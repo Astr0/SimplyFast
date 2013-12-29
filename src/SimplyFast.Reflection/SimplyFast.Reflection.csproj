@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0466B054-C102-4B3F-8D89-AC3EE2892D44}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SF.Reflection</RootNamespace>
+    <AssemblyName>SimplyFast.Reflection</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Internal\ConstructorDelegateCache.cs" />
+    <Compile Include="Internal\ConstructorInfoCache.cs" />
+    <Compile Include="Internal\FieldDelegateCache.cs" />
+    <Compile Include="Internal\FieldInfoCache.cs" />
+    <Compile Include="Internal\GenericMethodInfoCache.cs" />
+    <Compile Include="Internal\GenericTypeCache.cs" />
+    <Compile Include="Internal\MethodDelegateCache.cs" />
+    <Compile Include="Internal\MethodInfoCache.cs" />
+    <Compile Include="Internal\PropertyInfoCache.cs" />
+    <Compile Include="Internal\TypeResolveCache.cs" />
+    <Compile Include="Internal\DelegateBuilders\ConstructorDelegateBuilder.cs" />
+    <Compile Include="Internal\DelegateBuilders\DelegateBuilder.cs" />
+    <Compile Include="Internal\DelegateBuilders\FieldAccessorDelegateBuilder.cs" />
+    <Compile Include="Internal\DelegateBuilders\MethodDelegateBuilder.cs" />
+    <Compile Include="Internal\DelegateBuilders\Parameters\ArgLocalVariableParameterMap.cs" />
+    <Compile Include="Internal\DelegateBuilders\Parameters\ArgNoneParameterMap.cs" />
+    <Compile Include="Internal\DelegateBuilders\Parameters\ArgOutParameterMap.cs" />
+    <Compile Include="Internal\DelegateBuilders\Parameters\ArgParameterMap.cs" />
+    <Compile Include="Internal\DelegateBuilders\Parameters\ArgRefParameterMap.cs" />
+    <Compile Include="Internal\DelegateBuilders\Parameters\IDelegateParameterMap.cs" />
+    <Compile Include="Internal\DelegateBuilders\Parameters\RetValParameterMap.cs" />
+    <Compile Include="Internal\DelegateBuilders\Parameters\SimpleParameterInfo.cs" />
+    <Compile Include="ContructorInfoEx.cs" />
+    <Compile Include="FieldInfoEx.cs" />
+    <Compile Include="MemberInfoEx.cs" />
+    <Compile Include="MethodInfoEx.cs" />
+    <Compile Include="PropertyInfoEx.cs" />
+    <Compile Include="SimpleReflection.cs" />
+    <Compile Include="Internal\Todo.cs" />
+    <Compile Include="Substitute.cs" />
+    <Compile Include="TypeEx.cs" />
+    <Compile Include="Old\Helpers\SimpleConvert.cs" />
+    <Compile Include="Emit\ILGeneratorEx.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SimplyFast\SimplyFast.csproj">
+      <Project>{1ED04E22-9459-439D-A7AE-1BF9380E75F2}</Project>
+      <Name>SimplyFast</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
