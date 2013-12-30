@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -7,9 +8,13 @@ using SF.Reflection;
 
 namespace SF.Expressions
 {
-    public static partial class ExpressionEx
+    /// <summary>
+    ///     Expression Builder
+    /// </summary>
+    public static class EBuilder
     {
         #region Lambda shortcuts
+
         public static LambdaExpression Lambda(Func<ParameterExpression[], Expression> builder, params ParameterExpression[] parameters)
         {
             return Expression.Lambda(builder(parameters), parameters);
@@ -39,7 +44,8 @@ namespace SF.Expressions
             return Expression.Lambda(builder(p1, p2), p1, p2);
         }
 
-        public static LambdaExpression Lambda(Type parameterType1, Type parameterType2, Type parameterType3, Func<ParameterExpression, ParameterExpression, ParameterExpression, Expression> builder)
+        public static LambdaExpression Lambda(Type parameterType1, Type parameterType2, Type parameterType3,
+            Func<ParameterExpression, ParameterExpression, ParameterExpression, Expression> builder)
         {
             var p1 = Expression.Parameter(parameterType1);
             var p2 = Expression.Parameter(parameterType2);
@@ -47,7 +53,8 @@ namespace SF.Expressions
             return Expression.Lambda(builder(p1, p2, p3), p1, p2, p3);
         }
 
-        public static LambdaExpression Lambda(Type parameterType1, Type parameterType2, Type parameterType3, Type parameterType4, Func<ParameterExpression, ParameterExpression, ParameterExpression, ParameterExpression, Expression> builder)
+        public static LambdaExpression Lambda(Type parameterType1, Type parameterType2, Type parameterType3, Type parameterType4,
+            Func<ParameterExpression, ParameterExpression, ParameterExpression, ParameterExpression, Expression> builder)
         {
             var p1 = Expression.Parameter(parameterType1);
             var p2 = Expression.Parameter(parameterType2);
@@ -59,6 +66,7 @@ namespace SF.Expressions
         #endregion
 
         #region Block shortcuts
+
         public static BlockExpression Block(Func<ParameterExpression[], Expression[]> builder, params ParameterExpression[] variable)
         {
             return Expression.Block(variable, builder(variable));
@@ -78,31 +86,146 @@ namespace SF.Expressions
         public static BlockExpression Block(Type variableType1, Func<ParameterExpression, Expression[]> builder)
         {
             var p1 = Expression.Variable(variableType1);
-            return Expression.Block(new[] { p1 }, builder(p1));
+            return Expression.Block(new[] {p1}, builder(p1));
         }
 
         public static BlockExpression Block(Type variableType1, Type variableType2, Func<ParameterExpression, ParameterExpression, Expression[]> builder)
         {
             var p1 = Expression.Variable(variableType1);
             var p2 = Expression.Variable(variableType2);
-            return Expression.Block(new[] { p1, p2 }, builder(p1, p2));
+            return Expression.Block(new[] {p1, p2}, builder(p1, p2));
         }
 
-        public static BlockExpression Block(Type variableType1, Type variableType2, Type variableType3, Func<ParameterExpression, ParameterExpression, ParameterExpression, Expression[]> builder)
+        public static BlockExpression Block(Type variableType1, Type variableType2, Type variableType3,
+            Func<ParameterExpression, ParameterExpression, ParameterExpression, Expression[]> builder)
         {
             var p1 = Expression.Variable(variableType1);
             var p2 = Expression.Variable(variableType2);
             var p3 = Expression.Variable(variableType3);
-            return Expression.Block(new[] { p1, p2, p3 }, builder(p1, p2, p3));
+            return Expression.Block(new[] {p1, p2, p3}, builder(p1, p2, p3));
         }
 
-        public static BlockExpression Block(Type variableType1, Type variableType2, Type variableType3, Type variableType4, Func<ParameterExpression, ParameterExpression, ParameterExpression, ParameterExpression, Expression[]> builder)
+        public static BlockExpression Block(Type variableType1, Type variableType2, Type variableType3, Type variableType4,
+            Func<ParameterExpression, ParameterExpression, ParameterExpression, ParameterExpression, Expression[]> builder)
         {
             var p1 = Expression.Variable(variableType1);
             var p2 = Expression.Variable(variableType2);
             var p3 = Expression.Variable(variableType3);
             var p4 = Expression.Variable(variableType4);
-            return Expression.Block(new[] { p1, p2, p3, p4 }, builder(p1, p2, p3, p4));
+            return Expression.Block(new[] {p1, p2, p3, p4}, builder(p1, p2, p3, p4));
+        }
+
+        #endregion
+
+        #region Control structures
+
+        private static readonly MethodInfo DisposableDispose = LambdaExtract.Method((IDisposable x) => x.Dispose());
+        private static readonly MethodInfo EnumerableGetEnumerator = LambdaExtract.Method((IEnumerable x) => x.GetEnumerator());
+        private static readonly MethodInfo EnumeratorMoveNext = LambdaExtract.Method((IEnumerator x) => x.MoveNext());
+
+        public static Expression Using(Expression disposable, Expression body)
+        {
+            if (!typeof (IDisposable).IsAssignableFrom(disposable.Type))
+                throw new ArgumentException("Not IDisposable", "disposable");
+            return Expression.TryFinally(body,
+                Expression.IfThen(disposable.Binary(ExpressionType.NotEqual, Expression.Constant(null, disposable.Type)),
+                    disposable.Method(DisposableDispose)));
+        }
+
+        public static LoopExpression Loop(Func<ILoopControl, Expression> bodyBuilder)
+        {
+            var loop = new LoopControl();
+            var body = bodyBuilder(loop);
+            return Expression.Loop(body, loop.BreakLabel, loop.ContinueLabel);
+        }
+
+        public static LoopExpression While(Expression test, Func<ILoopControl, Expression> bodyBuilder)
+        {
+            return Loop(loop => Expression.Block(
+                Expression.IfThen(Expression.Not(test), loop.Break()),
+                bodyBuilder(loop)));
+        }
+
+        public static LoopExpression For(Expression test, Expression iterator, Func<ILoopControl, Expression> bodyBuilder)
+        {
+            var loop = new LoopControl();
+            var body = bodyBuilder(loop);
+            var bodyExpr = new[]
+            {
+                test == null ? null : Expression.IfThen(Expression.Not(test), loop.Break()),
+                body,
+                loop.ContinueLabel == null ? null : Expression.Label(loop.ContinueLabel),
+                iterator
+            };
+            var loopBody = Expression.Block(bodyExpr.Where(x => x != null));
+            return Expression.Loop(loopBody, loop.BreakLabel);
+        }
+
+        private static Type GetForEachType(Type expressionType)
+        {
+            var enumerableTypes = TypeEx.FindIEnumerable(expressionType);
+            using (var en = enumerableTypes.GetEnumerator())
+            {
+                if (!en.MoveNext())
+                    throw new ArgumentException("Not an IEnumerable", "expressionType");
+                var res = en.Current;
+                if (en.MoveNext())
+                    throw new ArgumentException("Ambigious IEnumerable", "expressionType");
+                return res;
+            }
+        }
+
+        public static Expression ForEach(Type type, Expression enumerable, Func<IForeachControl, Expression> bodyBuilder)
+        {
+            if (type == null)
+                type = GetForEachType(enumerable.Type);
+            MethodInfo getEnumerator = null;
+            var enGeneric = typeof (IEnumerable<>).MakeGeneric(type);
+            if (enGeneric.IsAssignableFrom(enumerable.Type))
+                getEnumerator = enGeneric.Method("GetEnumerator");
+            else if (typeof (IEnumerable).IsAssignableFrom(enumerable.Type))
+                getEnumerator = EnumerableGetEnumerator;
+            if (getEnumerator == null)
+                throw new ArgumentException("Not IEnumerable", "enumerable");
+
+            var enumerator = Expression.Parameter(getEnumerator.ReturnType);
+
+            var needCast = getEnumerator == EnumerableGetEnumerator && type != typeof (object);
+            var whileLoop = While(enumerator.Method(EnumeratorMoveNext), loop =>
+            {
+                Expression current = enumerator.Property("Current");
+                var foreachLoop = new ForeachControl(needCast ? current.CastAs(type) : current, loop);
+                var body = bodyBuilder(foreachLoop);
+                return needCast ? Expression.IfThen(Expression.TypeIs(current, type), body) : body;
+            });
+            return Expression.Block(new[] {enumerator}, new[]
+            {
+                enumerator.Assign(enumerable.Method(getEnumerator)),
+                typeof (IDisposable).IsAssignableFrom(enumerator.Type) ? Using(enumerator, whileLoop) : whileLoop
+            });
+        }
+
+
+        public static Expression ForEach(Expression enumerable, Func<IForeachControl, Expression> bodyBuilder)
+        {
+            return ForEach(null, enumerable, bodyBuilder);
+        }
+
+        public static ConditionalExpression If(Expression test, Expression ifTrue, Expression ifFalse = null)
+        {
+            Type type;
+            if (ifFalse == null)
+            {
+                type = ifTrue.Type;
+                ifFalse = Expression.Default(type);
+            }
+            else
+            {
+                type = ifTrue.Type;
+                if (type != ifFalse.Type)
+                    type = typeof (void);
+            }
+            return Expression.Condition(test, ifTrue, ifFalse, type);
         }
 
         #endregion
@@ -187,7 +310,7 @@ namespace SF.Expressions
 
         // ReSharper disable MethodOverloadWithOptionalParameter
         public static IndexExpression Property(this Expression expression, PropertyInfo property, params Expression[] arguments)
-        // ReSharper restore MethodOverloadWithOptionalParameter
+            // ReSharper restore MethodOverloadWithOptionalParameter
         {
             return Expression.Property(expression, property, arguments);
         }
@@ -242,22 +365,22 @@ namespace SF.Expressions
 
         public static Expression Method(Type type, string methodOrMemberName, params Expression[] arguments)
         {
-            var method = type.BestMemberOverload(methodOrMemberName, arguments.Select(x => x.Type).ToArray());
+            var method = type.FindInvokableMember(methodOrMemberName, arguments.Select(x => x.Type).ToArray());
             if (method == null)
                 throw new ArgumentException("Method not found.", "methodOrMemberName");
-            if (method.MemberType == MemberTypes.Method)
-                return Expression.Call(null, (MethodInfo)method, arguments);
-            return MemberAccess(null, method).InvokeDelegate(arguments);
+            return method.MemberType == MemberTypes.Method
+                ? Expression.Call(null, (MethodInfo) method, arguments)
+                : MemberAccess(null, method).InvokeDelegate(arguments);
         }
 
         public static Expression Method(this Expression expression, string methodOrMemberName, params Expression[] arguments)
         {
-            var method = expression.Type.BestMemberOverload(methodOrMemberName, arguments.Select(x => x.Type).ToArray());
+            var method = expression.Type.FindInvokableMember(methodOrMemberName, arguments.Select(x => x.Type).ToArray());
             if (method == null)
                 throw new ArgumentException("Method not found.", "methodOrMemberName");
-            if (method.MemberType == MemberTypes.Method)
-                return Expression.Call(expression, (MethodInfo)method, arguments);
-            return expression.MemberAccess(method).InvokeDelegate(arguments);
+            return method.MemberType == MemberTypes.Method
+                ? Expression.Call(expression, (MethodInfo) method, arguments)
+                : expression.MemberAccess(method).InvokeDelegate(arguments);
         }
 
         public static Expression New(Type type, params Expression[] arguments)

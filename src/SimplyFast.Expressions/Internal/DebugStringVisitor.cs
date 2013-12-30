@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using SF.Collections;
+using SF.Reflection;
 
 namespace SF.Expressions
 {
@@ -31,7 +33,7 @@ namespace SF.Expressions
 
         private void Indent(int inc)
         {
-            var newIdent = _ident.Length + inc * IdentMultiplier;
+            var newIdent = _ident.Length + inc*IdentMultiplier;
             if (newIdent < 0)
                 newIdent = 0;
             _ident = new string(' ', newIdent);
@@ -224,7 +226,7 @@ namespace SF.Expressions
                     Visit(node.Operand);
                     break;
                 case ExpressionType.Not:
-                    Out((node.Type == typeof(bool) || node.Type == typeof(bool?)) ? '!' : '~');
+                    Out((node.Type == typeof (bool) || node.Type == typeof (bool?)) ? '!' : '~');
                     Visit(node.Operand);
                     break;
                 case ExpressionType.Quote:
@@ -251,17 +253,17 @@ namespace SF.Expressions
 
         private static string GetConstantSuffix(Type type)
         {
-            if (type == typeof(uint))
+            if (type == typeof (uint))
                 return "U";
-            if (type == typeof(long))
+            if (type == typeof (long))
                 return "L";
-            if (type == typeof(ulong))
+            if (type == typeof (ulong))
                 return "UL";
-            if (type == typeof(double))
+            if (type == typeof (double))
                 return "D";
-            if (type == typeof(float))
+            if (type == typeof (float))
                 return "F";
-            if (type == typeof(Decimal))
+            if (type == typeof (Decimal))
                 return "M";
             return "";
         }
@@ -350,7 +352,7 @@ namespace SF.Expressions
                     Out(", ");
                 // ReSharper disable ConditionIsAlwaysTrueOrFalse
                 if (members != null)
-                // ReSharper restore ConditionIsAlwaysTrueOrFalse
+                    // ReSharper restore ConditionIsAlwaysTrueOrFalse
                 {
                     Out(members[i].Name);
                     Out(" = ");
@@ -742,7 +744,7 @@ namespace SF.Expressions
             if (
                 node.GetType()
                     .GetMethod("ToString", BindingFlags.Instance | BindingFlags.Public | BindingFlags.ExactBinding, null, Type.EmptyTypes, null)
-                    .DeclaringType != typeof(Expression))
+                    .DeclaringType != typeof (Expression))
             {
                 Out(node.ToString());
                 return node;

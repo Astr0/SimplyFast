@@ -11,11 +11,10 @@ namespace SF.Expressions
     {
         private readonly HashSet<Expression> _canBeEvaluated;
         private bool _allowEval = true;
-        
+
         internal PartialEvaluator(HashSet<Expression> canBeEvaluated)
         {
             _canBeEvaluated = canBeEvaluated;
-            
         }
 
         internal Expression Eval(Expression exp)

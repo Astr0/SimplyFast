@@ -39,21 +39,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EBuilder.cs" />
+    <Compile Include="LambdaExtract.cs" />
     <Compile Include="ExpressionEx.cs" />
-    <Compile Include="ExpressionExExtensions.cs" />
-    <Compile Include="ExpressionExMember.cs" />
+    <Compile Include="IForeachControl.cs" />
+    <Compile Include="ILoopControl.cs" />
     <Compile Include="Internal\DebugStringVisitor.cs" />
+    <Compile Include="Internal\ForeachControl.cs" />
+    <Compile Include="Internal\LoopControl.cs" />
     <Compile Include="Internal\NormalizationVisitor.cs" />
     <Compile Include="Internal\PartialEvaluationSearcher.cs" />
     <Compile Include="Internal\PartialEvaluator.cs" />
     <Compile Include="Internal\ReplaceParametersVisitor.cs" />
     <Compile Include="Internal\Todo.cs" />
+    <Compile Include="LambdaEx.cs" />
+    <Compile Include="ParameterEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SimplyFast.Reflection\SimplyFast.Reflection.csproj">
       <Project>{0466B054-C102-4B3F-8D89-AC3EE2892D44}</Project>
       <Name>SimplyFast.Reflection</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SimplyFast\SimplyFast.csproj">
+      <Project>{1ED04E22-9459-439D-A7AE-1BF9380E75F2}</Project>
+      <Name>SimplyFast</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

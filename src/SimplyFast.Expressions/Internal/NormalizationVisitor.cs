@@ -4,7 +4,7 @@ using SF.Reflection;
 
 namespace SF.Expressions
 {
-    internal class NormalizationVisitor: ExpressionVisitor
+    internal class NormalizationVisitor : ExpressionVisitor
     {
         public static readonly NormalizationVisitor Instance = new NormalizationVisitor();
 
@@ -23,7 +23,7 @@ namespace SF.Expressions
         protected override Expression VisitMethodCall(MethodCallExpression node)
         {
             var method = node.Method;
-            var property = MethodInfoEx.FindProperty(method);
+            var property = PropertyInfoEx.Property(method);
             if (property == null)
                 return base.VisitMethodCall(node);
             // rewrite...
@@ -40,7 +40,7 @@ namespace SF.Expressions
             if (node.Arguments.Count == 1)
                 return instance.Property(property).Assign(Visit(node.Arguments[0]));
             return instance.Property(property, node.Arguments.Take(node.Arguments.Count - 1).Select(Visit))
-                           .Assign(node.Arguments[node.Arguments.Count - 1]);
+                .Assign(node.Arguments[node.Arguments.Count - 1]);
         }
     }
 }

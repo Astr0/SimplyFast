@@ -28,7 +28,7 @@ namespace SF.Expressions
 
         public override Expression Visit(Expression expression)
         {
-            if (expression == null) 
+            if (expression == null)
                 return null;
             var saveCannotBeEvaluated = _cannotBeEvaluated;
             _cannotBeEvaluated = false;

@@ -46,9 +46,11 @@ namespace SF.Reflection
         public MethodInfo Get(string name, Type[] arguments)
         {
             MethodInfo[] methods;
-            if (!_methods.TryGetValue(name, out methods))
-                return null;
+            return _methods.TryGetValue(name, out methods) ? FindMatch(methods, arguments) : null;
+        }
 
+        private static MethodInfo FindMatch(MethodInfo[] methods, Type[] arguments)
+        {
             foreach (var methodInfo in methods)
             {
                 var parameters = methodInfo.GetParameters();
@@ -130,6 +132,80 @@ namespace SF.Reflection
             }
             // not found (
             return null;
+        }
+
+        private static Type[] MatchParameters(IList<ParameterInfo> genericParameters, IList<Type> parameters)
+        {
+            if (genericParameters.Count != parameters.Count)
+                return null;
+            var dictionary = new Dictionary<int, Type>(genericParameters.Count);
+            for (var i = 0; i < parameters.Count; i++)
+            {
+                var generic = genericParameters[i];
+                var param = parameters[i];
+                if (param.IsGenericParameter)
+                    return null;
+                if (generic.ParameterType.IsByRef != param.IsByRef)
+                    return null;
+                if (generic.ParameterType.IsGenericParameter)
+                {
+                    Type genericType;
+                    if (dictionary.TryGetValue(generic.ParameterType.GenericParameterPosition, out genericType))
+                    {
+                        if (genericType != param)
+                            return null;
+                    }
+                    else
+                    {
+                        dictionary.Add(generic.ParameterType.GenericParameterPosition, param);
+                    }
+                }
+                else
+                {
+                    if (generic.ParameterType != param)
+                        return null;
+                }
+            }
+            var result = new Type[dictionary.Count];
+            foreach (var type in dictionary)
+            {
+                result[type.Key] = type.Value;
+            }
+            return result;
+        }
+
+        private static MethodInfo FindGenericMatch(MethodInfo[] methods, Type[] arguments)
+        {
+            MethodInfo result = null;
+            foreach (var genericMethodInfo in methods)
+            {
+                if (!genericMethodInfo.IsGenericMethodDefinition)
+                    continue;
+                var types = MatchParameters(genericMethodInfo.GetParameters(), arguments);
+                if (types == null)
+                    continue;
+                try
+                {
+                    var method = genericMethodInfo.MakeGeneric(types);
+                    if (result != null)
+                        return null;
+                    result = method;
+                }
+                catch (InvalidOperationException)
+                {
+                    // Just enumerate to next error
+                }
+            }
+            return result;
+        }
+
+        public MethodInfo FindMethod(string name, Type[] arguments)
+        {
+            MethodInfo[] methods;
+            if (!_methods.TryGetValue(name, out methods))
+                return null;
+
+            return FindMatch(methods, arguments) ?? FindGenericMatch(methods, arguments);
         }
     }
 }

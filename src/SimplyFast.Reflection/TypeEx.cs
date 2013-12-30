@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -13,7 +15,7 @@ namespace SF.Reflection
         /// <summary>
         /// Returns programmer-friendly name for type
         /// </summary>
-        public static string FirendlyName(this Type type)
+        public static string FriendlyName(this Type type)
         {
             if (!type.IsGenericType)
                 return type.Name;
@@ -23,7 +25,7 @@ namespace SF.Reflection
             var index = genericName.IndexOf('`');
             if (index >= 0)
                 genericName = genericName.Substring(0, index);
-            sb.Append(genericName).Append('<').Append(string.Join(", ", arguments.Select(x => x.FirendlyName()))).Append('>');
+            sb.Append(genericName).Append('<').Append(string.Join(", ", arguments.Select(x => x.FriendlyName()))).Append('>');
             return sb.ToString();
         }
 
@@ -73,6 +75,26 @@ namespace SF.Reflection
         public static Type TypeOf<T>(T obj)
         {
             return typeof (T);
+        }
+        
+        /// <summary>
+        /// Returns all underlying types for IEnumerable implementations found in type
+        /// </summary>
+        public static IEnumerable<Type> FindIEnumerable(Type type)
+        {
+            var interfaces = type.GetInterfaces().Concat(new []{ type });
+            var normalFound = false;
+            foreach (var inter in interfaces)
+            {
+                if (inter.IsGenericType && inter.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                {
+                    yield return inter.GetGenericArguments()[0];
+                }
+                else if (inter == typeof(IEnumerable))
+                    normalFound = true;
+            }
+            if (normalFound)
+                yield return typeof(object);
         }
 
         /// <summary>

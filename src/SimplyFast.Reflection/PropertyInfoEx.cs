@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -66,6 +67,39 @@ namespace SF.Reflection
         public static PropertyInfo Property(this Type type, string name, params Type[] parameters)
         {
             return PropertyInfoCache.ForType(type).GetIndexed(name, parameters);
+        }
+
+        /// <summary>
+        ///     Returns Property who's getter or setter is passed method
+        /// </summary>
+        public static PropertyInfo Property(MethodInfo method)
+        {
+            // Easy and fast way out. 
+            if (!method.IsSpecialName)
+                return null;
+
+            // Try euristics
+            if (method.Name.Length > 4)
+            {
+                // Property getter/setter name is get_x or set_x
+                var prefix = method.Name.Substring(0, 4);
+                var getSet = (prefix == "get_" ? 1 : (prefix == "set_" ? 2 : 0));
+                if (getSet != 0)
+                {
+                    var propertyName = method.Name.Substring(4);
+                    var properties = method.DeclaringType.Properties(propertyName);
+                    return
+                        properties.FirstOrDefault(
+                            x => (getSet == 1 ? x.GetGetMethod(SimpleReflection.PrivateAccess) : x.GetSetMethod(SimpleReflection.PrivateAccess)) == method);
+                }
+            }
+            // ReSharper disable once PossibleNullReferenceException
+            var allProperties = method.DeclaringType.Properties();
+
+            // Euristics failed... try the hard way
+            return
+                allProperties.FirstOrDefault(
+                    p => p.GetGetMethod(SimpleReflection.PrivateAccess) == method || p.GetSetMethod(SimpleReflection.PrivateAccess) == method);
         }
 
         /// <summary>

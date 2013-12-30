@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace SF.Reflection
@@ -71,6 +72,30 @@ namespace SF.Reflection
                 var attribute = member.GetCustomAttribute(attributeType, inherit);
                 if (attribute != null)
                     yield return new KeyValuePair<T, Attribute>(member, attribute);
+            }
+        }
+
+        /// <summary>
+        /// Returns Method, generic method, delegate field or property with matched name and parameters
+        /// </summary>
+        public static MemberInfo FindInvokableMember(this Type type, string member, params Type[] parameters)
+        {
+            var method = type.FindMethod(member, parameters);
+            if (method != null)
+                return method;
+            var fieldOrProperty = type.FieldOrProperty(member);
+            if (fieldOrProperty == null)
+                return null;
+            var valueType = fieldOrProperty.ValueType();
+            try
+            {
+                var invokeParameters = MethodInfoEx.GetInvokeMethod(valueType).GetParameters();
+                // check parameters
+                return invokeParameters.Where((d, i) => d.ParameterType != parameters[i]).Any() ? null : fieldOrProperty;
+            }
+            catch
+            {
+                return null;
             }
         }
     }
