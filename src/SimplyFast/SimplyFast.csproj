@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnonymousEx.cs" />
     <Compile Include="Collections\DictionaryEx.cs" />
     <Compile Include="Internal\ArrayEqualityComparer.cs" />
     <Compile Include="Internal\Todo.cs" />
