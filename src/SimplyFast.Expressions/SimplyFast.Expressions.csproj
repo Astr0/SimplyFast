@@ -39,6 +39,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Dynamic\Internal\LambdaParametersEBuilder.cs" />
+    <Compile Include="Dynamic\Internal\OperationEBuilder.cs" />
+    <Compile Include="Dynamic\Internal\ParametersEBuilder.cs" />
+    <Compile Include="Dynamic\Internal\StaticEBuilder.cs" />
+    <Compile Include="Dynamic\DynamicEBuilder.cs" />
+    <Compile Include="Dynamic\DynamicEBuilderEx.cs" />
+    <Compile Include="Dynamic\DynamicControlBuilder.cs" />
     <Compile Include="EBuilder.cs" />
     <Compile Include="LambdaExtract.cs" />
     <Compile Include="ExpressionEx.cs" />
