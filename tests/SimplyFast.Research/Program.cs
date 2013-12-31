@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using SF.Threading;
 
 namespace SimplyFast.Research
 {
@@ -14,110 +16,59 @@ namespace SimplyFast.Research
 
         public static async Task<int> GetA()
         {
-            await Task.Delay(1000);
-            DebugWrite("GetA");
+            //await Task.Delay(1000);
+            //DebugWrite("GetA");
             return 0;
         }
 
         public static async Task<int> GetSum()
         {
-            DebugWrite("GetSum - before GetA");
+            //DebugWrite("GetSum - before GetA");
             var res = await Task.WhenAll(GetA(), GetA());
             var a = res[0];
             var b = res[1];
-            DebugWrite("GetSum - after GetA");
+            //DebugWrite("GetSum - after GetA");
             return a + b;
         }
 
         private static async void Work()
         {
-            DebugWrite("Main - before GetSum");
-            var res = await GetSum();
-            Console.WriteLine(res);
+            await TestCatch();
+            //DebugWrite("Main - before GetSum");
+            var sw = new Stopwatch();
+            sw.Start();
+            for (int i = 0; i < 1000000; i++)
+            {
+                var res = await GetSum();
+            }
+            sw.Stop();
+            Console.WriteLine(sw.ElapsedMilliseconds);
+            
+            //Console.WriteLine(res);
         }
 
-        public class TestSyncContext : SynchronizationContext
+        private static async Task TestCatch()
         {
-            private struct QueueItem
+            try
             {
-                public QueueItem(SendOrPostCallback callback, object state)
-                {
-                    _callback = callback;
-                    _state = state;
-                }
-
-                public void Execute()
-                {
-                    _callback(_state);
-                }
-
-                private readonly SendOrPostCallback _callback;
-                private readonly object _state;
+                await SomethingThrows();
             }
-
-            private readonly ConcurrentQueue<QueueItem> _queue = new ConcurrentQueue<QueueItem>();
-            private volatile int _ops;
-
-
-            public override void OperationCompleted()
+            catch (Exception ex)
             {
-                Console.WriteLine("OperationCompleted");
-                Interlocked.Decrement(ref _ops);
+                Console.WriteLine("Catched " + ex.Message);
             }
+        }
 
-            public override void OperationStarted()
-            {
-                Console.WriteLine("OperationStarted");
-                Interlocked.Increment(ref _ops);
-            }
-
-            public override int Wait(IntPtr[] waitHandles, bool waitAll, int millisecondsTimeout)
-            {
-                Console.WriteLine("Wait");
-                return base.Wait(waitHandles, waitAll, millisecondsTimeout);
-            }
-
-            public override void Send(SendOrPostCallback d, object state)
-            {
-                Console.WriteLine("Send");
-                d(state);
-            }
-
-            public override void Post(SendOrPostCallback d, object state)
-            {
-                DebugWrite("Post " + d.Method);
-                _queue.Enqueue(new QueueItem(d, state));
-            }
-
-            public void Run()
-            {
-                while (!_queue.IsEmpty || _ops > 0)
-                {
-                    QueueItem item;
-                    if (!_queue.TryDequeue(out item))
-                    {
-                        Thread.Sleep(1);
-                        continue;
-                    }
-                    try
-                    {
-                        item.Execute();
-                    }
-                    catch
-                    {
-                        
-                    }
-                }
-            }
+        private static Task SomethingThrows()
+        {
+            throw new Exception("My Ex");
         }
 
 
         private static void Main(string[] args)
         {
-            var context = new TestSyncContext();
-            SynchronizationContext.SetSynchronizationContext(context);
-            context.Post(x => Work(), null);
-            context.Run();
+            //Work();
+            EventLoop.Run(Work);
             Console.ReadLine();
         }
     }
