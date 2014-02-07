@@ -21,7 +21,7 @@ namespace SF.Reflection
 
         private struct GenericMethodKey : IEquatable<GenericMethodKey>
         {
-            private static readonly EqualityComparer<Type[]> _comparer = SimpleEqualityComparer.Array<Type>();
+            private static readonly EqualityComparer<Type[]> _comparer = EqualityComparerEx.Array<Type>();
 
             public readonly Type[] Arguments;
             // ReSharper disable MemberHidesStaticFromOuterClass

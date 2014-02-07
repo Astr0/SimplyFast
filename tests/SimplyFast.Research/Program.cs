@@ -1,8 +1,12 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Diagnostics;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using SF.IO;
+using SF.Network.Sockets;
 using SF.Threading;
 
 namespace SimplyFast.Research
@@ -14,56 +18,103 @@ namespace SimplyFast.Research
             Console.WriteLine(caption + " " + Thread.CurrentThread.ManagedThreadId + " " + TaskScheduler.Current.Id);
         }
 
-        public static async Task<int> GetA()
-        {
-            //await Task.Delay(1000);
-            //DebugWrite("GetA");
-            return 0;
-        }
-
-        public static async Task<int> GetSum()
-        {
-            //DebugWrite("GetSum - before GetA");
-            var res = await Task.WhenAll(GetA(), GetA());
-            var a = res[0];
-            var b = res[1];
-            //DebugWrite("GetSum - after GetA");
-            return a + b;
-        }
-
+        
         private static async void Work()
         {
-            await TestCatch();
-            //DebugWrite("Main - before GetSum");
-            var sw = new Stopwatch();
-            sw.Start();
-            for (int i = 0; i < 1000000; i++)
-            {
-                var res = await GetSum();
-            }
-            sw.Stop();
-            Console.WriteLine(sw.ElapsedMilliseconds);
-            
-            //Console.WriteLine(res);
+            var factory = new NetFactory();
+            var tasks = new List<Task>();
+            tasks.Add(RunServer(factory));
+            tasks.AddRange(Enumerable.Range(0, 100).Select(x => RunClient(factory)));
+            await Task.WhenAll(tasks);
         }
 
-        private static async Task TestCatch()
+        private static byte[] GenerateData(int i)
         {
+            var res = new byte[i*100];
+            for (int j = 0; j < res.Length; j++)
+            {
+                res[j] = (byte)((i + j) % 255);
+            }
+            return res;
+        }
+
+        private static async Task RunClient(NetFactory factory)
+        {
+            //var cts = new CancellationTokenSource(500);
             try
             {
-                await SomethingThrows();
+                //using (var client = await factory.Connect(new IPEndPoint(IPAddress.Loopback, 3232), cts.Token))
+                using (var client = await factory.Connect(new IPEndPoint(IPAddress.Loopback, 3232)))
+                {
+                    Console.WriteLine("Connected");
+                    for (int i = 0; i < 10; i++)
+                    {
+                        var buf = GenerateData(i);
+                        //Console.WriteLine("Sending data");
+                        await client.Write(buf);
+                        Console.WriteLine(buf.Length + " bytes sent.");
+                    }
+                    
+                    await client.Disconnect();
+                    //await client.Write(GenerateData(2));
+                    Console.WriteLine("Disconnected");
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Catched " + ex.Message);
+                Console.WriteLine("Client exception " + ex);
             }
         }
 
-        private static Task SomethingThrows()
+        private static async Task RunServer(NetFactory factory)
         {
-            throw new Exception("My Ex");
+            //await Task.Delay(2000);
+            using (var server = factory.Listen(new IPEndPoint(IPAddress.Loopback, 3232),backlog:30))
+            {
+                while (true)
+                {
+                    var client = await server.Accept();
+                    Console.WriteLine("Client connected " + client);
+                    StartClient(client);
+                }
+            }
         }
 
+        private static async Task StartClient(NetSocket client)
+        {
+            Console.WriteLine("Client Task started");
+            var buf = new byte[2550];
+            try
+            {
+                while (true)
+                {
+                    var count = await client.Read(buf);
+                    Console.WriteLine(count + " bytes received.");
+                    /*if (count > 200)
+                    {
+                        Console.WriteLine("Disconnecting client " + client);
+                        await client.Disconnect();
+                        Console.WriteLine("Client disconnected");
+                        break;
+                    }*/
+                }
+            }
+            catch (Exception ex)
+            {
+                var se = ex as SocketException;
+                if (se != null && se.SocketErrorCode == SocketError.Shutdown)
+                {
+                    Console.WriteLine("Client Task Stopped");
+                    return;
+                }
+                Console.WriteLine("Exception in client thread " + ex);
+                throw;
+            }
+            finally
+            {
+                client.Dispose();
+            }
+        }
 
         private static void Main(string[] args)
         {

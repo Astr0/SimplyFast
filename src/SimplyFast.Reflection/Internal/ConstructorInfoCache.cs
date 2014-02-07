@@ -25,7 +25,7 @@ namespace SF.Reflection
         private ConstructorInfoCache(Type type)
         {
             Constructors = type.GetConstructors(SimpleReflection.BindingFlags & ~BindingFlags.Static);
-            _constructors = new Dictionary<Type[], ConstructorInfo>(SimpleEqualityComparer.Array<Type>());
+            _constructors = new Dictionary<Type[], ConstructorInfo>(EqualityComparerEx.Array<Type>());
             foreach (var constructorInfo in Constructors)
             {
                 _constructors[constructorInfo.GetParameters().Select(x => x.ParameterType).ToArray()] = constructorInfo;

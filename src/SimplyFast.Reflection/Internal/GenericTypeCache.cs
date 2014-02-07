@@ -11,7 +11,7 @@ namespace SF.Reflection
 
         private struct GenericTypeKey : IEquatable<GenericTypeKey>
         {
-            private static readonly EqualityComparer<Type[]> _comparer = SimpleEqualityComparer.Array<Type>();
+            private static readonly EqualityComparer<Type[]> _comparer = EqualityComparerEx.Array<Type>();
             public readonly Type[] Arguments;
             public readonly Type Type;
 

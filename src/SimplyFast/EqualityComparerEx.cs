@@ -5,7 +5,7 @@ namespace SF
     /// <summary>
     /// Facade for Comparers
     /// </summary>
-    public static class SimpleEqualityComparer
+    public static class EqualityComparerEx
     {
         public static EqualityComparer<T[]> Array<T>()
         {
