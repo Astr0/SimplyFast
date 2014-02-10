@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace SF.Pipes
 {
-    public interface IProducer
+    public interface IProducer<in T>: IDisposable
     {
-        Task Add<T>(T obj);
+        Task Add(T obj);
     }
 }

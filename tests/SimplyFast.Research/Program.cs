@@ -40,7 +40,7 @@ namespace SimplyFast.Research
             await Task.WhenAll(tasks);
         }
 
-        private static async Task Producer(IProducer producer)
+        private static async Task Producer(IProducer<string> producer)
         {
             while (true)
             {
@@ -49,11 +49,11 @@ namespace SimplyFast.Research
             }
         }
 
-        private static async Task Consumer(IConsumer consumer)
+        private static async Task Consumer(IConsumer<string> consumer)
         {
             while (true)
             {
-                var str = await consumer.Take<string>();
+                var str = await consumer.Take();
                 Console.WriteLine("Consumed " + str);
             }
         }

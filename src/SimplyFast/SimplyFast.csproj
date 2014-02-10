@@ -49,9 +49,12 @@
     <Compile Include="IO\StreamEx.cs" />
     <Compile Include="Network\Sockets\ISocket.cs" />
     <Compile Include="Network\Sockets\ISocketServer.cs" />
+    <Compile Include="Pipes\Internal\InputStreamPipe.cs" />
+    <Compile Include="Pipes\Internal\DbDataReaderPipe.cs" />
     <Compile Include="Pipes\EndOfPipeException.cs" />
     <Compile Include="Pipes\IConsumer.cs" />
     <Compile Include="Pipes\IProducer.cs" />
+    <Compile Include="Pipes\Internal\OutputStreamPipe.cs" />
     <Compile Include="Pipes\PipeEx.cs" />
     <Compile Include="Pipes\ProducerConsumerPipe.cs" />
     <Compile Include="Pool\BasicPool.cs" />
