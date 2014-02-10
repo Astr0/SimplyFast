@@ -3,7 +3,7 @@ using SF.IO;
 
 namespace SF.Network.Sockets
 {
-    public interface ISocket: IDuplexStream
+    public interface ISocket: IInputStream, IOutputStream
     {
         Task Disconnect();
     }

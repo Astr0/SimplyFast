@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace SF.Threading
 {
@@ -9,7 +10,12 @@ namespace SF.Threading
         public static Task<TBase> CastToBase<TDerived, TBase>(this Task<TDerived> task)
             where TDerived : TBase
         {
-            var tcs = new TaskCompletionSource<TBase>();
+            return task.Convert(x => (TBase)x);
+        }
+
+        public static Task<TConvert> Convert<TConvert, TSource>(this Task<TSource> task, Func<TSource, TConvert> conversion)
+        {
+            var tcs = new TaskCompletionSource<TConvert>();
             task.ContinueWith(t =>
             {
                 if (t.IsFaulted)
@@ -18,7 +24,7 @@ namespace SF.Threading
                 else if (t.IsCanceled)
                     tcs.TrySetCanceled();
                 else
-                    tcs.TrySetResult(t.Result);
+                    tcs.TrySetResult(conversion(t.Result));
             }, TaskContinuationOptions.ExecuteSynchronously);
 
             return tcs.Task;

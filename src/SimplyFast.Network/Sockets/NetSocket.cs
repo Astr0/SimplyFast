@@ -43,23 +43,6 @@ namespace SF.Network.Sockets
             return tcs.Task;
         }
 
-        private void ClearWrite(SocketAsyncEventArgs e)
-        {
-            e.SetBuffer(null, 0, 0);
-            e.UserToken = null;
-            e.Completed -= WriteCompleted;
-            _pool.Return(e);
-        }
-
-        private void WriteCompleted(object sender, SocketAsyncEventArgs e)
-        {
-            if (e.SocketError == SocketError.Success)
-                ((TaskCompletionSource<bool>)e.UserToken).SetResult(true);
-            else
-                ((TaskCompletionSource<bool>)e.UserToken).SetException(new SocketException((int)e.SocketError));
-            ClearWrite(e);
-        }
-
         public Task<int> Read(byte[] buffer, int offset, int count)
         {
             var tcs = new TaskCompletionSource<int>();
@@ -79,28 +62,6 @@ namespace SF.Network.Sockets
                 tcs.SetException(ex);
             }
             return tcs.Task;
-        }
-
-        private void ClearRead(SocketAsyncEventArgs e)
-        {
-            e.SetBuffer(null, 0, 0);
-            e.UserToken = null;
-            e.Completed -= ReadCompleted;
-            _pool.Return(e);
-        }
-
-        private void ReadCompleted(object sender, SocketAsyncEventArgs e)
-        {
-            if (e.SocketError == SocketError.Success)
-            {
-                if (e.BytesTransferred != 0)
-                    ((TaskCompletionSource<int>) e.UserToken).SetResult(e.BytesTransferred);
-                else
-                    ((TaskCompletionSource<int>) e.UserToken).SetException(new SocketException((int)SocketError.Shutdown));
-            }
-            else
-                ((TaskCompletionSource<int>) e.UserToken).SetException(new SocketException((int) e.SocketError));
-            ClearRead(e);
         }
 
         public Task Disconnect()
@@ -123,6 +84,42 @@ namespace SF.Network.Sockets
         }
 
         #endregion
+
+        private void ClearWrite(SocketAsyncEventArgs e)
+        {
+            e.SetBuffer(null, 0, 0);
+            e.UserToken = null;
+            e.Completed -= WriteCompleted;
+            _pool.Return(e);
+        }
+
+        private void WriteCompleted(object sender, SocketAsyncEventArgs e)
+        {
+            if (e.SocketError == SocketError.Success)
+                ((TaskCompletionSource<bool>) e.UserToken).SetResult(true);
+            else
+                ((TaskCompletionSource<bool>) e.UserToken).SetException(new SocketException((int) e.SocketError));
+            ClearWrite(e);
+        }
+
+        private void ClearRead(SocketAsyncEventArgs e)
+        {
+            e.SetBuffer(null, 0, 0);
+            e.UserToken = null;
+            e.Completed -= ReadCompleted;
+            _pool.Return(e);
+        }
+
+        private void ReadCompleted(object sender, SocketAsyncEventArgs e)
+        {
+            if (e.SocketError == SocketError.Success)
+            {
+                ((TaskCompletionSource<int>) e.UserToken).SetResult(e.BytesTransferred);
+            }
+            else
+                ((TaskCompletionSource<int>) e.UserToken).SetException(new SocketException((int) e.SocketError));
+            ClearRead(e);
+        }
 
         private void ClearDisconnect(SocketAsyncEventArgs e)
         {
