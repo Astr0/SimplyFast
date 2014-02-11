@@ -69,29 +69,5 @@ namespace SF.Pipes
         {
             return new DbDataReaderPipe(reader);
         }
-
-        /// <summary>
-        ///     No framing, just sends bytes to stream
-        /// </summary>
-        public static IProducer<ArraySegment<byte>> AsBinaryPipe(this IOutputStream stream)
-        {
-            return new OutputStreamPipe(stream);
-        }
-
-        /// <summary>
-        ///     No framing, just reads bytes from stream
-        /// </summary>
-        public static IConsumer<ArraySegment<byte>> AsBinaryPipe(this IInputStream stream, ArraySegment<byte> buffer)
-        {
-            return new InputStreamPipe(stream, buffer);
-        }
-
-        /// <summary>
-        ///     No framing, just reads bytes from stream
-        /// </summary>
-        public static IConsumer<ArraySegment<byte>> AsBinaryPipe(this IInputStream stream, int bufferSize = 256)
-        {
-            return new InputStreamPipe(stream, new ArraySegment<byte>(new byte[bufferSize]));
-        }
     }
 }

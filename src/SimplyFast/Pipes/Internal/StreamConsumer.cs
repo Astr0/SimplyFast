@@ -4,12 +4,12 @@ using SF.IO;
 
 namespace SF.Pipes
 {
-    internal class InputStreamPipe : IConsumer<ArraySegment<byte>>
+    internal class StreamConsumer : IConsumer<ArraySegment<byte>>
     {
         private readonly IInputStream _stream;
         private readonly ArraySegment<byte> _buffer;
 
-        public InputStreamPipe(IInputStream stream, ArraySegment<byte> buffer)
+        public StreamConsumer(IInputStream stream, ArraySegment<byte> buffer)
         {
             _stream = stream;
             _buffer = buffer;

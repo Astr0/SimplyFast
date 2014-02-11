@@ -4,11 +4,11 @@ using SF.IO;
 
 namespace SF.Pipes
 {
-    internal class OutputStreamPipe : IProducer<ArraySegment<byte>>
+    internal class StreamProducer : IProducer<ArraySegment<byte>>
     {
         private readonly IOutputStream _stream;
 
-        public OutputStreamPipe(IOutputStream stream)
+        public StreamProducer(IOutputStream stream)
         {
             _stream = stream;
         }

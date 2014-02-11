@@ -38,12 +38,46 @@ namespace SF.IO
         }
 
         /// <summary>
-        /// Reads exactly count bytes from stream
+        /// Reads exactly count bytes from stream. Returns number of bytes read. 
         /// </summary>
-        public static Task ReadExact(this IInputStream stream, byte[] buffer, int offset, int count, CancellationToken cancellation)
+        public static async Task<int> ReadExact(this IInputStream stream, byte[] buffer, int offset, int count, CancellationToken cancellation)
         {
-            // TODO
-            throw new NotImplementedException();
+            var countRead = count;
+            while (countRead > 0)
+            {
+                cancellation.ThrowIfCancellationRequested();
+                var read = await stream.Read(buffer, offset, countRead);
+                if (read == 0)
+                    return count;
+                offset += read;
+                countRead -= read;
+            }
+            return count;
+        }
+
+        public static Task<int> ReadExact(this IInputStream stream, byte[] buffer, int offset, int count)
+        {
+            return ReadExact(stream, buffer, offset, count, CancellationToken.None);
+        }
+
+        public static Task<int> ReadExact(this IInputStream stream, byte[] buffer, CancellationToken cancellation)
+        {
+            return ReadExact(stream, buffer, 0, buffer.Length, cancellation);
+        }
+
+        public static Task<int> ReadExact(this IInputStream stream, byte[] buffer)
+        {
+            return ReadExact(stream, buffer, CancellationToken.None);
+        }
+
+        public static Task<int> ReadExact(this IInputStream stream, ArraySegment<byte> buffer, CancellationToken cancellation)
+        {
+            return ReadExact(stream, buffer.Array, buffer.Offset, buffer.Count, cancellation);
+        }
+
+        public static Task<int> ReadExact(this IInputStream stream, ArraySegment<byte> buffer)
+        {
+            return ReadExact(stream, buffer, CancellationToken.None);
         }
 
         public static async Task CopyTo(this IInputStream input, IOutputStream target, CancellationToken cancellation, int bufferSize = 256)
