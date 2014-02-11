@@ -42,6 +42,7 @@
     <Compile Include="AnonymousEx.cs" />
     <Compile Include="Collections\DictionaryEx.cs" />
     <Compile Include="Internal\ArrayEqualityComparer.cs" />
+    <Compile Include="IO\BufferWriter.cs" />
     <Compile Include="IO\IInputStream.cs" />
     <Compile Include="IO\AsyncStreamWrapper.cs" />
     <Compile Include="IO\BlockingStreamWrapper.cs" />
@@ -52,12 +53,16 @@
     <Compile Include="Pipes\BinaryPipeEx.cs" />
     <Compile Include="Pipes\Internal\StreamConsumer.cs" />
     <Compile Include="Pipes\Internal\DbDataReaderPipe.cs" />
-    <Compile Include="Pipes\EndOfPipeException.cs" />
     <Compile Include="Pipes\IConsumer.cs" />
+    <Compile Include="Pipes\Internal\IntLengthPrefixedStreamProducer.cs" />
+    <Compile Include="Pipes\Internal\IntLengthPrefixedStreamConsumer.cs" />
     <Compile Include="Pipes\IProducer.cs" />
     <Compile Include="Pipes\Internal\StreamProducer.cs" />
     <Compile Include="Pipes\PipeEx.cs" />
     <Compile Include="Pipes\ProducerConsumerPipe.cs" />
+    <Compile Include="Pipes\Internal\VarIntLengthPrefixedStreamProducer.cs" />
+    <Compile Include="Pipes\Internal\VarIntLengthPrefixedStreamConsumer.cs" />
+    <Compile Include="Pool\AlwaysNewPool.cs" />
     <Compile Include="Pool\BasicPool.cs" />
     <Compile Include="Pool\IPool.cs" />
     <Compile Include="Pool\ProducerConsumerPool.cs" />

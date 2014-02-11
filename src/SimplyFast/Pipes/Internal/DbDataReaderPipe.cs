@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.Common;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace SF.Pipes
@@ -24,7 +25,7 @@ namespace SF.Pipes
         {
             var read = await _reader.ReadAsync();
             if (!read)
-                throw new EndOfPipeException();
+                throw new EndOfStreamException();
             return _reader;
         }
 

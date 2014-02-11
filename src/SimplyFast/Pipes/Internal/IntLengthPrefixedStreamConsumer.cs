@@ -1,0 +1,54 @@
+﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using SF.IO;
+
+namespace SF.Pipes
+{
+    internal class IntLengthPrefixedStreamConsumer : IConsumer<ArraySegment<byte>>
+    {
+        private readonly IInputStream _stream;
+        private byte[] _buffer;
+
+        public IntLengthPrefixedStreamConsumer(IInputStream stream, int bufferCapacity)
+        {
+            _stream = stream;
+            _buffer = new byte[Math.Min(4, bufferCapacity)];
+        }
+
+        public async Task<ArraySegment<byte>> Take()
+        {
+            // read length
+            var crc = await _stream.ReadExact(_buffer, 0, 4);
+            // check if not EOF
+            if (crc != 4)
+                throw new EndOfStreamException();
+
+            // decode length
+            var length = BitConverter.ToInt32(_buffer, 0);
+
+            // perf optimization - don't read if length == 0
+            if (length == 0)
+                return new ArraySegment<byte>(_buffer, 0, 0);
+
+            // check buffer capacity
+            if (_buffer.Length < length)
+                _buffer = new byte[length];
+
+            // read message
+            crc = await _stream.ReadExact(_buffer, 0, length);
+
+            // check if not EOF
+            if (crc != length)
+                throw new EndOfStreamException();
+
+            // return message
+            return new ArraySegment<byte>(_buffer, 0, length);
+        }
+
+        public void Dispose()
+        {
+            _stream.Dispose();
+        }
+    }
+}

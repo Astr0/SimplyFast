@@ -42,17 +42,16 @@ namespace SF.IO
         /// </summary>
         public static async Task<int> ReadExact(this IInputStream stream, byte[] buffer, int offset, int count, CancellationToken cancellation)
         {
-            var countRead = count;
-            while (countRead > 0)
+            var countRead = 0;
+            while (count > 0)
             {
                 cancellation.ThrowIfCancellationRequested();
-                var read = await stream.Read(buffer, offset, countRead);
+                var read = await stream.Read(buffer, offset + countRead, count - countRead);
                 if (read == 0)
-                    return count;
-                offset += read;
-                countRead -= read;
+                    return countRead;
+                countRead += read;
             }
-            return count;
+            return countRead;
         }
 
         public static Task<int> ReadExact(this IInputStream stream, byte[] buffer, int offset, int count)

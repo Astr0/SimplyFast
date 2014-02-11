@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.Common;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using SF.IO;
@@ -19,7 +20,7 @@ namespace SF.Pipes
                 {
                     next = await consumer.Take();
                 }
-                catch (EndOfPipeException)
+                catch (EndOfStreamException)
                 {
                     break;
                 }
@@ -42,7 +43,7 @@ namespace SF.Pipes
                 {
                     next = await consumer.Take();
                 }
-                catch (EndOfPipeException)
+                catch (EndOfStreamException)
                 {
                     break;
                 }

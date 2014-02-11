@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using SF.IO;
 
@@ -19,7 +20,7 @@ namespace SF.Pipes
         {
             var read = await _stream.Read(_buffer);
             if (read == 0)
-                throw new EndOfPipeException();
+                throw new EndOfStreamException();
             return new ArraySegment<byte>(_buffer.Array, _buffer.Offset, read);
         }
 
