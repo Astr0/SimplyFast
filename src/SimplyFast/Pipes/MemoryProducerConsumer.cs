@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace SF.Pipes
 {
-    public class ProducerConsumerPipe<T> : IProducer<T>, IConsumer<T>
+    public class MemoryProducerConsumer<T> : IProducer<T>, IConsumer<T>
     {
         private readonly IProducerConsumerCollection<T> _storage;
         private volatile TaskCompletionSource<Task> _added = new TaskCompletionSource<Task>();
         private volatile TaskCompletionSource<Task> _taken = new TaskCompletionSource<Task>();
 
-        public ProducerConsumerPipe(IProducerConsumerCollection<T> storage = null)
+        public MemoryProducerConsumer(IProducerConsumerCollection<T> storage = null)
         {
             _storage = storage ?? new ConcurrentQueue<T>();
         }

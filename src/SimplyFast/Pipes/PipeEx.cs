@@ -68,7 +68,7 @@ namespace SF.Pipes
 
         public static IConsumer<IDataRecord> AsPipe(this DbDataReader reader)
         {
-            return new DbDataReaderPipe(reader);
+            return new DbDataReaderConsumer(reader);
         }
     }
 }

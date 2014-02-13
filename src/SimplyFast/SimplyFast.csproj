@@ -48,14 +48,14 @@
     <Compile Include="Net\Sockets\ISocketServer.cs" />
     <Compile Include="Pipes\BinaryPipeEx.cs" />
     <Compile Include="Pipes\Internal\StreamConsumer.cs" />
-    <Compile Include="Pipes\Internal\DbDataReaderPipe.cs" />
+    <Compile Include="Pipes\Internal\DbDataReaderConsumer.cs" />
     <Compile Include="Pipes\IConsumer.cs" />
     <Compile Include="Pipes\Internal\IntLengthPrefixedStreamProducer.cs" />
     <Compile Include="Pipes\Internal\IntLengthPrefixedStreamConsumer.cs" />
     <Compile Include="Pipes\IProducer.cs" />
     <Compile Include="Pipes\Internal\StreamProducer.cs" />
     <Compile Include="Pipes\PipeEx.cs" />
-    <Compile Include="Pipes\ProducerConsumerPipe.cs" />
+    <Compile Include="Pipes\MemoryProducerConsumer.cs" />
     <Compile Include="Pipes\Internal\VarIntLengthPrefixedStreamProducer.cs" />
     <Compile Include="Pipes\Internal\VarIntLengthPrefixedStreamConsumer.cs" />
     <Compile Include="Pool\AlwaysNewPool.cs" />

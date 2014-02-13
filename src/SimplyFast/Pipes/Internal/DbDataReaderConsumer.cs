@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace SF.Pipes
 {
-    internal class DbDataReaderPipe : IConsumer<IDataRecord>
+    internal class DbDataReaderConsumer : IConsumer<IDataRecord>
     {
         private readonly DbDataReader _reader;
 
-        public DbDataReaderPipe(DbDataReader reader)
+        public DbDataReaderConsumer(DbDataReader reader)
         {
             _reader = reader;
         }
