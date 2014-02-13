@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Reflection", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Expressions", "src\SimplyFast.Expressions\SimplyFast.Expressions.csproj", "{AA155BE8-5564-4251-9FEF-0DEA54B46C6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Network", "src\SimplyFast.Network\SimplyFast.Network.csproj", "{7DCC1830-F3BD-46DD-BC67-66D143D7D184}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Net", "src\SimplyFast.Net\SimplyFast.Net.csproj", "{7DCC1830-F3BD-46DD-BC67-66D143D7D184}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

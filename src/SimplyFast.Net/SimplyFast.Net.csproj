@@ -7,8 +7,8 @@
     <ProjectGuid>{7DCC1830-F3BD-46DD-BC67-66D143D7D184}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SF.Network</RootNamespace>
-    <AssemblyName>SimplyFast.Network</AssemblyName>
+    <RootNamespace>SF.Net</RootNamespace>
+    <AssemblyName>SimplyFast.Net</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sockets\Internal\NetStream.cs" />
     <Compile Include="Sockets\NetFactory.cs" />
     <Compile Include="Sockets\NetServer.cs" />
     <Compile Include="Sockets\NetSocket.cs" />

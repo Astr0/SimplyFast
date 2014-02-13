@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SimplyFast.Network")]
+[assembly: AssemblyTitle("SimplyFast.Net")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Astr0")]
-[assembly: AssemblyProduct("SimplyFast.Network")]
+[assembly: AssemblyProduct("SimplyFast.Net")]
 [assembly: AssemblyCopyright("Copyright © Astr0 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

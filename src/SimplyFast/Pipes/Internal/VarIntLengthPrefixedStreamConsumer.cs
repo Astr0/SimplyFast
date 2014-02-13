@@ -7,12 +7,12 @@ namespace SF.Pipes
 {
     internal class VarIntLengthPrefixedStreamConsumer : IConsumer<ArraySegment<byte>>
     {
-        private readonly IInputStream _stream;
+        private readonly Stream _stream;
         private byte[] _buffer;
         private int _offset;
         private int _end;
 
-        public VarIntLengthPrefixedStreamConsumer(IInputStream stream, int bufferCapacity)
+        public VarIntLengthPrefixedStreamConsumer(Stream stream, int bufferCapacity)
         {
             _stream = stream;
             _buffer = new byte[Math.Min(5, bufferCapacity)];
@@ -39,7 +39,7 @@ namespace SF.Pipes
                 }
             }
             // Attemp to fill the buffer
-            var read = await _stream.Read(_buffer, _end, _buffer.Length - _end);
+            var read = await _stream.ReadAsync(_buffer, _end, _buffer.Length - _end);
             if (read == 0)
                 throw new EndOfStreamException();
             // shift end to bytes read
@@ -70,7 +70,7 @@ namespace SF.Pipes
             // Attemp to fill the buffer
             while (_end - _offset < totalCount)
             {
-                var read = await _stream.Read(_buffer, _end, _buffer.Length - _end);
+                var read = await _stream.ReadAsync(_buffer, _end, _buffer.Length - _end);
                 if (read == 0)
                     throw new EndOfStreamException();
                 // shift end to bytes read

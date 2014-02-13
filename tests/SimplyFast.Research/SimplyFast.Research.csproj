@@ -49,9 +49,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\SimplyFast.Network\SimplyFast.Network.csproj">
+    <ProjectReference Include="..\..\src\SimplyFast.Net\SimplyFast.Net.csproj">
       <Project>{7DCC1830-F3BD-46DD-BC67-66D143D7D184}</Project>
-      <Name>SimplyFast.Network</Name>
+      <Name>SimplyFast.Net</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\SimplyFast\SimplyFast.csproj">
       <Project>{1ED04E22-9459-439D-A7AE-1BF9380E75F2}</Project>

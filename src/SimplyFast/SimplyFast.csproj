@@ -43,13 +43,9 @@
     <Compile Include="Collections\DictionaryEx.cs" />
     <Compile Include="Internal\ArrayEqualityComparer.cs" />
     <Compile Include="IO\BufferWriter.cs" />
-    <Compile Include="IO\IInputStream.cs" />
-    <Compile Include="IO\AsyncStreamWrapper.cs" />
-    <Compile Include="IO\BlockingStreamWrapper.cs" />
-    <Compile Include="IO\IOutputStream.cs" />
     <Compile Include="IO\StreamEx.cs" />
-    <Compile Include="Network\Sockets\ISocket.cs" />
-    <Compile Include="Network\Sockets\ISocketServer.cs" />
+    <Compile Include="Net\Sockets\ISocket.cs" />
+    <Compile Include="Net\Sockets\ISocketServer.cs" />
     <Compile Include="Pipes\BinaryPipeEx.cs" />
     <Compile Include="Pipes\Internal\StreamConsumer.cs" />
     <Compile Include="Pipes\Internal\DbDataReaderPipe.cs" />

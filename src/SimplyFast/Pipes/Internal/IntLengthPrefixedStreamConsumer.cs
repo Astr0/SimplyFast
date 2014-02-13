@@ -7,10 +7,10 @@ namespace SF.Pipes
 {
     internal class IntLengthPrefixedStreamConsumer : IConsumer<ArraySegment<byte>>
     {
-        private readonly IInputStream _stream;
+        private readonly Stream _stream;
         private byte[] _buffer;
 
-        public IntLengthPrefixedStreamConsumer(IInputStream stream, int bufferCapacity)
+        public IntLengthPrefixedStreamConsumer(Stream stream, int bufferCapacity)
         {
             _stream = stream;
             _buffer = new byte[Math.Min(4, bufferCapacity)];
@@ -19,7 +19,7 @@ namespace SF.Pipes
         public async Task<ArraySegment<byte>> Take()
         {
             // read length
-            var crc = await _stream.ReadExact(_buffer, 0, 4);
+            var crc = await _stream.ReadExactAsync(_buffer, 0, 4);
             // check if not EOF
             if (crc != 4)
                 throw new EndOfStreamException();
@@ -36,7 +36,7 @@ namespace SF.Pipes
                 _buffer = new byte[length];
 
             // read message
-            crc = await _stream.ReadExact(_buffer, 0, length);
+            crc = await _stream.ReadExactAsync(_buffer, 0, length);
 
             // check if not EOF
             if (crc != length)

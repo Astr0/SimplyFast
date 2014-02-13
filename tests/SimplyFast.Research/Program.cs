@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using SF.Network.Sockets;
+using SF.Net.Sockets;
 using SF.Pipes;
 using SF.Threading;
 
@@ -39,10 +39,10 @@ namespace SimplyFast.Research
         {
             using (var client = await factory.Connect(endPoint))
             {
-                var consumer = client.AsVarIntLengthPrefixedProducer();
+                var producer = client.Stream.AsIntLengthPrefixedProducer();
                 for (var i = 0; i < 100; i++)
                 {
-                    await consumer.Add(new ArraySegment<byte>(GenerateBuffer(i)));
+                    await producer.Add(new ArraySegment<byte>(GenerateBuffer(i)));
                 }
                 await client.Disconnect();
             }
@@ -70,7 +70,7 @@ namespace SimplyFast.Research
 
         private static async void StartClientTask(NetSocket client)
         {
-            using (var consumer = client.AsVarIntLengthPrefixedConsumer())
+            using (var consumer = client.Stream.AsIntLengthPrefixedConsumer())
             {
                 var i = 0;
                 while (true)

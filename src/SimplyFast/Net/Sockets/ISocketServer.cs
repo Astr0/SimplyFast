@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace SF.Network.Sockets
+namespace SF.Net.Sockets
 {
     public interface ISocketServer: IDisposable
     {

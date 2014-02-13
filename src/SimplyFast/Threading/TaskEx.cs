@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SF.Threading
@@ -27,6 +28,15 @@ namespace SF.Threading
                     tcs.TrySetResult(conversion(t.Result));
             }, TaskContinuationOptions.ExecuteSynchronously);
 
+            return tcs.Task;
+        }
+
+        public static Task<TResult> FromCancellation<TResult>(CancellationToken cancellation)
+        {
+            if (!cancellation.IsCancellationRequested)
+                throw new ArgumentOutOfRangeException("cancellation");
+            var tcs = new TaskCompletionSource<TResult>();
+            tcs.SetCanceled();
             return tcs.Task;
         }
     }

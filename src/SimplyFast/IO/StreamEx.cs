@@ -7,46 +7,35 @@ namespace SF.IO
 {
     public static class StreamEx
     {
-        public static BlockingStreamWrapper FromBlockingStream(Stream stream)
+        public static Task WriteAsync(this Stream stream, byte[] buffer)
         {
-            return new BlockingStreamWrapper(stream);
+            return stream.WriteAsync(buffer, 0, buffer.Length);
         }
 
-        public static AsyncStreamWrapper FromAsyncStream(Stream stream)
+        public static Task WriteAsync(this Stream stream, ArraySegment<byte> buffer)
         {
-            return new AsyncStreamWrapper(stream);
+            return stream.WriteAsync(buffer.Array, buffer.Offset, buffer.Count);
         }
 
-        public static Task Write(this IOutputStream stream, byte[] buffer)
+        public static Task<int> ReadAsync(this Stream stream, byte[] buffer)
         {
-            return stream.Write(buffer, 0, buffer.Length);
+            return stream.ReadAsync(buffer, 0, buffer.Length);
         }
 
-        public static Task Write(this IOutputStream stream, ArraySegment<byte> buffer)
+        public static Task<int> ReadAsync(this Stream stream, ArraySegment<byte> buffer)
         {
-            return stream.Write(buffer.Array, buffer.Offset, buffer.Count);
-        }
-
-        public static Task<int> Read(this IInputStream stream, byte[] buffer)
-        {
-            return stream.Read(buffer, 0, buffer.Length);
-        }
-
-        public static Task<int> Read(this IInputStream stream, ArraySegment<byte> buffer)
-        {
-            return stream.Read(buffer.Array, buffer.Offset, buffer.Count);
+            return stream.ReadAsync(buffer.Array, buffer.Offset, buffer.Count);
         }
 
         /// <summary>
         /// Reads exactly count bytes from stream. Returns number of bytes read. 
         /// </summary>
-        public static async Task<int> ReadExact(this IInputStream stream, byte[] buffer, int offset, int count, CancellationToken cancellation)
+        public static async Task<int> ReadExactAsync(this Stream stream, byte[] buffer, int offset, int count, CancellationToken cancellation)
         {
             var countRead = 0;
             while (count > 0)
             {
-                cancellation.ThrowIfCancellationRequested();
-                var read = await stream.Read(buffer, offset + countRead, count - countRead);
+                var read = await stream.ReadAsync(buffer, offset + countRead, count - countRead, cancellation);
                 if (read == 0)
                     return countRead;
                 countRead += read;
@@ -54,47 +43,29 @@ namespace SF.IO
             return countRead;
         }
 
-        public static Task<int> ReadExact(this IInputStream stream, byte[] buffer, int offset, int count)
+        public static Task<int> ReadExactAsync(this Stream stream, byte[] buffer, int offset, int count)
         {
-            return ReadExact(stream, buffer, offset, count, CancellationToken.None);
+            return ReadExactAsync(stream, buffer, offset, count, CancellationToken.None);
         }
 
-        public static Task<int> ReadExact(this IInputStream stream, byte[] buffer, CancellationToken cancellation)
+        public static Task<int> ReadExactAsync(this Stream stream, byte[] buffer, CancellationToken cancellation)
         {
-            return ReadExact(stream, buffer, 0, buffer.Length, cancellation);
+            return ReadExactAsync(stream, buffer, 0, buffer.Length, cancellation);
         }
 
-        public static Task<int> ReadExact(this IInputStream stream, byte[] buffer)
+        public static Task<int> ReadExactAsync(this Stream stream, byte[] buffer)
         {
-            return ReadExact(stream, buffer, CancellationToken.None);
+            return ReadExactAsync(stream, buffer, CancellationToken.None);
         }
 
-        public static Task<int> ReadExact(this IInputStream stream, ArraySegment<byte> buffer, CancellationToken cancellation)
+        public static Task<int> ReadExactAsync(this Stream stream, ArraySegment<byte> buffer, CancellationToken cancellation)
         {
-            return ReadExact(stream, buffer.Array, buffer.Offset, buffer.Count, cancellation);
+            return ReadExactAsync(stream, buffer.Array, buffer.Offset, buffer.Count, cancellation);
         }
 
-        public static Task<int> ReadExact(this IInputStream stream, ArraySegment<byte> buffer)
+        public static Task<int> ReadExactAsync(this Stream stream, ArraySegment<byte> buffer)
         {
-            return ReadExact(stream, buffer, CancellationToken.None);
-        }
-
-        public static async Task CopyTo(this IInputStream input, IOutputStream target, CancellationToken cancellation, int bufferSize = 256)
-        {
-            cancellation.ThrowIfCancellationRequested();
-            var buffer = new byte[bufferSize];
-            var read = await input.Read(buffer, 0, bufferSize);
-            while (read > 0)
-            {
-                await target.Write(buffer, 0, read);
-                cancellation.ThrowIfCancellationRequested();
-                read = await input.Read(buffer, 0, bufferSize);
-            }
-        }
-
-        public static Task CopyTo(this IInputStream input, IOutputStream target, int bufferSize = 256)
-        {
-            return CopyTo(input, target, CancellationToken.None, bufferSize);
+            return ReadExactAsync(stream, buffer, CancellationToken.None);
         }
     }
 }

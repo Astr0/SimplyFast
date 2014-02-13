@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using SF.Pool;
 
-namespace SF.Network.Sockets
+namespace SF.Net.Sockets
 {
     public class NetFactory
     {

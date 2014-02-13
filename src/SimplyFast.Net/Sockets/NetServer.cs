@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using SF.Pool;
 using SF.Threading;
 
-namespace SF.Network.Sockets
+namespace SF.Net.Sockets
 {
     public class NetServer: ISocketServer
     {
