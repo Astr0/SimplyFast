@@ -16,6 +16,8 @@ namespace SF.Pipes
             _buffer = new byte[Math.Min(4, bufferCapacity)];
         }
 
+        #region IConsumer<ArraySegment<byte>> Members
+
         public async Task<ArraySegment<byte>> Take()
         {
             // read length
@@ -50,5 +52,7 @@ namespace SF.Pipes
         {
             _stream.Dispose();
         }
+
+        #endregion
     }
 }

@@ -9,6 +9,17 @@ namespace SF.Reflection
     {
         private static readonly ConcurrentDictionary<GenericTypeKey, Type> _genericCache = new ConcurrentDictionary<GenericTypeKey, Type>();
 
+        /// <summary>
+        ///     MakeGenericType with cache lookup
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Type MakeGeneric(Type type, params Type[] arguments)
+        {
+            return _genericCache.GetOrAdd(new GenericTypeKey(type, arguments), k => k.Type.MakeGenericType(k.Arguments));
+        }
+
+        #region Nested type: GenericTypeKey
+
         private struct GenericTypeKey : IEquatable<GenericTypeKey>
         {
             private static readonly EqualityComparer<Type[]> _comparer = EqualityComparerEx.Array<Type>();
@@ -34,25 +45,18 @@ namespace SF.Reflection
             {
                 if (ReferenceEquals(null, obj)) return false;
                 if (obj.GetType() != GetType()) return false;
-                return Equals((GenericTypeKey)obj);
+                return Equals((GenericTypeKey) obj);
             }
 
             public override int GetHashCode()
             {
                 unchecked
                 {
-                    return (Type.GetHashCode() * 397) ^ _comparer.GetHashCode(Arguments);
+                    return (Type.GetHashCode()*397) ^ _comparer.GetHashCode(Arguments);
                 }
             }
         }
 
-        /// <summary>
-        ///     MakeGenericType with cache lookup
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Type MakeGeneric(Type type, params Type[] arguments)
-        {
-            return _genericCache.GetOrAdd(new GenericTypeKey(type, arguments), k => k.Type.MakeGenericType(k.Arguments));
-        }
+        #endregion
     }
 }

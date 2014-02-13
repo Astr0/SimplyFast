@@ -14,6 +14,8 @@ namespace SF.Pipes
             _stream = stream;
         }
 
+        #region IProducer<ArraySegment<byte>> Members
+
         public async Task Add(ArraySegment<byte> obj)
         {
             await _stream.WriteAsync(BitConverter.GetBytes(obj.Count));
@@ -24,5 +26,7 @@ namespace SF.Pipes
         {
             _stream.Dispose();
         }
+
+        #endregion
     }
 }

@@ -28,7 +28,7 @@ namespace SF.IO
         }
 
         /// <summary>
-        /// Reads exactly count bytes from stream. Returns number of bytes read. 
+        ///     Reads exactly count bytes from stream. Returns number of bytes read.
         /// </summary>
         public static async Task<int> ReadExactAsync(this Stream stream, byte[] buffer, int offset, int count, CancellationToken cancellation)
         {

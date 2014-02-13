@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using SF.IO;
 
 namespace SF.Pipes
 {

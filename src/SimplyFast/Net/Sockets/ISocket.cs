@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace SF.Net.Sockets
 {
-    public interface ISocket: IDisposable
+    public interface ISocket : IDisposable
     {
         Stream Stream { get; }
         Task Disconnect();

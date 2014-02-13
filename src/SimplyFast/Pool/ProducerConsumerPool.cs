@@ -2,7 +2,7 @@
 
 namespace SF.Pool
 {
-    public abstract class ProducerConsumerPool<T>: IPool<T>
+    public abstract class ProducerConsumerPool<T> : IPool<T>
     {
         private readonly IProducerConsumerCollection<T> _storage;
 
@@ -11,7 +11,7 @@ namespace SF.Pool
             _storage = storage ?? new ConcurrentBag<T>();
         }
 
-        protected abstract T CreateInstance();
+        #region IPool<T> Members
 
         public T Get()
         {
@@ -23,5 +23,9 @@ namespace SF.Pool
         {
             _storage.TryAdd(instance);
         }
+
+        #endregion
+
+        protected abstract T CreateInstance();
     }
 }

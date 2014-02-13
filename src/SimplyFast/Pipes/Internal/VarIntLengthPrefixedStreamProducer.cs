@@ -15,6 +15,8 @@ namespace SF.Pipes
             _stream = stream;
         }
 
+        #region IProducer<ArraySegment<byte>> Members
+
         public async Task Add(ArraySegment<byte> obj)
         {
             var count = BufferWriter.WriteVarUInt32(_buffer, 0, (uint) obj.Count);
@@ -26,5 +28,7 @@ namespace SF.Pipes
         {
             _stream.Dispose();
         }
+
+        #endregion
     }
 }

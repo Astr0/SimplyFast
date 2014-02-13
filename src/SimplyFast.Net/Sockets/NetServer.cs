@@ -6,16 +6,49 @@ using SF.Threading;
 
 namespace SF.Net.Sockets
 {
-    public class NetServer: ISocketServer
+    public class NetServer : ISocketServer
     {
-        private readonly Socket _socket;
         private readonly IPool<SocketAsyncEventArgs> _pool;
+        private readonly Socket _socket;
 
         public NetServer(Socket socket, IPool<SocketAsyncEventArgs> pool)
         {
             _socket = socket;
             _pool = pool;
         }
+
+        #region ISocketServer Members
+
+        Task<ISocket> ISocketServer.Accept()
+        {
+            return Accept().CastToBase<NetSocket, ISocket>();
+        }
+
+        public Task Close()
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            var e = _pool.Get();
+            e.UserToken = tcs;
+            e.Completed += CloseCompleted;
+            try
+            {
+                if (!_socket.DisconnectAsync(e))
+                    CloseCompleted(_socket, e);
+            }
+            catch (Exception ex)
+            {
+                ClearClose(e);
+                tcs.SetException(ex);
+            }
+            return tcs.Task;
+        }
+
+        public void Dispose()
+        {
+            _socket.Dispose();
+        }
+
+        #endregion
 
         public Task<NetSocket> Accept()
         {
@@ -46,35 +79,11 @@ namespace SF.Net.Sockets
         private void AcceptCompleted(object sender, SocketAsyncEventArgs e)
         {
             if (e.SocketError == SocketError.Success)
-                ((TaskCompletionSource<NetSocket>)e.UserToken).SetResult(new NetSocket(e.AcceptSocket, _pool));
+                ((TaskCompletionSource<NetSocket>) e.UserToken).SetResult(new NetSocket(e.AcceptSocket, _pool));
             else
-                ((TaskCompletionSource<NetSocket>)e.UserToken).SetException(new SocketException((int)e.SocketError));
+                ((TaskCompletionSource<NetSocket>) e.UserToken).SetException(new SocketException((int) e.SocketError));
             e.AcceptSocket = null;
             ClearAccept(e);
-        }
-
-        Task<ISocket> ISocketServer.Accept()
-        {
-            return Accept().CastToBase<NetSocket, ISocket>();
-        }
-        
-        public Task Close()
-        {
-            var tcs = new TaskCompletionSource<bool>();
-            var e = _pool.Get();
-            e.UserToken = tcs;
-            e.Completed += CloseCompleted;
-            try
-            {
-                if (!_socket.DisconnectAsync(e))
-                    CloseCompleted(_socket, e);
-            }
-            catch(Exception ex)
-            {
-                ClearClose(e);
-                tcs.SetException(ex);
-            }
-            return tcs.Task;
         }
 
         private void ClearClose(SocketAsyncEventArgs e)
@@ -86,13 +95,8 @@ namespace SF.Net.Sockets
 
         private void CloseCompleted(object sender, SocketAsyncEventArgs e)
         {
-            ((TaskCompletionSource<bool>)e.UserToken).SetResult(true);
+            ((TaskCompletionSource<bool>) e.UserToken).SetResult(true);
             ClearClose(e);
-        }
-
-        public void Dispose()
-        {
-            _socket.Dispose();
         }
 
         public override string ToString()

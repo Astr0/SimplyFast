@@ -28,8 +28,7 @@ namespace SF.Reflection
 
         public static BindingFlags BindingFlags
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get { return _bindingFlags; }
+            [MethodImpl(MethodImplOptions.AggressiveInlining)] get { return _bindingFlags; }
         }
     }
 }

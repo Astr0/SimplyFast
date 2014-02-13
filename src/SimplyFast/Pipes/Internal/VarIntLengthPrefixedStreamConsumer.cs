@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using SF.IO;
 
 namespace SF.Pipes
 {
@@ -9,14 +8,40 @@ namespace SF.Pipes
     {
         private readonly Stream _stream;
         private byte[] _buffer;
-        private int _offset;
         private int _end;
+        private int _offset;
 
         public VarIntLengthPrefixedStreamConsumer(Stream stream, int bufferCapacity)
         {
             _stream = stream;
             _buffer = new byte[Math.Min(5, bufferCapacity)];
         }
+
+        #region IConsumer<ArraySegment<byte>> Members
+
+        public async Task<ArraySegment<byte>> Take()
+        {
+            // Read length
+            var length = (int) await ReadLength();
+
+            // Fill count bytes to buffer
+            if (_end - _offset < length)
+                await FillBuffer(length);
+
+            // prepare result
+            var result = new ArraySegment<byte>(_buffer, _offset, length);
+            // shift buffer offset
+            _offset += length;
+
+            return result;
+        }
+
+        public void Dispose()
+        {
+            _stream.Dispose();
+        }
+
+        #endregion
 
         private async Task FillBuffer()
         {
@@ -26,7 +51,7 @@ namespace SF.Pipes
                 if (_offset == 0)
                 {
                     // _end remains the same
-                    Array.Resize(ref _buffer, _buffer.Length * 2);
+                    Array.Resize(ref _buffer, _buffer.Length*2);
                 }
                 else
                 {
@@ -78,23 +103,6 @@ namespace SF.Pipes
             }
         }
 
-        public async Task<ArraySegment<byte>> Take()
-        {
-            // Read length
-            var length = (int)await ReadLength();
-            
-            // Fill count bytes to buffer
-            if (_end - _offset < length)
-                await FillBuffer(length);
-
-            // prepare result
-            var result = new ArraySegment<byte>(_buffer, _offset, length);
-            // shift buffer offset
-            _offset += length;
-
-            return result;
-        }
-
         private async Task<uint> ReadLength()
         {
             // 1
@@ -139,11 +147,6 @@ namespace SF.Pipes
                 return value;
 
             throw new OverflowException("Invalid 7bit encoded UInt32");
-        }
-
-        public void Dispose()
-        {
-            _stream.Dispose();
         }
     }
 }

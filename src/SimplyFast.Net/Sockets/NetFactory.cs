@@ -73,7 +73,7 @@ namespace SF.Net.Sockets
             if (e.SocketError == SocketError.Success)
                 token.TrySetResult(new NetSocket(e.ConnectSocket, _pool));
             else
-                token.TrySetException(new SocketException((int)e.SocketError));
+                token.TrySetException(new SocketException((int) e.SocketError));
             ClearConnect(e);
         }
 
@@ -103,6 +103,11 @@ namespace SF.Net.Sockets
                 get { return _tcs.Task; }
             }
 
+            public bool IsCompleted
+            {
+                get { return Task.IsCompleted; }
+            }
+
             #region IDisposable Members
 
             public void Dispose()
@@ -111,8 +116,6 @@ namespace SF.Net.Sockets
             }
 
             #endregion
-
-            public bool IsCompleted{get { return Task.IsCompleted; }}
 
             public void TrySetCanceled()
             {

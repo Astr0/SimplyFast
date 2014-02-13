@@ -8,7 +8,7 @@ namespace SF.Expressions.Dynamic
         #region Expr Builder
 
         /// <summary>
-        /// Creates DynamicEBuilder from expression
+        ///     Creates DynamicEBuilder from expression
         /// </summary>
         public static dynamic EBuilder(this Expression expression)
         {
@@ -16,7 +16,7 @@ namespace SF.Expressions.Dynamic
         }
 
         /// <summary>
-        /// Create DynamicEBuilder from type
+        ///     Create DynamicEBuilder from type
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>

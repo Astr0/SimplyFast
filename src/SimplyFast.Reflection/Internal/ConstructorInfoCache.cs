@@ -11,12 +11,6 @@ namespace SF.Reflection
     {
         private static readonly ConcurrentDictionary<Type, ConstructorInfoCache> _constructorCache = new ConcurrentDictionary<Type, ConstructorInfoCache>();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ConstructorInfoCache ForType(Type type)
-        {
-            return _constructorCache.GetOrAdd(type, t => new ConstructorInfoCache(t));
-        }
-
         // ReSharper disable MemberHidesStaticFromOuterClass
         public readonly ConstructorInfo[] Constructors;
         // ReSharper restore MemberHidesStaticFromOuterClass
@@ -30,6 +24,12 @@ namespace SF.Reflection
             {
                 _constructors[constructorInfo.GetParameters().Select(x => x.ParameterType).ToArray()] = constructorInfo;
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ConstructorInfoCache ForType(Type type)
+        {
+            return _constructorCache.GetOrAdd(type, t => new ConstructorInfoCache(t));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

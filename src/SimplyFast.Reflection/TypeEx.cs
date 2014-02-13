@@ -13,7 +13,7 @@ namespace SF.Reflection
     public static class TypeEx
     {
         /// <summary>
-        /// Returns programmer-friendly name for type
+        ///     Returns programmer-friendly name for type
         /// </summary>
         public static string FriendlyName(this Type type)
         {
@@ -76,25 +76,25 @@ namespace SF.Reflection
         {
             return typeof (T);
         }
-        
+
         /// <summary>
-        /// Returns all underlying types for IEnumerable implementations found in type
+        ///     Returns all underlying types for IEnumerable implementations found in type
         /// </summary>
         public static IEnumerable<Type> FindIEnumerable(Type type)
         {
-            var interfaces = type.GetInterfaces().Concat(new []{ type });
+            var interfaces = type.GetInterfaces().Concat(new[] {type});
             var normalFound = false;
             foreach (var inter in interfaces)
             {
-                if (inter.IsGenericType && inter.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                if (inter.IsGenericType && inter.GetGenericTypeDefinition() == typeof (IEnumerable<>))
                 {
                     yield return inter.GetGenericArguments()[0];
                 }
-                else if (inter == typeof(IEnumerable))
+                else if (inter == typeof (IEnumerable))
                     normalFound = true;
             }
             if (normalFound)
-                yield return typeof(object);
+                yield return typeof (object);
         }
 
         /// <summary>

@@ -3,7 +3,7 @@
 namespace SF
 {
     /// <summary>
-    /// Facade for Comparers
+    ///     Facade for Comparers
     /// </summary>
     public static class EqualityComparerEx
     {

@@ -67,7 +67,7 @@ namespace SF.Reflection
         public static TDelegate InvokerAs<TDelegate>(this ConstructorInfo constructorInfo)
             where TDelegate : class
         {
-            return (TDelegate)ConstructorDelegateCache.InvokerAs(constructorInfo, typeof(TDelegate));
+            return (TDelegate) ConstructorDelegateCache.InvokerAs(constructorInfo, typeof (TDelegate));
         }
     }
 }

@@ -7,14 +7,16 @@ namespace SF.Pipes
 {
     internal class StreamConsumer : IConsumer<ArraySegment<byte>>
     {
-        private readonly Stream _stream;
         private readonly ArraySegment<byte> _buffer;
+        private readonly Stream _stream;
 
         public StreamConsumer(Stream stream, ArraySegment<byte> buffer)
         {
             _stream = stream;
             _buffer = buffer;
         }
+
+        #region IConsumer<ArraySegment<byte>> Members
 
         public async Task<ArraySegment<byte>> Take()
         {
@@ -28,5 +30,7 @@ namespace SF.Pipes
         {
             _stream.Dispose();
         }
+
+        #endregion
     }
 }

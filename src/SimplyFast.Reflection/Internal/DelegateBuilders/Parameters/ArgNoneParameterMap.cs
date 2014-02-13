@@ -8,7 +8,7 @@ namespace SF.Reflection.DelegateBuilders
     internal class ArgNoneParameterMap : ArgParameterMap
     {
         public ArgNoneParameterMap(ParameterInfo delegateParameter, int delegateParameterIndex,
-                                   ParameterInfo methodParameter)
+            ParameterInfo methodParameter)
             : base(delegateParameter, delegateParameterIndex, methodParameter)
         {
         }
@@ -30,7 +30,7 @@ namespace SF.Reflection.DelegateBuilders
                 throw new ArgumentException("Invalid methodParameter modifier. Should be None.");
             if (_delegateParameter.IsOut)
                 throw new ArgumentException(string.Format("Invalid modifier for parameter {0}. Should be None or Ref.",
-                                                          _delegateParameterIndex));
+                    _delegateParameterIndex));
 
             var dt = _delegateParameter.ParameterType.RemoveByRef();
             var mt = _delegateParameter.ParameterType.RemoveByRef();

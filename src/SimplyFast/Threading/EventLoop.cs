@@ -6,8 +6,20 @@ namespace SF.Threading
 {
     public static class EventLoop
     {
+        private static EventLoopImplementation CurrentLoop
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                var elContext = SynchronizationContext.Current as EventLoopSynchronizationContext;
+                if (elContext == null)
+                    throw new InvalidOperationException("Event Loop is not running on current thread");
+                return elContext.EventLoopImplementation;
+            }
+        }
+
         /// <summary>
-        /// Runs event loop on current thread
+        ///     Runs event loop on current thread
         /// </summary>
         /// <param name="init">First event to be invoked</param>
         /// <param name="state">Event parameter</param>
@@ -34,24 +46,12 @@ namespace SF.Threading
         }
 
         /// <summary>
-        /// Runs event loop on current thread
+        ///     Runs event loop on current thread
         /// </summary>
         /// <param name="init">First event to be invoked</param>
         public static void Run(Action init)
         {
             Run(x => init(), null);
-        }
-
-        private static EventLoopImplementation CurrentLoop
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
-            {
-                var elContext = SynchronizationContext.Current as EventLoopSynchronizationContext;
-                if (elContext == null)
-                    throw new InvalidOperationException("Event Loop is not running on current thread");
-                return elContext.EventLoopImplementation;
-            }
         }
 
         public static void DoEvents()
@@ -61,14 +61,8 @@ namespace SF.Threading
 
         public static event Action<Exception> UnhandledException
         {
-            add
-            {
-                CurrentLoop.UnhandledException += value;
-            }
-            remove
-            {
-                CurrentLoop.UnhandledException -= value;
-            }
+            add { CurrentLoop.UnhandledException += value; }
+            remove { CurrentLoop.UnhandledException -= value; }
         }
     }
 }

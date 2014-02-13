@@ -8,7 +8,7 @@ namespace SF.Reflection.DelegateBuilders
     internal class ArgRefParameterMap : ArgOutParameterMap
     {
         public ArgRefParameterMap(ParameterInfo delegateParameter, int delegateParameterIndex,
-                                  ParameterInfo methodParameter)
+            ParameterInfo methodParameter)
             : base(delegateParameter, delegateParameterIndex, methodParameter)
         {
         }

@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace SF.Reflection.DelegateBuilders
 {
-    internal class SimpleParameterInfo: ParameterInfo
+    internal class SimpleParameterInfo : ParameterInfo
     {
         public SimpleParameterInfo(Type parameterType)
         {

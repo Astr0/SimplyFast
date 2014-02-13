@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -11,7 +10,7 @@ namespace SF.Reflection.DelegateBuilders
         protected readonly ParameterInfo _methodParameter;
 
         protected ArgParameterMap(ParameterInfo delegateParameter, int delegateParameterIndex,
-                                  ParameterInfo methodParameter)
+            ParameterInfo methodParameter)
         {
             _delegateParameter = delegateParameter;
             _delegateParameterIndex = delegateParameterIndex;
@@ -22,7 +21,7 @@ namespace SF.Reflection.DelegateBuilders
         protected abstract void CheckParameters();
 
         public static ArgParameterMap CreateParameterMap(ParameterInfo delegateParameter, int delegateParameterIndex,
-                                                         ParameterInfo methodParameter)
+            ParameterInfo methodParameter)
         {
             if (methodParameter.IsOut)
                 return new ArgOutParameterMap(delegateParameter, delegateParameterIndex, methodParameter);

@@ -11,7 +11,7 @@ namespace SF.Reflection.DelegateBuilders
         protected LocalBuilder _localVariable;
 
         protected ArgLocalVariableParameterMap(ParameterInfo delegateParameter, int delegateParameterIndex,
-                                               ParameterInfo methodParameter)
+            ParameterInfo methodParameter)
             : base(delegateParameter, delegateParameterIndex, methodParameter)
         {
             _methodType = methodParameter.ParameterType.RemoveByRef();

@@ -6,14 +6,14 @@ using System.Reflection.Emit;
 
 namespace SF.Reflection.DelegateBuilders
 {
-    internal abstract class DelegateBuilder 
+    internal abstract class DelegateBuilder
     {
         protected readonly ParameterInfo[] _delegateParams;
         protected readonly Type _delegateReturn;
         protected readonly Type _delegateType;
         //protected readonly MethodBase _method;
-        protected List<IDelegateParameterMap> _parametersMap;
         protected bool _delegateExcatlyMatch;
+        protected List<IDelegateParameterMap> _parametersMap;
 
         protected DelegateBuilder(Type delegateType)
         {
@@ -29,15 +29,11 @@ namespace SF.Reflection.DelegateBuilders
             _delegateReturn = invokeMethod.ReturnType;
         }
 
-        #region IDelegateBuilder Members
-
         public Delegate CreateDelegate()
         {
             MapParameters();
             return _delegateExcatlyMatch ? CreateExactDelegate() : CreateCastDelegate();
         }
-
-        #endregion
 
         protected abstract Type GetMethodReturnType();
         protected abstract ParameterInfo[] GetMethodParameters();
@@ -64,9 +60,9 @@ namespace SF.Reflection.DelegateBuilders
                 if (_this != null)
                 {
                     var list = new List<ParameterInfo>(parameters.Length + 1)
-                        {
-                            _this
-                        };
+                    {
+                        _this
+                    };
                     list.AddRange(parameters);
                     methodParameters = list;
                 }
@@ -103,7 +99,7 @@ namespace SF.Reflection.DelegateBuilders
         {
             var paramTypes = _delegateParams.Select(x => x.ParameterType).ToArray();
             var m = new DynamicMethod(string.Empty, _delegateReturn, paramTypes,
-                                      typeof (DelegateBuilder), SimpleReflection.PrivateAccess);
+                typeof (DelegateBuilder), SimpleReflection.PrivateAccess);
             var cg = m.GetILGenerator();
             // Prepare parameters...
             foreach (var parameterMap in _parametersMap)

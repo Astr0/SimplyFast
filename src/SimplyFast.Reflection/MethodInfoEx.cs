@@ -88,11 +88,11 @@ namespace SF.Reflection
         }
 
         /// <summary>
-        /// Returns delegate's invoke method
+        ///     Returns delegate's invoke method
         /// </summary>
         public static MethodInfo GetInvokeMethod(Type delegateType)
         {
-            if (delegateType.BaseType != typeof(MulticastDelegate))
+            if (delegateType.BaseType != typeof (MulticastDelegate))
                 throw new ArgumentException("Not a delegate", "delegateType");
             var invokeMethod = delegateType.Method("Invoke");
             if (invokeMethod == null)

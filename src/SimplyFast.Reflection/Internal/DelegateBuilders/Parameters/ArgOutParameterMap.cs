@@ -8,7 +8,7 @@ namespace SF.Reflection.DelegateBuilders
     internal class ArgOutParameterMap : ArgLocalVariableParameterMap
     {
         public ArgOutParameterMap(ParameterInfo delegateParameter, int delegateParameterIndex,
-                                  ParameterInfo methodParameter)
+            ParameterInfo methodParameter)
             : base(delegateParameter, delegateParameterIndex, methodParameter)
         {
         }
@@ -21,7 +21,7 @@ namespace SF.Reflection.DelegateBuilders
                 throw new ArgumentException("Invalid methodParameter modifier. Should be Out.");
             if (!(_delegateParameter.IsOut || _delegateParameter.ParameterType.IsByRef))
                 throw new ArgumentException(string.Format("Invalid modifier for parameter {0}. Should be Out or Ref.",
-                                                          _delegateParameterIndex));
+                    _delegateParameterIndex));
         }
 
         public override void EmitLoad(ILGenerator generator)

@@ -11,7 +11,7 @@ namespace SF.Threading
         public static Task<TBase> CastToBase<TDerived, TBase>(this Task<TDerived> task)
             where TDerived : TBase
         {
-            return task.Convert(x => (TBase)x);
+            return task.Convert(x => (TBase) x);
         }
 
         public static Task<TConvert> Convert<TConvert, TSource>(this Task<TSource> task, Func<TSource, TConvert> conversion)

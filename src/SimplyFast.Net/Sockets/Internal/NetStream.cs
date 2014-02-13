@@ -16,7 +16,10 @@ namespace SF.Net.Sockets
             _pool = pool;
         }
 
-        public string SocketName { get { return Socket.LocalEndPoint.ToString(); } }
+        public string SocketName
+        {
+            get { return Socket.LocalEndPoint.ToString(); }
+        }
 
         public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
@@ -135,9 +138,9 @@ namespace SF.Net.Sockets
         private void DisconnectCompleted(object sender, SocketAsyncEventArgs e)
         {
             if (e.SocketError == SocketError.Success)
-                ((TaskCompletionSource<bool>)e.UserToken).SetResult(true);
+                ((TaskCompletionSource<bool>) e.UserToken).SetResult(true);
             else
-                ((TaskCompletionSource<bool>)e.UserToken).SetException(new SocketException((int)e.SocketError));
+                ((TaskCompletionSource<bool>) e.UserToken).SetException(new SocketException((int) e.SocketError));
             ClearDisconnect(e);
         }
     }

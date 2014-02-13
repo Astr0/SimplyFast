@@ -14,6 +14,8 @@ namespace SF.Pipes
             _stream = stream;
         }
 
+        #region IProducer<ArraySegment<byte>> Members
+
         public Task Add(ArraySegment<byte> obj)
         {
             return _stream.WriteAsync(obj);
@@ -23,5 +25,7 @@ namespace SF.Pipes
         {
             _stream.Dispose();
         }
+
+        #endregion
     }
 }
