@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using SF.Pool;
-using SF.Threading;
 
 namespace SF.Net.Sockets
 {
-    public class NetServer : ISocketServer
+    // TODO: Add Cancellation support
+    internal class NetServer : ISocketServer
     {
         private readonly IPool<SocketAsyncEventArgs> _pool;
         private readonly Socket _socket;
@@ -17,14 +18,8 @@ namespace SF.Net.Sockets
             _pool = pool;
         }
 
-        #region ISocketServer Members
 
-        Task<ISocket> ISocketServer.Accept()
-        {
-            return Accept().CastToBase<NetSocket, ISocket>();
-        }
-
-        public Task Close()
+        public Task Close(CancellationToken token)
         {
             var tcs = new TaskCompletionSource<bool>();
             var e = _pool.Get();
@@ -48,11 +43,9 @@ namespace SF.Net.Sockets
             _socket.Dispose();
         }
 
-        #endregion
-
-        public Task<NetSocket> Accept()
+        public Task<ISocket> Accept(CancellationToken cancellation)
         {
-            var tcs = new TaskCompletionSource<NetSocket>();
+            var tcs = new TaskCompletionSource<ISocket>();
             var e = _pool.Get();
             e.UserToken = tcs;
             e.Completed += AcceptCompleted;

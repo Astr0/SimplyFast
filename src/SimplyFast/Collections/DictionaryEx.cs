@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace SF.Collections
 {
+    /// <summary>
+    /// Dictionary utilities
+    /// </summary>
     public static class DictionaryEx
     {
         /// <summary>

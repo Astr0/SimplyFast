@@ -40,13 +40,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnonymousEx.cs" />
+    <Compile Include="Collections\CollectionEx.cs" />
     <Compile Include="Collections\DictionaryEx.cs" />
     <Compile Include="Internal\ArrayEqualityComparer.cs" />
+    <Compile Include="IoC\IServiceLocator.cs" />
+    <Compile Include="IoC\ServiceLocator.cs" />
     <Compile Include="IO\BufferWriter.cs" />
     <Compile Include="IO\StreamEx.cs" />
+    <Compile Include="ILogger.cs" />
     <Compile Include="Net\Sockets\ISocket.cs" />
     <Compile Include="Net\Sockets\ISocketServer.cs" />
-    <Compile Include="Pipes\BinaryPipeEx.cs" />
+    <Compile Include="Pipes\StreamPipeEx.cs" />
     <Compile Include="Pipes\Internal\StreamConsumer.cs" />
     <Compile Include="Pipes\Internal\DbDataReaderConsumer.cs" />
     <Compile Include="Pipes\IConsumer.cs" />
@@ -58,9 +62,10 @@
     <Compile Include="Pipes\MemoryProducerConsumer.cs" />
     <Compile Include="Pipes\Internal\VarIntLengthPrefixedStreamProducer.cs" />
     <Compile Include="Pipes\Internal\VarIntLengthPrefixedStreamConsumer.cs" />
-    <Compile Include="Pool\AlwaysNewPool.cs" />
-    <Compile Include="Pool\BasicPool.cs" />
+    <Compile Include="Pool\Internal\NullPool.cs" />
+    <Compile Include="Pool\Internal\ActivatorPool.cs" />
     <Compile Include="Pool\IPool.cs" />
+    <Compile Include="Pool\PoolEx.cs" />
     <Compile Include="Pool\ProducerConsumerPool.cs" />
     <Compile Include="Threading\EventLoop.cs" />
     <Compile Include="Threading\Internal\EventLoopImplementation.cs" />

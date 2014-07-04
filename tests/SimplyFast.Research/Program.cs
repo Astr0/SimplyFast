@@ -21,7 +21,7 @@ namespace SimplyFast.Research
         
         private static async void Work()
         {
-            var factory = new NetFactory();
+            var factory = new NetSocketFactory();
 
             var endPoint = new IPEndPoint(IPAddress.Loopback, 3232);
             var tasks = new List<Task>
@@ -35,7 +35,7 @@ namespace SimplyFast.Research
             await Task.WhenAll(tasks);
         }
 
-        private static async Task StartClient(NetFactory factory, EndPoint endPoint)
+        private static async Task StartClient(NetSocketFactory factory, EndPoint endPoint)
         {
             using (var client = await factory.Connect(endPoint))
             {
@@ -58,7 +58,7 @@ namespace SimplyFast.Research
             return res;
         }
 
-        private static async Task StartServer(NetFactory factory, EndPoint endPoint)
+        private static async Task StartServer(NetSocketFactory factory, EndPoint endPoint)
         {
             var server = factory.Listen(endPoint);
             while (true)
@@ -68,7 +68,7 @@ namespace SimplyFast.Research
             }
         }
 
-        private static async void StartClientTask(NetSocket client)
+        private static async void StartClientTask(ISocket client)
         {
             using (var consumer = client.Stream.AsIntLengthPrefixedConsumer())
             {

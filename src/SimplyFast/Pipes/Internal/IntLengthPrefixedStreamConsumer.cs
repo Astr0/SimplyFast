@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using SF.IO;
 
@@ -18,10 +19,10 @@ namespace SF.Pipes
 
         #region IConsumer<ArraySegment<byte>> Members
 
-        public async Task<ArraySegment<byte>> Take()
+        public async Task<ArraySegment<byte>> Take(CancellationToken cancellation)
         {
             // read length
-            var crc = await _stream.ReadExactAsync(_buffer, 0, 4);
+            var crc = await _stream.ReadExactAsync(_buffer, 0, 4, cancellation);
             // check if not EOF
             if (crc != 4)
                 throw new EndOfStreamException();
@@ -38,7 +39,7 @@ namespace SF.Pipes
                 _buffer = new byte[length];
 
             // read message
-            crc = await _stream.ReadExactAsync(_buffer, 0, length);
+            crc = await _stream.ReadExactAsync(_buffer, 0, length, cancellation);
 
             // check if not EOF
             if (crc != length)

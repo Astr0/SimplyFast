@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using SF.IO;
 
@@ -16,10 +17,10 @@ namespace SF.Pipes
 
         #region IProducer<ArraySegment<byte>> Members
 
-        public async Task Add(ArraySegment<byte> obj)
+        public async Task Add(ArraySegment<byte> obj, CancellationToken cancellation)
         {
-            await _stream.WriteAsync(BitConverter.GetBytes(obj.Count));
-            await _stream.WriteAsync(obj);
+            await _stream.WriteAsync(BitConverter.GetBytes(obj.Count), cancellation);
+            await _stream.WriteAsync(obj, cancellation);
         }
 
         public void Dispose()

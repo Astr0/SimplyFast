@@ -10,12 +10,18 @@ namespace SF
     /// </summary>
     public static class AnonymousEx
     {
+        /// <summary>
+        /// Anonymous action for object
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Action<T> Action<T>(T obj, Action<T> action)
         {
             return action;
         }
 
+        /// <summary>
+        /// Anonymous func for object
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Func<T, TR> Func<T, TR>(T obj, Func<T, TR> func)
         {
@@ -23,13 +29,18 @@ namespace SF
         }
 
         #region Lambdas
-
+        /// <summary>
+        /// Anonymous Expression action
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Expression<Action<T>> ExpressionAction<T>(T obj, Expression<Action<T>> action)
         {
             return action;
         }
 
+        /// <summary>
+        /// Anonymous expression func
+        /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Expression<Func<T, TR>> ExpressionFunc<T, TR>(T obj, Expression<Func<T, TR>> func)
         {

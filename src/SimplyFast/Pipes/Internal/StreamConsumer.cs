@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using SF.IO;
 
@@ -18,9 +19,9 @@ namespace SF.Pipes
 
         #region IConsumer<ArraySegment<byte>> Members
 
-        public async Task<ArraySegment<byte>> Take()
+        public async Task<ArraySegment<byte>> Take(CancellationToken cancellation)
         {
-            var read = await _stream.ReadAsync(_buffer);
+            var read = await _stream.ReadAsync(_buffer, cancellation);
             if (read == 0)
                 throw new EndOfStreamException();
             return new ArraySegment<byte>(_buffer.Array, _buffer.Offset, read);

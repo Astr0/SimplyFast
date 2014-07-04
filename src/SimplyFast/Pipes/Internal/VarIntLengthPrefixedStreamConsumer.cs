@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SF.Pipes
@@ -19,14 +20,14 @@ namespace SF.Pipes
 
         #region IConsumer<ArraySegment<byte>> Members
 
-        public async Task<ArraySegment<byte>> Take()
+        public async Task<ArraySegment<byte>> Take(CancellationToken cancellation)
         {
             // Read length
-            var length = (int) await ReadLength();
+            var length = (int)await ReadLength(cancellation);
 
             // Fill count bytes to buffer
             if (_end - _offset < length)
-                await FillBuffer(length);
+                await FillBuffer(length, cancellation);
 
             // prepare result
             var result = new ArraySegment<byte>(_buffer, _offset, length);
@@ -43,7 +44,7 @@ namespace SF.Pipes
 
         #endregion
 
-        private async Task FillBuffer()
+        private async Task FillBuffer(CancellationToken cancellation)
         {
             if (_offset == _end)
             {
@@ -64,14 +65,14 @@ namespace SF.Pipes
                 }
             }
             // Attemp to fill the buffer
-            var read = await _stream.ReadAsync(_buffer, _end, _buffer.Length - _end);
+            var read = await _stream.ReadAsync(_buffer, _end, _buffer.Length - _end, cancellation);
             if (read == 0)
                 throw new EndOfStreamException();
             // shift end to bytes read
             _end += read;
         }
 
-        private async Task FillBuffer(int totalCount)
+        private async Task FillBuffer(int totalCount, CancellationToken cancellation)
         {
             // fill more bytes to buffer, to contain at least totalCount bytes
             if (_buffer.Length - _offset < totalCount)
@@ -95,7 +96,7 @@ namespace SF.Pipes
             // Attemp to fill the buffer
             while (_end - _offset < totalCount)
             {
-                var read = await _stream.ReadAsync(_buffer, _end, _buffer.Length - _end);
+                var read = await _stream.ReadAsync(_buffer, _end, _buffer.Length - _end, cancellation);
                 if (read == 0)
                     throw new EndOfStreamException();
                 // shift end to bytes read
@@ -103,11 +104,11 @@ namespace SF.Pipes
             }
         }
 
-        private async Task<uint> ReadLength()
+        private async Task<uint> ReadLength(CancellationToken cancellation)
         {
             // 1
             if (_offset == _end)
-                await FillBuffer();
+                await FillBuffer(cancellation);
             uint value = _buffer[_offset++];
             if ((value & 128) == 0)
                 return value;
@@ -115,7 +116,7 @@ namespace SF.Pipes
 
             // 2
             if (_offset == _end)
-                await FillBuffer();
+                await FillBuffer(cancellation);
             uint readByte = _buffer[_offset++];
             value |= (readByte & 127) << 7;
             if ((readByte & 128) == 0)
@@ -123,7 +124,7 @@ namespace SF.Pipes
 
             // 3
             if (_offset == _end)
-                await FillBuffer();
+                await FillBuffer(cancellation);
             readByte = _buffer[_offset++];
             value |= (readByte & 127) << 14;
             if ((readByte & 128) == 0)
@@ -131,7 +132,7 @@ namespace SF.Pipes
 
             // 4
             if (_offset == _end)
-                await FillBuffer();
+                await FillBuffer(cancellation);
             readByte = _buffer[_offset++];
             value |= (readByte & 127) << 21;
             if ((readByte & 128) == 0)
@@ -139,7 +140,7 @@ namespace SF.Pipes
 
             //5
             if (_offset == _end)
-                await FillBuffer();
+                await FillBuffer(cancellation);
             readByte = _buffer[_offset++];
             value |= readByte << 28;
             // magic number stuff copied from ProtoBuf.Net

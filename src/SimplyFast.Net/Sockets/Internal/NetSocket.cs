@@ -1,11 +1,12 @@
 ﻿using System.IO;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using SF.Pool;
 
 namespace SF.Net.Sockets
 {
-    public class NetSocket : ISocket
+    internal class NetSocket : ISocket
     {
         private readonly NetStream _stream;
 
@@ -21,7 +22,7 @@ namespace SF.Net.Sockets
             get { return _stream; }
         }
 
-        public Task Disconnect()
+        public Task Disconnect(CancellationToken cancellation)
         {
             return _stream.Disconnect();
         }

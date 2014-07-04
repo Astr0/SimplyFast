@@ -9,15 +9,17 @@ namespace SF.Pipes
 {
     public static class PipeEx
     {
-        public static async Task ForEach<T>(this IConsumer<T> consumer, Action<T> action, CancellationToken cancellation)
+        /// <summary>
+        /// Consumes all events and runs action for them
+        /// </summary>
+        public static async Task ForEach<T>(this IConsumer<T> consumer, Action<T> action, CancellationToken cancellation = default(CancellationToken))
         {
             while (true)
             {
-                cancellation.ThrowIfCancellationRequested();
                 T next;
                 try
                 {
-                    next = await consumer.Take();
+                    next = await consumer.Take(cancellation);
                 }
                 catch (EndOfStreamException)
                 {
@@ -27,42 +29,41 @@ namespace SF.Pipes
             }
         }
 
-        public static Task ForEach<T>(this IConsumer<T> consumer, Action<T> action)
-        {
-            return consumer.ForEach(action, CancellationToken.None);
-        }
-
-        public static async Task ForEach<T>(this IConsumer<T> consumer, Func<T, Task> action, CancellationToken cancellation)
+        /// <summary>
+        /// Consumes all events and runs async action for all of them
+        /// </summary>
+        public static async Task ForEach<T>(this IConsumer<T> consumer, Func<T, CancellationToken, Task> action, CancellationToken cancellation = default(CancellationToken))
         {
             while (true)
             {
-                cancellation.ThrowIfCancellationRequested();
                 T next;
                 try
                 {
-                    next = await consumer.Take();
+                    next = await consumer.Take(cancellation);
                 }
                 catch (EndOfStreamException)
                 {
                     break;
                 }
-                await action(next);
+                await action(next, cancellation);
             }
         }
 
-        public static Task ForEach<T>(this IConsumer<T> consumer, Func<T, Task> action)
+        /// <summary>
+        /// Consumes all events and runs async action for all of them
+        /// </summary>
+        public static Task ForEach<T>(this IConsumer<T> consumer, Func<T, Task> action,
+            CancellationToken cancellation = default(CancellationToken))
         {
-            return consumer.ForEach(action, CancellationToken.None);
+            return ForEach(consumer, (obj, token) => action(obj), cancellation);
         }
 
-        public static Task SendTo<T>(this IConsumer<T> consumer, IProducer<T> producer, CancellationToken cancellation)
+        /// <summary>
+        /// Sends all events from producer to consumer
+        /// </summary>
+        public static Task SendTo<T>(this IConsumer<T> consumer, IProducer<T> producer, CancellationToken cancellation = default (CancellationToken))
         {
-            return consumer.ForEach((Func<T, Task>) producer.Add, cancellation);
-        }
-
-        public static Task SendTo<T>(this IConsumer<T> consumer, IProducer<T> producer)
-        {
-            return consumer.SendTo(producer, CancellationToken.None);
+            return consumer.ForEach(producer.Add, cancellation);
         }
 
         public static IConsumer<IDataRecord> AsPipe(this DbDataReader reader)

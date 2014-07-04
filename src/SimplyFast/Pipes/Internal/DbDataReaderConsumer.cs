@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.Common;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SF.Pipes
@@ -21,9 +22,9 @@ namespace SF.Pipes
             _reader.Dispose();
         }
 
-        public async Task<IDataRecord> Take()
+        public async Task<IDataRecord> Take(CancellationToken cancellation)
         {
-            var read = await _reader.ReadAsync();
+            var read = await _reader.ReadAsync(cancellation);
             if (!read)
                 throw new EndOfStreamException();
             return _reader;

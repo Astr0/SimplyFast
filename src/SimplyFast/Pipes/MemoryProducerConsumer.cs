@@ -2,9 +2,13 @@
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+using SF.Threading;
 
 namespace SF.Pipes
 {
+    /// <summary>
+    /// In memory IProducer / IConsumer
+    /// </summary>
     public class MemoryProducerConsumer<T> : IProducer<T>, IConsumer<T>
     {
         private readonly IProducerConsumerCollection<T> _storage;
@@ -18,13 +22,13 @@ namespace SF.Pipes
 
         #region IConsumer<T> Members
 
-        public async Task<T> Take()
+        public async Task<T> Take(CancellationToken cancellation)
         {
             var added = _added.Task;
             T obj;
             while (!_storage.TryTake(out obj))
             {
-                added = (Task<Task>) (await added);
+                added = (Task<Task>) (await added.OrCancellation(cancellation));
             }
             var newTaken = new TaskCompletionSource<Task>();
             // ReSharper disable once CSharpWarnings::CS0420
@@ -37,12 +41,12 @@ namespace SF.Pipes
 
         #region IProducer<T> Members
 
-        public async Task Add(T obj)
+        public async Task Add(T obj, CancellationToken cancellation)
         {
             var taken = _taken.Task;
             while (!_storage.TryAdd(obj))
             {
-                taken = (Task<Task>) await taken;
+                taken = (Task<Task>)await taken.OrCancellation(cancellation);
             }
             var newAdded = new TaskCompletionSource<Task>();
             // ReSharper disable once CSharpWarnings::CS0420

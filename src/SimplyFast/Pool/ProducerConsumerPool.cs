@@ -2,6 +2,9 @@
 
 namespace SF.Pool
 {
+    /// <summary>
+    /// Abstract pool that uses IProducerConsumerCollection to store objects
+    /// </summary>
     public abstract class ProducerConsumerPool<T> : IPool<T>
     {
         private readonly IProducerConsumerCollection<T> _storage;

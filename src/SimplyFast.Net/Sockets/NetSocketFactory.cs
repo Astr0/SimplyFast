@@ -7,16 +7,19 @@ using SF.Pool;
 
 namespace SF.Net.Sockets
 {
-    public class NetFactory
+    public class NetSocketFactory
     {
         private readonly IPool<SocketAsyncEventArgs> _pool;
 
-        public NetFactory(IPool<SocketAsyncEventArgs> pool = null)
+        public NetSocketFactory(IPool<SocketAsyncEventArgs> pool = null)
         {
-            _pool = pool ?? new BasicPool<SocketAsyncEventArgs>();
+            _pool = pool ?? PoolEx.Basic<SocketAsyncEventArgs>();
         }
 
-        public NetServer Listen(EndPoint endPoint, SocketType socketType = SocketType.Stream, ProtocolType protocolType = ProtocolType.IP, int backlog = 10)
+        /// <summary>
+        /// Creates a server socket that listens on endPoint
+        /// </summary>
+        public ISocketServer Listen(EndPoint endPoint, SocketType socketType = SocketType.Stream, ProtocolType protocolType = ProtocolType.IP, int backlog = 10)
         {
             var socket = new Socket(endPoint.AddressFamily, socketType, protocolType);
             socket.Bind(endPoint);
@@ -24,8 +27,11 @@ namespace SF.Net.Sockets
             return new NetServer(socket, _pool);
         }
 
-        public Task<NetSocket> Connect(EndPoint endPoint, CancellationToken cancellation, SocketType socketType = SocketType.Stream,
-            ProtocolType protocolType = ProtocolType.IP)
+        /// <summary>
+        /// Connects to remote endpoint
+        /// </summary>
+        public Task<ISocket> Connect(EndPoint endPoint, SocketType socketType = SocketType.Stream,
+            ProtocolType protocolType = ProtocolType.IP, CancellationToken cancellation = default (CancellationToken))
         {
             cancellation.ThrowIfCancellationRequested();
             var e = _pool.Get();
@@ -44,6 +50,22 @@ namespace SF.Net.Sockets
                 connectToken.TrySetException(ex);
             }
             return connectToken.Task;
+        }
+
+        /// <summary>
+        /// Wraps existing socket as server socket
+        /// </summary>
+        public ISocketServer WrapServerSocket(Socket socket)
+        {
+            return new NetServer(socket, _pool);
+        }
+
+        /// <summary>
+        /// Wraps existing socket as socket
+        /// </summary>
+        public ISocket WrapClientSocket(Socket socket)
+        {
+            return new NetSocket(socket, _pool);
         }
 
         private void ClearConnect(SocketAsyncEventArgs e)
@@ -77,28 +99,23 @@ namespace SF.Net.Sockets
             ClearConnect(e);
         }
 
-        public Task<NetSocket> Connect(EndPoint endPoint, SocketType socketType = SocketType.Stream, ProtocolType protocolType = ProtocolType.IP)
-        {
-            return Connect(endPoint, CancellationToken.None, socketType, protocolType);
-        }
-
         #region Nested type: ConnectToken
 
         private class ConnectToken : IDisposable
         {
-            private readonly TaskCompletionSource<NetSocket> _tcs;
+            private readonly TaskCompletionSource<ISocket> _tcs;
             private CancellationTokenRegistration _cancellationTokenRegistration;
 
             public ConnectToken(CancellationToken cancellation, Action<ConnectToken, SocketAsyncEventArgs> cancel, SocketAsyncEventArgs e)
             {
-                _tcs = new TaskCompletionSource<NetSocket>();
+                _tcs = new TaskCompletionSource<ISocket>();
                 if (cancellation.CanBeCanceled)
                 {
                     _cancellationTokenRegistration = cancellation.Register(() => cancel(this, e));
                 }
             }
 
-            public Task<NetSocket> Task
+            public Task<ISocket> Task
             {
                 get { return _tcs.Task; }
             }
