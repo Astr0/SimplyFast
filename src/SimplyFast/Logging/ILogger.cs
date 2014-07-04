@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SF
+namespace SF.Logging
 {
     public interface ILogger
     {

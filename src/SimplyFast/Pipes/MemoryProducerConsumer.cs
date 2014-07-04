@@ -22,6 +22,7 @@ namespace SF.Pipes
 
         #region IConsumer<T> Members
 
+        #pragma warning disable 420
         public async Task<T> Take(CancellationToken cancellation)
         {
             var added = _added.Task;
@@ -31,7 +32,6 @@ namespace SF.Pipes
                 added = (Task<Task>) (await added.OrCancellation(cancellation));
             }
             var newTaken = new TaskCompletionSource<Task>();
-            // ReSharper disable once CSharpWarnings::CS0420
             var currentTaken = Interlocked.Exchange(ref _taken, newTaken);
             currentTaken.SetResult(newTaken.Task);
             return obj;
@@ -53,6 +53,7 @@ namespace SF.Pipes
             var currentAdded = Interlocked.Exchange(ref _added, newAdded);
             currentAdded.SetResult(newAdded.Task);
         }
+        #pragma warning restore 420
 
         void IDisposable.Dispose()
         {

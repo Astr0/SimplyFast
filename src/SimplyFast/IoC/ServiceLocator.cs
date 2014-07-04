@@ -7,12 +7,12 @@ namespace SF.IoC
     /// </summary>
     public static class ServiceLocator
     {
-        private static IServiceLocator _locator;
+        private static volatile Func<Type, object> _locator;
 
         /// <summary>
         /// Set ServiceLocator implementation
         /// </summary>
-        public static void SetLocator(IServiceLocator locator)
+        public static void SetLocator(Func<Type, object> locator)
         {
             _locator = locator;
         }
@@ -22,10 +22,7 @@ namespace SF.IoC
         /// </summary>
         public static T Get<T>()
         {
-            var loc = _locator;
-            if (loc == null)
-                throw NoServiceLocator();
-            return loc.Get<T>();
+            return (T) Get(typeof (T));
         }
 
         /// <summary>
@@ -34,14 +31,7 @@ namespace SF.IoC
         public static object Get(Type serviceType)
         {
             var loc = _locator;
-            if (loc == null)
-                throw NoServiceLocator();
-            return loc.Get(serviceType);
-        }
-
-        private static InvalidOperationException NoServiceLocator()
-        {
-            return new InvalidOperationException("No service locator was set");
+            return loc != null ? loc(serviceType) : null;
         }
     }
 }
