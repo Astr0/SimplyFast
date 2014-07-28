@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Research", "tests\SimplyFast.Research\SimplyFast.Research.csproj", "{3C887A6D-AF94-4230-ADD3-760EA3EFDF30}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast", "src\SimplyFast\SimplyFast.csproj", "{1ED04E22-9459-439D-A7AE-1BF9380E75F2}"
@@ -10,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Expressions", "src\SimplyFast.Expressions\SimplyFast.Expressions.csproj", "{AA155BE8-5564-4251-9FEF-0DEA54B46C6B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Net", "src\SimplyFast.Net\SimplyFast.Net.csproj", "{7DCC1830-F3BD-46DD-BC67-66D143D7D184}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Net.Zmq", "SimplyFast.Net.Zmq\SimplyFast.Net.Zmq.csproj", "{97F6EA3D-C72F-4CF4-A4A8-F53EC1081173}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +41,10 @@ Global
 		{7DCC1830-F3BD-46DD-BC67-66D143D7D184}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DCC1830-F3BD-46DD-BC67-66D143D7D184}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DCC1830-F3BD-46DD-BC67-66D143D7D184}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97F6EA3D-C72F-4CF4-A4A8-F53EC1081173}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97F6EA3D-C72F-4CF4-A4A8-F53EC1081173}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97F6EA3D-C72F-4CF4-A4A8-F53EC1081173}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97F6EA3D-C72F-4CF4-A4A8-F53EC1081173}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

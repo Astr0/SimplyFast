@@ -20,7 +20,7 @@ namespace SF.Threading
         public static Task<TBase> CastToBase<TDerived, TBase>(this Task<TDerived> task)
             where TDerived : TBase
         {
-            return task.Then(x => (TBase) x);
+            return task.Then(x => (TBase)x);
         }
 
         /// <summary>
@@ -84,6 +84,19 @@ namespace SF.Threading
                 return cancel;
             // when any hack to return first - cancelled or task
             return Task.WhenAny(task, cancel).Then(x => x.Result);
+        }
+
+        public static bool UseCancellation<T>(this TaskCompletionSource<T> source, CancellationToken cancellation)
+        {
+            if (!cancellation.CanBeCanceled) 
+                return false;
+            if (cancellation.IsCancellationRequested)
+            {
+                source.TrySetCanceled();
+                return true;
+            }
+            cancellation.Register(x => ((TaskCompletionSource<T>)x).TrySetCanceled(), source);
+            return false;
         }
     }
 }

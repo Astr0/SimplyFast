@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace SF.Collections
@@ -21,6 +22,16 @@ namespace SF.Collections
             {
                 array[arrayIndex++] = obj;
             }
+        }
+
+        public static TList CopyTo<TList, T>(this IEnumerable<T> data, TList list, int startIndex = 0)
+            where TList: IList<T>
+        {
+            foreach (var obj in data)
+            {
+                list[startIndex++] = obj;
+            }
+            return list;
         }
     }
 }

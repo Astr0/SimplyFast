@@ -1,19 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3C887A6D-AF94-4230-ADD3-760EA3EFDF30}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{97F6EA3D-C72F-4CF4-A4A8-F53EC1081173}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SimplyFast.Research</RootNamespace>
-    <AssemblyName>SimplyFast.Research</AssemblyName>
+    <RootNamespace>SF.Net</RootNamespace>
+    <AssemblyName>SimplyFast.Net.Zmq</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -32,9 +30,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NetMQ">
+      <HintPath>..\packages\NetMQ.3.3.0.10\lib\net40\NetMQ.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,29 +42,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NetTest.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ResearchBase.cs" />
-    <Compile Include="ZmqTest.cs" />
+    <Compile Include="Sockets\ZmqSocket.cs" />
+    <Compile Include="Sockets\ZmqSocketFactory.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SimplyFast.Net.Zmq\SimplyFast.Net.Zmq.csproj">
-      <Project>{97F6EA3D-C72F-4CF4-A4A8-F53EC1081173}</Project>
-      <Name>SimplyFast.Net.Zmq</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\SimplyFast.Net\SimplyFast.Net.csproj">
-      <Project>{7DCC1830-F3BD-46DD-BC67-66D143D7D184}</Project>
-      <Name>SimplyFast.Net</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\SimplyFast\SimplyFast.csproj">
+    <ProjectReference Include="..\src\SimplyFast\SimplyFast.csproj">
       <Project>{1ED04E22-9459-439D-A7AE-1BF9380E75F2}</Project>
       <Name>SimplyFast</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
