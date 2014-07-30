@@ -6,7 +6,7 @@ using SF.IO;
 
 namespace SF.Pipes
 {
-    internal class StreamProducer : IProducer<ArraySegment<byte>>
+    internal class StreamProducer : IProducer<byte[]>
     {
         private readonly Stream _stream;
 
@@ -17,7 +17,7 @@ namespace SF.Pipes
 
         #region IProducer<ArraySegment<byte>> Members
 
-        public Task Add(ArraySegment<byte> obj, CancellationToken cancellation)
+        public Task Add(byte[] obj, CancellationToken cancellation)
         {
             return _stream.WriteAsync(obj, cancellation);
         }

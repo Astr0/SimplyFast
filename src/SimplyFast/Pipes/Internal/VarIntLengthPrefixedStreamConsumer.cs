@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SF.Pipes
 {
-    internal class VarIntLengthPrefixedStreamConsumer : IConsumer<ArraySegment<byte>>
+    internal class VarIntLengthPrefixedStreamConsumer : IConsumer<byte[]>
     {
         private readonly Stream _stream;
         private byte[] _buffer;
@@ -20,7 +20,7 @@ namespace SF.Pipes
 
         #region IConsumer<ArraySegment<byte>> Members
 
-        public async Task<ArraySegment<byte>> Take(CancellationToken cancellation)
+        public async Task<byte[]> Take(CancellationToken cancellation)
         {
             // Read length
             var length = (int)await ReadLength(cancellation);
@@ -30,7 +30,8 @@ namespace SF.Pipes
                 await FillBuffer(length, cancellation);
 
             // prepare result
-            var result = new ArraySegment<byte>(_buffer, _offset, length);
+            var result = new byte[length];
+            Array.Copy(_buffer, _offset, result, 0, length);
             // shift buffer offset
             _offset += length;
 

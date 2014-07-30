@@ -6,20 +6,20 @@ using SF.IO;
 
 namespace SF.Pipes
 {
-    internal class IntLengthPrefixedStreamConsumer : IConsumer<ArraySegment<byte>>
+    internal class IntLengthPrefixedStreamConsumer : IConsumer<byte[]>
     {
         private readonly Stream _stream;
-        private byte[] _buffer;
+        private readonly byte[] _buffer;
 
-        public IntLengthPrefixedStreamConsumer(Stream stream, int bufferCapacity)
+        public IntLengthPrefixedStreamConsumer(Stream stream)
         {
             _stream = stream;
-            _buffer = new byte[Math.Min(4, bufferCapacity)];
+            _buffer = new byte[4];
         }
 
         #region IConsumer<ArraySegment<byte>> Members
 
-        public async Task<ArraySegment<byte>> Take(CancellationToken cancellation)
+        public async Task<byte[]> Take(CancellationToken cancellation)
         {
             // read length
             var crc = await _stream.ReadExactAsync(_buffer, 0, 4, cancellation);
@@ -32,21 +32,19 @@ namespace SF.Pipes
 
             // perf optimization - don't read if length == 0
             if (length == 0)
-                return new ArraySegment<byte>(_buffer, 0, 0);
+                return ZeroArray<byte>.Instance;
 
-            // check buffer capacity
-            if (_buffer.Length < length)
-                _buffer = new byte[length];
+            var result = new byte[length];
 
             // read message
-            crc = await _stream.ReadExactAsync(_buffer, 0, length, cancellation);
+            crc = await _stream.ReadExactAsync(result, 0, length, cancellation);
 
             // check if not EOF
             if (crc != length)
                 throw new EndOfStreamException();
 
             // return message
-            return new ArraySegment<byte>(_buffer, 0, length);
+            return result;
         }
 
         public void Dispose()

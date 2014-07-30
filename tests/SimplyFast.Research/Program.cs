@@ -8,7 +8,7 @@ namespace SimplyFast.Research
         private static void Main()
         {
             //ZmqTest.Work();
-            EventLoop.Run(ZmqTest.Work);
+            EventLoop.Run(CastleZmqTest.Work);
             Console.ReadLine();
         }
     }

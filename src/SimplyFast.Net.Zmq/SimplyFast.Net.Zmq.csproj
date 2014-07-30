@@ -50,7 +50,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\SimplyFast\SimplyFast.csproj">
+    <ProjectReference Include="..\SimplyFast\SimplyFast.csproj">
       <Project>{1ED04E22-9459-439D-A7AE-1BF9380E75F2}</Project>
       <Name>SimplyFast</Name>
     </ProjectReference>

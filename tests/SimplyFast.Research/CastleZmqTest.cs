@@ -10,14 +10,14 @@ using SF.Pipes;
 
 namespace SimplyFast.Research
 {
-    public class ZmqTest: ResearchBase
+    public class CastleZmqTest: ResearchBase
     {
 
         private const int Clients = 300;
 
         public static async void Work()
         {
-            var factory = new ZmqSocketFactory();
+            var factory = new CastleZmqSocketFactory();
 
             const string endPoint = "tcp://127.0.0.1:3232";
             var tasks = new List<Task>
@@ -28,11 +28,21 @@ namespace SimplyFast.Research
             {
                 tasks.Add(StartClient(i, factory, endPoint));
             }
+            StartFactory(factory);
 
             await Task.WhenAll(tasks);
         }
 
-        private static async Task StartClient(int clientId, ZmqSocketFactory factory, string address)
+        private static async void StartFactory(CastleZmqSocketFactory factory)
+        {
+            while (true)
+            {
+                await Task.Yield();
+                factory.Poll();
+            }
+        }
+
+        private static async Task StartClient(int clientId, CastleZmqSocketFactory factory, string address)
         {
             using (var client = factory.CreateDealer())
             {
@@ -56,7 +66,7 @@ namespace SimplyFast.Research
             return res;
         }
 
-        private static async Task StartServer(ZmqSocketFactory factory, string address)
+        private static async Task StartServer(CastleZmqSocketFactory factory, string address)
         {
             using (var server = factory.CreateRouter())
             {

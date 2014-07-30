@@ -35,7 +35,7 @@ namespace SimplyFast.Research
                 var producer = client.Stream.AsIntLengthPrefixedProducer();
                 for (var i = 0; i < 100; i++)
                 {
-                    await producer.Add(new ArraySegment<byte>(GenerateBuffer(i)));
+                    await producer.Add(GenerateBuffer(i));
                 }
                 await client.Disconnect();
             }
@@ -73,7 +73,7 @@ namespace SimplyFast.Research
                         var read = await consumer.Take();
                         var equal = read.SequenceEqual(GenerateBuffer(i));
                         i++;
-                        DebugWrite(read.Count + " bytes received. Equal " + equal);
+                        DebugWrite(read.Length + " bytes received. Equal " + equal);
                     }
                     catch (EndOfStreamException)
                     {

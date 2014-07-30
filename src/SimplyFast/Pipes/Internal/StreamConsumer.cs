@@ -6,12 +6,12 @@ using SF.IO;
 
 namespace SF.Pipes
 {
-    internal class StreamConsumer : IConsumer<ArraySegment<byte>>
+    internal class StreamConsumer : IConsumer<byte[]>
     {
-        private readonly ArraySegment<byte> _buffer;
+        private readonly byte[] _buffer;
         private readonly Stream _stream;
 
-        public StreamConsumer(Stream stream, ArraySegment<byte> buffer)
+        public StreamConsumer(Stream stream, byte[] buffer)
         {
             _stream = stream;
             _buffer = buffer;
@@ -19,12 +19,16 @@ namespace SF.Pipes
 
         #region IConsumer<ArraySegment<byte>> Members
 
-        public async Task<ArraySegment<byte>> Take(CancellationToken cancellation)
+        public async Task<byte[]> Take(CancellationToken cancellation)
         {
             var read = await _stream.ReadAsync(_buffer, cancellation);
             if (read == 0)
                 throw new EndOfStreamException();
-            return new ArraySegment<byte>(_buffer.Array, _buffer.Offset, read);
+            if (read == _buffer.Length) 
+                return _buffer;
+            var res = new byte[read];
+            Array.Copy(_buffer, res, read);
+            return res;
         }
 
         public void Dispose()

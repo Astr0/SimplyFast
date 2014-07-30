@@ -13,10 +13,10 @@ using SF.Threading;
 namespace SF.Net.Sockets
 {
     public class ZmqSocket : ISocket, 
-        IProducer<IEnumerable<ArraySegment<byte>>>,
-        IProducer<ArraySegment<byte>>,
-        IConsumer<ArraySegment<byte>[]>,
-        IConsumer<ArraySegment<byte>>
+        IProducer<IEnumerable<byte[]>>,
+        IProducer<byte[]>,
+        IConsumer<IReadOnlyList<byte[]>>,
+        IConsumer<byte[]>
     {
         private readonly ZmqSocketFactory _factory;
         private readonly NetMQSocket _socket;
@@ -27,7 +27,6 @@ namespace SF.Net.Sockets
         {
             if (socket == null)
                 throw new ArgumentNullException("socket");
-            _factory = factory;
             _factory = factory;
             _socket = socket;
             _socket.SendReady += SendReady;
@@ -59,9 +58,9 @@ namespace SF.Net.Sockets
             _receiveAction = action;
         }
 
-        public Task<ArraySegment<byte>> Take(CancellationToken cancellation = new CancellationToken())
+        public Task<byte[]> Take(CancellationToken cancellation = new CancellationToken())
         {
-            var tcs = new TaskCompletionSource<ArraySegment<byte>>();
+            var tcs = new TaskCompletionSource<byte[]>();
             if (tcs.UseCancellation(cancellation))
                 return tcs.Task;
             EnqueueReceive(() =>
@@ -72,10 +71,10 @@ namespace SF.Net.Sockets
             return tcs.Task;
         }
 
-        Task<ArraySegment<byte>[]> IConsumer<ArraySegment<byte>[]>.Take(
+        Task<IReadOnlyList<byte[]>> IConsumer<IReadOnlyList<byte[]>>.Take(
             CancellationToken cancellation)
         {
-            var tcs = new TaskCompletionSource<ArraySegment<byte>[]>();
+            var tcs = new TaskCompletionSource<IReadOnlyList<byte[]>>();
             if (tcs.UseCancellation(cancellation))
                 return tcs.Task;
             EnqueueReceive(() =>
@@ -92,7 +91,7 @@ namespace SF.Net.Sockets
             _sendAction = action;
         }
 
-        public Task Add(ArraySegment<byte> obj, CancellationToken cancellation = new CancellationToken())
+        public Task Add(byte[] obj, CancellationToken cancellation = new CancellationToken())
         {
             var tcs = new TaskCompletionSource<bool>();
             if (tcs.UseCancellation(cancellation))
@@ -107,7 +106,7 @@ namespace SF.Net.Sockets
             return tcs.Task;
         }
 
-        Task IProducer<IEnumerable<ArraySegment<byte>>>.Add(IEnumerable<ArraySegment<byte>> obj,
+        Task IProducer<IEnumerable<byte[]>>.Add(IEnumerable<byte[]> obj,
             CancellationToken cancellation)
         {
             var tcs = new TaskCompletionSource<bool>();
@@ -131,7 +130,7 @@ namespace SF.Net.Sockets
             _socket.Dispose();
         }
 
-        public Stream Stream
+        Stream ISocket.Stream
         {
             get { throw new NotSupportedException("Not supported yet"); }
         }
@@ -142,7 +141,7 @@ namespace SF.Net.Sockets
             return TaskEx.Completed;
         }
 
-        private void Send(IEnumerable<ArraySegment<byte>> message)
+        private void Send(IEnumerable<byte[]> message)
         {
             using (var en = message.GetEnumerator())
             {
@@ -151,45 +150,29 @@ namespace SF.Net.Sockets
                 {
                     var data = en.Current;
                     hasMore = en.MoveNext();
-                    if (data.Offset == 0)
-                    {
-                        _socket.Send(data.Array, data.Count);
-                    }
-                    else
-                    {
-                        var arr = new byte[data.Count];
-                        Array.Copy(data.Array, data.Offset, arr, 0, data.Count);
-                        _socket.Send(arr, arr.Length);
-                    }
+                    _socket.Send(data, data.Length, false, hasMore);
                 }
             }
         }
 
-        private ArraySegment<byte>[] Receive()
+        private IReadOnlyList<byte[]> Receive()
         {
-            var msg = _socket.ReceiveMessage();
-
-            return msg.Select(f => new ArraySegment<byte>(f.Buffer, 0, f.MessageSize)).CopyTo(new ArraySegment<byte>[msg.FrameCount]);
+            var res = new List<byte[]>();
+            var hasMore = true;
+            while (hasMore)
+                res.Add(_socket.Receive(out hasMore));
+            return res;
         }
 
-        private void SendOne(ArraySegment<byte> data)
+        private void SendOne(byte[] data)
         {
-            if (data.Offset == 0)
-            {
-                _socket.Send(data.Array, data.Count);
-            }
-            else
-            {
-                var arr = new byte[data.Count];
-                Array.Copy(data.Array, data.Offset, arr, 0, data.Count);
-                _socket.Send(arr, arr.Length);
-            }
+            _socket.Send(data, data.Length);
         }
 
-        private ArraySegment<byte> ReceiveOne()
+        private byte[] ReceiveOne()
         {
             bool hasMore;
-            return new ArraySegment<byte>(_socket.Receive(out hasMore));
+            return _socket.Receive(out hasMore);
         }
 
         public void Connect(string address)
