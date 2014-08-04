@@ -1,4 +1,6 @@
-﻿using SF.Pipes;
+﻿using System.IO;
+using ProtoBuf;
+using SF.Pipes;
 
 namespace SF.Protobuf
 {
@@ -12,6 +14,23 @@ namespace SF.Protobuf
         public static IProducer<T> AsProtobufProducer<T>(this IProducer<byte[]> producer)
         {
             return new ProtobufProducer<T>(producer);
+        }
+
+        public static T Deserialize<T>(byte[] buffer)
+        {
+            using (var ms = new MemoryStream(buffer))
+            {
+                return Serializer.Deserialize<T>(ms);
+            }
+        }
+
+        public static byte[] Serialize<T>(T instance)
+        {
+            using (var ms = new MemoryStream())
+            {
+                Serializer.Serialize(ms, instance);
+                return ms.ToArray();
+            }
         }
     }
 }

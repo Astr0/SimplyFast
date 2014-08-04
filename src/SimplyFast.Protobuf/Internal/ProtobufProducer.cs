@@ -17,12 +17,7 @@ namespace SF.Protobuf
 
         public Task Add(T obj, CancellationToken cancellation = new CancellationToken())
         {
-            using (var ms = new MemoryStream())
-            {
-                Serializer.Serialize(ms, obj);
-                var buf = ms.ToArray();
-                return _producer.Add(buf, cancellation);
-            }
+            return _producer.Add(ProtobufEx.Serialize(obj), cancellation);
         }
 
         public void Dispose()

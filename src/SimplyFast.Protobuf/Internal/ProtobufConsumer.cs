@@ -18,10 +18,7 @@ namespace SF.Protobuf
         public async Task<T> Take(CancellationToken cancellation = new CancellationToken())
         {
             var buf = await _consumer.Take(cancellation);
-            using (var ms = new MemoryStream(buf))
-            {
-                return Serializer.Deserialize<T>(ms);
-            }
+            return ProtobufEx.Deserialize<T>(buf);
         }
 
         public void Dispose()

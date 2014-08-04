@@ -31,7 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Zmq">
-      <HintPath>..\packages\Castle.Zmq.4.0.0\lib\net40\Castle.Zmq.dll</HintPath>
+      <HintPath>..\..\packages\Castle.Zmq.4.0.0\lib\net40\Castle.Zmq.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
