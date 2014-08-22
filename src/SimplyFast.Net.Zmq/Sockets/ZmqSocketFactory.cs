@@ -53,6 +53,11 @@ namespace SF.Net.Sockets
             return Wrap(_context.CreateRouterSocket());
         }
 
+        public ZmqSubSocket CreateSubSocket()
+        {
+            return new ZmqSubSocket(this, _context.CreateSubscriberSocket());
+        }
+
         #endregion
 
         private void ExecuteOnPoller(Action action)

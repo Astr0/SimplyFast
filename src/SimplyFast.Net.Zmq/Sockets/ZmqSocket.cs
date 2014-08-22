@@ -2,24 +2,22 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NetMQ;
-using SF.Collections;
 using SF.Pipes;
 using SF.Threading;
 
 namespace SF.Net.Sockets
 {
-    public class ZmqSocket : ISocket, 
+    public class ZmqSocket : ISocket,
         IProducer<IEnumerable<byte[]>>,
         IProducer<byte[]>,
         IConsumer<IReadOnlyList<byte[]>>,
         IConsumer<byte[]>
     {
+        protected readonly NetMQSocket Socket;
         private readonly ZmqSocketFactory _factory;
-        private readonly NetMQSocket _socket;
         private Action _receiveAction;
         private Action _sendAction;
 
@@ -28,34 +26,10 @@ namespace SF.Net.Sockets
             if (socket == null)
                 throw new ArgumentNullException("socket");
             _factory = factory;
-            _socket = socket;
-            _socket.SendReady += SendReady;
-            _socket.ReceiveReady += ReceiveReady;
+            Socket = socket;
+            Socket.SendReady += SendReady;
+            Socket.ReceiveReady += ReceiveReady;
             _factory.AddSocket(socket);
-        }
-
-        private void ReceiveReady(object sender, NetMQSocketEventArgs e)
-        {
-            if (_receiveAction == null) 
-                return;
-            var act = _receiveAction;
-            _receiveAction = null;
-            act();
-        }
-
-        private void SendReady(object sender, NetMQSocketEventArgs e)
-        {
-            if (_sendAction == null) 
-                return;
-            var act = _sendAction;
-            _sendAction = null;
-            act();
-        }
-
-        private void EnqueueReceive(Action action)
-        {
-            Debug.Assert(_receiveAction == null, "No multithreading here!");
-            _receiveAction = action;
         }
 
         public Task<byte[]> Take(CancellationToken cancellation = new CancellationToken())
@@ -85,12 +59,6 @@ namespace SF.Net.Sockets
             return tcs.Task;
         }
 
-        private void EnqueueSend(Action action)
-        {
-            Debug.Assert(_sendAction == null, "No multithreading here!");
-            _sendAction = action;
-        }
-
         public Task Add(byte[] obj, CancellationToken cancellation = new CancellationToken())
         {
             var tcs = new TaskCompletionSource<bool>();
@@ -98,7 +66,7 @@ namespace SF.Net.Sockets
                 return tcs.Task;
             EnqueueSend(() =>
             {
-                if (cancellation.IsCancellationRequested) 
+                if (cancellation.IsCancellationRequested)
                     return;
                 SendOne(obj);
                 tcs.TrySetResult(true);
@@ -124,10 +92,10 @@ namespace SF.Net.Sockets
 
         public void Dispose()
         {
-            _socket.ReceiveReady -= ReceiveReady;
-            _socket.SendReady -= SendReady;
-            _factory.RemoveSocket(_socket);
-            _socket.Dispose();
+            Socket.ReceiveReady -= ReceiveReady;
+            Socket.SendReady -= SendReady;
+            _factory.RemoveSocket(Socket);
+            Socket.Dispose();
         }
 
         Stream ISocket.Stream
@@ -137,8 +105,38 @@ namespace SF.Net.Sockets
 
         public Task Disconnect(CancellationToken cancellation = new CancellationToken())
         {
-            _socket.Close();
+            Socket.Close();
             return TaskEx.Completed;
+        }
+
+        private void ReceiveReady(object sender, NetMQSocketEventArgs e)
+        {
+            if (_receiveAction == null)
+                return;
+            var act = _receiveAction;
+            _receiveAction = null;
+            act();
+        }
+
+        private void SendReady(object sender, NetMQSocketEventArgs e)
+        {
+            if (_sendAction == null)
+                return;
+            var act = _sendAction;
+            _sendAction = null;
+            act();
+        }
+
+        private void EnqueueReceive(Action action)
+        {
+            Debug.Assert(_receiveAction == null, "No multithreading here!");
+            _receiveAction = action;
+        }
+
+        private void EnqueueSend(Action action)
+        {
+            Debug.Assert(_sendAction == null, "No multithreading here!");
+            _sendAction = action;
         }
 
         private void Send(IEnumerable<byte[]> message)
@@ -150,7 +148,7 @@ namespace SF.Net.Sockets
                 {
                     var data = en.Current;
                     hasMore = en.MoveNext();
-                    _socket.Send(data, data.Length, false, hasMore);
+                    Socket.Send(data, data.Length, false, hasMore);
                 }
             }
         }
@@ -160,29 +158,29 @@ namespace SF.Net.Sockets
             var res = new List<byte[]>();
             var hasMore = true;
             while (hasMore)
-                res.Add(_socket.Receive(out hasMore));
+                res.Add(Socket.Receive(out hasMore));
             return res;
         }
 
         private void SendOne(byte[] data)
         {
-            _socket.Send(data, data.Length);
+            Socket.Send(data, data.Length);
         }
 
         private byte[] ReceiveOne()
         {
             bool hasMore;
-            return _socket.Receive(out hasMore);
+            return Socket.Receive(out hasMore);
         }
 
         public void Connect(string address)
         {
-            _socket.Connect(address);
+            Socket.Connect(address);
         }
 
         public void Bind(string address)
         {
-            _socket.Bind(address);
+            Socket.Bind(address);
         }
     }
 }

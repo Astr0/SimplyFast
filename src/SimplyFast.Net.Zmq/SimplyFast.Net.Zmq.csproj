@@ -45,6 +45,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sockets\ZmqSocket.cs" />
     <Compile Include="Sockets\ZmqSocketFactory.cs" />
+    <Compile Include="Sockets\ZmqSubSocket.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
