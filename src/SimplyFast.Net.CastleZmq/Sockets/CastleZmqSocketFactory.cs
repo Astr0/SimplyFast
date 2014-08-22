@@ -43,6 +43,11 @@ namespace SF.Net.Sockets
             return Wrap(_context.CreateSocket(SocketType.Router));
         }
 
+        public CastleZmqSubSocket CreateSubSocket()
+        {
+            return new CastleZmqSubSocket(this, _context.CreateSocket(SocketType.Sub));
+        }
+
         #endregion
 
         private void ExecuteOnPoller(Action action)
