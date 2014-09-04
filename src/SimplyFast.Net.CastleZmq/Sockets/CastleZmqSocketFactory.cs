@@ -65,12 +65,13 @@ namespace SF.Net.Sockets
             ExecuteOnPoller(() => _sockets.Remove(socket.Socket));
         }
 
-        private Polling _polling = new Polling(PollingEvents.RecvReady | PollingEvents.SendReady, new IZmqSocket[0]);
+        private Polling _polling = null;
 
         public void Poll()
         {
             ExecutePollerTasks();
-            _polling.PollNow();
+            if (_polling != null)
+                _polling.PollNow();
         }
 
         private void ExecutePollerTasks()
@@ -84,21 +85,30 @@ namespace SF.Net.Sockets
             }
             if (!doneSomething) 
                 return;
-            // rebuild poller
-            _polling = new Polling(PollingEvents.SendReady | PollingEvents.RecvReady, _sockets.Keys.ToArray());
-            _polling.SendReady += s =>
+            if (_sockets.Count > 0)
             {
-                CastleZmqSocket socket;
-                if (_sockets.TryGetValue(s, out socket))
-                    socket.SendReady();
-            };
-            
-            _polling.RecvReady += s =>
+                // rebuild poller
+                _polling = new Polling(PollingEvents.SendReady | PollingEvents.RecvReady, _sockets.Keys.ToArray());
+                _polling.SendReady += s =>
+                {
+                    //Console.WriteLine("Send ready");
+                    CastleZmqSocket socket;
+                    if (_sockets.TryGetValue(s, out socket))
+                        socket.SendReady();
+                };
+
+                _polling.RecvReady += s =>
+                {
+                    //Console.WriteLine("Recv ready");
+                    CastleZmqSocket socket;
+                    if (_sockets.TryGetValue(s, out socket))
+                        socket.ReceiveReady();
+                };
+            }
+            else
             {
-                CastleZmqSocket socket;
-                if (_sockets.TryGetValue(s, out socket))
-                    socket.ReceiveReady();
-            };
+                _polling = null;
+            }
         }
 
         public CastleZmqSocket Wrap(IZmqSocket socket)

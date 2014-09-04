@@ -18,8 +18,8 @@ namespace SF.Net.Sockets
     {
         protected readonly NetMQSocket Socket;
         private readonly ZmqSocketFactory _factory;
-        private Action _receiveAction;
-        private Action _sendAction;
+        private volatile Action _receiveAction;
+        private volatile Action _sendAction;
 
         internal ZmqSocket(ZmqSocketFactory factory, NetMQSocket socket)
         {
@@ -111,32 +111,28 @@ namespace SF.Net.Sockets
 
         private void ReceiveReady(object sender, NetMQSocketEventArgs e)
         {
-            if (_receiveAction == null)
-                return;
-            var act = _receiveAction;
-            _receiveAction = null;
-            act();
+            var act = Interlocked.Exchange(ref _receiveAction, null);
+            if (act != null)
+                act();
         }
 
         private void SendReady(object sender, NetMQSocketEventArgs e)
         {
-            if (_sendAction == null)
-                return;
-            var act = _sendAction;
-            _sendAction = null;
-            act();
+            var act = Interlocked.Exchange(ref _sendAction, null);
+            if (act != null)
+                act();
         }
 
         private void EnqueueReceive(Action action)
         {
-            Debug.Assert(_receiveAction == null, "No multithreading here!");
-            _receiveAction = action;
+            var res = Interlocked.Exchange(ref _receiveAction, action);
+            Debug.Assert(res == null, "No multithreading here!");
         }
 
         private void EnqueueSend(Action action)
         {
-            Debug.Assert(_sendAction == null, "No multithreading here!");
-            _sendAction = action;
+            var res = Interlocked.Exchange(ref _sendAction, action);
+            Debug.Assert(res == null, "No multithreading here!");
         }
 
         private void Send(IEnumerable<byte[]> message)
@@ -170,7 +166,10 @@ namespace SF.Net.Sockets
         private byte[] ReceiveOne()
         {
             bool hasMore;
-            return Socket.Receive(out hasMore);
+            var res = Socket.Receive(out hasMore);
+            while (hasMore)
+                Socket.Receive(out hasMore);
+            return res;
         }
 
         public void Connect(string address)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Threading;
 using System.Threading.Tasks;
 using NetMQ;
 
@@ -22,11 +23,15 @@ namespace SF.Net.Sockets
                 throw new ArgumentNullException("context");
             if (poller == null)
             {
-                poller = new Poller();
-                Task.Factory.StartNew(() => _poller.Start(), TaskCreationOptions.LongRunning);
+                _poller = new Poller();
+                var thread = new Thread(pol => ((Poller) pol).Start());
+                thread.Start(_poller);
+            }
+            else
+            {
+                _poller = poller;
             }
             _context = context;
-            _poller = poller;
             _timer = new NetMQTimer(0) {Enable = true};
             _timer.Elapsed += OnTimer;
             _poller.AddTimer(_timer);
