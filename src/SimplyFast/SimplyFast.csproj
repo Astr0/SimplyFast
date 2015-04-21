@@ -42,6 +42,7 @@
     <Compile Include="AnonymousEx.cs" />
     <Compile Include="Collections\CollectionEx.cs" />
     <Compile Include="Collections\DictionaryEx.cs" />
+    <Compile Include="DisposableEx.cs" />
     <Compile Include="Events\Todo.cs" />
     <Compile Include="Internal\ArrayEqualityComparer.cs" />
     <Compile Include="IoC\DependencyContainerEx.cs" />

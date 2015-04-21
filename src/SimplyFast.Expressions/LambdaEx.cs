@@ -18,7 +18,7 @@ namespace SF.Expressions
         {
             return lambda.Parameters.Count == parameters.Length
                    && lambda.ReturnType == result
-                   && !parameters.Where((t, i) => lambda.Parameters[i].ParameterType() != t).Any();
+                   && parameters.SequenceEqual(lambda.Parameters.Select(x => x.ParameterType()));
         }
 
         /// <summary>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using SF.Expressions.Dynamic;
 using SF.Reflection;
 
 namespace SF.Expressions
@@ -169,8 +170,12 @@ namespace SF.Expressions
                 if (!en.MoveNext())
                     throw new ArgumentException("Not an IEnumerable", "expressionType");
                 var res = en.Current;
-                if (en.MoveNext())
-                    throw new ArgumentException("Ambigious IEnumerable", "expressionType");
+                while (en.MoveNext())
+                {
+                    // if we found object second, just ignore - it's generic IEnumerable
+                    if (en.Current != typeof(object))
+                        throw new ArgumentException("Ambigious IEnumerable", "expressionType");
+                }
                 return res;
             }
         }
