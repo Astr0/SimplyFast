@@ -1,12 +1,42 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace SF.Reflection
 {
     public static class MemberInfoEx
     {
+        #region Private Access
+
+                private static bool _privateAccess;
+        private static BindingFlags _bindingFlags;
+
+        static MemberInfoEx()
+        {
+            PrivateAccess = true;
+        }
+
+        public static bool PrivateAccess
+        {
+            get { return _privateAccess; }
+            set
+            {
+                _privateAccess = value;
+
+                _bindingFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;
+                if (_privateAccess)
+                    _bindingFlags |= BindingFlags.NonPublic;
+            }
+        }
+
+        public static BindingFlags BindingFlags
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)] get { return _bindingFlags; }
+        }
+
+        #endregion
+
         /// <summary>
         ///     Checks if member can be written to
         /// </summary>
@@ -62,20 +92,6 @@ namespace SF.Reflection
         }
 
         /// <summary>
-        ///     Returns members that have custom attribute
-        /// </summary>
-        public static IEnumerable<KeyValuePair<T, Attribute>> WithAttribute<T>(this IEnumerable<T> members, Type attributeType, bool inherit = true)
-            where T : MemberInfo
-        {
-            foreach (var member in members)
-            {
-                var attribute = member.GetCustomAttribute(attributeType, inherit);
-                if (attribute != null)
-                    yield return new KeyValuePair<T, Attribute>(member, attribute);
-            }
-        }
-
-        /// <summary>
         ///     Returns Method, generic method, delegate field or property with matched name and parameters
         /// </summary>
         public static MemberInfo FindInvokableMember(this Type type, string member, params Type[] parameters)
@@ -84,14 +100,14 @@ namespace SF.Reflection
             if (method != null)
                 return method;
             var fieldOrProperty = type.FieldOrProperty(member);
-            if (fieldOrProperty == null)
+            if (fieldOrProperty == null || !fieldOrProperty.CanRead())
                 return null;
             var valueType = fieldOrProperty.ValueType();
             try
             {
                 var invokeParameters = MethodInfoEx.GetInvokeMethod(valueType).GetParameters();
                 // check parameters
-                return invokeParameters.Where((d, i) => d.ParameterType != parameters[i]).Any() ? null : fieldOrProperty;
+                return !invokeParameters.Select(x => x.ParameterType).SequenceEqual(parameters) ? null : fieldOrProperty;
             }
             catch
             {

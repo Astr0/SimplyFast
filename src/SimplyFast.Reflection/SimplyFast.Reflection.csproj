@@ -61,16 +61,14 @@
     <Compile Include="Internal\DelegateBuilders\Parameters\IDelegateParameterMap.cs" />
     <Compile Include="Internal\DelegateBuilders\Parameters\RetValParameterMap.cs" />
     <Compile Include="Internal\DelegateBuilders\Parameters\SimpleParameterInfo.cs" />
-    <Compile Include="ContructorInfoEx.cs" />
+    <Compile Include="ConstructorInfoEx.cs" />
     <Compile Include="FieldInfoEx.cs" />
     <Compile Include="MemberInfoEx.cs" />
     <Compile Include="MethodInfoEx.cs" />
     <Compile Include="PropertyInfoEx.cs" />
-    <Compile Include="SimpleReflection.cs" />
-    <Compile Include="Internal\Todo.cs" />
     <Compile Include="Substitute.cs" />
     <Compile Include="TypeEx.cs" />
-    <Compile Include="Old\Helpers\SimpleConvert.cs" />
+    <Compile Include="ConvertEx.cs" />
     <Compile Include="Emit\ILGeneratorEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -79,6 +77,9 @@
       <Project>{1ED04E22-9459-439D-A7AE-1BF9380E75F2}</Project>
       <Name>SimplyFast</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Old\Helpers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

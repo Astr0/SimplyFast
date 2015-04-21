@@ -99,7 +99,7 @@ namespace SF.Reflection.DelegateBuilders
         {
             var paramTypes = _delegateParams.Select(x => x.ParameterType).ToArray();
             var m = new DynamicMethod(string.Empty, _delegateReturn, paramTypes,
-                typeof (DelegateBuilder), SimpleReflection.PrivateAccess);
+                typeof(DelegateBuilder), MemberInfoEx.PrivateAccess);
             var cg = m.GetILGenerator();
             // Prepare parameters...
             foreach (var parameterMap in _parametersMap)

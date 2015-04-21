@@ -12,10 +12,10 @@ namespace SF.Reflection
         /// </summary>
         public static bool IsStatic(this PropertyInfo propertyInfo)
         {
-            var method = propertyInfo.GetGetMethod(SimpleReflection.PrivateAccess);
+            var method = propertyInfo.GetGetMethod(MemberInfoEx.PrivateAccess);
             if (method != null)
                 return method.IsStatic;
-            method = propertyInfo.GetSetMethod(SimpleReflection.PrivateAccess);
+            method = propertyInfo.GetSetMethod(MemberInfoEx.PrivateAccess);
             return method.IsStatic;
         }
 
@@ -90,7 +90,7 @@ namespace SF.Reflection
                     var properties = method.DeclaringType.Properties(propertyName);
                     return
                         properties.FirstOrDefault(
-                            x => (getSet == 1 ? x.GetGetMethod(SimpleReflection.PrivateAccess) : x.GetSetMethod(SimpleReflection.PrivateAccess)) == method);
+                            x => (getSet == 1 ? x.GetGetMethod(MemberInfoEx.PrivateAccess) : x.GetSetMethod(MemberInfoEx.PrivateAccess)) == method);
                 }
             }
             // ReSharper disable once PossibleNullReferenceException
@@ -99,7 +99,7 @@ namespace SF.Reflection
             // Euristics failed... try the hard way
             return
                 allProperties.FirstOrDefault(
-                    p => p.GetGetMethod(SimpleReflection.PrivateAccess) == method || p.GetSetMethod(SimpleReflection.PrivateAccess) == method);
+                    p => p.GetGetMethod(MemberInfoEx.PrivateAccess) == method || p.GetSetMethod(MemberInfoEx.PrivateAccess) == method);
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace SF.Reflection
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object GetterAs(PropertyInfo propertyInfo, Type delegateType)
         {
-            return propertyInfo.CanRead ? propertyInfo.GetGetMethod(SimpleReflection.PrivateAccess).InvokerAs(delegateType) : null;
+            return propertyInfo.CanRead ? propertyInfo.GetGetMethod(MemberInfoEx.PrivateAccess).InvokerAs(delegateType) : null;
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace SF.Reflection
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object SetterAs(PropertyInfo propertyInfo, Type delegateType)
         {
-            return propertyInfo.CanWrite ? propertyInfo.GetSetMethod(SimpleReflection.PrivateAccess).InvokerAs(delegateType) : null;
+            return propertyInfo.CanWrite ? propertyInfo.GetSetMethod(MemberInfoEx.PrivateAccess).InvokerAs(delegateType) : null;
         }
 
         /// <summary>

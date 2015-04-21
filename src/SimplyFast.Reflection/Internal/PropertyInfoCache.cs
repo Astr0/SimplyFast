@@ -19,7 +19,7 @@ namespace SF.Reflection
 
         public PropertyInfoCache(Type type)
         {
-            Properties = type.GetProperties(SimpleReflection.BindingFlags);
+            Properties = type.GetProperties(MemberInfoEx.BindingFlags);
             _properties = Properties.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.ToArray(), StringComparer.Ordinal);
             var defaultMember = type.GetCustomAttribute<DefaultMemberAttribute>();
             if (defaultMember != null)

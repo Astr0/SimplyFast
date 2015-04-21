@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace SF.Reflection
 {
-    public static class ContructorInfoEx
+    public static class ConstructorInfoEx
     {
         /// <summary>
         ///     Creates instance of type using parametless constructor and casts it to T

@@ -47,7 +47,6 @@
     <Compile Include="Dynamic\DynamicEBuilderEx.cs" />
     <Compile Include="Dynamic\DynamicControlBuilder.cs" />
     <Compile Include="EBuilder.cs" />
-    <Compile Include="LambdaExtract.cs" />
     <Compile Include="ExpressionEx.cs" />
     <Compile Include="IForeachControl.cs" />
     <Compile Include="ILoopControl.cs" />
@@ -60,6 +59,7 @@
     <Compile Include="Internal\ReplaceParametersVisitor.cs" />
     <Compile Include="Internal\Todo.cs" />
     <Compile Include="LambdaEx.cs" />
+    <Compile Include="LambdaExtract.cs" />
     <Compile Include="ParameterEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -7,23 +7,23 @@ namespace SF.Reflection.DelegateBuilders
 {
     internal abstract class FieldAccessorDelegateBuilder : DelegateBuilder
     {
-        protected readonly FieldInfo _fieldInfo;
+        protected readonly FieldInfo FieldInfo;
 
         protected FieldAccessorDelegateBuilder(FieldInfo fieldInfo, Type delegateType)
             : base(delegateType)
         {
             if (fieldInfo == null)
                 throw new ArgumentNullException("fieldInfo");
-            _fieldInfo = fieldInfo;
+            FieldInfo = fieldInfo;
         }
 
         #region Overrides of DelegateBuilder
 
         protected override ParameterInfo GetThisParameterForMethod()
         {
-            if (_fieldInfo.IsStatic)
+            if (FieldInfo.IsStatic)
                 return null;
-            var declaringType = _fieldInfo.DeclaringType;
+            var declaringType = FieldInfo.DeclaringType;
             // ReSharper disable PossibleNullReferenceException
             return new SimpleParameterInfo(declaringType.IsValueType ? declaringType.MakeByRefType() : declaringType);
             // ReSharper restore PossibleNullReferenceException
@@ -40,7 +40,7 @@ namespace SF.Reflection.DelegateBuilders
 
         protected override Type GetMethodReturnType()
         {
-            return _fieldInfo.FieldType;
+            return FieldInfo.FieldType;
         }
 
         protected override ParameterInfo[] GetMethodParameters()
@@ -50,14 +50,14 @@ namespace SF.Reflection.DelegateBuilders
 
         protected override void EmitInvoke(ILGenerator generator)
         {
-            if (_fieldInfo.IsLiteral)
+            if (FieldInfo.IsLiteral)
             {
-                var value = _fieldInfo.GetValue(null);
+                var value = FieldInfo.GetValue(null);
                 generator.EmitLdConst(value);
             }
             else
             {
-                generator.EmitFieldGet(_fieldInfo);
+                generator.EmitFieldGet(FieldInfo);
             }
         }
     }
@@ -75,12 +75,12 @@ namespace SF.Reflection.DelegateBuilders
 
         protected override ParameterInfo[] GetMethodParameters()
         {
-            return new ParameterInfo[] {new SimpleParameterInfo(_fieldInfo.FieldType)};
+            return new ParameterInfo[] {new SimpleParameterInfo(FieldInfo.FieldType)};
         }
 
         protected override void EmitInvoke(ILGenerator generator)
         {
-            generator.EmitFieldSet(_fieldInfo);
+            generator.EmitFieldSet(FieldInfo);
         }
     }
 }

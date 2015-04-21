@@ -4,6 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using SF.Reflection;
 
 namespace SF.Expressions.Dynamic
 {

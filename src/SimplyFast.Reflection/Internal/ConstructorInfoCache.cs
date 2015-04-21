@@ -18,7 +18,7 @@ namespace SF.Reflection
 
         private ConstructorInfoCache(Type type)
         {
-            Constructors = type.GetConstructors(SimpleReflection.BindingFlags & ~BindingFlags.Static);
+            Constructors = type.GetConstructors(MemberInfoEx.BindingFlags & ~BindingFlags.Static);
             _constructors = new Dictionary<Type[], ConstructorInfo>(EqualityComparerEx.Array<Type>());
             foreach (var constructorInfo in Constructors)
             {

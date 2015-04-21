@@ -18,7 +18,7 @@ namespace SF.Reflection
 
         private MethodInfoCache(IReflect type)
         {
-            Methods = type.GetMethods(SimpleReflection.BindingFlags);
+            Methods = type.GetMethods(MemberInfoEx.BindingFlags);
             _methods = Methods.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.ToArray(), StringComparer.Ordinal);
         }
 
@@ -166,7 +166,9 @@ namespace SF.Reflection
                         return null;
                 }
             }
-            var result = new Type[dictionary.Count];
+            if (dictionary.Count == 0)
+                return null;
+            var result = new Type[dictionary.Max(x => x.Key) + 1];
             foreach (var type in dictionary)
             {
                 result[type.Key] = type.Value;
@@ -182,7 +184,7 @@ namespace SF.Reflection
                 if (!genericMethodInfo.IsGenericMethodDefinition)
                     continue;
                 var types = MatchParameters(genericMethodInfo.GetParameters(), arguments);
-                if (types == null)
+                if (types == null || types.Any(x => x == null))
                     continue;
                 try
                 {

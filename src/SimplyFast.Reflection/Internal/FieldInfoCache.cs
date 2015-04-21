@@ -18,7 +18,7 @@ namespace SF.Reflection
 
         private FieldInfoCache(IReflect type)
         {
-            Fields = type.GetFields(SimpleReflection.BindingFlags);
+            Fields = type.GetFields(MemberInfoEx.BindingFlags);
             _fields = Fields.ToDictionary(x => x.Name, StringComparer.Ordinal);
         }
 

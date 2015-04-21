@@ -19,6 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Net.CastleZmq", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Protobuf", "src\SimplyFast.Protobuf\SimplyFast.Protobuf.csproj", "{E4C67100-C828-4AD6-80B6-4A91814D98F2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meta", "Meta", "{2D074E55-B8E0-4407-8AFE-05F45004950D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Tests.Meta", "tests\SimplyFast.Tests.Meta\SimplyFast.Tests.Meta.csproj", "{E065733F-2A11-462B-8704-6206757CBC29}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,8 +61,17 @@ Global
 		{E4C67100-C828-4AD6-80B6-4A91814D98F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4C67100-C828-4AD6-80B6-4A91814D98F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4C67100-C828-4AD6-80B6-4A91814D98F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E065733F-2A11-462B-8704-6206757CBC29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E065733F-2A11-462B-8704-6206757CBC29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E065733F-2A11-462B-8704-6206757CBC29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E065733F-2A11-462B-8704-6206757CBC29}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0466B054-C102-4B3F-8D89-AC3EE2892D44} = {2D074E55-B8E0-4407-8AFE-05F45004950D}
+		{AA155BE8-5564-4251-9FEF-0DEA54B46C6B} = {2D074E55-B8E0-4407-8AFE-05F45004950D}
+		{E065733F-2A11-462B-8704-6206757CBC29} = {2D074E55-B8E0-4407-8AFE-05F45004950D}
 	EndGlobalSection
 EndGlobal
