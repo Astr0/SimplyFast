@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -158,6 +159,12 @@ namespace SF.Reflection.Emit
             }
         }
 
+        public static void EmitStloc(this ILGenerator generator, LocalBuilder local)
+        {
+            generator.EmitStloc(local.LocalIndex);
+        }
+
+
         public static void EmitLdloc(this ILGenerator generator, int index)
         {
             if (index < 0)
@@ -186,6 +193,12 @@ namespace SF.Reflection.Emit
                     break;
             }
         }
+
+        public static void EmitLdloc(this ILGenerator generator, LocalBuilder local)
+        {
+            generator.EmitLdloc(local.LocalIndex);
+        }
+
 
         public static void EmitLdarg(this ILGenerator generator, int index)
         {
@@ -226,6 +239,11 @@ namespace SF.Reflection.Emit
                 generator.Emit(OpCodes.Ldloca, index);
             else
                 throw new ArgumentException("index");
+        }
+
+        public static void EmitLdloca(this ILGenerator generator, LocalBuilder local)
+        {
+            generator.EmitLdloca(local.LocalIndex);
         }
 
         public static void EmitLdind(this ILGenerator generator, Type type)
@@ -306,6 +324,94 @@ namespace SF.Reflection.Emit
                 generator.Emit(OpCodes.Ldarga, index);
             else
                 throw new ArgumentException("index");
+        }
+
+        public static void EmitTryFinally(this ILGenerator g, Action emitTry, Action emitFinally)
+        {
+            g.BeginExceptionBlock();
+            emitTry();
+            g.BeginFinallyBlock();
+            emitFinally();
+            g.EndExceptionBlock();
+        }
+
+        public static void EmitUsing(this ILGenerator g, LocalBuilder local, Action emitBody)
+        {
+            EmitTryFinally(g, emitBody, () =>
+            {
+                var endFinally = g.DefineLabel();
+                g.EmitLdloc(local);
+                g.Emit(OpCodes.Brfalse_S, endFinally);
+                g.EmitLdloc(local);
+                g.EmitMethodCall(typeof (IDisposable).Method("Dispose"));
+                g.MarkLabel(endFinally);
+            });
+        }
+
+        private class WhileLooopControl : ILoopControl
+        {
+            private readonly ILGenerator _generator;
+            private readonly Label _breakLabel;
+            private readonly Label _continueLabel;
+            private readonly bool _shortBody;
+
+            public WhileLooopControl(ILGenerator generator, Label breakLabel, Label continueLabel, bool shortBody)
+            {
+                _generator = generator;
+                _breakLabel = breakLabel;
+                _continueLabel = continueLabel;
+                _shortBody = shortBody;
+            }
+
+            public void EmitBreak()
+            {
+                _generator.Emit(_shortBody ? OpCodes.Br_S : OpCodes.Br, _breakLabel);
+            }
+
+            public void EmitContinue()
+            {
+                _generator.Emit(_shortBody ? OpCodes.Br_S : OpCodes.Br, _continueLabel);
+            }
+        }
+
+        public static void EmitWhile(this ILGenerator g, Action emitCondition, Action<ILoopControl> emitBody, bool shortBody = true)
+        {
+            var condition = g.DefineLabel();
+            g.Emit(shortBody ? OpCodes.Br_S : OpCodes.Br, condition);
+
+            var body = g.DefineLabel();
+            var end = g.DefineLabel();
+            g.MarkLabel(body);
+            var control = new WhileLooopControl(g, end, condition, shortBody);
+            emitBody(control);
+
+            g.MarkLabel(condition);
+            emitCondition();
+            g.Emit(OpCodes.Brtrue_S, body);
+            g.MarkLabel(end);
+        }
+
+        public static void EmitForEach(this ILGenerator g, Type enumerableType, Action<ILoopControl> emitBody, bool shortBody = true)
+        {
+            var getEnumerator = enumerableType.Method("GetEnumerator");
+            var ienumerator = getEnumerator.ReturnType;
+            var enumerator = g.DeclareLocal(ienumerator);
+
+            g.EmitMethodCall(getEnumerator);
+            g.EmitStloc(enumerator);
+            g.EmitUsing(enumerator, () => g.EmitWhile(
+                () =>
+                {
+                    g.EmitLdloc(enumerator);
+                    g.EmitMethodCall(typeof (IEnumerator).Method("MoveNext"));
+                },
+                l =>
+                {
+                    g.EmitLdloc(enumerator);
+                    g.EmitMethodCall(ienumerator.Property("Current").GetGetMethod());
+                    emitBody(l);
+                },
+                shortBody));
         }
     }
 }

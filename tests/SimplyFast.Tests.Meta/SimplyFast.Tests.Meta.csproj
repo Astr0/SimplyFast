@@ -50,6 +50,7 @@
     <Compile Include="Expressions\LambdaExTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\ConstructorInfoExTests.cs" />
+    <Compile Include="Reflection\Emit\Todo.cs" />
     <Compile Include="Reflection\FieldInfoExTests.cs">
       <SubType>Code</SubType>
     </Compile>

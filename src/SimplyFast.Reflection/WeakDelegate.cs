@@ -93,58 +93,26 @@ namespace SF.Reflection
             var invoke = tb.DefineMethod("Invoke", MethodAttributes.Private | MethodAttributes.HideBySig,
                 returnType, args);
 
-            var hasReturn = returnType != typeof (void);
             var il = invoke.GetILGenerator();
             //var del = il.DeclareLocal(typeof(T));
-            var ienumerator = typeof (IEnumerator<T>);
-            il.DeclareLocal(ienumerator);
-            if (hasReturn)
-                il.DeclareLocal(returnType);
+            var hasReturn = returnType != typeof(void);
+            var returnValue = hasReturn ? il.DeclareLocal(returnType) : null;
             
+            // get enumerator
             il.Emit(OpCodes.Ldarg_0);
-            il.EmitCall(OpCodes.Call, typeof(WeakCollection<T>).Method("GetEnumerator"), null);
-            il.Emit(OpCodes.Stloc_0);
-
-            // foreach body
-            il.BeginExceptionBlock();
-            var moveNext = il.DefineLabel();
-            il.Emit(OpCodes.Br_S, moveNext);
-
-            var getCurrent = il.DefineLabel();
-            il.MarkLabel(getCurrent);
-            il.Emit(OpCodes.Ldloc_0);
-            il.EmitCall(OpCodes.Callvirt, ienumerator.Property("Current").GetGetMethod(), null);
-            /*il.Emit(OpCodes.Stloc_0);
-            
-            il.Emit(OpCodes.Ldloc_0);*/
-            for (var i = 1; i <= args.Length; i++)
+            il.EmitForEach(typeof(WeakCollection<T>), l =>
             {
-                il.EmitLdarg(i);
-            }
-            il.EmitCall(OpCodes.Callvirt, invokeMethod, null);
-            if (hasReturn)
-                il.Emit(OpCodes.Stloc_1);
-            
-            il.MarkLabel(moveNext);
-            il.Emit(OpCodes.Ldloc_0);
-            il.EmitCall(OpCodes.Callvirt, typeof(IEnumerator).Method("MoveNext"), null);
-            il.Emit(OpCodes.Brtrue_S, getCurrent);
-            var end = il.DefineLabel();
-            il.Emit(OpCodes.Leave_S, end);
-            
-            il.BeginFinallyBlock();
-            il.Emit(OpCodes.Ldloc_0);
-            var endFinally = il.DefineLabel();
-            il.Emit(OpCodes.Brfalse_S, endFinally);
-            il.Emit(OpCodes.Ldloc_0);
-            il.EmitCall(OpCodes.Callvirt, typeof(IDisposable).Method("Dispose"), null);
-            il.MarkLabel(endFinally);
-            il.EndExceptionBlock();
-            
-            il.MarkLabel(end);
+                for (var i = 1; i <= args.Length; i++)
+                {
+                    il.EmitLdarg(i);
+                }
+                il.EmitCall(OpCodes.Callvirt, invokeMethod, null);
+                if (hasReturn)
+                    il.EmitStloc(returnValue);
+            });
 
             if (hasReturn)
-                il.Emit(OpCodes.Ldloc_1);
+                il.EmitLdloc(returnValue);
             il.Emit(OpCodes.Ret);
 
             return invoke;
