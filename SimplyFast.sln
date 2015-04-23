@@ -23,6 +23,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Meta", "Meta", "{2D074E55-B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Tests.Meta", "tests\SimplyFast.Tests.Meta\SimplyFast.Tests.Meta.csproj", "{E065733F-2A11-462B-8704-6206757CBC29}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{3BBDF5D9-702E-4A49-96B4-81BD26DF6FE2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Tests", "tests\SimplyFast.Tests\SimplyFast.Tests.csproj", "{E1C35C07-DE0E-4619-848B-59554349A6F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,13 +69,19 @@ Global
 		{E065733F-2A11-462B-8704-6206757CBC29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E065733F-2A11-462B-8704-6206757CBC29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E065733F-2A11-462B-8704-6206757CBC29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E1C35C07-DE0E-4619-848B-59554349A6F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1C35C07-DE0E-4619-848B-59554349A6F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1C35C07-DE0E-4619-848B-59554349A6F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1C35C07-DE0E-4619-848B-59554349A6F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{1ED04E22-9459-439D-A7AE-1BF9380E75F2} = {3BBDF5D9-702E-4A49-96B4-81BD26DF6FE2}
 		{0466B054-C102-4B3F-8D89-AC3EE2892D44} = {2D074E55-B8E0-4407-8AFE-05F45004950D}
 		{AA155BE8-5564-4251-9FEF-0DEA54B46C6B} = {2D074E55-B8E0-4407-8AFE-05F45004950D}
 		{E065733F-2A11-462B-8704-6206757CBC29} = {2D074E55-B8E0-4407-8AFE-05F45004950D}
+		{E1C35C07-DE0E-4619-848B-59554349A6F8} = {3BBDF5D9-702E-4A49-96B4-81BD26DF6FE2}
 	EndGlobalSection
 EndGlobal

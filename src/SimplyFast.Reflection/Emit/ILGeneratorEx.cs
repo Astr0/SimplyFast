@@ -41,6 +41,11 @@ namespace SF.Reflection.Emit
 
         public static void EmitLdConst(this ILGenerator generator, object value)
         {
+            if (value == null)
+            {
+                generator.Emit(OpCodes.Ldnull);
+                return;
+            }
             var type = value.GetType();
             try
             {

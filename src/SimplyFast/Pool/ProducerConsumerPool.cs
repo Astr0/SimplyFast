@@ -16,19 +16,28 @@ namespace SF.Pool
 
         #region IPool<T> Members
 
-        public T Get()
+        public virtual T Get()
         {
             T item;
-            return _storage.TryTake(out item) ? item : CreateInstance();
+            if (!_storage.TryTake(out item)) 
+                return CreateInstance();
+            Prepare(item);
+            return item;
         }
 
-        public void Return(T instance)
+        public virtual bool Return(T instance)
         {
-            _storage.TryAdd(instance);
+            return _storage.TryAdd(instance);
         }
 
         #endregion
 
+        protected virtual void Prepare(T item)
+        {
+            
+        }
+
+        
         protected abstract T CreateInstance();
     }
 }

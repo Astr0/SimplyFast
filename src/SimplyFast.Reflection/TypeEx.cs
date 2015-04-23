@@ -30,6 +30,23 @@ namespace SF.Reflection
         }
 
         /// <summary>
+        ///     Returns identifier-friendly name for type
+        /// </summary>
+        public static string IdentifierFriendlyName(this Type type)
+        {
+            if (!type.IsGenericType)
+                return type.Name;
+            var sb = new StringBuilder();
+            var arguments = type.GetGenericArguments();
+            var genericName = type.Name;
+            var index = genericName.IndexOf('`');
+            if (index >= 0)
+                genericName = genericName.Substring(0, index);
+            sb.Append(genericName).Append('_').Append(string.Join("_", arguments.Select(x => x.IdentifierFriendlyName()))).Append('_');
+            return sb.ToString();
+        }
+
+        /// <summary>
         ///     Replaces generic type arguments in passed type using substitution function
         /// </summary>
         /// <param name="type">Type to replace</param>

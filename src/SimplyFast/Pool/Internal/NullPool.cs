@@ -23,11 +23,12 @@ namespace SF.Pool
             return _activator();
         }
 
-        public void Return(T instance)
+        public bool Return(T instance)
         {
             var disposabe = instance as IDisposable;
             if (disposabe != null)
                 disposabe.Dispose();
+            return true;
         }
 
         #endregion

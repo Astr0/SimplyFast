@@ -12,6 +12,6 @@
         /// <summary>
         /// Returns instance of an object to a pool
         /// </summary>
-        void Return(T instance);
+        bool Return(T instance);
     }
 }
