@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -337,73 +338,73 @@ namespace SF.Reflection.Emit
 
         public static void EmitUsing(this ILGenerator g, LocalBuilder local, Action emitBody)
         {
-            EmitTryFinally(g, emitBody, () =>
+            if (typeof (IDisposable).IsAssignableFrom(local.LocalType))
             {
-                var endFinally = g.DefineLabel();
-                g.EmitLdloc(local);
-                g.Emit(OpCodes.Brfalse_S, endFinally);
-                g.EmitLdloc(local);
-                g.EmitMethodCall(typeof (IDisposable).Method("Dispose"));
-                g.MarkLabel(endFinally);
-            });
-        }
-
-        private class WhileLooopControl : ILoopControl
-        {
-            private readonly ILGenerator _generator;
-            private readonly Label _breakLabel;
-            private readonly Label _continueLabel;
-            private readonly bool _shortBody;
-
-            public WhileLooopControl(ILGenerator generator, Label breakLabel, Label continueLabel, bool shortBody)
-            {
-                _generator = generator;
-                _breakLabel = breakLabel;
-                _continueLabel = continueLabel;
-                _shortBody = shortBody;
+                EmitTryFinally(g, emitBody, () =>
+                {
+                    var endFinally = g.DefineLabel();
+                    g.EmitLdloc(local);
+                    g.Emit(OpCodes.Brfalse_S, endFinally);
+                    g.EmitLdloc(local);
+                    g.EmitMethodCall(typeof (IDisposable).Method("Dispose"));
+                    g.MarkLabel(endFinally);
+                });
             }
-
-            public void EmitBreak()
+            else
             {
-                _generator.Emit(_shortBody ? OpCodes.Br_S : OpCodes.Br, _breakLabel);
-            }
-
-            public void EmitContinue()
-            {
-                _generator.Emit(_shortBody ? OpCodes.Br_S : OpCodes.Br, _continueLabel);
+                emitBody();
             }
         }
 
-        public static void EmitWhile(this ILGenerator g, Action emitCondition, Action<ILoopControl> emitBody, bool shortBody = true)
+        /// <summary>
+        /// While loop. condition received body label. body receives continue label
+        /// </summary>
+        public static void EmitWhile(this ILGenerator g, Action<Label> emitCondition, Action<Label> emitBody, bool shortBody = true)
         {
             var condition = g.DefineLabel();
             g.Emit(shortBody ? OpCodes.Br_S : OpCodes.Br, condition);
 
             var body = g.DefineLabel();
-            var end = g.DefineLabel();
+            //var end = g.DefineLabel();
             g.MarkLabel(body);
-            var control = new WhileLooopControl(g, end, condition, shortBody);
-            emitBody(control);
+            emitBody(condition);
 
             g.MarkLabel(condition);
-            emitCondition();
-            g.Emit(OpCodes.Brtrue_S, body);
-            g.MarkLabel(end);
+            emitCondition(body);
         }
 
-        public static void EmitForEach(this ILGenerator g, Type enumerableType, Action<ILoopControl> emitBody, bool shortBody = true)
+        /// <summary>
+        /// For loop. condition received body label.  body receives continue label
+        /// </summary>
+        public static void EmitFor(this ILGenerator g, Action<Label> emitCondition, Action emitAction,
+            Action<Label> emitBody, bool shortBody = true)
         {
-            var getEnumerator = enumerableType.Method("GetEnumerator");
+            g.EmitWhile(emitCondition, l =>
+            {
+               var continueLabel = g.DefineLabel();
+               emitBody(continueLabel);
+               g.MarkLabel(continueLabel);
+               emitAction();
+            });
+        }
+
+        /// <summary>
+        /// Foreach loop. body receives continue label
+        /// </summary>
+        public static void EmitForEach(ILGenerator g, MethodInfo getEnumerator, Action<Label> emitBody,
+            bool shortBody = true)
+        {
             var ienumerator = getEnumerator.ReturnType;
             var enumerator = g.DeclareLocal(ienumerator);
 
             g.EmitMethodCall(getEnumerator);
             g.EmitStloc(enumerator);
             g.EmitUsing(enumerator, () => g.EmitWhile(
-                () =>
+                body =>
                 {
                     g.EmitLdloc(enumerator);
-                    g.EmitMethodCall(typeof (IEnumerator).Method("MoveNext"));
+                    g.EmitMethodCall(typeof(IEnumerator).Method("MoveNext"));
+                    g.Emit(OpCodes.Brtrue_S, body);
                 },
                 l =>
                 {
@@ -412,6 +413,30 @@ namespace SF.Reflection.Emit
                     emitBody(l);
                 },
                 shortBody));
+        }
+
+        /// <summary>
+        /// Foreach loop. body receives continue label
+        /// </summary>
+        public static void EmitForEach(this ILGenerator g, Type enumerableType, Action<Label> emitBody, bool shortBody = true)
+        {
+            var getEnumerator = enumerableType.Method("GetEnumerator");
+            EmitForEach(g, getEnumerator, emitBody, shortBody);
+        }
+        
+        public static void EmitCast(this ILGenerator g, Type from, Type to)
+        {
+            if (from == to)
+                return;
+            if (to == typeof(object))
+                g.EmitBox(from);
+            else if (from == typeof (object))
+                g.EmitUnBoxAnyOrCastClass(to);
+            else
+            {
+                var method = MethodInfoEx.FindCastOperator(from, to);
+                g.EmitMethodCall(method);
+            }
         }
     }
 }

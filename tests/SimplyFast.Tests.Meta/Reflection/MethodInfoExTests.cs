@@ -256,5 +256,87 @@ namespace SF.Tests.Reflection
             Assert.Throws<ArgumentException>(() => MethodInfoEx.GetInvokeMethod(typeof (string)));
             Assert.Throws<ArgumentException>(() => MethodInfoEx.GetInvokeMethod(typeof(ClassWithInvoke)));
         }
+
+        public class Cast1
+        {
+            public static explicit operator int(Cast1 a)
+            {
+                return 0;
+            }
+
+            public static implicit operator double(Cast1 a)
+            {
+                return 0;
+            }
+
+            public static explicit operator Cast2(Cast1 a)
+            {
+                return new Cast2();
+            }
+        }
+
+        public class Cast2
+        {
+            public static explicit operator Cast2(int a)
+            {
+                return new Cast2();
+            }
+
+            public static implicit operator Cast2(double a)
+            {
+                return new Cast2();
+            }
+
+            public static implicit operator Cast2(Cast1 a)
+            {
+                return new Cast2();
+            }
+
+            public static explicit operator Cast1(Cast2 a)
+            {
+                return new Cast1();
+            }
+        }
+
+        [Test]
+        public void FindCastToWorks()
+        {
+            var t = typeof (Cast1);
+            Assert.AreEqual(typeof(int), MethodInfoEx.FindCastToOperator(t, typeof(int)).ReturnType);
+            Assert.AreEqual(typeof(double), MethodInfoEx.FindCastToOperator(t, typeof(double)).ReturnType);
+            Assert.AreEqual(typeof(Cast2), MethodInfoEx.FindCastToOperator(t, typeof(Cast2)).ReturnType);
+            Assert.IsNull(MethodInfoEx.FindCastToOperator(t, typeof(string)));
+            Assert.IsNull(MethodInfoEx.FindCastToOperator(t, typeof(decimal)));
+        }
+
+        [Test]
+        public void FindCastFromWorks()
+        {
+            var t = typeof(Cast2);
+            Assert.AreEqual(typeof(int), MethodInfoEx.FindCastFromOperator(typeof(int), t).GetParameterTypes()[0]);
+            Assert.AreEqual(typeof(double), MethodInfoEx.FindCastFromOperator(typeof(double), t).GetParameterTypes()[0]);
+            Assert.AreEqual(typeof(Cast1), MethodInfoEx.FindCastFromOperator(typeof(Cast1), t).GetParameterTypes()[0]);
+            Assert.IsNull(MethodInfoEx.FindCastFromOperator(typeof(string), t));
+            Assert.IsNull(MethodInfoEx.FindCastFromOperator(typeof(decimal), t));
+        }
+
+        [Test]
+        public void FindCastWorks()
+        {
+            var t1 = typeof(Cast1);
+            var t2 = typeof(Cast2);
+            Assert.AreEqual(typeof(int), MethodInfoEx.FindCastOperator(t1, typeof(int)).ReturnType);
+            Assert.AreEqual(typeof(double), MethodInfoEx.FindCastOperator(t1, typeof(double)).ReturnType);
+            Assert.IsNull(MethodInfoEx.FindCastToOperator(t1, typeof(string)));
+            Assert.IsNull(MethodInfoEx.FindCastToOperator(t1, typeof(decimal)));
+
+            Assert.AreEqual(typeof(int), MethodInfoEx.FindCastOperator(typeof(int), t2).GetParameterTypes()[0]);
+            Assert.AreEqual(typeof(double), MethodInfoEx.FindCastOperator(typeof(double), t2).GetParameterTypes()[0]);
+            Assert.AreEqual(t2, MethodInfoEx.FindCastOperator(t2, t1).GetParameterTypes()[0]);
+            Assert.IsNull(MethodInfoEx.FindCastOperator(typeof(string), t2));
+            Assert.IsNull(MethodInfoEx.FindCastOperator(typeof(decimal), t2));
+
+            Assert.Throws<AmbiguousMatchException>(() => MethodInfoEx.FindCastOperator(t1, t2));
+        }
     }
 }

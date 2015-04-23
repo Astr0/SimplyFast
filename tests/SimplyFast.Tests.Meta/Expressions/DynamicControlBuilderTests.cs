@@ -198,6 +198,7 @@ namespace SF.Tests.Expressions
         [Test]
         public void TestForEachEnumerable()
         {
+            // TODO: This is not a C# behavior, C# will throw?!
             var lambda = _.Lambda(p => _.Block(b => new []
                 {
                     b.s = 0,

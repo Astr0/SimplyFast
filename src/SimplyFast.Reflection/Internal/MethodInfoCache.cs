@@ -32,8 +32,7 @@ namespace SF.Reflection
         public MethodInfo[] Get(string name)
         {
             MethodInfo[] methods;
-            _methods.TryGetValue(name, out methods);
-            return methods;
+            return _methods.TryGetValue(name, out methods) ? methods : ZeroArray<MethodInfo>.Instance;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

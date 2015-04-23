@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyEx.cs" />
-    <Compile Include="Emit\ILoopControl.cs" />
+    <Compile Include="Emit\EmitEx.cs" />
     <Compile Include="Internal\ConstructorDelegateCache.cs" />
     <Compile Include="Internal\ConstructorInfoCache.cs" />
     <Compile Include="Internal\FieldDelegateCache.cs" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -100,6 +101,11 @@ namespace SF.Reflection
             return invokeMethod;
         }
 
+        public static Type[] GetParameterTypes(this MethodInfo method)
+        {
+            return Array.ConvertAll(method.GetParameters(), x => x.ParameterType);
+        }
+
         /// <summary>
         ///     Returns method invoker as delegateType
         /// </summary>
@@ -117,6 +123,29 @@ namespace SF.Reflection
             where TDelegate : class
         {
             return (TDelegate) MethodDelegateCache.InvokerAs(methodInfo, typeof (TDelegate));
+        }
+
+
+        public static MethodInfo FindCastToOperator(Type from, Type to)
+        {
+            return from.Methods("op_Implicit").FirstOrDefault(x => x.ReturnType == to) ??
+                from.Methods("op_Explicit").FirstOrDefault(x => x.ReturnType == to);
+        }
+
+        public static MethodInfo FindCastFromOperator(Type from, Type to)
+        {
+            return to.Method("op_Implicit", from) ?? to.Method("op_Explicit", from);
+        }
+
+        public static MethodInfo FindCastOperator(Type from, Type to)
+        {
+            var castTo = FindCastToOperator(from, to);
+            var castFrom = FindCastFromOperator(from, to);
+            if (castTo == null) 
+                return castFrom;
+            if (castFrom != null)
+                throw new AmbiguousMatchException(string.Format("Both {0} and {1} have conversion operators", from.Name, to.Name));
+            return castTo;
         }
     }
 }

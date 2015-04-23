@@ -159,5 +159,26 @@ namespace SF.Reflection
         {
             return TypeResolveCache.Resolve(name);
         }
+
+        /// <summary>
+        /// Returns element type chosen by foreach 
+        /// </summary>
+        public static Type GetForEachType(Type enumerableType)
+        {
+            var enumerableTypes = FindIEnumerable(enumerableType);
+            using (var en = enumerableTypes.GetEnumerator())
+            {
+                if (!en.MoveNext())
+                    throw new ArgumentException("Not an IEnumerable", "expressionType");
+                var res = en.Current;
+                while (en.MoveNext())
+                {
+                    // if we found object second, just ignore - it's generic IEnumerable
+                    if (en.Current != typeof(object))
+                        throw new ArgumentException("Ambigious IEnumerable", "expressionType");
+                }
+                return res;
+            }
+        }
     }
 }

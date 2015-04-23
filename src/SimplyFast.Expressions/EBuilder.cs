@@ -162,28 +162,12 @@ namespace SF.Expressions
             return Expression.Loop(loopBody, loop.BreakLabel);
         }
 
-        private static Type GetForEachType(Type expressionType)
-        {
-            var enumerableTypes = TypeEx.FindIEnumerable(expressionType);
-            using (var en = enumerableTypes.GetEnumerator())
-            {
-                if (!en.MoveNext())
-                    throw new ArgumentException("Not an IEnumerable", "expressionType");
-                var res = en.Current;
-                while (en.MoveNext())
-                {
-                    // if we found object second, just ignore - it's generic IEnumerable
-                    if (en.Current != typeof(object))
-                        throw new ArgumentException("Ambigious IEnumerable", "expressionType");
-                }
-                return res;
-            }
-        }
+
 
         public static Expression ForEach(Type type, Expression enumerable, Func<IForeachControl, Expression> bodyBuilder)
         {
             if (type == null)
-                type = GetForEachType(enumerable.Type);
+                type = TypeEx.GetForEachType(enumerable.Type);
             MethodInfo getEnumerator = null;
             var enGeneric = typeof (IEnumerable<>).MakeGeneric(type);
             if (enGeneric.IsAssignableFrom(enumerable.Type))
