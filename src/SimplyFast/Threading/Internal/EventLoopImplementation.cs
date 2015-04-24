@@ -23,11 +23,10 @@ namespace SF.Threading
          * 1. Same thread - send is queued and executed after post
          * 2. Diffrent thread - send is queued and executed after post
          */
-        private readonly ManualResetEvent _operationsZero = new ManualResetEvent(true);
+        private readonly CountdownEvent _operationsZero = new CountdownEvent(0);
         private readonly ConcurrentQueue<WorkItem> _queue = new ConcurrentQueue<WorkItem>();
         private readonly ManualResetEvent _queueHasSomething = new ManualResetEvent(false);
         private readonly WeakReference _thread;
-        private volatile int _operations;
         private volatile int _queueSize;
         private volatile bool _running;
 
@@ -42,7 +41,7 @@ namespace SF.Threading
             get
             {
                 if (_thread != null && _thread.IsAlive)
-                    return (Thread) _thread.Target;
+                    return (Thread)_thread.Target;
                 return null;
             }
         }
@@ -61,15 +60,14 @@ namespace SF.Threading
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void OperationStarted()
         {
-            if (Interlocked.Increment(ref _operations) == 1)
-                _operationsZero.Reset();
+            if (!_operationsZero.TryAddCount())
+                _operationsZero.Reset(1);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void OperationCompleted()
         {
-            if (Interlocked.Decrement(ref _operations) == 0)
-                _operationsZero.Set();
+            _operationsZero.Signal();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -143,7 +141,7 @@ namespace SF.Threading
             {
                 handler(exception);
             }
-                // ReSharper disable once EmptyGeneralCatchClause
+            // ReSharper disable once EmptyGeneralCatchClause
             catch
             {
             }
@@ -190,7 +188,7 @@ namespace SF.Threading
 
         private void RunEventLoop()
         {
-            var toWait = new WaitHandle[] {_queueHasSomething, _operationsZero};
+            var toWait = new[] { _queueHasSomething, _operationsZero.WaitHandle };
             // we should run while async operations running or we have stuff in queue
             while (true)
             {
@@ -213,7 +211,7 @@ namespace SF.Threading
                     _queueHasSomething.Reset();
 
                 // queue processed, terminate if no async operations
-                if (_operations == 0)
+                if (_operationsZero.IsSet)
                     break;
 
                 // ok, we have async operations... wait till all of them completes or something is added to queue

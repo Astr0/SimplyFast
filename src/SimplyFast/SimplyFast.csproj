@@ -69,13 +69,13 @@
     <Compile Include="Pool\IPool.cs" />
     <Compile Include="Pool\PoolEx.cs" />
     <Compile Include="Pool\ProducerConsumerPool.cs" />
-    <Compile Include="Legacy\Threading\EventLoop.cs" />
-    <Compile Include="Legacy\Threading\Internal\EventLoopImplementation.cs" />
-    <Compile Include="Legacy\Threading\Internal\EventLoopSynchronizationContext.cs" />
-    <Compile Include="Legacy\Threading\TaskSchedulerEx.cs" />
+    <Compile Include="Threading\EventLoop.cs" />
+    <Compile Include="Threading\Internal\EventLoopImplementation.cs" />
+    <Compile Include="Threading\Internal\EventLoopSynchronizationContext.cs" />
+    <Compile Include="Threading\TaskSchedulerEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Comparers\EqualityComparerEx.cs" />
-    <Compile Include="Legacy\Threading\TaskEx.cs" />
+    <Compile Include="Threading\TaskEx.cs" />
     <Compile Include="ZeroArray.cs" />
   </ItemGroup>
   <ItemGroup />

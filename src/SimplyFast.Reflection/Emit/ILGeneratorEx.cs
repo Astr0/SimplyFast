@@ -435,7 +435,10 @@ namespace SF.Reflection.Emit
             else
             {
                 var method = MethodInfoEx.FindCastOperator(from, to);
-                g.EmitMethodCall(method);
+                if (method != null)
+                    g.EmitMethodCall(method);
+                else if (!to.IsAssignableFrom(from))
+                    g.Emit(OpCodes.Castclass, to);
             }
         }
     }
