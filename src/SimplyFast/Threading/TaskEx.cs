@@ -28,6 +28,14 @@ namespace SF.Threading
         /// </summary>
         public static Task<TConvert> Then<TConvert, TSource>(this Task<TSource> task, Func<TSource, TConvert> func)
         {
+            return task.Then<TConvert, TSource>((r, tcs) => tcs.TrySetResult(func(r)));
+        }
+
+        /// <summary>
+        /// Synchronously continues Task with func
+        /// </summary>
+        public static Task<TConvert> Then<TConvert, TSource>(this Task<TSource> task, Action<TSource, TaskCompletionSource<TConvert>> func)
+        {
             var tcs = new TaskCompletionSource<TConvert>();
             task.ContinueWith(t =>
             {
@@ -37,11 +45,12 @@ namespace SF.Threading
                 else if (t.IsCanceled)
                     tcs.TrySetCanceled();
                 else
-                    tcs.TrySetResult(func(t.Result));
+                    func(t.Result, tcs);
             }, TaskContinuationOptions.ExecuteSynchronously);
 
             return tcs.Task;
         }
+
 
         /// <summary>
         /// Returns cancelled task or task that will be cancelled when requested by token
@@ -83,7 +92,7 @@ namespace SF.Threading
             if (token.IsCancellationRequested)
                 return cancel;
             // when any hack to return first - cancelled or task
-            return Task.WhenAny(task, cancel).Then(x => x.Result);
+            return Task.WhenAny(task, cancel).Unwrap();
         }
 
         public static bool UseCancellation<T>(this TaskCompletionSource<T> source, CancellationToken cancellation)

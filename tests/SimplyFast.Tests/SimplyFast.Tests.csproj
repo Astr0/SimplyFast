@@ -54,6 +54,7 @@
     <Compile Include="Pool\PoolExTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Threading\EventLoopTests.cs" />
+    <Compile Include="Threading\TaskExTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
