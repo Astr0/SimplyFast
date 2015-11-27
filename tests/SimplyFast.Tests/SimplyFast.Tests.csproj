@@ -51,6 +51,7 @@
     <Compile Include="Comparers\FuncEqualityComparerTests.cs" />
     <Compile Include="Comparers\KeyEqualityComparerTests.cs" />
     <Compile Include="DisposableExTests.cs" />
+    <Compile Include="Pipes\ConsumerExTests.cs" />
     <Compile Include="Pool\PoolExTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Threading\EventLoopTests.cs" />
