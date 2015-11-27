@@ -25,62 +25,62 @@ namespace SF.Tests.Pipes
         }
 
         //[Test]
-        // TODO: This doesnt works
-        public void FromEventWorks()
-        {
-            var es = new EventSource();
+        //public void FromEventWorks()
+        //{
+        //    var es = new EventSource();
 
-            var sum = 0;
-            var i = 0;
-            var can = 0;
-            var iOk = false;
-            EventLoop.Run(async () =>
-            {
-                using (var signal = ConsumerEx.FromEvent<int>(x =>
-                {
-                    es.Signal += x;
-                    return DisposableEx.Action(() => es.Signal -= x);
-                }))
-                {
-                    var t = Task.Run(() =>
-                    {
-                        for (i = 0; i < 10; ++i)
-                            es.OnSignal(i);
-                    });
+        //    var sum = 0;
+        //    var i = 0;
+        //    var can = 0;
+        //    var iOk = false;
+        //    var task = Task.Run(async () =>
+        //    {
+        //        using (var signal = ConsumerEx.FromEvent<int>(x =>
+        //        {
+        //            es.Signal += x;
+        //            return DisposableEx.Action(() => es.Signal -= x);
+        //        }))
+        //        {
+        //            var t = Task.Run(() =>
+        //            {
+        //                for (i = 0; i < 10; ++i)
+        //                    es.OnSignal(i);
+        //            });
 
-                    for (var j = 0; j < 10; ++j)
-                    {
-                        sum += await signal.Take();
-                    }
-                    iOk = (i == 10);
-                    using (var cts = new CancellationTokenSource(100))
-                    {
-                        try
-                        {
-                            sum += await signal.Take(cts.Token);
-                        }
-                        catch (OperationCanceledException)
-                        {
-                            can++;
-                        }
-                    }
-                    es.OnSignal(11);
-                    try
-                    {
-                        sum += await signal.Take(new CancellationToken(true));
-                    }
-                    catch (OperationCanceledException)
-                    {
-                        can++;
-                    }
-                    sum += await signal.Take();
-                    await t;
-                }
-            });
-            Assert.IsTrue(iOk);
-            Assert.AreEqual(2, can);
-            Assert.AreEqual(Enumerable.Range(0, 11).Sum(), sum);
-            Assert.IsTrue(es.Empty);
-        }
+        //            for (var j = 0; j < 10; ++j)
+        //            {
+        //                sum += await signal.Take();
+        //            }
+        //            iOk = (i == 10);
+        //            using (var cts = new CancellationTokenSource(100))
+        //            {
+        //                try
+        //                {
+        //                    sum += await signal.Take(cts.Token);
+        //                }
+        //                catch (OperationCanceledException)
+        //                {
+        //                    can++;
+        //                }
+        //            }
+        //            es.OnSignal(11);
+        //            try
+        //            {
+        //                sum += await signal.Take(new CancellationToken(true));
+        //            }
+        //            catch (OperationCanceledException)
+        //            {
+        //                can++;
+        //            }
+        //            sum += await signal.Take();
+        //            await t;
+        //        }
+        //    });
+        //    task.Wait();
+        //    Assert.IsTrue(iOk);
+        //    Assert.AreEqual(2, can);
+        //    Assert.AreEqual(Enumerable.Range(0, 11).Sum(), sum);
+        //    Assert.IsTrue(es.Empty);
+        //}
     }
 }
