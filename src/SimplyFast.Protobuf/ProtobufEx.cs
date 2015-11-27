@@ -6,14 +6,14 @@ namespace SF.Protobuf
 {
     public static class ProtobufEx
     {
-        public static IConsumer<T> AsProtobufConsumer<T>(this IConsumer<byte[]> consumer)
+        public static IConsumer<T> ProtobufDeserializer<T>(this IConsumer<byte[]> consumer)
         {
-            return new ProtobufConsumer<T>(consumer);
+            return consumer.Select(Deserialize<T>);
         }
 
-        public static IProducer<T> AsProtobufProducer<T>(this IProducer<byte[]> producer)
+        public static IProducer<T> ProtobufSerializer<T>(this IProducer<byte[]> producer)
         {
-            return new ProtobufProducer<T>(producer);
+            return producer.Convert<byte[], T>(Serialize);
         }
 
         public static T Deserialize<T>(byte[] buffer)
