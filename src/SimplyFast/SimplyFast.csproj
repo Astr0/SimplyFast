@@ -60,7 +60,9 @@
     <Compile Include="Pipes\IConsumer.cs" />
     <Compile Include="Legacy\Pipes\Internal\IntLengthPrefixedStreamProducer.cs" />
     <Compile Include="Legacy\Pipes\Internal\IntLengthPrefixedStreamConsumer.cs" />
+    <Compile Include="Pipes\Internal\ConvertConsumer.cs" />
     <Compile Include="Pipes\Internal\EventConsumer.cs" />
+    <Compile Include="Pipes\Internal\WhereConsumer.cs" />
     <Compile Include="Pipes\IProducer.cs" />
     <Compile Include="Legacy\Pipes\Internal\StreamProducer.cs" />
     <Compile Include="Legacy\Pipes\PipeEx.cs" />
