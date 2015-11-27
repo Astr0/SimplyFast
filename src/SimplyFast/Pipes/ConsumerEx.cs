@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using SF.Threading;
 
@@ -37,6 +38,16 @@ namespace SF.Pipes
         public static IConsumer<T> Where<T>(this IConsumer<T> consumer, Func<T, bool> predicate)
         {
             return new WhereConsumer<T>(consumer, predicate);
+        }
+
+        public static IConsumer<T> FromMethod<T>(Func<CancellationToken, Task<T>> method, Action dispose = null)
+        {
+            return new MethodConsumer<T>(method, dispose);
+        }
+
+        public static IConsumer<T> FromMethod<T>(Func<Task<T>> method, Action dispose = null)
+        {
+            return FromMethod(ctx => ctx.IsCancellationRequested ? TaskEx.CreateCancelledTask<T>() : method(), dispose);
         }
 
         ///// <summary>

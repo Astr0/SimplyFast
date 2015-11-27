@@ -14,11 +14,14 @@ namespace SF.Threading
         /// </summary>
         public static readonly Task Completed = Task.FromResult(true);
 
-        public static readonly Task Cancelled = CreateCancelledTask();
+        public static readonly Task Cancelled = CreateCancelledTask<bool>();
 
-        private static Task CreateCancelledTask()
+        /// <summary>
+        /// Creates cancelled task
+        /// </summary>
+        public static Task<T> CreateCancelledTask<T>()
         {
-            var cts = new TaskCompletionSource<bool>();
+            var cts = new TaskCompletionSource<T>();
             cts.TrySetCanceled();
             return cts.Task;
         }

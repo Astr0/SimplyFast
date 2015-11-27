@@ -63,6 +63,8 @@
     <Compile Include="Pipes\Internal\ConvertConsumer.cs" />
     <Compile Include="Pipes\Internal\ConvertProducer.cs" />
     <Compile Include="Pipes\Internal\EventConsumer.cs" />
+    <Compile Include="Pipes\Internal\MethodConsumer.cs" />
+    <Compile Include="Pipes\Internal\MethodProducer.cs" />
     <Compile Include="Pipes\Internal\WhereConsumer.cs" />
     <Compile Include="Pipes\Internal\FilterProducer.cs" />
     <Compile Include="Pipes\IProducer.cs" />
