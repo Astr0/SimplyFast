@@ -55,6 +55,7 @@
     <Compile Include="Legacy\Pipes\StreamPipeEx.cs" />
     <Compile Include="Legacy\Pipes\Internal\StreamConsumer.cs" />
     <Compile Include="Legacy\Pipes\Internal\DbDataReaderConsumer.cs" />
+    <Compile Include="MathEx.cs" />
     <Compile Include="Pipes\ConsumerEx.cs" />
     <Compile Include="Pipes\IConsumer.cs" />
     <Compile Include="Legacy\Pipes\Internal\IntLengthPrefixedStreamProducer.cs" />
@@ -72,6 +73,8 @@
     <Compile Include="Pool\IPool.cs" />
     <Compile Include="Pool\PoolEx.cs" />
     <Compile Include="Pool\ProducerConsumerPool.cs" />
+    <Compile Include="Strings\StringEx.cs" />
+    <Compile Include="Strings\StringParser.cs" />
     <Compile Include="Threading\EventLoop.cs" />
     <Compile Include="Threading\Internal\EventLoopImplementation.cs" />
     <Compile Include="Threading\Internal\EventLoopSynchronizationContext.cs" />
