@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Research", "tests\SimplyFast.Research\SimplyFast.Research.csproj", "{3C887A6D-AF94-4230-ADD3-760EA3EFDF30}"
 EndProject
@@ -26,6 +26,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{3BBDF5D9-702E-4A49-96B4-81BD26DF6FE2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Tests", "tests\SimplyFast.Tests\SimplyFast.Tests.csproj", "{E1C35C07-DE0E-4619-848B-59554349A6F8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{E39880EC-234E-469B-9E17-C78BA2B4B503}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Data", "src\SimplyFast.Data\SimplyFast.Data.csproj", "{54E4B709-E8E8-4D18-9A42-E7278A0E5374}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Tests.Data", "tests\SimplyFast.Tests.Data\SimplyFast.Tests.Data.csproj", "{2F9E0F49-7213-4B9D-95D9-C466EB677EFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +79,14 @@ Global
 		{E1C35C07-DE0E-4619-848B-59554349A6F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1C35C07-DE0E-4619-848B-59554349A6F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E1C35C07-DE0E-4619-848B-59554349A6F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54E4B709-E8E8-4D18-9A42-E7278A0E5374}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54E4B709-E8E8-4D18-9A42-E7278A0E5374}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54E4B709-E8E8-4D18-9A42-E7278A0E5374}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54E4B709-E8E8-4D18-9A42-E7278A0E5374}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F9E0F49-7213-4B9D-95D9-C466EB677EFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F9E0F49-7213-4B9D-95D9-C466EB677EFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F9E0F49-7213-4B9D-95D9-C466EB677EFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F9E0F49-7213-4B9D-95D9-C466EB677EFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,5 +97,7 @@ Global
 		{AA155BE8-5564-4251-9FEF-0DEA54B46C6B} = {2D074E55-B8E0-4407-8AFE-05F45004950D}
 		{E065733F-2A11-462B-8704-6206757CBC29} = {2D074E55-B8E0-4407-8AFE-05F45004950D}
 		{E1C35C07-DE0E-4619-848B-59554349A6F8} = {3BBDF5D9-702E-4A49-96B4-81BD26DF6FE2}
+		{54E4B709-E8E8-4D18-9A42-E7278A0E5374} = {E39880EC-234E-469B-9E17-C78BA2B4B503}
+		{2F9E0F49-7213-4B9D-95D9-C466EB677EFF} = {E39880EC-234E-469B-9E17-C78BA2B4B503}
 	EndGlobalSection
 EndGlobal

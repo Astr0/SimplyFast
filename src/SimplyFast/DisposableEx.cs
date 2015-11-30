@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace SF
@@ -23,6 +24,28 @@ namespace SF
         public static IDisposable Action(Action disposeAction)
         {
             return new DisposableAction(disposeAction);
+        }
+
+        public static IDisposable Remove<T>(ICollection<T> collection, T item)
+        {
+            return new CollectionRemove<T>(collection, item);
+        }
+
+        public class CollectionRemove<T> : IDisposable
+        {
+            private readonly ICollection<T> _collection;
+            private readonly T _item;
+
+            public CollectionRemove(ICollection<T> collection, T item)
+            {
+                _collection = collection;
+                _item = item;
+            }
+
+            public void Dispose()
+            {
+                _collection.Remove(_item);
+            }
         }
 
         public static IDisposable DisposeOnFinalize(this IDisposable disposable)
