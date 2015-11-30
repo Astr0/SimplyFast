@@ -1,71 +1,91 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using SF.Threading;
 
 namespace SF.Data.Spaces
 {
-    internal class SafeLocalSpace<T> : ISpace<T> where T : class
+    internal class SafeLocalSpace : ISpace
     {
-        private readonly ILocalSpace<T> _space;
-        private readonly Func<T, T> _clone;
+        private readonly Converter<object, object> _clone;
         private readonly SynchronizationContext _context;
+        private readonly ISyncSpace _space;
 
-        public SafeLocalSpace(ILocalSpace<T> space, Func<T, T> clone, SynchronizationContext context = null)
+        public SafeLocalSpace(ISyncSpace space, Converter<object, object> clone, SynchronizationContext context = null)
         {
             _space = space;
             _clone = clone;
             _context = context ?? SynchronizationContext.Current;
         }
 
-        public void Dispose()
+        ISyncSpaceTable<T> ISyncSpace.GetTable<T>(ushort id)
         {
-            _space.Dispose();
+            return _context.Send(() => Wrap(_space.GetTable<T>(id)));
+        }
+
+        public Task<ISpaceTable<T>> GetTable<T>(ushort id) where T : class
+        {
+            return _context.PostTask(() => Wrap(_space.GetTable<T>(id)));
+        }
+
+        ISyncTransaction ISyncSpace.BeginTransaction()
+        {
+            return _context.Send(() => Wrap(_space.BeginTransaction()));
         }
 
         public Task<ITransaction> BeginTransaction()
         {
-            throw new NotImplementedException();
+            return _context.PostTask(() => Wrap(_space.BeginTransaction()));
         }
 
-        public Task<T> Read(IQuery<T> query, CancellationToken token, ITransaction transaction = null)
+        private ISpaceTable<T> Wrap<T>(ISyncSpaceTable<T> table)
+            where T : class
         {
-            throw new NotImplementedException();
+            return new SafeLocalSpaceTable<T>(table, x => (T) _clone(x), _context);
         }
 
-        public Task<T> TryRead(IQuery<T> query, ITransaction transaction = null)
+        #region transaction stuff
+
+        private ITransaction Wrap(ISyncTransaction transaction)
         {
-            throw new NotImplementedException();
+            return new SafeLocalTransaction(this, transaction);
         }
 
-        public Task<T> Take(IQuery<T> query, CancellationToken token, ITransaction transaction = null)
+        internal Task<ITransaction> BeginTransaction(ISyncTransaction syncTransaction)
         {
-            throw new NotImplementedException();
+            return _context.PostTask(syncTransaction, x => Wrap(x.BeginTransaction()));
         }
 
-        public Task<T> TryTake(IQuery<T> query, ITransaction transaction = null)
+        internal void DisposeTransaction(ISyncTransaction syncTransaction)
         {
-            throw new NotImplementedException();
+            _context.Send(syncTransaction, x => x.Dispose());
         }
 
-        public Task<T[]> Scan(IQuery<T> query, ITransaction transaction = null)
+        internal Task Abort(ISyncTransaction syncTransaction)
         {
-            throw new NotImplementedException();
+            return _context.PostTask(syncTransaction, x => x.Abort());
         }
 
-        public Task<int> Count(IQuery<T> query, ITransaction transaction = null)
+        internal Task Commit(ISyncTransaction syncTransaction)
         {
-            throw new NotImplementedException();
+            return _context.PostTask(syncTransaction, x => x.Commit());
         }
 
-        public Task Add(T tuple, ITransaction transaction = null)
+        internal ISyncTransaction BeginTransactionSync(ISyncTransaction syncTransaction)
         {
-            throw new NotImplementedException();
+            return _context.Send(syncTransaction, x => Wrap(x.BeginTransaction()));
         }
 
-        public Task AddRange(IEnumerable<T> tuples, ITransaction transaction = null)
+        internal void CommitSync(ISyncTransaction syncTransaction)
         {
-            throw new NotImplementedException();
+            _context.Send(syncTransaction, x => x.Commit());
         }
+
+        internal void AbortSync(ISyncTransaction syncTransaction)
+        {
+            _context.Send(syncTransaction, x => x.Abort());
+        }
+
+        #endregion
     }
 }

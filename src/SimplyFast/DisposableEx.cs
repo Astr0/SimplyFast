@@ -31,7 +31,36 @@ namespace SF
             return new CollectionRemove<T>(collection, item);
         }
 
-        public class CollectionRemove<T> : IDisposable
+        public static IDisposable UseContext(this IDisposable disposable, SynchronizationContext context)
+        {
+            return new ContextDisposable(disposable, context);
+        }
+
+
+        public static IDisposable DisposeOnFinalize(this IDisposable disposable)
+        {
+            return new FinalizeDisposable(disposable);
+        }
+
+        private class ContextDisposable : IDisposable
+        {
+            private readonly IDisposable _disposable;
+            private readonly SynchronizationContext _context;
+
+
+            public ContextDisposable(IDisposable disposable, SynchronizationContext context)
+            {
+                _disposable = disposable;
+                _context = context;
+            }
+
+            public void Dispose()
+            {
+                _context.Send(x => ((IDisposable)x).Dispose(), _disposable);
+            }
+        }
+
+        private class CollectionRemove<T> : IDisposable
         {
             private readonly ICollection<T> _collection;
             private readonly T _item;
@@ -48,10 +77,6 @@ namespace SF
             }
         }
 
-        public static IDisposable DisposeOnFinalize(this IDisposable disposable)
-        {
-            return new FinalizeDisposable(disposable);
-        }
 
         private sealed class DisposableAction : IDisposable
         {

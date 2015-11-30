@@ -2,21 +2,54 @@
 
 namespace SF.Data.Spaces
 {
-    public class SafeLocalTransaction<T>: ITransaction
+    internal class SafeLocalTransaction : ITransaction
     {
-        public async void Dispose()
+        private readonly SafeLocalSpace _space;
+        public readonly ISyncTransaction SyncTransaction;
+
+        public SafeLocalTransaction(SafeLocalSpace space, ISyncTransaction syncTransaction)
         {
-            await Abort();
+            _space = space;
+            SyncTransaction = syncTransaction;
+        }
+
+        public void Dispose()
+        {
+            if (State != TransactionState.Running)
+                return;
+            _space.DisposeTransaction(SyncTransaction);
+        }
+
+        ISyncTransaction ISyncTransaction.BeginTransaction()
+        {
+            return _space.BeginTransactionSync(SyncTransaction);
+        }
+
+        public TransactionState State => SyncTransaction.State;
+
+        public Task<ITransaction> BeginTransaction()
+        {
+            return _space.BeginTransaction(SyncTransaction);
         }
 
         public Task Abort()
         {
-            throw new System.NotImplementedException();
+            return _space.Abort(SyncTransaction);
+        }
+
+        void ISyncTransaction.Commit()
+        {
+            _space.CommitSync(SyncTransaction);
+        }
+
+        void ISyncTransaction.Abort()
+        {
+            _space.AbortSync(SyncTransaction);
         }
 
         public Task Commit()
         {
-            throw new System.NotImplementedException();
+            return _space.Commit(SyncTransaction);
         }
     }
 }
