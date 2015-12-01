@@ -7,17 +7,17 @@ namespace SF.Data.Spaces
 {
     internal class LocalTransaction : ISyncTransaction
     {
-        //public readonly ICollection<LocalTransaction> Children = new List<LocalTransaction>();
-        private readonly List<ILocalTransactionData> _data = new List<ILocalTransactionData>(4);
         public readonly int Id;
         public readonly LocalTransaction Parent;
         public readonly LocalSpace Space;
-        private ICollection<LocalTransaction> _children;
-
-        internal LocalTransaction(LocalSpace space, LocalTransaction parent = null)
+        protected RootLocalTransaction Root;
+        private List<LocalTransaction> _children;
+        
+        protected LocalTransaction(LocalSpace space, RootLocalTransaction root, LocalTransaction parent)
         {
             Space = space;
             Id = space.GetNextTransactionId();
+            Root = root;
             Parent = parent;
             State = TransactionState.Running;
         }
@@ -25,37 +25,62 @@ namespace SF.Data.Spaces
         internal bool Alive => State == TransactionState.Running;
         public IEnumerable<LocalTransaction> Children => _children ?? Enumerable.Empty<LocalTransaction>();
         public TransactionState State { get; internal set; }
-
-        public void Commit()
-        {
-            var parent = Parent;
-
-            Cleanup(TransactionState.Commited);
-
-            // commit trans to parent trans
-            DoCommit(parent);
-
-            // remove this trans from parent
-            parent?._children?.Remove(this);
-        }
-
+        
         public ISyncTransaction BeginTransaction()
         {
-            var trans = new LocalTransaction(Space, this);
+            var trans = new LocalTransaction(Space, Root, this);
             if (_children == null)
                 _children = new List<LocalTransaction>(1);
             _children.Add(trans);
             return trans;
         }
 
+        internal void AddTable(ILocalSpaceTable table)
+        {
+            Root.AddDependentTable(table);
+        }
+
+        public void Commit()
+        {
+            Debug.Assert(Alive, "Transaction not running");
+
+            // commit trans
+            Root.CommitTransaction(this);
+            
+            Cleanup(TransactionState.Commited);
+
+            // remove this trans from parent
+            Parent?._children.Remove(this);
+        }
+
+
         public void Abort()
         {
+            Debug.Assert(Alive, "Transaction not running");
+
+            Root.AbortTransaction(this);
+
             Cleanup(TransactionState.Aborted);
-
-            DoAbort();
-
+            
             // remove trans from parent if any
-            Parent?._children?.Remove(this);
+            Parent?._children.Remove(this);
+        }
+
+        
+        private void Cleanup(TransactionState state)
+        {
+            Debug.Assert(Alive, "Transaction not running");
+
+            State = state;
+            Space.Cleanup(Id);
+
+            if (_children != null)
+            {
+                foreach (var child in Children)
+                {
+                    child.Cleanup(state);
+                }
+            }
         }
 
         void IDisposable.Dispose()
@@ -64,142 +89,36 @@ namespace SF.Data.Spaces
                 return;
             Abort();
         }
-
-        private void DoCommit(LocalTransaction target)
-        {
-            // commit child transactions?
-            foreach (var child in Children)
-            {
-                child.DoCommit(target);
-            }
-
-            // commit data
-            foreach (var data in _data)
-            {
-                data.Commit(target);
-            }
-        }
-
-        private void Cleanup(TransactionState state)
-        {
-            Debug.Assert(Alive, "Transaction not running");
-
-            State = state;
-            foreach (var data in _data)
-            {
-                data.Cleanup();
-            }
-
-            foreach (var child in Children)
-            {
-                child.Cleanup(state);
-            }
-        }
-
-        private void DoAbort()
-        {
-            // abort child transactions
-            foreach (var child in Children)
-            {
-                child.DoAbort();
-            }
-
-            // abort tables
-            foreach (var data in _data)
-            {
-                data.Abort();
-            }
-        }
-
-        public LocalTransactionData<T> GetData<T>(ushort id) where T : class
-        {
-            return (LocalTransactionData<T>) _data.Find(x => x.TableId == id);
-        }
-
-        public LocalTransactionData<T> GetOrAddData<T>(LocalSpaceTable<T> table) where T : class
-        {
-            var data = GetData<T>(table.Id);
-            if (data != null)
-                return data;
-            data = new LocalTransactionData<T>(this, table);
-            _data.Add(data);
-            return data;
-        }
-
-        public T ReadToParent<T>(ushort id, IQuery<T> query) where T : class
-        {
-            var result = GetData<T>(id)?.Written.Read(query);
-            return result ?? Parent?.ReadToParent(id, query);
-        }
-
-        public T Take<T>(ushort id, IQuery<T> query) where T : class
-        {
-            return GetData<T>(id)?.Written.Take(query);
-        }
-
-        public void AddTaken<T>(LocalSpaceTable<T> table, TakenTuple<T> taken) where T : class
-        {
-            GetOrAddData(table).Taken.Add(taken);
-        }
-
-        public void AddWritten<T>(LocalSpaceTable<T> table, T tuple) where T : class
-        {
-            GetOrAddData(table).Written.Add(tuple);
-        }
-
-        public IEnumerable<T> Scan<T>(ushort id, IQuery<T> query) where T : class
-        {
-            return GetData<T>(id)?.Written.Scan(query);
-        }
-
-        public int Count<T>(ushort id, IQuery<T> query) where T : class
-        {
-            return GetData<T>(id)?.Written.Count(query) ?? 0;
-        }
     }
 
-    internal interface ILocalTransactionData
+    internal class RootLocalTransaction : LocalTransaction
     {
-        ushort TableId { get; }
-        void Abort();
-        void Commit(LocalTransaction target);
-        void Cleanup();
-    }
-
-    /// <summary>
-    ///     very important no to hold references on this stuff anywhere in LocalStorage
-    ///     since then finalizer won't fire and it'll be impossible to remove pending actions
-    /// </summary>
-    internal class LocalTransactionData<T> : ILocalTransactionData
-        where T : class
-    {
-        private readonly LocalSpaceTable<T> _table;
-        private readonly LocalTransaction _transaction;
-        public readonly ICollection<TakenTuple<T>> Taken = new List<TakenTuple<T>>();
-        public readonly TupleStorage<T> Written = new TupleStorage<T>();
-
-        public LocalTransactionData(LocalTransaction transaction, LocalSpaceTable<T> table)
+        internal RootLocalTransaction(LocalSpace space) : base(space, null, null)
         {
-            _transaction = transaction;
-            _table = table;
+            Root = this;
         }
 
-        public int Id => _transaction.Id;
-        public ushort TableId => _table.Id;
+        private readonly HashSet<ILocalSpaceTable> _tables = new HashSet<ILocalSpaceTable>();
 
-        public void Abort()
+        public void AddDependentTable(ILocalSpaceTable table)
         {
-            _table.AbortTransaction(this);
+            _tables.Add(table);
         }
 
-        public void Commit(LocalTransaction target)
+        public void CommitTransaction(LocalTransaction transaction)
         {
-            _table.CommitTransaction(this, target);
+            foreach (var table in _tables)
+            {
+                table.CommitTransaction(transaction);
+            }
         }
 
-        public void Cleanup()
+        public void AbortTransaction(LocalTransaction transaction)
         {
-            _table.CleanupTransaction(this);
+            foreach (var table in _tables)
+            {
+                table.AbortTransaction(transaction);
+            }
         }
     }
 }

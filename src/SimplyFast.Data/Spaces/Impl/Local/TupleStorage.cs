@@ -54,5 +54,10 @@ namespace SF.Data.Spaces
         {
             return _storage.Count(query.Match);
         }
+
+        public void Clear()
+        {
+            _storage.Clear();
+        }
     }
 }

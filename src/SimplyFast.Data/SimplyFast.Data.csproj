@@ -43,11 +43,15 @@
     <Compile Include="Dynamo\DObjectEx.cs" />
     <Compile Include="Dynamo\DObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Spaces\Impl\Local\ILocalSpaceTable.cs" />
     <Compile Include="Spaces\Impl\Local\LocalSpace.cs" />
-    <Compile Include="Spaces\Impl\Local\New\LocalSpaceTable.cs" />
-    <Compile Include="Spaces\Impl\Local\New\LocalSpaceTableImpl.cs" />
-    <Compile Include="Spaces\Impl\Local\New\TakenTuple.cs" />
-    <Compile Include="Spaces\Impl\Local\New\WaitingActions.cs" />
+    <Compile Include="Spaces\Impl\Local\LocalSpaceConsts.cs" />
+    <Compile Include="Spaces\Impl\Local\LocalSpaceTable.cs" />
+    <Compile Include="Spaces\Impl\Local\LocalSpaceTableImpl.cs" />
+    <Compile Include="Spaces\Impl\Local\LocalTransaction.cs" />
+    <Compile Include="Spaces\Impl\Local\TakenTuple.cs" />
+    <Compile Include="Spaces\Impl\Local\TupleStorage.cs" />
+    <Compile Include="Spaces\Impl\Local\WaitingActions.cs" />
     <Compile Include="Spaces\Impl\SafeLocal\SafeLocalSpace.cs" />
     <Compile Include="Spaces\Impl\SafeLocal\SafeLocalTransaction.cs" />
     <Compile Include="Spaces\Interface\ISpace.cs" />
@@ -57,12 +61,7 @@
     <Compile Include="Spaces\Interface\ITransaction.cs" />
     <Compile Include="Spaces\Interface\IQuery.cs" />
     <Compile Include="Spaces\Interface\ISpaceTable.cs" />
-    <Compile Include="Spaces\Impl\Local\LocalSpaceTable.cs" />
-    <Compile Include="Spaces\Impl\Local\LocalTransaction.cs" />
     <Compile Include="Spaces\Impl\SafeLocal\SafeLocalSpaceTable.cs" />
-    <Compile Include="Spaces\Impl\Local\TakenTuple.cs" />
-    <Compile Include="Spaces\Impl\Local\WaitingActions.cs" />
-    <Compile Include="Spaces\Impl\Local\TupleStorage.cs" />
     <Compile Include="Spaces\Interface\TransactionState.cs" />
     <Compile Include="Spaces\SpaceEx.cs" />
   </ItemGroup>

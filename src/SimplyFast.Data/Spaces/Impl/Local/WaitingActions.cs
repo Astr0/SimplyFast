@@ -6,66 +6,25 @@ namespace SF.Data.Spaces
     internal class WaitingActions<T> where T : class
     {
         private const int WaitingListCapacity = 1;
-        private readonly Dictionary<int, List<WaitingAction>> _actions = new Dictionary<int, List<WaitingAction>>();
-        private readonly List<WaitingAction> _globalActions = new List<WaitingAction>(32);
+        private readonly List<WaitingAction> _actions = new List<WaitingAction>(WaitingListCapacity);
 
-        public void Cleanup(int transactionId)
+        public void Add(IQuery<T> query, Action<T> callback, DateTime expire, bool take)
         {
-            _actions.Remove(transactionId);
+            var action = new WaitingAction(query, callback, expire, take);
+            _actions.Add(action);
         }
 
-        public void AddGlobal(IQuery<T> query, Action<T> callback, TimeSpan timeout, bool take)
+        public bool Taken(T tuple, DateTime now, bool taken = false)
         {
-            var action = new WaitingAction(query, callback, timeout, take);
-            _globalActions.Add(action);
-        }
-
-        public void Add(int transactionId, IQuery<T> query, Action<T> callback, TimeSpan timeout, bool take)
-        {
-            List<WaitingAction> actions;
-            if (!_actions.TryGetValue(transactionId, out actions))
-            {
-                actions = new List<WaitingAction>(WaitingListCapacity);
-                _actions.Add(transactionId, actions);
-            }
-            var action = new WaitingAction(query, callback, timeout, take);
-            actions.Add(action);
-        }
-
-        public bool Taken(T tuple, int transactionId, bool taken)
-        {
-            List<WaitingAction> actions;
-            if (!_actions.TryGetValue(transactionId, out actions))
-                return false;
-            taken = Taken(tuple, actions, taken);
-            if (actions.Count == 0)
-                _actions.Remove(transactionId);
-            return taken;
-        }
-
-        public bool Taken(T tuple)
-        {
-            var taken = Taken(tuple, _globalActions);
-            // ReSharper disable once LoopCanBeConvertedToQuery
-            foreach (var actions in _actions.Values)
-            {
-                taken = Taken(tuple, actions, taken);
-            }
-            return taken;
-        }
-
-        private static bool Taken(T tuple, List<WaitingAction> actions, bool taken = false)
-        {
-            var now = DateTime.UtcNow;
             // we should invoke read for everything, but take for only one action
-            for (var i = actions.Count - 1; i >= 0; i--)
+            for (var i = _actions.Count - 1; i >= 0; i--)
             {
-                var action = actions[i];
+                var action = _actions[i];
                 // check expiration
                 if (action.Expire < now)
                 {
                     action.Callback(null);
-                    actions.RemoveAt(i);
+                    _actions.RemoveAt(i);
                     continue;
                 }
                 if (action.Take && taken)
@@ -73,7 +32,7 @@ namespace SF.Data.Spaces
                 if (!action.Query.Match(tuple))
                     continue;
                 action.Callback(tuple);
-                actions.RemoveAt(i);
+                _actions.RemoveAt(i);
                 if (action.Take)
                     taken = true;
             }
@@ -87,13 +46,18 @@ namespace SF.Data.Spaces
             public readonly IQuery<T> Query;
             public readonly bool Take;
 
-            public WaitingAction(IQuery<T> query, Action<T> callback, TimeSpan timeout, bool take)
+            public WaitingAction(IQuery<T> query, Action<T> callback, DateTime expire, bool take)
             {
                 Query = query;
                 Callback = callback;
                 Take = take;
-                Expire = DateTime.UtcNow.Add(timeout);
+                Expire = expire;
             }
+        }
+
+        public void Clear()
+        {
+            _actions.Clear();
         }
     }
 }

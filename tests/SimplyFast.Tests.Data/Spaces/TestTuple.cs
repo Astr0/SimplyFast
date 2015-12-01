@@ -38,5 +38,10 @@ namespace SF.Tests.Data.Spaces
                 return (X*397) ^ Y;
             }
         }
+
+        public override string ToString()
+        {
+            return $"({X}, {Y})";
+        }
     }
 }

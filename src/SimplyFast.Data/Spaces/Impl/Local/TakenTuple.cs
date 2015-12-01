@@ -2,15 +2,13 @@
 {
     internal struct TakenTuple<T> where T : class
     {
-        public readonly LocalTransaction Transaction;
+        public readonly LocalSpaceTableImpl<T> TableImpl;
         public readonly T Tuple;
 
-        public TakenTuple(LocalTransaction transaction, T tuple)
+        public TakenTuple(LocalSpaceTableImpl<T> tableImpl, T tuple)
         {
-            Transaction = transaction;
+            TableImpl = tableImpl;
             Tuple = tuple;
         }
     }
-
-
 }

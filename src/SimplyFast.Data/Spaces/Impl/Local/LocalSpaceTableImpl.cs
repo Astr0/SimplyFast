@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SF.Data.Spaces.New
+namespace SF.Data.Spaces
 {
-    public class LocalSpaceTableImpl<T> where T : class
+    internal class LocalSpaceTableImpl<T> where T : class
     {
         private readonly TupleStorage<T> _written = new TupleStorage<T>(); 
         private readonly ICollection<TakenTuple<T>> _taken = new List<TakenTuple<T>>();
@@ -11,6 +11,8 @@ namespace SF.Data.Spaces.New
 
         private readonly List<LocalSpaceTableImpl<T>> _children = new List<LocalSpaceTableImpl<T>>();
         private LocalSpaceTableImpl<T> _parent;
+
+        public bool Active => _parent != null;
 
         public LocalSpaceTableImpl<T> Parent
         {
@@ -64,6 +66,7 @@ namespace SF.Data.Spaces.New
             if (readItem != null)
             {
                 callback(readItem);
+                return;
             }
 
             // add waiting action
@@ -76,6 +79,7 @@ namespace SF.Data.Spaces.New
             if (takenItem != null)
             {
                 callback(takenItem);
+                return;
             }
 
             // add waiting action
@@ -135,6 +139,77 @@ namespace SF.Data.Spaces.New
             {
                 Add(tuple);
             }
+        }
+
+        private void AddRange(IEnumerable<T> tuples)
+        {
+            foreach (var tuple in tuples)
+            {
+                Add(tuple);
+            }
+        }
+
+        public void Abort()
+        {
+            // remove itself
+            _parent?._children.Remove(this);
+            DoAbort();
+        }
+
+        private void DoAbort()
+        {
+            StartCleanup();
+
+            // abort children
+            foreach (var child in Children)
+            {
+                child.DoAbort();
+            }
+
+            // abort this
+            foreach (var takenTuple in _taken)
+            {
+                var target = takenTuple.TableImpl;
+                if (target.Active)
+                    target.Add(takenTuple.Tuple);
+            }
+
+            EndCleanup();
+        }
+
+        private void StartCleanup()
+        {
+            _waitingActions.Clear();
+            _parent = null;
+        }
+
+        private void EndCleanup()
+        {
+            _taken.Clear();
+            _written.Clear();
+            _children.Clear();
+        }
+
+        public void Commit(LocalSpaceTableImpl<T> target)
+        {
+            // remove itself
+            _parent?._children.Remove(this);
+            DoCommit(target);
+        }
+
+        private void DoCommit(LocalSpaceTableImpl<T> target)
+        {
+            StartCleanup();
+
+            // commit children
+            foreach (var child in Children)
+            {
+                child.DoCommit(target);
+            }
+
+            target.AddRange(_written);
+
+            EndCleanup();
         }
     }
 }

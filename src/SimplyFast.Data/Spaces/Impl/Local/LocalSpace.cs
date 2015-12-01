@@ -1,31 +1,38 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SF.Data.Spaces
 {
     internal class LocalSpace : ISyncSpace
     {
-        private int _nextTransactionId;
-        private object[] _spaces = new object[4];
-
-        public ISyncTransaction BeginTransaction()
-        {
-            return new LocalTransaction(this, null);
-        }
-
+        private object[] _tables = new object[4];
+        
         public ISyncSpaceTable<T> GetTable<T>(ushort id) where T : class
         {
-            if (id >= _spaces.Length)
-                Array.Resize(ref _spaces, id + 1);
-            var result = _spaces[id];
+            if (id >= _tables.Length)
+                Array.Resize(ref _tables, id + 1);
+            var result = _tables[id];
             if (result == null)
-                _spaces[id] = result = new LocalSpaceTable<T>(this, id);
+                _tables[id] = result = new LocalSpaceTable<T>(this, id);
 
             return (ISyncSpaceTable<T>) result;
         }
 
+        private int _nextTransactionId;
+        private readonly Stack<int> _freeTransactionIds = new Stack<int>(LocalSpaceConsts.TransactionsCapacity);
+        public ISyncTransaction BeginTransaction()
+        {
+            return new RootLocalTransaction(this);
+        }
+
+        internal void Cleanup(int transactionId)
+        {
+            _freeTransactionIds.Push(transactionId);
+        }
+
         internal int GetNextTransactionId()
         {
-            return _nextTransactionId++;
+            return _freeTransactionIds.Count != 0 ? _freeTransactionIds.Pop() : _nextTransactionId++;
         }
     }
 }
