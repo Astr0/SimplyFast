@@ -23,14 +23,14 @@ namespace SimplyFast.Research
         protected static void TestPerformance(Action action, int iterations, bool jitPrepare)
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
             TestPerformance(action, iterations, action.Method.Name, jitPrepare);
         }
 
-        protected static void TestPerformance(Action action, int iterations, string caption, bool jitPrepare)
+        protected static void TestPerformance(Action action, int iterations, Action finalAction, string caption, bool jitPrepare)
         {
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
             if (jitPrepare)
             {
                 // JIT prepare
@@ -51,12 +51,23 @@ namespace SimplyFast.Research
             {
                 action();
             }
+            if (finalAction != null)
+                finalAction();
             sw.Stop();
             if (iterations != 1)
-                Console.WriteLine("{0}({1} iterations) - {2} ms.", caption, iterations, sw.ElapsedMilliseconds);
+            {
+                var opsPerSecond = sw.ElapsedMilliseconds > 0 ? (iterations*1000.0/sw.ElapsedMilliseconds).ToString("F") : "?";
+                Console.WriteLine("{0}({1} iterations) - {2} ms. {3} ops/second", caption, iterations, sw.ElapsedMilliseconds, opsPerSecond);
+            }
             else
                 Console.WriteLine("{0} - {1} ms.", caption, sw.ElapsedMilliseconds);
         }
+
+        protected static void TestPerformance(Action action, int iterations, string caption, bool jitPrepare)
+        {
+           TestPerformance(action, iterations, null, caption, jitPrepare);
+        }
+
 
         protected void TestPerformance(Action action, string caption)
         {

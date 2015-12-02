@@ -10,7 +10,8 @@ namespace SimplyFast.Research
             //ZmqTest.Work();
             //EventLoop.Run(CastleZmqTest.Work);
             //new WeakStuffTest().Run();
-            new EmitTest().Run();
+            //new EmitTest().Run();
+            new LocalSpaceWriteTests().Run();
             Console.ReadLine();
         }
     }

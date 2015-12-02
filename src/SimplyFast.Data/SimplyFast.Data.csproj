@@ -63,7 +63,7 @@
     <Compile Include="Spaces\Interface\ISpaceTable.cs" />
     <Compile Include="Spaces\Impl\SafeLocal\SafeLocalSpaceTable.cs" />
     <Compile Include="Spaces\Interface\TransactionState.cs" />
-    <Compile Include="Spaces\SpaceEx.cs" />
+    <Compile Include="Spaces\SpaceFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SimplyFast\SimplyFast.csproj">

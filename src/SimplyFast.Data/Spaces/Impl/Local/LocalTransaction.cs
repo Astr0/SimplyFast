@@ -42,7 +42,8 @@ namespace SF.Data.Spaces
 
         public void Commit()
         {
-            Debug.Assert(Alive, "Transaction not running");
+            if (!Alive)
+                throw new InvalidOperationException("Transaction already " + State);
 
             // commit trans
             Root.CommitTransaction(this);
@@ -56,7 +57,8 @@ namespace SF.Data.Spaces
 
         public void Abort()
         {
-            Debug.Assert(Alive, "Transaction not running");
+            if (!Alive)
+                throw new InvalidOperationException("Transaction already " + State);
 
             Root.AbortTransaction(this);
 

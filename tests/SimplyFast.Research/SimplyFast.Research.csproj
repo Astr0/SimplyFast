@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LocalSpaceWriteTests.cs" />
     <Compile Include="NetTest.cs" />
     <Compile Include="PerfTestBase.cs" />
     <Compile Include="Program.cs" />
@@ -56,6 +57,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\src\SimplyFast.Data\SimplyFast.Data.csproj">
+      <Project>{54E4B709-E8E8-4D18-9A42-E7278A0E5374}</Project>
+      <Name>SimplyFast.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\SimplyFast.Net.CastleZmq\SimplyFast.Net.CastleZmq.csproj">
       <Project>{3EF465F5-B733-48BD-91C3-B106B038D3D4}</Project>
       <Name>SimplyFast.Net.CastleZmq</Name>
