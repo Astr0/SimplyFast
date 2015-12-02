@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Threading;
 
 namespace SimplyFast.Research
 {
@@ -6,6 +8,8 @@ namespace SimplyFast.Research
     {
         private static void Main()
         {
+            Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
+            Thread.CurrentThread.Priority = ThreadPriority.Highest;
             //ZmqTest.Work();
             //EventLoop.Run(CastleZmqTest.Work);
             //new WeakStuffTest().Run();

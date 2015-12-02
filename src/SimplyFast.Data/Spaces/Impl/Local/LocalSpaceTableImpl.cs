@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace SF.Data.Spaces
 {
@@ -9,7 +10,7 @@ namespace SF.Data.Spaces
         private readonly List<TakenTuple<T>> _taken = new List<TakenTuple<T>>();
         private readonly WaitingActions<T> _waitingActions = new WaitingActions<T>();
         
-        private readonly List<LocalSpaceTableImpl<T>> _children = new List<LocalSpaceTableImpl<T>>();
+        private readonly HashSet<LocalSpaceTableImpl<T>> _children = new HashSet<LocalSpaceTableImpl<T>>();
         private LocalSpaceTableImpl<T> _parent;
 
         public LocalSpaceTableImpl(ITupleStorage<T> written)
@@ -132,6 +133,7 @@ namespace SF.Data.Spaces
             if (_children.Count == 0)
                 return false;
 
+            // ReSharper disable once LoopCanBeConvertedToQuery
             foreach (var child in _children)
             {
                 if (child.PendingReadAndTake(tuple, source))
@@ -142,12 +144,42 @@ namespace SF.Data.Spaces
             return false;
         }
 
+        private int PendingReadAndTake(T[] tuples, int count, LocalSpaceTableImpl<T> source)
+        {
+            var taken = _waitingActions.PendingTake(tuples, count);
+            if (taken > 0 && this != source)
+            {
+                // remember taken tuples
+                for (var i = count - taken; i < count; i++)
+                {
+                    _taken.Add(new TakenTuple<T>(source, tuples[i]));
+                }
+            }
+            if (_children.Count == 0)
+                return taken;
+
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            foreach (var child in _children)
+            {
+                taken += child.PendingReadAndTake(tuples, count - taken, source);
+                if (count == taken)
+                    return taken;
+            }
+            return taken;
+        }
+
+        private void AddRange(T[] tuples, int count)
+        {
+            if (count == 0)
+                return;
+            var taken = PendingReadAndTake(tuples, count, this);
+            count -= taken;
+            _written.AddRange(tuples, count);
+        }
+
         public void AddRange(T[] tuples)
         {
-            foreach (var tuple in tuples)
-            {
-                Add(tuple);
-            }
+            AddRange(tuples, tuples.Length);
         }
 
         public void Abort()
@@ -178,12 +210,14 @@ namespace SF.Data.Spaces
             EndCleanup();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void StartCleanup()
         {
             _waitingActions.Clear();
             _parent = null;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void EndCleanup()
         {
             _taken.Clear();
@@ -208,7 +242,9 @@ namespace SF.Data.Spaces
                 child.DoCommit(target);
             }
 
-            target.AddRange(_written.GetArray());
+            int count;
+            var written = _written.GetArray(out count);
+            target.AddRange(written, count);
 
             EndCleanup();
         }

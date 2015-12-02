@@ -52,7 +52,7 @@
     <Compile Include="Spaces\Impl\Local\LocalTransaction.cs" />
     <Compile Include="Spaces\Impl\Local\ArrayTupleStorage.cs" />
     <Compile Include="Spaces\Impl\Local\TakenTuple.cs" />
-    <Compile Include="Spaces\Impl\Local\ListTupleStorage.cs" />
+    <Compile Include="Spaces\Impl\Local\NotInUse\ListTupleStorage.cs" />
     <Compile Include="Spaces\Impl\Local\WaitingActions.cs" />
     <Compile Include="Spaces\Impl\SafeLocal\SafeLocalSpace.cs" />
     <Compile Include="Spaces\Impl\SafeLocal\SafeLocalTransaction.cs" />

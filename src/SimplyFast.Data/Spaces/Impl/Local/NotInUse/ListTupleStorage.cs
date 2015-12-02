@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SF.Data.Spaces
+namespace SF.Data.Spaces.NotInUse
 {
     internal class ListTupleStorage<T> : IEnumerable<T>, ITupleStorage<T>
         where T: class
@@ -65,9 +65,15 @@ namespace SF.Data.Spaces
             _storage.Clear();
         }
 
-        public T[] GetArray()
+        public T[] GetArray(out int count)
         {
+            count = _storage.Count;
             return _storage.ToArray();
+        }
+
+        public void AddRange(T[] tuples, int count)
+        {
+            _storage.AddRange(tuples.Take(count));
         }
     }
 }

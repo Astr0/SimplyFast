@@ -11,6 +11,7 @@ namespace SF.Data.Spaces
         public readonly LocalTransaction Parent;
         public readonly LocalSpace Space;
         protected RootLocalTransaction Root;
+        // TODO: We remove from here, so list is kinda slow
         public List<LocalTransaction> Children;
         
         protected LocalTransaction(LocalSpace space, RootLocalTransaction root, LocalTransaction parent)
@@ -104,6 +105,7 @@ namespace SF.Data.Spaces
 
         public void AddDependentTable(ILocalSpaceTable table)
         {
+            Debug.Assert(!_tables.Contains(table), "Table added more than once!");
             _tables.Add(table);
         }
 

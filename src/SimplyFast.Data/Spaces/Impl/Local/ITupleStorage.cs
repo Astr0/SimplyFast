@@ -11,6 +11,7 @@ namespace SF.Data.Spaces
         void Scan(IQuery<T> query, Action<T> callback);
         int Count(IQuery<T> query);
         void Clear();
-        T[] GetArray();
+        T[] GetArray(out int count);
+        void AddRange(T[] tuples, int count);
     }
 }

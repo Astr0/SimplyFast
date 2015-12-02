@@ -2,11 +2,11 @@
 
 namespace SF.Data.Spaces
 {
-    public class ArrayTupleStorage<T>: ITupleStorage<T>
-        where T:class
+    public class ArrayTupleStorage<T> : ITupleStorage<T>
+        where T : class
     {
-        private T[] _storage;
         private int _count;
+        private T[] _storage;
 
         public ArrayTupleStorage(int capacity)
         {
@@ -17,7 +17,7 @@ namespace SF.Data.Spaces
         {
             if (_count == _storage.Length)
             {
-                Array.Resize(ref _storage, _count * 2);
+                Array.Resize(ref _storage, _count*2);
             }
             _storage[_count++] = tuple;
         }
@@ -73,15 +73,31 @@ namespace SF.Data.Spaces
 
         public void Clear()
         {
+            if (_count == 0)
+                return;
             Array.Clear(_storage, 0, _count);
             _count = 0;
         }
 
-        public T[] GetArray()
+        public T[] GetArray(out int count)
         {
-            var res = new T[_count];
-            Array.Copy(_storage, res, _count);
-            return res;
+            count = _count;
+            return _storage;
+        }
+
+        public void AddRange(T[] tuples, int count)
+        {
+            if (_count + count > _storage.Length)
+            {
+                var newCount = Math.Max(_storage.Length*2, _count + count);
+                Array.Resize(ref _storage, newCount);
+            }
+
+            for (var i = 0; i < count; i++)
+            {
+                _storage[_count + i] = tuples[i];
+            }
+            _count += count;
         }
     }
 }
