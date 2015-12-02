@@ -15,7 +15,7 @@ namespace SF.Data.Spaces
             _transactions = new LocalSpaceTableImpl<T>[transactionsCapacity];
             for (var i = 0; i < _transactions.Length; i++)
             {
-                _transactions[i] = new LocalSpaceTableImpl<T>();
+                _transactions[i] = new LocalSpaceTableImpl<T>(new ArrayTupleStorage<T>(LocalSpaceConsts.TransactionWriteCapacity));
             }
         }
 
@@ -74,7 +74,7 @@ namespace SF.Data.Spaces
 
         #region Internal
 
-        private readonly LocalSpaceTableImpl<T> _root = new LocalSpaceTableImpl<T>();
+        private readonly LocalSpaceTableImpl<T> _root = new LocalSpaceTableImpl<T>(new ArrayTupleStorage<T>(LocalSpaceConsts.TableCapacity));
         private LocalSpaceTableImpl<T>[] _transactions;
 
         private LocalSpaceTableImpl<T> GetExistingParentImpl(ISyncTransaction transaction)
@@ -142,9 +142,9 @@ namespace SF.Data.Spaces
                 return;
             var oldSize = _transactions.Length;
             Array.Resize(ref _transactions, count);
-            for (var i = 0; i < _transactions.Length; i++)
+            for (var i = oldSize; i < _transactions.Length; i++)
             {
-                _transactions[i] = new LocalSpaceTableImpl<T>();
+                _transactions[i] = new LocalSpaceTableImpl<T>(new ArrayTupleStorage<T>(LocalSpaceConsts.TransactionWriteCapacity));
             }
         }
 

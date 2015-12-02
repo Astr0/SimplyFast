@@ -38,13 +38,13 @@ namespace SF.Data.Spaces
             if (_freeTransactionIds.Count != 0)
                 return _freeTransactionIds.Pop();
             var id = _nextTransactionId++;
-            if (_nextTransactionId >= _transactionsCapacity)
+            if (_nextTransactionId < _transactionsCapacity)
+                return id;
+            // ensure capactiy for spaces
+            _transactionsCapacity = _transactionsCapacity*2;
+            foreach (var table in _tables)
             {
-                _transactionsCapacity = _transactionsCapacity*2;
-                foreach (var table in _tables)
-                {
-                    table?.EnsureTransactionsCapacity(_nextTransactionId);
-                }
+                table?.EnsureTransactionsCapacity(_nextTransactionId);
             }
             return id;
         }

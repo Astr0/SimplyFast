@@ -49,8 +49,8 @@ namespace SF.Data.Spaces
             Root.CommitTransaction(this);
             
             Cleanup(TransactionState.Commited);
-
-            // remove this trans from parent
+            
+            // remove trans from parent if any
             Parent?._children.Remove(this);
         }
 
@@ -83,6 +83,7 @@ namespace SF.Data.Spaces
                     child.Cleanup(state);
                 }
             }
+
         }
 
         void IDisposable.Dispose()
