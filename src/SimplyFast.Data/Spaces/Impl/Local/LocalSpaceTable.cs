@@ -8,11 +8,11 @@ namespace SF.Data.Spaces
         public readonly ushort Id;
         private readonly LocalSpace _space;
 
-        public LocalSpaceTable(LocalSpace space, ushort id)
+        public LocalSpaceTable(LocalSpace space, ushort id, int transactionsCapacity)
         {
             _space = space;
             Id = id;
-            _transactions = new LocalSpaceTableImpl<T>[LocalSpaceConsts.TransactionsCapacity];
+            _transactions = new LocalSpaceTableImpl<T>[transactionsCapacity];
             for (var i = 0; i < _transactions.Length; i++)
             {
                 _transactions[i] = new LocalSpaceTableImpl<T>();
@@ -84,12 +84,9 @@ namespace SF.Data.Spaces
             Debug.Assert(localTransaction == null || localTransaction.Alive, "Dead transaction");
             while (localTransaction != null)
             {
-                if (localTransaction.Id < _transactions.Length)
-                {
-                    var impl = _transactions[localTransaction.Id];
-                    if (impl.Active)
-                        return impl;
-                }
+                var impl = _transactions[localTransaction.Id];
+                if (impl.Active)
+                    return impl;
                 localTransaction = localTransaction.Parent;
             }
             return _root;
@@ -103,16 +100,6 @@ namespace SF.Data.Spaces
             var localTransaction = (LocalTransaction)transaction;
             Debug.Assert(localTransaction == null || localTransaction.Space == _space, "Invalid transaction");
             Debug.Assert(localTransaction == null || localTransaction.Alive, "Dead transaction");
-            if (localTransaction.Id >= _transactions.Length)
-            {
-                var oldSize = _transactions.Length;
-                var newSize = Math.Max(oldSize*2, localTransaction.Id + 1);
-                Array.Resize(ref _transactions, newSize);
-                for (var i = 0; i < _transactions.Length; i++)
-                {
-                    _transactions[i] = new LocalSpaceTableImpl<T>();
-                }
-            }
 
             var impl = _transactions[localTransaction.Id];
             if (impl.Active)
@@ -126,7 +113,7 @@ namespace SF.Data.Spaces
             }
             impl.Parent = parent;
             SetNewParentForChildren(localTransaction, impl);
-            
+
             return impl;
         }
 
@@ -134,16 +121,13 @@ namespace SF.Data.Spaces
         {
             foreach (var child in trans.Children)
             {
-                if (child.Id < _transactions.Length)
+                var childImpl = _transactions[child.Id];
+                if (childImpl.Active)
                 {
-                    var childImpl = _transactions[child.Id];
-                    if (childImpl.Active)
-                    {
-                        // ok, we got alive child
-                        // set it's parent
-                        childImpl.Parent = impl;
-                        continue;
-                    }
+                    // ok, we got alive child
+                    // set it's parent
+                    childImpl.Parent = impl;
+                    continue;
                 }
                 // If child transaction is dead, go recursively
                 // maybe it's child is alive
@@ -151,6 +135,18 @@ namespace SF.Data.Spaces
             }
         }
 
+
+        public void EnsureTransactionsCapacity(int count)
+        {
+            if (count < _transactions.Length)
+                return;
+            var oldSize = _transactions.Length;
+            Array.Resize(ref _transactions, count);
+            for (var i = 0; i < _transactions.Length; i++)
+            {
+                _transactions[i] = new LocalSpaceTableImpl<T>();
+            }
+        }
 
         public void CommitTransaction(LocalTransaction transaction)
         {
@@ -161,14 +157,11 @@ namespace SF.Data.Spaces
         private void CommitTransaction(LocalTransaction transaction, LocalSpaceTableImpl<T> target)
         {
             // find parts of this transaction or it's children
-            if (transaction.Id < _transactions.Length)
+            var impl = _transactions[transaction.Id];
+            if (impl.Active)
             {
-                var impl = _transactions[transaction.Id];
-                if (impl.Active)
-                {
-                    impl.Commit(target);
-                    return;
-                }
+                impl.Commit(target);
+                return;
             }
             // ok, this transaction not found, what about it's children?
             foreach (var child in transaction.Children)
@@ -180,14 +173,11 @@ namespace SF.Data.Spaces
         public void AbortTransaction(LocalTransaction transaction)
         {
             // find parts of this transaction or it's children
-            if (transaction.Id < _transactions.Length)
+            var impl = _transactions[transaction.Id];
+            if (impl.Active)
             {
-                var impl = _transactions[transaction.Id];
-                if (impl.Active)
-                {
-                    impl.Abort();
-                    return;
-                }
+                impl.Abort();
+                return;
             }
             // ok, this transaction not found, what about it's children?
             foreach (var child in transaction.Children)

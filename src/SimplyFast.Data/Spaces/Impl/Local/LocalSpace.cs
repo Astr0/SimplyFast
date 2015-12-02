@@ -5,7 +5,7 @@ namespace SF.Data.Spaces
 {
     internal class LocalSpace : ISyncSpace
     {
-        private object[] _tables = new object[4];
+        private ILocalSpaceTable[] _tables = new ILocalSpaceTable[4];
         
         public ISyncSpaceTable<T> GetTable<T>(ushort id) where T : class
         {
@@ -13,12 +13,15 @@ namespace SF.Data.Spaces
                 Array.Resize(ref _tables, id + 1);
             var result = _tables[id];
             if (result == null)
-                _tables[id] = result = new LocalSpaceTable<T>(this, id);
+            {
+                _tables[id] = result = new LocalSpaceTable<T>(this, id, _transactionsCapacity);
+            }
 
             return (ISyncSpaceTable<T>) result;
         }
 
         private int _nextTransactionId;
+        private int _transactionsCapacity = Math.Max(1, LocalSpaceConsts.TransactionsCapacity);
         private readonly Stack<int> _freeTransactionIds = new Stack<int>(LocalSpaceConsts.TransactionsCapacity);
         public ISyncTransaction BeginTransaction()
         {
@@ -32,7 +35,18 @@ namespace SF.Data.Spaces
 
         internal int GetNextTransactionId()
         {
-            return _freeTransactionIds.Count != 0 ? _freeTransactionIds.Pop() : _nextTransactionId++;
+            if (_freeTransactionIds.Count != 0)
+                return _freeTransactionIds.Pop();
+            var id = _nextTransactionId++;
+            if (_nextTransactionId >= _transactionsCapacity)
+            {
+                _transactionsCapacity = _transactionsCapacity*2;
+                foreach (var table in _tables)
+                {
+                    table?.EnsureTransactionsCapacity(_nextTransactionId);
+                }
+            }
+            return id;
         }
     }
 }
