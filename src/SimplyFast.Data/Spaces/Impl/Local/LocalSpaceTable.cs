@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace SF.Data.Spaces
@@ -79,16 +80,17 @@ namespace SF.Data.Spaces
 
         private LocalSpaceTableImpl<T> GetExistingParentImpl(ISyncTransaction transaction)
         {
-            var localTransaction = (LocalTransaction)transaction;
-            Debug.Assert(localTransaction == null || localTransaction.Space == _space, "Invalid transaction");
-            Debug.Assert(localTransaction == null || localTransaction.Alive, "Dead transaction");
-            while (localTransaction != null)
+            if (transaction == null)
+                return _root;
+
+            var localTransaction = (LocalTransaction) transaction;
+            do
             {
                 var impl = _transactions[localTransaction.Id];
                 if (impl.Active)
                     return impl;
                 localTransaction = localTransaction.Parent;
-            }
+            } while (localTransaction != null);
             return _root;
         }
 
@@ -105,21 +107,30 @@ namespace SF.Data.Spaces
             if (impl.Active)
                 return impl;
             // ok, this impl is dead, we need to init it
-            var parent = GetExistingParentImpl(localTransaction.Parent);
-            if (parent == _root)
+            if (localTransaction.Parent == null)
             {
+                // this is just perf optimization for first level transactions
                 // transaction don't know about changes in this table
                 localTransaction.AddTable(this);
+                impl.Parent = _root;
             }
-            impl.Parent = parent;
-            SetNewParentForChildren(localTransaction, impl);
+            else
+            {
+                // transaction don't know about changes in this table
+                var parentImpl = GetExistingParentImpl(localTransaction.Parent);
+                if (parentImpl == _root)
+                    localTransaction.AddTable(this);
+                impl.Parent = parentImpl;
+            }
+            if (localTransaction.Children != null)
+                SetNewParentForChildren(localTransaction.Children, impl);
 
             return impl;
         }
 
-        private void SetNewParentForChildren(LocalTransaction trans, LocalSpaceTableImpl<T> impl)
+        private void SetNewParentForChildren(List<LocalTransaction> children, LocalSpaceTableImpl<T> impl)
         {
-            foreach (var child in trans.Children)
+            foreach (var child in children)
             {
                 var childImpl = _transactions[child.Id];
                 if (childImpl.Active)
@@ -131,7 +142,8 @@ namespace SF.Data.Spaces
                 }
                 // If child transaction is dead, go recursively
                 // maybe it's child is alive
-                SetNewParentForChildren(child, impl);
+                if (child.Children != null)
+                    SetNewParentForChildren(child.Children, impl);
             }
         }
 
@@ -164,9 +176,12 @@ namespace SF.Data.Spaces
                 return;
             }
             // ok, this transaction not found, what about it's children?
-            foreach (var child in transaction.Children)
+            if (transaction.Children != null)
             {
-                CommitTransaction(child, target);
+                foreach (var child in transaction.Children)
+                {
+                    CommitTransaction(child, target);
+                }
             }
         }
 
@@ -180,9 +195,12 @@ namespace SF.Data.Spaces
                 return;
             }
             // ok, this transaction not found, what about it's children?
-            foreach (var child in transaction.Children)
+            if (transaction.Children != null)
             {
-                AbortTransaction(child);
+                foreach (var child in transaction.Children)
+                {
+                    AbortTransaction(child);
+                }
             }
         }
 

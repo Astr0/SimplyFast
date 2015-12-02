@@ -57,6 +57,25 @@ namespace SimplyFast.Research
             }
         }
 
+        private void AddTupleInTransactionAbort()
+        {
+            using (var trans = _space.BeginTransaction())
+            {
+                _table.Add(new TestTuple(_counter, _counter), trans);
+                _counter++;
+                trans.Abort();
+            }
+        }
+
+        private void NothingInTransactionAbort()
+        {
+            using (var trans = _space.BeginTransaction())
+            {
+                _counter++;
+                trans.Abort();
+            }
+        }
+
         private ISyncTransaction _globalTransaction;
         private void AddTupleInGlobalTransaction()
         {
@@ -71,10 +90,14 @@ namespace SimplyFast.Research
 
             ResetSpace();
             TestPerformance(AddTupleToList, Iterations, "Add tuples to list.", false);
+            /*ResetSpace();
+            TestPerformance(AddTupleNoTransaction, Iterations, "Add tuples, no transaction.", false);*/
             ResetSpace();
-            TestPerformance(AddTupleNoTransaction, Iterations, "Add tuples, no transaction.", false);
+            TestPerformance(NothingInTransactionAbort, Iterations, "Just do transactions.", false);
             ResetSpace();
             TestPerformance(AddTupleInTransaction, Iterations, "Add tuples in transaction.", false);
+            ResetSpace();
+            TestPerformance(AddTupleInTransactionAbort, Iterations, "Add tuples in transaction abort.", false);
             ResetSpace();
             using (_globalTransaction = _space.BeginTransaction())
             {
@@ -93,6 +116,8 @@ namespace SimplyFast.Research
             AddTupleToList();
             AddTupleNoTransaction();
             AddTupleInTransaction();
+            AddTupleInTransactionAbort();
+            NothingInTransactionAbort();
             using (_globalTransaction = _space.BeginTransaction())
             {
                 AddTupleInGlobalTransaction();

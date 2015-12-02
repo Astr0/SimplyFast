@@ -11,7 +11,7 @@ namespace SF.Data.Spaces
         public readonly LocalTransaction Parent;
         public readonly LocalSpace Space;
         protected RootLocalTransaction Root;
-        private List<LocalTransaction> _children;
+        public List<LocalTransaction> Children;
         
         protected LocalTransaction(LocalSpace space, RootLocalTransaction root, LocalTransaction parent)
         {
@@ -23,15 +23,14 @@ namespace SF.Data.Spaces
         }
 
         internal bool Alive => State == TransactionState.Running;
-        public IEnumerable<LocalTransaction> Children => _children ?? Enumerable.Empty<LocalTransaction>();
         public TransactionState State { get; internal set; }
         
         public ISyncTransaction BeginTransaction()
         {
             var trans = new LocalTransaction(Space, Root, this);
-            if (_children == null)
-                _children = new List<LocalTransaction>(1);
-            _children.Add(trans);
+            if (Children == null)
+                Children = new List<LocalTransaction>(1);
+            Children.Add(trans);
             return trans;
         }
 
@@ -51,7 +50,7 @@ namespace SF.Data.Spaces
             Cleanup(TransactionState.Commited);
             
             // remove trans from parent if any
-            Parent?._children.Remove(this);
+            Parent?.Children.Remove(this);
         }
 
 
@@ -65,7 +64,7 @@ namespace SF.Data.Spaces
             Cleanup(TransactionState.Aborted);
             
             // remove trans from parent if any
-            Parent?._children.Remove(this);
+            Parent?.Children.Remove(this);
         }
 
         
@@ -76,7 +75,7 @@ namespace SF.Data.Spaces
             State = state;
             Space.Cleanup(Id);
 
-            if (_children != null)
+            if (Children != null)
             {
                 foreach (var child in Children)
                 {
