@@ -7,8 +7,9 @@ namespace SF.Data.Spaces
     {
         private readonly TupleStorage<T> _written = new TupleStorage<T>(); 
         private readonly ICollection<TakenTuple<T>> _taken = new List<TakenTuple<T>>();
-        private readonly WaitingActions<T> _waitingActions = new WaitingActions<T>();
-
+        private const int WaitingListCapacity = 1;
+        private readonly List<WaitingAction> _waitingActions = new List<WaitingAction>(WaitingListCapacity);
+        
         private readonly List<LocalSpaceTableImpl<T>> _children = new List<LocalSpaceTableImpl<T>>();
         private LocalSpaceTableImpl<T> _parent;
 
@@ -25,7 +26,7 @@ namespace SF.Data.Spaces
             }
         }  
 
-        public IEnumerable<LocalSpaceTableImpl<T>> Children => _children;
+        //public IEnumerable<LocalSpaceTableImpl<T>> Children => _children;
 
         
         public T TryRead(IQuery<T> query)
@@ -70,7 +71,7 @@ namespace SF.Data.Spaces
             }
 
             // add waiting action
-            _waitingActions.Add(query, callback, DateTime.UtcNow.Add(timeout), false);
+            _waitingActions.Add(new WaitingAction(query, callback, DateTime.UtcNow.Add(timeout), false));
         }
 
         public void Take(IQuery<T> query, Action<T> callback, TimeSpan timeout)
@@ -83,7 +84,7 @@ namespace SF.Data.Spaces
             }
 
             // add waiting action
-            _waitingActions.Add(query, callback, DateTime.UtcNow.Add(timeout), true);
+            _waitingActions.Add(new WaitingAction(query, callback, DateTime.UtcNow.Add(timeout), true));
         }
 
         public T[] Scan(IQuery<T> query)
@@ -112,25 +113,48 @@ namespace SF.Data.Spaces
 
         public void Add(T tuple)
         {
+            //if (_children.Count == 0 && _waitingActions.Count == 0)
+            //{
+            //    // no waiting actions 
+            //    _written.Add(tuple);
+            //    return;
+            //}
             // try to take item by this transaction or it's childs
-            var now = DateTime.UtcNow;
-            if (Taken(tuple, now, false))
-                return;
-            _written.Add(tuple);
+            var source = this;
+            PendingReadAndTake(tuple, ref source);
+            if (source != null)
+                _written.Add(tuple);
         }
 
-        private bool Taken(T tuple, DateTime now, bool taken)
+        private void PendingReadAndTake(T tuple, ref LocalSpaceTableImpl<T> source)
         {
-            taken = _waitingActions.Taken(tuple, now, taken);
-            // ReSharper disable once LoopCanBeConvertedToQuery
-            
-            // item is available to child transactions
-            // iterate all the transactions so everyone can read it
-            foreach (var child in Children)
+            for (var i = _waitingActions.Count - 1; i >= 0; i--)
             {
-                taken = child.Taken(tuple, now, taken);
+                var action = _waitingActions[i];
+                // check expiration of all actions
+                if (action.Expire < DateTime.UtcNow)
+                {
+                    action.Callback(null);
+                    _waitingActions.RemoveAt(i);
+                    continue;
+                }
+                // ignore take actions here
+                if (action.Take && source == null)
+                    continue;
+                if (!action.Query.Match(tuple))
+                    continue;
+                action.Callback(tuple);
+                _waitingActions.RemoveAt(i);
+                if (!action.Take)
+                    continue;
+                if (this != source)
+                    _taken.Add(new TakenTuple<T>(source, tuple));
+                source = null;
             }
-            return taken;
+            foreach (var child in _children)
+            {
+                child.PendingReadAndTake(tuple, ref source);
+            }
         }
 
         public void AddRange(T[] tuples)
@@ -161,7 +185,7 @@ namespace SF.Data.Spaces
             StartCleanup();
 
             // abort children
-            foreach (var child in Children)
+            foreach (var child in _children)
             {
                 child.DoAbort();
             }
@@ -202,7 +226,7 @@ namespace SF.Data.Spaces
             StartCleanup();
 
             // commit children
-            foreach (var child in Children)
+            foreach (var child in _children)
             {
                 child.DoCommit(target);
             }
@@ -210,6 +234,22 @@ namespace SF.Data.Spaces
             target.AddRange(_written);
 
             EndCleanup();
+        }
+
+        private class WaitingAction
+        {
+            public readonly Action<T> Callback;
+            public readonly DateTime Expire;
+            public readonly IQuery<T> Query;
+            public readonly bool Take;
+
+            public WaitingAction(IQuery<T> query, Action<T> callback, DateTime expire, bool take)
+            {
+                Query = query;
+                Callback = callback;
+                Take = take;
+                Expire = expire;
+            }
         }
     }
 }

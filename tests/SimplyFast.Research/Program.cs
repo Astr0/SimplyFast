@@ -1,5 +1,4 @@
 ﻿using System;
-using SF.Threading;
 
 namespace SimplyFast.Research
 {
