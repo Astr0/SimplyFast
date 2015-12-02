@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace SF.Data.Spaces
 {
@@ -11,7 +10,7 @@ namespace SF.Data.Spaces
         public readonly LocalTransaction Parent;
         public readonly LocalSpace Space;
         protected RootLocalTransaction Root;
-        // TODO: We remove from here, so list is kinda slow
+
         public List<LocalTransaction> Children;
         
         protected LocalTransaction(LocalSpace space, RootLocalTransaction root, LocalTransaction parent)
@@ -23,7 +22,6 @@ namespace SF.Data.Spaces
             State = TransactionState.Running;
         }
 
-        internal bool Alive => State == TransactionState.Running;
         public TransactionState State { get; internal set; }
         
         public ISyncTransaction BeginTransaction()
@@ -42,7 +40,7 @@ namespace SF.Data.Spaces
 
         public void Commit()
         {
-            if (!Alive)
+            if (State != TransactionState.Running)
                 throw new InvalidOperationException("Transaction already " + State);
 
             // commit trans
@@ -57,7 +55,7 @@ namespace SF.Data.Spaces
 
         public void Abort()
         {
-            if (!Alive)
+            if (State != TransactionState.Running)
                 throw new InvalidOperationException("Transaction already " + State);
 
             Root.AbortTransaction(this);
@@ -71,8 +69,6 @@ namespace SF.Data.Spaces
         
         private void Cleanup(TransactionState state)
         {
-            Debug.Assert(Alive, "Transaction not running");
-
             State = state;
             Space.Cleanup(Id);
 
@@ -88,7 +84,7 @@ namespace SF.Data.Spaces
 
         void IDisposable.Dispose()
         {
-            if (!Alive)
+            if (State != TransactionState.Running)
                 return;
             Abort();
         }

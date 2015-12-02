@@ -102,7 +102,7 @@ namespace SF.Data.Spaces
 
             var localTransaction = (LocalTransaction)transaction;
             Debug.Assert(localTransaction == null || localTransaction.Space == _space, "Invalid transaction");
-            Debug.Assert(localTransaction == null || localTransaction.Alive, "Dead transaction");
+            Debug.Assert(localTransaction == null || localTransaction.State == TransactionState.Running, "Dead transaction");
 
             var impl = _transactions[localTransaction.Id];
             if (impl.Active)
