@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using NUnit.Framework;
-using SF.Data.Spaces;
+using SF.Data.Legacy.Spaces;
 
 namespace SF.Tests.Data.Spaces
 {

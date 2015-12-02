@@ -1,4 +1,4 @@
-﻿namespace SF.Data.Spaces
+﻿namespace SF.Data.Legacy.Spaces
 {
     internal static class LocalSpaceConsts
     {

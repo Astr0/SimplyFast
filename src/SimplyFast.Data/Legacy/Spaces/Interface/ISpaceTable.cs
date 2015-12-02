@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace SF.Data.Spaces
+namespace SF.Data.Legacy.Spaces
 {
     public interface ISpaceTable<T> : ISyncSpaceTable<T> where T : class
     {

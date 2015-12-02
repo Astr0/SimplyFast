@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SF.Data.Spaces
+namespace SF.Data.Legacy.Spaces
 {
     internal class LocalSpace : ISyncSpace
     {

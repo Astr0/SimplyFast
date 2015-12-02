@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using SF.Threading;
 
-namespace SF.Data.Spaces
+namespace SF.Data.Legacy.Spaces
 {
     internal class SafeLocalSpaceTable<T> : ISpaceTable<T> where T : class
     {

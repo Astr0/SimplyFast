@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace SF.Data.Spaces
+namespace SF.Data.Legacy.Spaces
 {
     internal class LocalTransaction : ISyncTransaction
     {

@@ -1,11 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
 
 namespace SF.Data.Spaces
 {
-    public interface ITransaction : ISyncTransaction
+    public interface ITransaction: IDisposable
     {
-        new Task<ITransaction> BeginTransaction();
-        new Task Abort();
-        new Task Commit();
+        TransactionState State { get; }
+        ITransaction BeginTransaction();
+        void Commit();
+        void Rollback();
     }
 }

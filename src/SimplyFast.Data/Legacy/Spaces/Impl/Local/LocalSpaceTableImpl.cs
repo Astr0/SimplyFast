@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace SF.Data.Spaces
+namespace SF.Data.Legacy.Spaces
 {
     internal class LocalSpaceTableImpl<T> where T : class
     {

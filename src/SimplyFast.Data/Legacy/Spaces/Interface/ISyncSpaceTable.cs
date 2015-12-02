@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SF.Data.Spaces
+namespace SF.Data.Legacy.Spaces
 {
     public interface ISyncSpaceTable<T> : IDisposable
         where T : class

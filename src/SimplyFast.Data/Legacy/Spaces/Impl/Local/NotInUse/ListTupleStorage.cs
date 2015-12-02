@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SF.Data.Spaces.NotInUse
+namespace SF.Data.Legacy.Spaces.NotInUse
 {
     internal class ListTupleStorage<T> : IEnumerable<T>, ITupleStorage<T>
         where T: class

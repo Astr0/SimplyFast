@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace SF.Data.Spaces
+namespace SF.Data.Legacy.Spaces
 {
     public interface ISpace : ISyncSpace
     {

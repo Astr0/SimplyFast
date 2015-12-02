@@ -1,7 +1,7 @@
 ﻿namespace SF.Data.Spaces
 {
-    public interface IQuery<in T>
+    public interface IQuery<T>
     {
-        bool Match(T tuple);
+         
     }
 }

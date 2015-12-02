@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using SF.Data.Spaces.NotInUse;
 
-namespace SF.Data.Spaces
+namespace SF.Data.Legacy.Spaces
 {
     internal class LocalSpaceTable<T> : ILocalSpaceTable, ISyncSpaceTable<T> where T : class
     {

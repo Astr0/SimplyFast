@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SF.Data.Spaces
+namespace SF.Data.Legacy.Spaces
 {
     public class ArrayTupleStorage<T> : ITupleStorage<T>
         where T : class

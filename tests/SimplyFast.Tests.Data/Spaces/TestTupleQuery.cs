@@ -1,4 +1,4 @@
-﻿using SF.Data.Spaces;
+﻿using SF.Data.Legacy.Spaces;
 
 namespace SF.Tests.Data.Spaces
 {

@@ -42,30 +42,35 @@
     <Compile Include="Dynamo\DVector.cs" />
     <Compile Include="Dynamo\DObjectEx.cs" />
     <Compile Include="Dynamo\DObject.cs" />
+    <Compile Include="Legacy\Spaces\Readme.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Spaces\Impl\Local\ILocalSpaceTable.cs" />
-    <Compile Include="Spaces\Impl\Local\ITupleStorage.cs" />
-    <Compile Include="Spaces\Impl\Local\LocalSpace.cs" />
-    <Compile Include="Spaces\Impl\Local\LocalSpaceConsts.cs" />
-    <Compile Include="Spaces\Impl\Local\LocalSpaceTable.cs" />
-    <Compile Include="Spaces\Impl\Local\LocalSpaceTableImpl.cs" />
-    <Compile Include="Spaces\Impl\Local\LocalTransaction.cs" />
-    <Compile Include="Spaces\Impl\Local\ArrayTupleStorage.cs" />
-    <Compile Include="Spaces\Impl\Local\TakenTuple.cs" />
-    <Compile Include="Spaces\Impl\Local\NotInUse\ListTupleStorage.cs" />
-    <Compile Include="Spaces\Impl\Local\WaitingActions.cs" />
-    <Compile Include="Spaces\Impl\SafeLocal\SafeLocalSpace.cs" />
-    <Compile Include="Spaces\Impl\SafeLocal\SafeLocalTransaction.cs" />
-    <Compile Include="Spaces\Interface\ISpace.cs" />
-    <Compile Include="Spaces\Interface\ISyncSpace.cs" />
-    <Compile Include="Spaces\Interface\ISyncSpaceTable.cs" />
-    <Compile Include="Spaces\Interface\ISyncTransaction.cs" />
-    <Compile Include="Spaces\Interface\ITransaction.cs" />
+    <Compile Include="Legacy\Spaces\Impl\Local\ILocalSpaceTable.cs" />
+    <Compile Include="Legacy\Spaces\Impl\Local\ITupleStorage.cs" />
+    <Compile Include="Legacy\Spaces\Impl\Local\LocalSpace.cs" />
+    <Compile Include="Legacy\Spaces\Impl\Local\LocalSpaceConsts.cs" />
+    <Compile Include="Legacy\Spaces\Impl\Local\LocalSpaceTable.cs" />
+    <Compile Include="Legacy\Spaces\Impl\Local\LocalSpaceTableImpl.cs" />
+    <Compile Include="Legacy\Spaces\Impl\Local\LocalTransaction.cs" />
+    <Compile Include="Legacy\Spaces\Impl\Local\ArrayTupleStorage.cs" />
+    <Compile Include="Legacy\Spaces\Impl\Local\TakenTuple.cs" />
+    <Compile Include="Legacy\Spaces\Impl\Local\NotInUse\ListTupleStorage.cs" />
+    <Compile Include="Legacy\Spaces\Impl\Local\WaitingActions.cs" />
+    <Compile Include="Legacy\Spaces\Impl\SafeLocal\SafeLocalSpace.cs" />
+    <Compile Include="Legacy\Spaces\Impl\SafeLocal\SafeLocalTransaction.cs" />
+    <Compile Include="Legacy\Spaces\Interface\ISpace.cs" />
+    <Compile Include="Legacy\Spaces\Interface\ISyncSpace.cs" />
+    <Compile Include="Legacy\Spaces\Interface\ISyncSpaceTable.cs" />
+    <Compile Include="Legacy\Spaces\Interface\ISyncTransaction.cs" />
+    <Compile Include="Legacy\Spaces\Interface\ITransaction.cs" />
+    <Compile Include="Legacy\Spaces\Interface\IQuery.cs" />
+    <Compile Include="Legacy\Spaces\Interface\ISpaceTable.cs" />
+    <Compile Include="Legacy\Spaces\Impl\SafeLocal\SafeLocalSpaceTable.cs" />
+    <Compile Include="Legacy\Spaces\Interface\TransactionState.cs" />
+    <Compile Include="Legacy\Spaces\SpaceFactory.cs" />
+    <Compile Include="Spaces\Interface\ISpaceProxy.cs" />
     <Compile Include="Spaces\Interface\IQuery.cs" />
-    <Compile Include="Spaces\Interface\ISpaceTable.cs" />
-    <Compile Include="Spaces\Impl\SafeLocal\SafeLocalSpaceTable.cs" />
+    <Compile Include="Spaces\Interface\ITransaction.cs" />
     <Compile Include="Spaces\Interface\TransactionState.cs" />
-    <Compile Include="Spaces\SpaceFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SimplyFast\SimplyFast.csproj">
@@ -73,6 +78,7 @@
       <Name>SimplyFast</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

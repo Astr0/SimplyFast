@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using SF.Data.Spaces;
+using SF.Data.Legacy.Spaces;
 
 namespace SimplyFast.Research
 {
