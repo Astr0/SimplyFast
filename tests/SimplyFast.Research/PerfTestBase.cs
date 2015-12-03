@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Runtime;
 using System.Threading;
 
 namespace SimplyFast.Research
@@ -43,24 +44,38 @@ namespace SimplyFast.Research
                     }
                 }
             }
+            GC.Collect();
+            GC.WaitForFullGCComplete();
 
-            var sw = new Stopwatch();
-            sw.Reset();
-            sw.Start();
-            for (var i = 0; i < iterations; i++)
+            var oldMode = GCSettings.LatencyMode;
+            GCSettings.LatencyMode = GCLatencyMode.LowLatency;
+            try
             {
-                action();
+                var sw = new Stopwatch();
+                sw.Reset();
+                sw.Start();
+                for (var i = 0; i < iterations; i++)
+                {
+                    action();
+                }
+                if (finalAction != null)
+                    finalAction();
+                sw.Stop();
+                if (iterations != 1)
+                {
+                    var opsPerSecond = sw.ElapsedMilliseconds > 0
+                        ? (iterations*1000.0/sw.ElapsedMilliseconds).ToString("F")
+                        : "?";
+                    Console.WriteLine("{0}({1} iterations) - {2} ms. {3} ops/second", caption, iterations,
+                        sw.ElapsedMilliseconds, opsPerSecond);
+                }
+                else
+                    Console.WriteLine("{0} - {1} ms.", caption, sw.ElapsedMilliseconds);
             }
-            if (finalAction != null)
-                finalAction();
-            sw.Stop();
-            if (iterations != 1)
+            finally
             {
-                var opsPerSecond = sw.ElapsedMilliseconds > 0 ? (iterations*1000.0/sw.ElapsedMilliseconds).ToString("F") : "?";
-                Console.WriteLine("{0}({1} iterations) - {2} ms. {3} ops/second", caption, iterations, sw.ElapsedMilliseconds, opsPerSecond);
+                GCSettings.LatencyMode = oldMode;
             }
-            else
-                Console.WriteLine("{0} - {1} ms.", caption, sw.ElapsedMilliseconds);
         }
 
         protected static void TestPerformance(Action action, int iterations, string caption, bool jitPrepare)

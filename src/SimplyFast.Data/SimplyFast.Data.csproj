@@ -23,7 +23,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -67,10 +67,20 @@
     <Compile Include="Legacy\Spaces\Impl\SafeLocal\SafeLocalSpaceTable.cs" />
     <Compile Include="Legacy\Spaces\Interface\TransactionState.cs" />
     <Compile Include="Legacy\Spaces\SpaceFactory.cs" />
+    <Compile Include="Spaces\Impl\Local\ILocalTable.cs" />
+    <Compile Include="Spaces\Impl\Local\LocalSpaceConsts.cs" />
+    <Compile Include="Spaces\Impl\Local\LocalSpaceProxy.cs" />
+    <Compile Include="Spaces\Impl\Local\LocalTable.cs" />
+    <Compile Include="Spaces\Impl\Local\Storage\ArrayTupleStorage.cs" />
+    <Compile Include="Spaces\Impl\Local\Storage\ITupleStorage.cs" />
+    <Compile Include="Spaces\Impl\Local\TakenTuple.cs" />
+    <Compile Include="Spaces\Interface\ISpace.cs" />
     <Compile Include="Spaces\Interface\ISpaceProxy.cs" />
     <Compile Include="Spaces\Interface\IQuery.cs" />
-    <Compile Include="Spaces\Interface\ITransaction.cs" />
     <Compile Include="Spaces\Interface\TransactionState.cs" />
+    <Compile Include="Spaces\Impl\Local\LocalSpace.cs" />
+    <Compile Include="Spaces\Interface\TupleType.cs" />
+    <Compile Include="Spaces\SpaceFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SimplyFast\SimplyFast.csproj">

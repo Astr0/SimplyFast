@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using SF.Data.Legacy.Spaces;
 
-namespace SimplyFast.Research
+namespace SimplyFast.Research.Spaces
 {
-    public class LocalSpaceWriteTests: PerfTestBase
+    public class LegacyLocalSpaceWriteTests: PerfTestBase
     {
         private ISyncSpace _space;
         private ISyncSpaceTable<TestTuple> _table;
@@ -21,7 +21,7 @@ namespace SimplyFast.Research
             public readonly int Y;
         }
 
-        public LocalSpaceWriteTests()
+        public LegacyLocalSpaceWriteTests()
         {
             ResetSpace();
         }
@@ -86,29 +86,29 @@ namespace SimplyFast.Research
 
         protected override void DoRun()
         {
-            TestPerformance(AddTupleInTransaction, Iterations, "Add tuples in transaction.", false);
-            //JitPrepare();
-
-            //ResetSpace();
-            //TestPerformance(AddTupleToList, Iterations, "Add tuples to list.", false);
-            ///*ResetSpace();
-            //TestPerformance(AddTupleNoTransaction, Iterations, "Add tuples, no transaction.", false);*/
-            //ResetSpace();
-            //TestPerformance(NothingInTransactionAbort, Iterations, "Just do transactions.", false);
-            //ResetSpace();
             //TestPerformance(AddTupleInTransaction, Iterations, "Add tuples in transaction.", false);
-            //ResetSpace();
-            //TestPerformance(AddTupleInTransactionAbort, Iterations, "Add tuples in transaction abort.", false);
-            //ResetSpace();
-            //using (_globalTransaction = _space.BeginTransaction())
-            //{
-            //    TestPerformance(AddTupleInGlobalTransaction, Iterations, () => _globalTransaction.Commit(), "Add tuples in global transaction and commit.", false);
-            //}
-            //ResetSpace();
-            //using (_globalTransaction = _space.BeginTransaction())
-            //{
-            //    TestPerformance(AddTupleInGlobalTransaction, Iterations, () => _globalTransaction.Abort(), "Add tuples in global transaction and abort.", false);
-            //}
+            JitPrepare();
+
+            ResetSpace();
+            TestPerformance(AddTupleToList, Iterations, "Add tuples to list.", false);
+            ResetSpace();
+            TestPerformance(AddTupleNoTransaction, Iterations, "Add tuples, no transaction.", false);
+            ResetSpace();
+            TestPerformance(AddTupleInTransaction, Iterations, "Add tuples in transaction.", false);
+            ResetSpace();
+            TestPerformance(NothingInTransactionAbort, Iterations, "Just do transactions.", false);
+            ResetSpace();
+            TestPerformance(AddTupleInTransactionAbort, Iterations, "Add tuples in transaction abort.", false);
+            ResetSpace();
+            using (_globalTransaction = _space.BeginTransaction())
+            {
+                TestPerformance(AddTupleInGlobalTransaction, Iterations, () => _globalTransaction.Commit(), "Add tuples in global transaction and commit.", false);
+            }
+            ResetSpace();
+            using (_globalTransaction = _space.BeginTransaction())
+            {
+                TestPerformance(AddTupleInGlobalTransaction, Iterations, () => _globalTransaction.Abort(), "Add tuples in global transaction and abort.", false);
+            }
         }
 
         private void JitPrepare()

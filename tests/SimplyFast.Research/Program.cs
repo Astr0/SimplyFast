@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using SimplyFast.Research.Spaces;
 
 namespace SimplyFast.Research
 {
@@ -14,6 +15,7 @@ namespace SimplyFast.Research
             //EventLoop.Run(CastleZmqTest.Work);
             //new WeakStuffTest().Run();
             //new EmitTest().Run();
+            new LegacyLocalSpaceWriteTests().Run();
             new LocalSpaceWriteTests().Run();
             Console.ReadLine();
         }
