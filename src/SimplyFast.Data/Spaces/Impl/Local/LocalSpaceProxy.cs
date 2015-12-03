@@ -170,6 +170,16 @@ namespace SF.Data.Spaces.Local
             return GetCurrentTransactionTable<T>(query.Type).TryTake(query);
         }
 
+        public IDisposable Read<T>(IQuery<T> query, Action<T> callback)
+        {
+            return GetCurrentTransactionTable<T>(query.Type).Read(query, callback);
+        }
+
+        public IDisposable Take<T>(IQuery<T> query, Action<T> callback)
+        {
+            return GetCurrentTransactionTable<T>(query.Type).Take(query, callback);
+        }
+
         public IReadOnlyList<T> Scan<T>(IQuery<T> query)
         {
             return GetLastTransactionTable<T>(query.Type).Scan(query);

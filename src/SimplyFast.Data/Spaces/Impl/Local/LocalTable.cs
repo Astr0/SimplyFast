@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace SF.Data.Spaces.Local
@@ -8,7 +9,8 @@ namespace SF.Data.Spaces.Local
         private readonly ITupleStorage<T> _written;
         private readonly List<TakenTuple<T>> _taken = new List<TakenTuple<T>>(LocalSpaceConsts.TransactionWrittenCapacity); 
         private LocalTable<T> _parent;
-
+        public LocalTable<T> Root;
+        public WaitingAction<T> WaitingAction; 
 
         #region Factory
 
@@ -23,6 +25,7 @@ namespace SF.Data.Spaces.Local
             var trans = _cache.Count != 0 ? _cache.Pop() : new LocalTable<T>(new ArrayTupleStorage<T>(LocalSpaceConsts.TransactionWrittenCapacity));
             trans.HierarchyLevel = hierarchyLevel;
             trans._parent = parent;
+            trans.Root = parent.Root;
             return trans;
         }
 
@@ -66,6 +69,33 @@ namespace SF.Data.Spaces.Local
             return default(T);
         }
 
+        public IDisposable Read(IQuery<T> query, Action<T> callback)
+        {
+            var readItem = TryRead(query);
+            if (readItem != null)
+            {
+                callback(readItem);
+                return DisposableEx.Null();
+            }
+
+            // add waiting action
+            return WaitingAction<T>.Install(this, query, callback, false);
+        }
+
+        public IDisposable Take(IQuery<T> query, Action<T> callback)
+        {
+            var takenItem = TryTake(query);
+            if (takenItem != null)
+            {
+                callback(takenItem);
+                return DisposableEx.Null();
+            }
+
+            // add waiting action
+            return WaitingAction<T>.Install(this, query, callback, true);
+
+        }
+
         public IReadOnlyList<T> Scan(IQuery<T> query)
         {
             var result = new List<T>();
@@ -92,7 +122,8 @@ namespace SF.Data.Spaces.Local
 
         public void Add(T tuple)
         {
-            // TODO: Check pending actions
+            if (WaitingAction != null && (Root == null ? WaitingAction.TakeRoot(tuple) : WaitingAction.Take(tuple)))
+                return;
             _written.Add(tuple);
         }
 
@@ -100,8 +131,10 @@ namespace SF.Data.Spaces.Local
         {
             if (count == 0)
                 return;
-            // TODO: Check pending actions
-            _written.AddRange(tuples, count);
+            if (WaitingAction == null)
+                _written.AddRange(tuples, count);
+            else
+                _written.AddRange(tuples, count - (Root == null ? WaitingAction.TakeRoot(tuples, count) : WaitingAction.Take(tuples, count)));
         }
 
         public void AddRange(T[] tuples)

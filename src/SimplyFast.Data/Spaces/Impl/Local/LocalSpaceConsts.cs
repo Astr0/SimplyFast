@@ -2,6 +2,7 @@
 {
     public class LocalSpaceConsts
     {
+        public const int WaitingActionsPoolCapacity = 10;
         public const int TransactionCacheCapacity = 10;
         public const int ProxyTableTransactionsCapacity = 2;
         public const int SpaceTablesCapacity = 4;

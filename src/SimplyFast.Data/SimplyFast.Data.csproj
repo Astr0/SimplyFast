@@ -74,6 +74,7 @@
     <Compile Include="Spaces\Impl\Local\Storage\ArrayTupleStorage.cs" />
     <Compile Include="Spaces\Impl\Local\Storage\ITupleStorage.cs" />
     <Compile Include="Spaces\Impl\Local\TakenTuple.cs" />
+    <Compile Include="Spaces\Impl\Local\WaitingAction.cs" />
     <Compile Include="Spaces\Interface\ISpace.cs" />
     <Compile Include="Spaces\Interface\ISpaceProxy.cs" />
     <Compile Include="Spaces\Interface\IQuery.cs" />

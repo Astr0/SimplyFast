@@ -37,16 +37,14 @@ namespace SF.Data.Spaces
         /// read and remove entity from space if exists, otherwise return default
         /// </summary>
         T TryTake<T>(IQuery<T> query);
-        ///// <summary>
-        ///// read entity from space if exists, othewise wait for entity or return.dispose
-        ///// </summary>
-        ///// TODO
-        //IDisposable Read<T>(IQuery<T> query, Action<T> callback, ITransaction transaction = null);
-        ///// <summary>
-        ///// read entity from space if exists, othewise wait for entity or return.dispose
-        ///// </summary>
-        ///// TODO
-        //IDisposable Take<T>(IQuery<T> query, Action<T> callback, ITransaction transaction = null);
+        /// <summary>
+        /// read entity from space if exists, othewise waits for entity. Use IDisposable to stop waiting
+        /// </summary>
+        IDisposable Read<T>(IQuery<T> query, Action<T> callback);
+        /// <summary>
+        /// read and remove entity from space if exists, othewise waits for entity. Use IDisposable to stop waiting
+        /// </summary>
+        IDisposable Take<T>(IQuery<T> query, Action<T> callback);
         /// <summary>
         /// read all matching entities
         /// </summary>
