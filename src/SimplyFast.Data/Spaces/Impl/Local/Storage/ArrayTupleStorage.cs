@@ -72,9 +72,10 @@ namespace SF.Data.Spaces.Local
 
         public void Clear()
         {
-            if (_count == 0)
-                return;
-            Array.Clear(_storage, 0, _count);
+            // TODO: Do we need to clean actual tuples?
+            /*if (_count == 0)
+                return;*/
+            //Array.Clear(_storage, 0, _count);
             _count = 0;
         }
 

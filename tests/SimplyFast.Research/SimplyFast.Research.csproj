@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Spaces\LegacyLocalSpaceWriteTests.cs" />
     <Compile Include="Spaces\LocalSpaceWriteTests.cs" />
     <Compile Include="NetTest.cs" />
     <Compile Include="PerfTestBase.cs" />

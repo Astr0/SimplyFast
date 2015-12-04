@@ -11,28 +11,35 @@ namespace SF.Tests.Data.Spaces
 
         private static readonly TupleType _testTupleType = new TupleType(0);
 
+        private static readonly TestTuple _tuple00 = new TestTuple(0, 0);
+        private static readonly TestTuple _tuple10 = new TestTuple(1, 0);
+        private static readonly TestTuple _tuple11 = new TestTuple(1, 1);
+        private static readonly TestTuple _tuple20 = new TestTuple(2, 0);
+
+
+        private static readonly TestTupleQuery _tuple1Q = new TestTupleQuery(1, null);
+        private static readonly TestTupleQuery _tuple2Q = new TestTupleQuery(2, null);
+        private static readonly TestTupleQuery _tuplesq = new TestTupleQuery(null, null);
+
         [Test]
         public void CanWrite()
         {
-            var tuple = new TestTuple(1, 0);
-            SpaceProxy.Add(_testTupleType, tuple);
-            var result = SpaceProxy.TryRead(new TestTupleQuery(1, null));
-            Assert.AreEqual(tuple, result);
+            SpaceProxy.Add(_testTupleType, _tuple10);
+            var result = SpaceProxy.TryRead(_tuple1Q);
+            Assert.AreEqual(_tuple10, result);
         }
 
         [Test]
         public void CanTryRead()
         {
-            var tuple = new TestTuple(1, 0);
-            var tuple2 = new TestTuple(2, 0);
-            SpaceProxy.Add(_testTupleType, tuple);
-            SpaceProxy.Add(_testTupleType, tuple2);
-            var result = SpaceProxy.TryRead(new TestTupleQuery(1, null));
-            Assert.AreEqual(tuple, result);
+            SpaceProxy.Add(_testTupleType, _tuple10);
+            SpaceProxy.Add(_testTupleType, _tuple20);
+            var result = SpaceProxy.TryRead(_tuple1Q);
+            Assert.AreEqual(_tuple10, result);
             result = SpaceProxy.TryRead(new TestTupleQuery(1, 0));
-            Assert.AreEqual(tuple, result);
-            result = SpaceProxy.TryRead(new TestTupleQuery(2, null));
-            Assert.AreEqual(tuple2, result);
+            Assert.AreEqual(_tuple10, result);
+            result = SpaceProxy.TryRead(_tuple2Q);
+            Assert.AreEqual(_tuple20, result);
             result = SpaceProxy.TryRead(new TestTupleQuery(3, null));
             Assert.IsNull(result);
         }
@@ -40,92 +47,82 @@ namespace SF.Tests.Data.Spaces
         [Test]
         public void CanScan()
         {
-            var tuple10 = new TestTuple(1, 0);
-            var tuple11 = new TestTuple(1, 1);
-            var tuple20 = new TestTuple(2, 0);
-            SpaceProxy.Add(_testTupleType, tuple10);
-            SpaceProxy.Add(_testTupleType, tuple11);
-            SpaceProxy.Add(_testTupleType, tuple20);
-            var result = SpaceProxy.Scan(new TestTupleQuery(1, null));
-            Assert.IsTrue(result.OrderBy(x => x.Y).SequenceEqual(new[] {tuple10, tuple11}));
-            result = SpaceProxy.Scan(new TestTupleQuery(2, null));
-            Assert.IsTrue(result.SequenceEqual(new[] { tuple20 }));
+            SpaceProxy.Add(_testTupleType, _tuple10);
+            SpaceProxy.Add(_testTupleType, _tuple11);
+            SpaceProxy.Add(_testTupleType, _tuple20);
+            var result = SpaceProxy.Scan(_tuple1Q);
+            Assert.IsTrue(result.OrderBy(x => x.Y).SequenceEqual(new[] { _tuple10, _tuple11 }));
+            result = SpaceProxy.Scan(_tuple2Q);
+            Assert.IsTrue(result.SequenceEqual(new[] { _tuple20 }));
         }
 
         [Test]
         public void CanTryTake()
         {
-            var tuple = new TestTuple(1, 0);
-            var tuple2 = new TestTuple(2, 0);
-            SpaceProxy.Add(_testTupleType, tuple);
-            SpaceProxy.Add(_testTupleType, tuple2);
-            var result = SpaceProxy.TryTake(new TestTupleQuery(1, null));
-            Assert.AreEqual(tuple, result);
-            result = SpaceProxy.TryTake(new TestTupleQuery(1, null));
+            SpaceProxy.Add(_testTupleType, _tuple10);
+            SpaceProxy.Add(_testTupleType, _tuple20);
+            var result = SpaceProxy.TryTake(_tuple1Q);
+            Assert.AreEqual(_tuple10, result);
+            result = SpaceProxy.TryTake(_tuple1Q);
             Assert.IsNull(result);
-            result = SpaceProxy.TryRead(new TestTupleQuery(1, null));
+            result = SpaceProxy.TryRead(_tuple1Q);
             Assert.IsNull(result);
-            result = SpaceProxy.TryTake(new TestTupleQuery(2, null));
-            Assert.AreEqual(tuple2, result);
+            result = SpaceProxy.TryTake(_tuple2Q);
+            Assert.AreEqual(_tuple20, result);
         }
 
         [Test]
         public void CanCount()
         {
-            var tuple10 = new TestTuple(1, 0);
-            var tuple11 = new TestTuple(1, 1);
-            var tuple20 = new TestTuple(2, 0);
-            SpaceProxy.AddRange(_testTupleType, new[]{tuple10, tuple11, tuple20});
+            SpaceProxy.AddRange(_testTupleType, new[] { _tuple10, _tuple11, _tuple20 });
             Assert.AreEqual(0, SpaceProxy.Count(new TestTupleQuery(2, 1)));
-            Assert.AreEqual(1, SpaceProxy.Count(new TestTupleQuery(2, null)));
-            Assert.AreEqual(2, SpaceProxy.Count(new TestTupleQuery(1, null)));
-            Assert.AreEqual(3, SpaceProxy.Count(new TestTupleQuery(null, null)));
-            var obj = SpaceProxy.TryTake(new TestTupleQuery(1, null));
+            Assert.AreEqual(1, SpaceProxy.Count(_tuple2Q));
+            Assert.AreEqual(2, SpaceProxy.Count(_tuple1Q));
+            Assert.AreEqual(3, SpaceProxy.Count(_tuplesq));
+            var obj = SpaceProxy.TryTake(_tuple1Q);
             Assert.IsNotNull(obj);
             Assert.AreEqual(0, SpaceProxy.Count(new TestTupleQuery(2, 1)));
-            Assert.AreEqual(1, SpaceProxy.Count(new TestTupleQuery(2, null)));
-            Assert.AreEqual(1, SpaceProxy.Count(new TestTupleQuery(1, null)));
-            Assert.AreEqual(2, SpaceProxy.Count(new TestTupleQuery(null, null)));
+            Assert.AreEqual(1, SpaceProxy.Count(_tuple2Q));
+            Assert.AreEqual(1, SpaceProxy.Count(_tuple1Q));
+            Assert.AreEqual(2, SpaceProxy.Count(_tuplesq));
         }
 
         [Test]
         public void CanRead()
         {
-            var tuple10 = new TestTuple(1, 0);
-            var tuple2 = new TestTuple(2, 0);
-            SpaceProxy.AddRange(_testTupleType, new[]{tuple10, tuple2});
+            SpaceProxy.AddRange(_testTupleType, new[] { _tuple10, _tuple20 });
             TestTuple result = null;
             // instant read
-            SpaceProxy.Read(new TestTupleQuery(1, null), r => result = r);
-            Assert.AreEqual(tuple10, result);
+            SpaceProxy.Read(_tuple1Q, r => result = r);
+            Assert.AreEqual(_tuple10, result);
             result = null;
-            SpaceProxy.Read(new TestTupleQuery(1, null), r => result = r);
-            Assert.AreEqual(tuple10, result);
+            SpaceProxy.Read(_tuple1Q, r => result = r);
+            Assert.AreEqual(_tuple10, result);
 
-            result = SpaceProxy.TryTake(new TestTupleQuery(1, null));
-            Assert.AreEqual(tuple10, result);
+            result = SpaceProxy.TryTake(_tuple1Q);
+            Assert.AreEqual(_tuple10, result);
             result = null;
-            SpaceProxy.Read(new TestTupleQuery(1, null), r => result = r);
+            SpaceProxy.Read(_tuple1Q, r => result = r);
             Assert.IsNull(result);
-            SpaceProxy.Add(_testTupleType, tuple10);
+            SpaceProxy.Add(_testTupleType, _tuple10);
             // ReSharper disable once ExpressionIsAlwaysNull
-            Assert.AreEqual(tuple10, result);
-            var tuple11 = new TestTuple(1, 1);
-            SpaceProxy.Add(_testTupleType, tuple11);
+            Assert.AreEqual(_tuple10, result);
+            SpaceProxy.Add(_testTupleType, _tuple11);
             // ReSharper disable once ExpressionIsAlwaysNull
-            Assert.AreEqual(tuple10, result);
+            Assert.AreEqual(_tuple10, result);
 
 
-            Assert.AreEqual(tuple11, SpaceProxy.TryTake(new TestTupleQuery(1, 1)));
-            Assert.AreEqual(tuple10, SpaceProxy.TryTake(new TestTupleQuery(1, 0)));
+            Assert.AreEqual(_tuple11, SpaceProxy.TryTake(new TestTupleQuery(1, 1)));
+            Assert.AreEqual(_tuple10, SpaceProxy.TryTake(new TestTupleQuery(1, 0)));
 
-            var other = new TestTuple(0, 0);
-            result = other;
+            result = _tuple00;
             var cancel = SpaceProxy.Read(new TestTupleQuery(1, null), r => result = r);
-            Assert.AreEqual(other, result);
+            Assert.AreEqual(_tuple00, result);
             // cancel read
             cancel.Dispose();
-            SpaceProxy.Add(_testTupleType, tuple10);
+            Assert.IsNull(result);
+
+            SpaceProxy.Add(_testTupleType, _tuple10);
             // ReSharper disable once ExpressionIsAlwaysNull
             Assert.IsNull(result);
         }
@@ -133,98 +130,94 @@ namespace SF.Tests.Data.Spaces
         [Test]
         public void CanTake()
         {
-            var tuple10 = new TestTuple(1, 0);
-            var tuple2 = new TestTuple(2, 0);
-            SpaceProxy.AddRange(_testTupleType, new[] { tuple10, tuple2 });
+            SpaceProxy.AddRange(_testTupleType, new[] { _tuple10, _tuple20 });
             TestTuple result = null;
 
             // instant take
-            SpaceProxy.Take(new TestTupleQuery(1, null), r => result = r);
-            Assert.AreEqual(tuple10, result);
+            SpaceProxy.Take(_tuple1Q, r => result = r);
+            Assert.AreEqual(_tuple10, result);
 
             // wait take
             result = null;
-            SpaceProxy.Take(new TestTupleQuery(1, null), r => result = r);
+            SpaceProxy.Take(_tuple1Q, r => result = r);
             Assert.IsNull(result);
-            SpaceProxy.Add(_testTupleType, tuple10);
+            SpaceProxy.Add(_testTupleType, _tuple10);
             // ReSharper disable once ExpressionIsAlwaysNull
-            Assert.AreEqual(tuple10, result);
+            Assert.AreEqual(_tuple10, result);
             // wait take only once
-            var tuple11 = new TestTuple(1, 1);
-            SpaceProxy.Add(_testTupleType, tuple11);
+            SpaceProxy.Add(_testTupleType, _tuple11);
 
 
             // ReSharper disable once ExpressionIsAlwaysNull
-            Assert.AreEqual(tuple10, result);
-            SpaceProxy.Take(new TestTupleQuery(1, null), r => result = r);
-            Assert.AreEqual(tuple11, result);
+            Assert.AreEqual(_tuple10, result);
+            SpaceProxy.Take(_tuple1Q, r => result = r);
+            Assert.AreEqual(_tuple11, result);
 
-            var other = new TestTuple(0, 0);
-            result = other;
-            var cancel = SpaceProxy.Take(new TestTupleQuery(1, null), r => result = r);
-            Assert.AreEqual(other, result);
+            result = _tuple00;
+            var cancel = SpaceProxy.Take(_tuple1Q, r => result = r);
+            Assert.AreEqual(_tuple00, result);
             // cancel take
             cancel.Dispose();
-            SpaceProxy.Add(_testTupleType, tuple10);
+            Assert.IsNull(result);
+
+            SpaceProxy.Add(_testTupleType, _tuple10);
             // ReSharper disable once ExpressionIsAlwaysNull
             Assert.IsNull(result);
 
             // check that tuple was not taken
-            Assert.AreEqual(tuple10, SpaceProxy.TryRead(new TestTupleQuery(1, null)));
+            Assert.AreEqual(_tuple10, SpaceProxy.TryRead(_tuple1Q));
         }
 
         private void CanAddInTransactionsAndNested(bool commit)
         {
-            var tuple10 = new TestTuple(1, 0);
-            var tuple20 = new TestTuple(2, 0);
             var cleanProxy = Space.CreateProxy();
 
             SpaceProxy.BeginTransaction();
             {
                 // add tuple in transaction
-                SpaceProxy.Add(_testTupleType, tuple10);
+                SpaceProxy.Add(_testTupleType, _tuple10);
                 // space should not see it
-                Assert.IsNull(cleanProxy.TryRead(new TestTupleQuery(1, null)));
+                Assert.IsNull(cleanProxy.TryRead(_tuple1Q));
                 // trans should see it
-                Assert.AreEqual(tuple10, SpaceProxy.TryRead(new TestTupleQuery(1, null)));
+                Assert.AreEqual(_tuple10, SpaceProxy.TryRead(_tuple1Q));
                 SpaceProxy.BeginTransaction();
                 {
                     // nested should see it
-                    Assert.AreEqual(tuple10, SpaceProxy.TryRead(new TestTupleQuery(1, null)));
+                    Assert.AreEqual(_tuple10, SpaceProxy.TryRead(_tuple1Q));
 
                     // add tuple2 in nested transaction
-                    SpaceProxy.Add(_testTupleType, tuple20);
+                    SpaceProxy.Add(_testTupleType, _tuple20);
 
                     // space should not see it
-                    Assert.IsNull(cleanProxy.TryRead(new TestTupleQuery(2, null)));
+                    Assert.IsNull(cleanProxy.TryRead(_tuple2Q));
                     // nested should see it
-                    Assert.AreEqual(tuple20, SpaceProxy.TryRead(new TestTupleQuery(2, null)));
+                    Assert.AreEqual(_tuple20, SpaceProxy.TryRead(_tuple2Q));
 
                     SpaceProxy.CommitTransaction();
                 }
                 // trans should see it now
-                Assert.AreEqual(tuple20, SpaceProxy.TryRead(new TestTupleQuery(2, null)));
+                Assert.AreEqual(_tuple20, SpaceProxy.TryRead(_tuple2Q));
                 // space still should not see it
-                Assert.IsNull(cleanProxy.TryRead(new TestTupleQuery(2, null)));
+                Assert.IsNull(cleanProxy.TryRead(_tuple2Q));
 
                 if (commit)
                 {
                     SpaceProxy.CommitTransaction();
                     // now space should see both
-                    Assert.AreEqual(tuple10, SpaceProxy.TryRead(new TestTupleQuery(1, null)));
-                    Assert.AreEqual(tuple20, SpaceProxy.TryRead(new TestTupleQuery(2, null)));
-                    Assert.AreEqual(tuple10, cleanProxy.TryRead(new TestTupleQuery(1, null)));
-                    Assert.AreEqual(tuple20, cleanProxy.TryRead(new TestTupleQuery(2, null)));
+                    Assert.AreEqual(_tuple10, SpaceProxy.TryRead(_tuple1Q));
+                    Assert.AreEqual(_tuple20, SpaceProxy.TryRead(_tuple2Q));
+                    Assert.AreEqual(_tuple10, cleanProxy.TryRead(_tuple1Q));
+                    Assert.AreEqual(_tuple20, cleanProxy.TryRead(_tuple2Q));
 
                 }
                 else
                 {
                     SpaceProxy.RollbackTransaction();
                     // space should see nothing
-                    Assert.IsNull(SpaceProxy.TryRead(new TestTupleQuery(1, null)));
-                    Assert.IsNull(SpaceProxy.TryRead(new TestTupleQuery(2, null)));
-                    Assert.IsNull(cleanProxy.TryRead(new TestTupleQuery(1, null)));
-                    Assert.IsNull(cleanProxy.TryRead(new TestTupleQuery(2, null)));
+                    Assert.IsNull(SpaceProxy.TryRead(_tuple1Q));
+                    Assert.IsNull(SpaceProxy.TryRead(_tuple2Q));
+                    Assert.IsNull(cleanProxy.TryRead(_tuple1Q));
+                    Assert.IsNull(cleanProxy.TryRead(_tuple2Q));
                 }
 
             }
@@ -240,56 +233,53 @@ namespace SF.Tests.Data.Spaces
 
         private void CanAddInNestedTransactions(bool commitNested, bool commitTrans)
         {
-            var tuple10 = new TestTuple(1, 0);
-            var tuple20 = new TestTuple(2, 0);
-            var tuple10q = new TestTupleQuery(1, null);
-            var tuple20q = new TestTupleQuery(2, null);
             var cleanProxy = Space.CreateProxy();
 
             SpaceProxy.BeginTransaction();
             {
-                TestTuple trans10result = null;
-                SpaceProxy.Read(tuple10q, x => trans10result = x);
+                TestTuple trans10Result = null;
+                SpaceProxy.Read(_tuple1Q, x => trans10Result = x);
 
-                TestTuple trans20result = null;
-                SpaceProxy.Read(tuple20q, x => trans20result = x);
+                TestTuple trans20Result = null;
+                SpaceProxy.Read(_tuple2Q, x => trans20Result = x);
                 SpaceProxy.BeginTransaction();
                 {
-                    SpaceProxy.Add(_testTupleType, tuple10);
+                    SpaceProxy.Add(_testTupleType, _tuple10);
                     // space should not see it
-                    Assert.IsNull(cleanProxy.TryRead(tuple10q));
+                    Assert.IsNull(cleanProxy.TryRead(_tuple1Q));
                     // trans should not see it
-                    Assert.IsNull(trans10result);
+                    Assert.IsNull(trans10Result);
                     // nested should see it
-                    Assert.AreEqual(tuple10, SpaceProxy.TryRead(tuple10q));
+                    Assert.AreEqual(_tuple10, SpaceProxy.TryRead(_tuple1Q));
 
                     TestTuple nestedResult = null;
-                    SpaceProxy.Read(tuple20q, x => nestedResult = x);
+                    SpaceProxy.Read(_tuple2Q, x => nestedResult = x);
                     SpaceProxy.BeginTransaction();
                     {
                         // nested2 should see it
-                        Assert.AreEqual(tuple10, SpaceProxy.TryRead(tuple10q));
+                        Assert.AreEqual(_tuple10, SpaceProxy.TryRead(_tuple1Q));
 
                         // add in nested 2
-                        SpaceProxy.Add(_testTupleType, tuple20);
+                        SpaceProxy.Add(_testTupleType, _tuple20);
 
                         // space should not see it
-                        Assert.IsNull(cleanProxy.TryRead(tuple20q));
+                        Assert.IsNull(cleanProxy.TryRead(_tuple2Q));
                         // trans should not see it
-                        Assert.IsNull(trans20result);
+                        Assert.IsNull(trans20Result);
                         // nested should not see it
                         Assert.IsNull(nestedResult);
                         // nested2 should see it
-                        Assert.AreEqual(tuple20, SpaceProxy.TryRead(tuple20q));
+                        Assert.AreEqual(_tuple20, SpaceProxy.TryRead(_tuple2Q));
 
                         SpaceProxy.CommitTransaction();
                     }
                     // space should not see it
-                    Assert.IsNull(cleanProxy.TryRead(tuple20q));
+                    Assert.IsNull(cleanProxy.TryRead(_tuple2Q));
                     // trans should not see it
-                    Assert.IsNull(trans20result);
+                    Assert.IsNull(trans20Result);
                     // nested should see it
-                    Assert.AreEqual(tuple20, nestedResult);
+                    // ReSharper disable once ExpressionIsAlwaysNull
+                    Assert.AreEqual(_tuple20, nestedResult);
                     if (commitNested)
                     {
                         SpaceProxy.CommitTransaction();
@@ -300,19 +290,19 @@ namespace SF.Tests.Data.Spaces
                     }
                 }
                 // space should not see both
-                Assert.IsNull(cleanProxy.TryRead(tuple10q));
-                Assert.IsNull(cleanProxy.TryRead(tuple20q));
+                Assert.IsNull(cleanProxy.TryRead(_tuple1Q));
+                Assert.IsNull(cleanProxy.TryRead(_tuple2Q));
                 if (commitNested)
                 {
                     // trans should see both
-                    Assert.AreEqual(tuple10, trans10result);
-                    Assert.AreEqual(tuple20, trans20result);
+                    Assert.AreEqual(_tuple10, trans10Result);
+                    Assert.AreEqual(_tuple20, trans20Result);
                 }
                 else
                 {
                     // trans should not see both
-                    Assert.IsNull(trans10result);
-                    Assert.IsNull(trans20result);
+                    Assert.IsNull(trans10Result);
+                    Assert.IsNull(trans20Result);
                 }
 
                 if (commitTrans)
@@ -327,14 +317,14 @@ namespace SF.Tests.Data.Spaces
                 if (commitTrans && commitNested)
                 {
                     // now space should see both
-                    Assert.AreEqual(tuple10, cleanProxy.TryRead(tuple10q));
-                    Assert.AreEqual(tuple20, cleanProxy.TryRead(tuple20q));
+                    Assert.AreEqual(_tuple10, cleanProxy.TryRead(_tuple1Q));
+                    Assert.AreEqual(_tuple20, cleanProxy.TryRead(_tuple2Q));
                 }
                 else
                 {
                     // space still should not see both
-                    Assert.IsNull(cleanProxy.TryRead(tuple10q));
-                    Assert.IsNull(cleanProxy.TryRead(tuple20q));
+                    Assert.IsNull(cleanProxy.TryRead(_tuple1Q));
+                    Assert.IsNull(cleanProxy.TryRead(_tuple2Q));
                 }
             }
         }
@@ -348,31 +338,372 @@ namespace SF.Tests.Data.Spaces
             CanAddInNestedTransactions(true, true);
         }
 
-        
+
 
         [Test]
         public void DisposeAbortsTransaction()
         {
-            var tuple10 = new TestTuple(1, 0);
-            var tuple20 = new TestTuple(2, 0);
-            var tuple10q = new TestTupleQuery(1, null);
-            var tuple20q = new TestTupleQuery(2, null);
             using (var proxy = Space.CreateProxy())
             {
                 proxy.BeginTransaction();
-                proxy.Add(_testTupleType, tuple10);
+                proxy.Add(_testTupleType, _tuple10);
                 // verify add
-                Assert.AreEqual(tuple10, proxy.TryRead(tuple10q));
+                Assert.AreEqual(_tuple10, proxy.TryRead(_tuple1Q));
 
                 proxy.BeginTransaction();
-                proxy.Add(_testTupleType, tuple20);
+                proxy.Add(_testTupleType, _tuple20);
                 // verify add
-                Assert.AreEqual(tuple10, proxy.TryRead(tuple10q));
-                Assert.AreEqual(tuple20, proxy.TryRead(tuple20q));
+                Assert.AreEqual(_tuple10, proxy.TryRead(_tuple1Q));
+                Assert.AreEqual(_tuple20, proxy.TryRead(_tuple2Q));
             }
             // nothing in the space
-            Assert.IsNull(SpaceProxy.TryRead(tuple10q));
-            Assert.IsNull(SpaceProxy.TryRead(tuple20q));
+            Assert.IsNull(SpaceProxy.TryRead(_tuple1Q));
+            Assert.IsNull(SpaceProxy.TryRead(_tuple2Q));
+        }
+
+        [Test]
+        public void DisposeAbortsWaitingActions()
+        {
+            var globalResult = _tuple00;
+            var transactionResult = _tuple00;
+            using (var proxy = Space.CreateProxy())
+            {
+                proxy.Read(_tuple1Q, x => globalResult = x);
+                proxy.BeginTransaction();
+
+                proxy.Add(_testTupleType, _tuple10);
+                Assert.AreEqual(_tuple00, globalResult);
+                Assert.AreEqual(_tuple00, transactionResult);
+
+                proxy.Read(_tuple2Q, x => transactionResult = x);
+                Assert.AreEqual(_tuple00, globalResult);
+                Assert.AreEqual(_tuple00, transactionResult);
+            }
+            Assert.IsNull(globalResult);
+            Assert.IsNull(transactionResult);
+            SpaceProxy.Add(_testTupleType, _tuple10);
+            SpaceProxy.Add(_testTupleType, _tuple20);
+            Assert.IsNull(globalResult);
+            Assert.IsNull(transactionResult);
+        }
+
+        [Test]
+        public void AbortAndCommitAbortsWaitingAction()
+        {
+            var tresult = _tuple00;
+
+            SpaceProxy.BeginTransaction();
+            SpaceProxy.Read(_tuple1Q, x => tresult = x);
+            Assert.AreEqual(_tuple00, tresult);
+            SpaceProxy.RollbackTransaction();
+            Assert.IsNull(tresult);
+            // check that wa was deleted
+            SpaceProxy.Add(_testTupleType, _tuple10);
+            Assert.IsNull(tresult);
+
+            tresult = _tuple00;
+            SpaceProxy.BeginTransaction();
+            SpaceProxy.Read(_tuple2Q, x => tresult = x);
+            Assert.AreEqual(_tuple00, tresult);
+            SpaceProxy.RollbackTransaction();
+            Assert.IsNull(tresult);
+            // check that wa was deleted
+            SpaceProxy.Add(_testTupleType, _tuple20);
+            Assert.IsNull(tresult);
+        }
+
+        [Test]
+        public void OtherProxyTriggersGlobalWait()
+        {
+            var tresult = _tuple00;
+
+            SpaceProxy.Read(_tuple1Q, x => tresult = x);
+            Assert.AreEqual(_tuple00, tresult);
+            using (var proxy = Space.CreateProxy())
+            {
+                proxy.Add(_testTupleType, _tuple10);
+                Assert.AreEqual(_tuple10, tresult);
+                Assert.AreEqual(1, proxy.Count(_tuple1Q));
+            }
+
+            SpaceProxy.Take(_tuple2Q, x => tresult = x);
+            Assert.AreEqual(_tuple10, tresult);
+            using (var proxy = Space.CreateProxy())
+            {
+                proxy.Add(_testTupleType, _tuple20);
+                Assert.AreEqual(_tuple20, tresult);
+                Assert.AreEqual(0, proxy.Count(_tuple2Q));
+            }
+        }
+
+        [Test]
+        public void TransactionCommitTriggersWait()
+        {
+            var gresult = _tuple00;
+            var tresult = _tuple00;
+
+            SpaceProxy.Read(_tuple1Q, x => gresult = x);
+
+            SpaceProxy.BeginTransaction();
+            SpaceProxy.Read(_tuple1Q, x => tresult = x);
+
+            SpaceProxy.BeginTransaction();
+            Assert.AreEqual(_tuple00, gresult);
+            Assert.AreEqual(_tuple00, tresult);
+
+            SpaceProxy.Add(_testTupleType, _tuple10);
+
+            // nothing should be triggered for uncommited trans
+            Assert.AreEqual(_tuple00, gresult);
+            Assert.AreEqual(_tuple00, tresult);
+            SpaceProxy.CommitTransaction();
+            // now transactional read should be triggered
+            Assert.AreEqual(_tuple00, gresult);
+            Assert.AreEqual(_tuple10, tresult);
+            SpaceProxy.CommitTransaction();
+            // now boths reads should be triggered
+            Assert.AreEqual(_tuple10, gresult);
+            Assert.AreEqual(_tuple10, tresult);
+        }
+
+        [Test]
+        public void GlobalsTryTakenInTransactionAreFine()
+        {
+            SpaceProxy.Add(_testTupleType, _tuple10);
+            SpaceProxy.Add(_testTupleType, _tuple20);
+
+            SpaceProxy.BeginTransaction();
+            Assert.AreEqual(_tuple10, SpaceProxy.TryTake(_tuple1Q));
+            SpaceProxy.CommitTransaction();
+            Assert.IsNull(SpaceProxy.TryTake(_tuple1Q));
+
+            SpaceProxy.BeginTransaction();
+            Assert.AreEqual(_tuple20, SpaceProxy.TryTake(_tuple2Q));
+            SpaceProxy.RollbackTransaction();
+            Assert.AreEqual(_tuple20, SpaceProxy.TryTake(_tuple2Q));
+            Assert.IsNull(SpaceProxy.TryTake(_tuple2Q));
+        }
+
+        [Test]
+        public void GlobalsTakenInTransactionAreFine()
+        {
+            using (var proxy = Space.CreateProxy())
+            {
+                var tresult = _tuple00;
+
+                SpaceProxy.BeginTransaction();
+
+                SpaceProxy.Take(_tuple1Q, x => tresult = x);
+                proxy.Add(_testTupleType, _tuple10);
+
+                Assert.AreEqual(_tuple10, tresult);
+                Assert.IsNull(SpaceProxy.TryTake(_tuple1Q));
+                Assert.IsNull(proxy.TryTake(_tuple1Q));
+
+                SpaceProxy.CommitTransaction();
+                Assert.IsNull(SpaceProxy.TryTake(_tuple1Q));
+                Assert.IsNull(proxy.TryTake(_tuple1Q));
+
+
+
+                SpaceProxy.BeginTransaction();
+
+                SpaceProxy.Take(_tuple2Q, x => tresult = x);
+                proxy.Add(_testTupleType, _tuple20);
+                Assert.AreEqual(_tuple20, tresult);
+
+                Assert.IsNull(SpaceProxy.TryTake(_tuple2Q));
+                Assert.IsNull(proxy.TryTake(_tuple2Q));
+
+                SpaceProxy.RollbackTransaction();
+
+                Assert.AreEqual(_tuple20, SpaceProxy.TryTake(_tuple2Q));
+                Assert.IsNull(SpaceProxy.TryTake(_tuple2Q));
+            }
+        }
+
+        [Test]
+        public void GlobalTakesAndReadsTransactionCommits()
+        {
+            using (var proxy = Space.CreateProxy())
+            {
+                var tresult = _tuple00;
+                var result = _tuple00;
+                proxy.Read(_tuple1Q, x => result = x);
+                proxy.Take(_tuple2Q, x => tresult = x);
+
+                SpaceProxy.BeginTransaction();
+                SpaceProxy.Add(_testTupleType, _tuple10);
+                SpaceProxy.Add(_testTupleType, _tuple20);
+                Assert.AreEqual(_tuple00, tresult);
+                Assert.AreEqual(_tuple00, result);
+                SpaceProxy.CommitTransaction();
+
+                Assert.AreEqual(_tuple10, result);
+                Assert.AreEqual(_tuple20, tresult);
+            }
+        }
+
+        [Test]
+        public void GlobalTakesAndReadsTransactionCommitsEvenWhileTransWasRunning()
+        {
+            using (var proxy = Space.CreateProxy())
+            {
+                var tresult = _tuple00;
+                var result = _tuple00;
+
+
+                SpaceProxy.BeginTransaction();
+                SpaceProxy.Add(_testTupleType, _tuple10);
+                SpaceProxy.Add(_testTupleType, _tuple20);
+
+                proxy.Read(_tuple1Q, x => result = x);
+                proxy.Take(_tuple2Q, x => tresult = x);
+                Assert.AreEqual(_tuple00, tresult);
+                Assert.AreEqual(_tuple00, result);
+                SpaceProxy.CommitTransaction();
+
+                Assert.AreEqual(_tuple10, result);
+                Assert.AreEqual(_tuple20, tresult);
+            }
+        }
+
+        [Test]
+        public void AllReadersReadTuple()
+        {
+            var results = Enumerable.Range(0, 10).Select(x => _tuple00).ToArray();
+            for (var i = 0; i < results.Length; i++)
+            {
+                var i1 = i;
+                SpaceProxy.Read(_tuple1Q, x => results[i1] = x);
+            }
+            Assert.IsTrue(results.All(x => x.Equals(_tuple00)));
+            SpaceProxy.Add(_testTupleType, _tuple10);
+            Assert.IsTrue(results.All(x => x.Equals(_tuple10)));
+        }
+
+        [Test]
+        public void TransactionTakesByTransactionAreFine()
+        {
+            SpaceProxy.BeginTransaction();
+            SpaceProxy.Add(_testTupleType, _tuple10);
+            SpaceProxy.BeginTransaction();
+            Assert.AreEqual(_tuple10, SpaceProxy.TryTake(_tuple1Q));
+            Assert.IsNull(SpaceProxy.TryTake(_tuple1Q));
+            SpaceProxy.RollbackTransaction();
+            Assert.AreEqual(_tuple10, SpaceProxy.TryRead(_tuple1Q));
+
+            SpaceProxy.BeginTransaction();
+            Assert.AreEqual(_tuple10, SpaceProxy.TryTake(_tuple1Q));
+            Assert.IsNull(SpaceProxy.TryTake(_tuple1Q));
+            SpaceProxy.CommitTransaction();
+            Assert.IsNull(SpaceProxy.TryRead(_tuple1Q));
+            SpaceProxy.CommitTransaction();
+            Assert.IsNull(SpaceProxy.TryRead(_tuple1Q));
+        }
+
+        [Test]
+        public void TransactionTakesByMoreNestedTransactionAreFine()
+        {
+            SpaceProxy.BeginTransaction();
+            SpaceProxy.Add(_testTupleType, _tuple10);
+
+            SpaceProxy.BeginTransaction();
+
+            SpaceProxy.BeginTransaction();
+
+            Assert.AreEqual(_tuple10, SpaceProxy.TryTake(_tuple1Q));
+            Assert.IsNull(SpaceProxy.TryTake(_tuple1Q));
+
+            SpaceProxy.RollbackTransaction();
+
+            Assert.AreEqual(_tuple10, SpaceProxy.TryRead(_tuple1Q));
+
+            SpaceProxy.CommitTransaction();
+
+            Assert.AreEqual(_tuple10, SpaceProxy.TryRead(_tuple1Q));
+
+            SpaceProxy.CommitTransaction();
+
+            Assert.AreEqual(_tuple10, SpaceProxy.TryRead(_tuple1Q));
+        }
+
+
+        [Test]
+        public void TransTakesAndReadsNestedTransactionCommits()
+        {
+            var tresult = _tuple00;
+            var result = _tuple00;
+
+            SpaceProxy.BeginTransaction();
+
+            SpaceProxy.Read(_tuple1Q, x => result = x);
+            SpaceProxy.Take(_tuple2Q, x => tresult = x);
+
+            SpaceProxy.BeginTransaction();
+
+            SpaceProxy.Add(_testTupleType, _tuple10);
+            Assert.AreEqual(_tuple00, tresult);
+            Assert.AreEqual(_tuple00, result);
+
+
+            SpaceProxy.BeginTransaction();
+            SpaceProxy.Add(_testTupleType, _tuple20);
+            Assert.AreEqual(_tuple00, tresult);
+            Assert.AreEqual(_tuple00, result);
+            SpaceProxy.CommitTransaction();
+            Assert.AreEqual(_tuple00, tresult);
+            Assert.AreEqual(_tuple00, result);
+
+            SpaceProxy.CommitTransaction();
+            Assert.AreEqual(_tuple10, result);
+            Assert.AreEqual(_tuple20, tresult);
+            SpaceProxy.CommitTransaction();
+
+            Assert.AreEqual(_tuple10, result);
+            Assert.AreEqual(_tuple20, tresult);
+
+            Assert.AreEqual(_tuple10, SpaceProxy.TryRead(_tuple1Q));
+            Assert.IsNull(SpaceProxy.TryRead(_tuple2Q));
+        }
+
+        private void TestScanCountInTransaction(int current, int count)
+        {
+            if (current >= count)
+                return;
+
+            SpaceProxy.BeginTransaction();
+
+            Assert.AreEqual(current, SpaceProxy.Count(_tuple1Q));
+            var scan = SpaceProxy.Scan(_tuple1Q);
+            Assert.AreEqual(current, scan.Count);
+            Assert.IsTrue(scan.All(_tuple10.Equals));
+
+            // after adding, all stuff should be  +1
+            SpaceProxy.Add(_testTupleType, _tuple10);
+            current++;
+
+            Assert.AreEqual(current, SpaceProxy.Count(_tuple1Q));
+            scan = SpaceProxy.Scan(_tuple1Q);
+            Assert.AreEqual(current, scan.Count);
+            Assert.IsTrue(scan.All(_tuple10.Equals));
+
+            TestScanCountInTransaction(current, count);
+
+            // now we should have count stuff
+
+            Assert.AreEqual(count, SpaceProxy.Count(_tuple1Q));
+            scan = SpaceProxy.Scan(_tuple1Q);
+            Assert.AreEqual(count, scan.Count);
+            Assert.IsTrue(scan.All(_tuple10.Equals));
+
+            SpaceProxy.CommitTransaction();
+        }
+
+        [Test]
+        public void ScanAndCountTakeTransItems()
+        {
+            TestScanCountInTransaction(0, 10);
         }
     }
 }

@@ -112,7 +112,7 @@ namespace SF.Data.Spaces.Local
             if (_transactionCount == 0)
                 return _space.GetRootTable<T>(type);
             // transactions have their own tables
-            for (var i = 0; i < _transactionCount; i++)
+            for (var i = 0; i < _transactionTablesCount; i++)
             {
                 if (_transactionTables[i].TupleTypeId == type.Id)
                     return (LocalTable<T>)_transactionTables[i].Table;

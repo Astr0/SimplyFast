@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SF.Collections;
 
 namespace SF.Data.Spaces.Local
 {
@@ -24,7 +25,7 @@ namespace SF.Data.Spaces.Local
 
     internal class WaitingAction<T>: IWaitingAction
     {
-        private static readonly Stack<WaitingAction<T>> _pool = new Stack<WaitingAction<T>>(LocalSpaceConsts.WaitingActionsPoolCapacity);
+        private static readonly FastUnsafeStack<WaitingAction<T>> _pool = new FastUnsafeStack<WaitingAction<T>>(LocalSpaceConsts.WaitingActionsPoolCapacity);
 
         public static IDisposable Install(LocalTable<T> owner, LinkedList<IWaitingAction> root, IQuery<T> query, Action<T> callback, bool take)
         {

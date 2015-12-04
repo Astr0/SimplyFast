@@ -42,6 +42,7 @@
     <Compile Include="AnonymousEx.cs" />
     <Compile Include="Collections\EnumerableEx.cs" />
     <Compile Include="Collections\DictionaryEx.cs" />
+    <Compile Include="Collections\FastUnsafeStack.cs" />
     <Compile Include="Collections\WeakCollection.cs" />
     <Compile Include="Comparers\Internal\FuncEqualityComparer.cs" />
     <Compile Include="Comparers\Internal\KeyEqualityComparer.cs" />

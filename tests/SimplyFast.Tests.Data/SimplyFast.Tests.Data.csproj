@@ -44,10 +44,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Legacy\Spaces\LocalSpaceBasicTest.cs" />
-    <Compile Include="Legacy\Spaces\SpaceTestsBase.cs" />
-    <Compile Include="Legacy\Spaces\TestTuple.cs" />
-    <Compile Include="Legacy\Spaces\TestTupleQuery.cs" />
     <Compile Include="Spaces\LocalSpaceBasicTest.cs" />
     <Compile Include="Spaces\SpaceTestsBase.cs" />
     <Compile Include="Spaces\TestTuple.cs" />

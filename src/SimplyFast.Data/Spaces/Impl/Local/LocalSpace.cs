@@ -4,7 +4,7 @@ namespace SF.Data.Spaces.Local
 {
     internal class LocalSpace : ISpace
     {
-        private object[] _tables = new object[LocalSpaceConsts.SpaceTablesCapacity];
+        private ILocalTable[] _tables = new ILocalTable[LocalSpaceConsts.SpaceTablesCapacity];
 
         public ISpaceProxy CreateProxy()
         {

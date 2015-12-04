@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using SF.Collections;
 
 namespace SF.Data.Spaces.Local
 {
     internal class LocalTable<T>: ILocalTable
     {
         private readonly ITupleStorage<T> _written;
-        private readonly List<TakenTuple<T>> _taken = new List<TakenTuple<T>>(LocalSpaceConsts.TransactionWrittenCapacity); 
+        private TakenTuple<T>[] _taken = new TakenTuple<T>[LocalSpaceConsts.TransactionTakenCapacity];
+        private int _takenCount;
+
         private LocalTable<T> _parent;
         public LocalTable<T> Root;
         public LinkedList<IWaitingAction> WaitingActions = new LinkedList<IWaitingAction>(); 
@@ -19,13 +23,13 @@ namespace SF.Data.Spaces.Local
             return new LocalTable<T>(new ArrayTupleStorage<T>(LocalSpaceConsts.RootWrittenCapacity));
         }
 
-        private static readonly Stack<LocalTable<T>> _cache = new Stack<LocalTable<T>>(LocalSpaceConsts.TransactionCacheCapacity);
+        private static readonly FastUnsafeStack<LocalTable<T>> _cache = new FastUnsafeStack<LocalTable<T>>(LocalSpaceConsts.TransactionCacheCapacity);
         public static LocalTable<T> GetTransactional(int hierarchyLevel, LocalTable<T> parent)
         {
             var trans = _cache.Count != 0 ? _cache.Pop() : new LocalTable<T>(new ArrayTupleStorage<T>(LocalSpaceConsts.TransactionWrittenCapacity));
             trans.HierarchyLevel = hierarchyLevel;
             trans._parent = parent;
-            trans.Root = parent.Root;
+            trans.Root = parent.Root ?? parent;
             return trans;
         }
 
@@ -93,7 +97,6 @@ namespace SF.Data.Spaces.Local
 
             // add waiting action
             return WaitingAction<T>.Install(this, Root != null ? Root.WaitingActions : ownerList, query, callback, true);
-
         }
 
         public IReadOnlyList<T> Scan(IQuery<T> query)
@@ -145,6 +148,22 @@ namespace SF.Data.Spaces.Local
         public ILocalTable Parent => _parent;
         public int HierarchyLevel { get; private set; }
 
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Cleanup()
+        {
+            //_parent = null;
+            _written.Clear();
+            // TODO: do we need to clear the array
+            //if (_takenCount != 0)
+            //{
+            //    Array.Clear(_taken, 0, _takenCount);
+            //    _takenCount = 0;
+            //}
+            _takenCount = 0;
+            _cache.Push(this);
+        }
+
         public void Commit()
         {
             Debug.Assert(_parent != null);
@@ -154,26 +173,22 @@ namespace SF.Data.Spaces.Local
             var written = _written.GetArray(out count);
             _parent.AddRange(written, count);
 
-            _parent = null;
-            _written.Clear();
-            _taken.Clear();
-            _cache.Push(this);
+            Cleanup();
         }
+
+
 
         public void Abort()
         {
             Debug.Assert(_parent != null);
             WaitingAction.RemoveAll(WaitingActions);
 
-            foreach (var takenTuple in _taken)
+            for (var i = 0; i < _takenCount; i++)
             {
-                takenTuple.Abort();
+                _taken[i].Abort();
             }
 
-            _parent = null;
-            _written.Clear();
-            _taken.Clear();
-            _cache.Push(this);
+            Cleanup();
         }
 
         public void AbortToRoot()
@@ -181,23 +196,25 @@ namespace SF.Data.Spaces.Local
             Debug.Assert(_parent != null);
             WaitingAction.RemoveAll(WaitingActions);
 
-            foreach (var takenTuple in _taken)
+            for (var i = 0; i < _takenCount; i++)
             {
-                if (takenTuple.Table.HierarchyLevel == 0)
-                    takenTuple.Abort();
+                _taken[i].AbortToRoot();
             }
+
             if (_parent.HierarchyLevel != 0)
                 _parent.AbortToRoot();
 
-            _parent = null;
-            _written.Clear();
-            _taken.Clear();
-            _cache.Push(this);
+            Cleanup();
         }
 
         public void AddTaken(LocalTable<T> borrower, T tuple)
         {
-            _taken.Add(new TakenTuple<T>(borrower, tuple));
+            if (_takenCount == _taken.Length)
+            {
+                Array.Resize(ref _taken, _takenCount * 2);
+            }
+            _taken[_takenCount++] = new TakenTuple<T>(borrower, tuple);
+            //_taken.Add(new TakenTuple<T>(borrower, tuple));
         }
     }
 }
