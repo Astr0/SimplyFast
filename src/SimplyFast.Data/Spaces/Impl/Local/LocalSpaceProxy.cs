@@ -6,6 +6,7 @@ namespace SF.Data.Spaces.Local
     internal class LocalSpaceProxy : ISpaceProxy
     {
         private readonly LocalSpace _space;
+        private readonly LinkedList<IWaitingAction> _globalWaitingActions = new LinkedList<IWaitingAction>();
 
         public LocalSpaceProxy(LocalSpace space)
         {
@@ -14,6 +15,7 @@ namespace SF.Data.Spaces.Local
 
         public void Dispose()
         {
+            WaitingAction.RemoveAll(_globalWaitingActions);
             if (_transactionCount == 0)
                 return;
             // Just rollback topmost transactions internally
@@ -65,6 +67,7 @@ namespace SF.Data.Spaces.Local
                 }
                 table.Commit();
             }
+            _transactionCount--;
         }
 
         public void RollbackTransaction()
@@ -95,6 +98,7 @@ namespace SF.Data.Spaces.Local
                 }
                 table.Abort();
             }
+            _transactionCount--;
         }
 
         
@@ -172,12 +176,12 @@ namespace SF.Data.Spaces.Local
 
         public IDisposable Read<T>(IQuery<T> query, Action<T> callback)
         {
-            return GetCurrentTransactionTable<T>(query.Type).Read(query, callback);
+            return GetCurrentTransactionTable<T>(query.Type).Read(query, callback, _globalWaitingActions);
         }
 
         public IDisposable Take<T>(IQuery<T> query, Action<T> callback)
         {
-            return GetCurrentTransactionTable<T>(query.Type).Take(query, callback);
+            return GetCurrentTransactionTable<T>(query.Type).Take(query, callback, _globalWaitingActions);
         }
 
         public IReadOnlyList<T> Scan<T>(IQuery<T> query)

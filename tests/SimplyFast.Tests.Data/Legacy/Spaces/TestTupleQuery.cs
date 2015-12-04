@@ -1,6 +1,6 @@
-﻿using SF.Data.Spaces;
+﻿using SF.Data.Legacy.Spaces;
 
-namespace SF.Tests.Data.Spaces
+namespace SF.Tests.Data.Legacy.Spaces
 {
     public class TestTupleQuery : IQuery<TestTuple>
     {
@@ -12,8 +12,6 @@ namespace SF.Tests.Data.Spaces
 
         public int? X { get; }
         public int? Y { get; }
-
-        public TupleType Type => new TupleType(0);
 
         public bool Match(TestTuple tuple)
         {

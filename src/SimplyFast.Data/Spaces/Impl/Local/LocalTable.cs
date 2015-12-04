@@ -10,7 +10,7 @@ namespace SF.Data.Spaces.Local
         private readonly List<TakenTuple<T>> _taken = new List<TakenTuple<T>>(LocalSpaceConsts.TransactionWrittenCapacity); 
         private LocalTable<T> _parent;
         public LocalTable<T> Root;
-        public WaitingAction<T> WaitingAction; 
+        public LinkedList<IWaitingAction> WaitingActions = new LinkedList<IWaitingAction>(); 
 
         #region Factory
 
@@ -61,7 +61,7 @@ namespace SF.Data.Spaces.Local
                 taken = borrower._written.Take(query);
                 if (taken != null)
                 {
-                    _taken.Add(new TakenTuple<T>(borrower, taken));
+                    AddTaken(borrower, taken);
                     return taken;
                 }
                 borrower = borrower._parent;
@@ -69,7 +69,7 @@ namespace SF.Data.Spaces.Local
             return default(T);
         }
 
-        public IDisposable Read(IQuery<T> query, Action<T> callback)
+        public IDisposable Read(IQuery<T> query, Action<T> callback, LinkedList<IWaitingAction> ownerList)
         {
             var readItem = TryRead(query);
             if (readItem != null)
@@ -79,10 +79,10 @@ namespace SF.Data.Spaces.Local
             }
 
             // add waiting action
-            return WaitingAction<T>.Install(this, query, callback, false);
+            return WaitingAction<T>.Install(this, Root != null ? Root.WaitingActions : ownerList, query, callback, false);
         }
 
-        public IDisposable Take(IQuery<T> query, Action<T> callback)
+        public IDisposable Take(IQuery<T> query, Action<T> callback, LinkedList<IWaitingAction> ownerList)
         {
             var takenItem = TryTake(query);
             if (takenItem != null)
@@ -92,7 +92,7 @@ namespace SF.Data.Spaces.Local
             }
 
             // add waiting action
-            return WaitingAction<T>.Install(this, query, callback, true);
+            return WaitingAction<T>.Install(this, Root != null ? Root.WaitingActions : ownerList, query, callback, true);
 
         }
 
@@ -122,7 +122,7 @@ namespace SF.Data.Spaces.Local
 
         public void Add(T tuple)
         {
-            if (WaitingAction != null && (Root == null ? WaitingAction.TakeRoot(tuple) : WaitingAction.Take(tuple)))
+            if (WaitingActions.First != null && WaitingAction<T>.Take(this, tuple))
                 return;
             _written.Add(tuple);
         }
@@ -131,10 +131,10 @@ namespace SF.Data.Spaces.Local
         {
             if (count == 0)
                 return;
-            if (WaitingAction == null)
+            if (WaitingActions.First == null)
                 _written.AddRange(tuples, count);
             else
-                _written.AddRange(tuples, count - (Root == null ? WaitingAction.TakeRoot(tuples, count) : WaitingAction.Take(tuples, count)));
+                _written.AddRange(tuples, count - (WaitingAction<T>.Take(this, tuples, count)));
         }
 
         public void AddRange(T[] tuples)
@@ -148,6 +148,8 @@ namespace SF.Data.Spaces.Local
         public void Commit()
         {
             Debug.Assert(_parent != null);
+            WaitingAction.RemoveAll(WaitingActions);
+
             int count;
             var written = _written.GetArray(out count);
             _parent.AddRange(written, count);
@@ -161,6 +163,8 @@ namespace SF.Data.Spaces.Local
         public void Abort()
         {
             Debug.Assert(_parent != null);
+            WaitingAction.RemoveAll(WaitingActions);
+
             foreach (var takenTuple in _taken)
             {
                 takenTuple.Abort();
@@ -175,6 +179,8 @@ namespace SF.Data.Spaces.Local
         public void AbortToRoot()
         {
             Debug.Assert(_parent != null);
+            WaitingAction.RemoveAll(WaitingActions);
+
             foreach (var takenTuple in _taken)
             {
                 if (takenTuple.Table.HierarchyLevel == 0)
@@ -187,6 +193,11 @@ namespace SF.Data.Spaces.Local
             _written.Clear();
             _taken.Clear();
             _cache.Push(this);
+        }
+
+        public void AddTaken(LocalTable<T> borrower, T tuple)
+        {
+            _taken.Add(new TakenTuple<T>(borrower, tuple));
         }
     }
 }

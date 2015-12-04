@@ -1,21 +1,21 @@
 ﻿using NUnit.Framework;
-using SF.Data.Legacy.Spaces;
+using SF.Data.Spaces;
 
 namespace SF.Tests.Data.Spaces
 {
     [TestFixture]
     public class LocalSpaceBasicTests: SpaceTestsBase
     {
-        private ISyncSpace _space;
-        private ISyncSpaceTable<TestTuple> _spaceTable;
+        private ISpace _space;
+        private ISpaceProxy _spaceProxy;
         [SetUp]
         public void Setup()
         {
             _space = SpaceFactory.UnsafeLocal();
-            _spaceTable = _space.GetTable<TestTuple>(0);
+            _spaceProxy = _space.CreateProxy();
         }
 
-        public override ISyncSpace SyncSpace => _space;
-        public override ISyncSpaceTable<TestTuple> SyncSpaceTable => _spaceTable;
+        public override ISpace Space => _space;
+        public override ISpaceProxy SpaceProxy => _spaceProxy;
     }
 }
