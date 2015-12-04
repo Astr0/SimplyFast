@@ -9,8 +9,9 @@ namespace SF.Data.Spaces.Local
     internal class LocalTable<T>: ILocalTable
     {
         private readonly ITupleStorage<T> _written;
-        private TakenTuple<T>[] _taken = new TakenTuple<T>[LocalSpaceConsts.TransactionTakenCapacity];
-        private int _takenCount;
+        private readonly FastCollection<TakenTuple<T>> _taken = new FastCollection<TakenTuple<T>>(LocalSpaceConsts.TransactionTakenCapacity);
+        //private TakenTuple<T>[] _taken = new TakenTuple<T>[LocalSpaceConsts.TransactionTakenCapacity];
+        //private int _takenCount;
 
         private LocalTable<T> _parent;
         public LocalTable<T> Root;
@@ -23,7 +24,7 @@ namespace SF.Data.Spaces.Local
             return new LocalTable<T>(new ArrayTupleStorage<T>(LocalSpaceConsts.RootWrittenCapacity));
         }
 
-        private static readonly FastUnsafeStack<LocalTable<T>> _cache = new FastUnsafeStack<LocalTable<T>>(LocalSpaceConsts.TransactionCacheCapacity);
+        private static readonly FastStack<LocalTable<T>> _cache = new FastStack<LocalTable<T>>(LocalSpaceConsts.TransactionCacheCapacity);
         public static LocalTable<T> GetTransactional(int hierarchyLevel, LocalTable<T> parent)
         {
             var trans = _cache.Count != 0 ? _cache.Pop() : new LocalTable<T>(new ArrayTupleStorage<T>(LocalSpaceConsts.TransactionWrittenCapacity));
@@ -160,7 +161,7 @@ namespace SF.Data.Spaces.Local
             //    Array.Clear(_taken, 0, _takenCount);
             //    _takenCount = 0;
             //}
-            _takenCount = 0;
+            _taken.Clear();
             _cache.Push(this);
         }
 
@@ -183,7 +184,7 @@ namespace SF.Data.Spaces.Local
             Debug.Assert(_parent != null);
             WaitingAction.RemoveAll(WaitingActions);
 
-            for (var i = 0; i < _takenCount; i++)
+            for (var i = 0; i < _taken.Count; i++)
             {
                 _taken[i].Abort();
             }
@@ -196,7 +197,7 @@ namespace SF.Data.Spaces.Local
             Debug.Assert(_parent != null);
             WaitingAction.RemoveAll(WaitingActions);
 
-            for (var i = 0; i < _takenCount; i++)
+            for (var i = 0; i < _taken.Count; i++)
             {
                 _taken[i].AbortToRoot();
             }
@@ -209,12 +210,12 @@ namespace SF.Data.Spaces.Local
 
         public void AddTaken(LocalTable<T> borrower, T tuple)
         {
-            if (_takenCount == _taken.Length)
+            /*if (_takenCount == _taken.Length)
             {
                 Array.Resize(ref _taken, _takenCount * 2);
             }
-            _taken[_takenCount++] = new TakenTuple<T>(borrower, tuple);
-            //_taken.Add(new TakenTuple<T>(borrower, tuple));
+            _taken[_takenCount++] = new TakenTuple<T>(borrower, tuple);*/
+            _taken.Add(new TakenTuple<T>(borrower, tuple));
         }
     }
 }

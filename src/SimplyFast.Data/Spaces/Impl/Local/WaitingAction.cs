@@ -25,7 +25,7 @@ namespace SF.Data.Spaces.Local
 
     internal class WaitingAction<T>: IWaitingAction
     {
-        private static readonly FastUnsafeStack<WaitingAction<T>> _pool = new FastUnsafeStack<WaitingAction<T>>(LocalSpaceConsts.WaitingActionsPoolCapacity);
+        private static readonly FastStack<WaitingAction<T>> _pool = new FastStack<WaitingAction<T>>(LocalSpaceConsts.WaitingActionsPoolCapacity);
 
         public static IDisposable Install(LocalTable<T> owner, LinkedList<IWaitingAction> root, IQuery<T> query, Action<T> callback, bool take)
         {

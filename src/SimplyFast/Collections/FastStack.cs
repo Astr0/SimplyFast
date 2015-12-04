@@ -3,17 +3,17 @@ using System.Runtime.CompilerServices;
 
 namespace SF.Collections
 {
-    public class FastUnsafeStack<T>
+    public class FastStack<T>
     {
         private T[] _array;
         private int _count;
 
-        public FastUnsafeStack()
+        public FastStack()
         {
             _array = new T[4];
         }
 
-        public FastUnsafeStack(int capacity)
+        public FastStack(int capacity)
         {
             _array = new T[Math.Max(4, capacity)];
         }

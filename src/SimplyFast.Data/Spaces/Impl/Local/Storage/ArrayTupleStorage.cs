@@ -1,29 +1,25 @@
 ﻿using System;
+using SF.Collections;
 
 namespace SF.Data.Spaces.Local
 {
     internal class ArrayTupleStorage<T> : ITupleStorage<T>
     {
-        private int _count;
-        private T[] _storage;
+        private readonly FastCollection<T> _storage; 
 
         public ArrayTupleStorage(int capacity)
         {
-            _storage = new T[capacity];
+            _storage = new FastCollection<T>(capacity);
         }
 
         public void Add(T tuple)
         {
-            if (_count == _storage.Length)
-            {
-                Array.Resize(ref _storage, _count*2);
-            }
-            _storage[_count++] = tuple;
+            _storage.Add(tuple);
         }
 
         public T Read(IQuery<T> query)
         {
-            for (var i = 0; i < _count; i++)
+            for (var i = 0; i < _storage.Count; i++)
             {
                 var item = _storage[i];
                 if (query.Match(item))
@@ -34,15 +30,13 @@ namespace SF.Data.Spaces.Local
 
         public T Take(IQuery<T> query)
         {
-            for (var i = 0; i < _count; i++)
+            for (var i = 0; i < _storage.Count; i++)
             {
                 var item = _storage[i];
                 if (!query.Match(item))
                     continue;
                 // move last item to it's place
-                _count--;
-                _storage[i] = _storage[_count];
-                _storage[_count] = default(T);
+                _storage.RemoveAt(i);
                 return item;
             }
             return default(T);
@@ -50,7 +44,7 @@ namespace SF.Data.Spaces.Local
 
         public void Scan(IQuery<T> query, Action<T> callback)
         {
-            for (var i = 0; i < _count; i++)
+            for (var i = 0; i < _storage.Count; i++)
             {
                 var item = _storage[i];
                 if (query.Match(item))
@@ -61,7 +55,7 @@ namespace SF.Data.Spaces.Local
         public int Count(IQuery<T> query)
         {
             var c = 0;
-            for (var i = 0; i < _count; i++)
+            for (var i = 0; i < _storage.Count; i++)
             {
                 var item = _storage[i];
                 if (item != null && query.Match(item))
@@ -72,32 +66,18 @@ namespace SF.Data.Spaces.Local
 
         public void Clear()
         {
-            // TODO: Do we need to clean actual tuples?
-            /*if (_count == 0)
-                return;*/
-            //Array.Clear(_storage, 0, _count);
-            _count = 0;
+            _storage.Clear();
         }
 
         public T[] GetArray(out int count)
         {
-            count = _count;
-            return _storage;
+            count = _storage.Count;
+            return _storage.Buffer;
         }
 
         public void AddRange(T[] tuples, int count)
         {
-            if (_count + count > _storage.Length)
-            {
-                var newCount = Math.Max(_storage.Length*2, _count + count);
-                Array.Resize(ref _storage, newCount);
-            }
-
-            for (var i = 0; i < count; i++)
-            {
-                _storage[_count + i] = tuples[i];
-            }
-            _count += count;
+            _storage.AddRange(tuples, count);
         }
     }
 }
