@@ -17,6 +17,12 @@ namespace SF.Strings
             Length = Text.Length;
         }
 
+        private StringParser(string text, int length)
+        {
+            Text = text;
+            Length = length;
+        }
+
         public int Length { get; private set; }
         public string Text { get; private set; }
 
@@ -38,7 +44,7 @@ namespace SF.Strings
 
         public string Right
         {
-            get { return End ? string.Empty : Text.Substring(_index); }
+            get { return End ? string.Empty : Text.Substring(_index, Length - _index); }
         }
 
         public string Left
@@ -73,8 +79,20 @@ namespace SF.Strings
                 throw new ArgumentNullException("str");
             if (End)
                 return this;
-            var pos = Text.IndexOf(str, _index, StringComparison.Ordinal);
+            var pos = Text.IndexOf(str, _index, Length - _index, StringComparison.Ordinal);
             _index = pos < 0 ? Length : pos;
+            return this;
+        }
+
+        public StringParser TrimTo(string str)
+        {
+            if (str == null)
+                throw new ArgumentNullException("str");
+            if (End)
+                return this;
+            var pos = Text.IndexOf(str, _index, Length - _index, StringComparison.Ordinal);
+            if (pos >= 0)
+                Length = pos;
             return this;
         }
 
@@ -92,6 +110,19 @@ namespace SF.Strings
             return Skip(str.Length);
         }
 
+        public StringParser TrimToEndOf(string str)
+        {
+            if (str == null)
+                throw new ArgumentNullException("str");
+            if (End)
+                return this;
+            var pos = Text.IndexOf(str, _index, Length - _index, StringComparison.Ordinal);
+            if (pos >= 0)
+                Length = pos + str.Length;
+            return this;
+        }
+
+
         public StringParser BackToEndOf(string str)
         {
             if (str == null)
@@ -99,7 +130,7 @@ namespace SF.Strings
             Back(str.Length - 1);
             if (Start)
                 return this;
-            var pos = Text.LastIndexOf(str, _index, StringComparison.Ordinal);
+            var pos = Text.LastIndexOf(str, _index, Length - _index, StringComparison.Ordinal);
             _index = pos < 0 ? 0 : pos + str.Length;
             return this;
         }
@@ -147,7 +178,7 @@ namespace SF.Strings
 
         public StringParser Clone()
         {
-            return new StringParser(Text) { _index = _index };
+            return new StringParser(Text, Length) { _index = _index };
         }
     }
 }

@@ -51,6 +51,7 @@
     <Compile Include="DisposableEx.cs" />
     <Compile Include="Comparers\Internal\CollectionComparer.cs" />
     <Compile Include="Comparers\Internal\ArrayEqualityComparer.cs" />
+    <Compile Include="IO\FileEx.cs" />
     <Compile Include="Legacy\IO\BufferWriter.cs" />
     <Compile Include="Legacy\IO\StreamEx.cs" />
     <Compile Include="Legacy\Net\Sockets\ISocket.cs" />
