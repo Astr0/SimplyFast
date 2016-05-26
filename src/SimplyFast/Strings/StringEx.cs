@@ -21,6 +21,16 @@ namespace SF.Strings
             return str.Substring(Math.Max(0, str.Length - length), Math.Min(length, str.Length));
         }
 
+
+        public static string Skip(this string str, string start)
+        {
+            if (str == null)
+                throw new ArgumentNullException("str");
+            if (start == null)
+                return str;
+            return str.StartsWith(start) ? str.Substring(start.Length) : str;
+        }
+
         public static string SubstringSafe(this string str, int startIndex, int length = int.MaxValue)
         {
             if (string.IsNullOrEmpty(str))
