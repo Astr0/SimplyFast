@@ -25,9 +25,7 @@ namespace SF.Collections
         public void Push(T value)
         {
             if (_count == _array.Length)
-            {
                 Array.Resize(ref _array, _count * 2);
-            }
             _array[_count++] = value;
         }
 

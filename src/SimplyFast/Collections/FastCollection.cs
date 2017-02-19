@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace SF.Collections
 {
-    public class FastCollection<T>: ICollection<T>
+    public class FastCollection<T> : ICollection<T>
     {
         private T[] _array;
         private int _count;
@@ -22,6 +22,14 @@ namespace SF.Collections
         {
             _array = new T[4];
         }
+
+        public T this[int index]
+        {
+            get { return _array[index]; }
+            set { _array[index] = value; }
+        }
+
+        public T[] Buffer => _array;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IEnumerator<T> GetEnumerator()
@@ -39,9 +47,7 @@ namespace SF.Collections
         public void Add(T item)
         {
             if (_array.Length == _count)
-            {
                 Array.Resize(ref _array, _count * 2);
-            }
             _array[_count++] = item;
         }
 
@@ -52,25 +58,9 @@ namespace SF.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int IndexOf(T item)
-        {
-            for (var i = 0; i < _count; i++)
-            {
-                if (_array[i].Equals(item))
-                    return i;
-            }
-            return -1;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(T item)
         {
-            for (var i = 0; i < _count; i++)
-            {
-                if (_array[i].Equals(item))
-                    return true;
-            }
-            return false;
+            return IndexOf(item) >= 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -82,15 +72,21 @@ namespace SF.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Remove(T item)
         {
-            for (var i = 0; i < _count; i++)
-            {
-                if (_array[i].Equals(item))
-                {
-                    RemoveAt(i);
-                    return true;
-                }
-            }
-            return false;
+            var index = IndexOf(item);
+            if (index < 0)
+                return false;
+            RemoveAt(index);
+            return true;
+        }
+
+        public int Count => _count;
+
+        public bool IsReadOnly => false;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public int IndexOf(T item)
+        {
+            return Array.IndexOf(_array, item, 0, _count);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -105,25 +101,13 @@ namespace SF.Collections
             if (_count + count > _array.Length)
             {
                 var newCount = Math.Max(_array.Length * 2, _count + count);
-                Array.Resize(ref _array, newCount);
+                var arr = new T[newCount];
+                Array.Copy(_array, arr, _count);
+                _array = arr;
             }
 
-            for (var i = 0; i < count; i++)
-            {
-                _array[_count + i] = items[i];
-            }
+            Array.Copy(items, 0, _array, _count, count);
             _count += count;
         }
-
-        public T this[int index]
-        {
-            get { return _array[index]; }
-            set { _array[index] = value; }
-        }
-
-        public T[] Buffer => _array;
-
-        public int Count => _count;
-        public bool IsReadOnly => false;
     }
 }
