@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using SF.Collections;
 
 namespace SF.Reflection
 {
@@ -32,7 +33,7 @@ namespace SF.Reflection
         public MethodInfo[] Get(string name)
         {
             MethodInfo[] methods;
-            return _methods.TryGetValue(name, out methods) ? methods : ZeroArray<MethodInfo>.Instance;
+            return _methods.TryGetValue(name, out methods) ? methods : TypeHelper<MethodInfo>.EmptyArray;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

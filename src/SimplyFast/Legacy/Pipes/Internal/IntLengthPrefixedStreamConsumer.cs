@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using SF.Collections;
 using SF.IO;
 
 namespace SF.Pipes
@@ -32,7 +33,7 @@ namespace SF.Pipes
 
             // perf optimization - don't read if length == 0
             if (length == 0)
-                return ZeroArray<byte>.Instance;
+                return TypeHelper<byte>.EmptyArray;
 
             var result = new byte[length];
 

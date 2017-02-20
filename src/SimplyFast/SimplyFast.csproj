@@ -50,9 +50,19 @@
     <Compile Include="Collections\WeakCollection.cs" />
     <Compile Include="Comparers\Internal\FuncEqualityComparer.cs" />
     <Compile Include="Comparers\Internal\KeyEqualityComparer.cs" />
-    <Compile Include="DisposableEx.cs" />
+    <Compile Include="disposable\DisposableEx.AlwaysDisposableAction.cs" />
+    <Compile Include="disposable\DisposableEx.AssignDisposable.cs" />
+    <Compile Include="disposable\DisposableEx.CollectionRemove.cs" />
+    <Compile Include="disposable\DisposableEx.ContextDisposable.cs" />
+    <Compile Include="disposable\DisposableEx.cs" />
     <Compile Include="Comparers\Internal\CollectionComparer.cs" />
     <Compile Include="Comparers\Internal\ArrayEqualityComparer.cs" />
+    <Compile Include="disposable\DisposableEx.DisposableAction.cs" />
+    <Compile Include="disposable\DisposableEx.Disposables.cs" />
+    <Compile Include="disposable\DisposableEx.FinalizeDisposable.cs" />
+    <Compile Include="disposable\DisposableEx.KeepAliveDisposable.cs" />
+    <Compile Include="disposable\DisposableEx.NullDisposable.cs" />
+    <Compile Include="disposable\IAssignDisposable.cs" />
     <Compile Include="IO\FileEx.cs" />
     <Compile Include="Legacy\IO\BufferWriter.cs" />
     <Compile Include="Legacy\IO\StreamEx.cs" />
@@ -96,7 +106,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Comparers\EqualityComparerEx.cs" />
     <Compile Include="Threading\TaskEx.cs" />
-    <Compile Include="ZeroArray.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
