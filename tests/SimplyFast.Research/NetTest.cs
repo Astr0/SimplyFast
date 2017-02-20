@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 using SF.Net.Sockets;
 using SF.Pipes;
@@ -51,6 +50,7 @@ namespace SimplyFast.Research
             return res;
         }
 
+        [SuppressMessage("ReSharper", "FunctionNeverReturns")]
         private static async Task StartServer(NetSocketFactory factory, EndPoint endPoint)
         {
             var server = factory.Listen(endPoint);

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Diagnostics.CodeAnalysis;
 using SF.Data.Spaces;
 
 namespace SimplyFast.Research.Spaces
@@ -7,19 +7,20 @@ namespace SimplyFast.Research.Spaces
     {
         private ISpace _space;
         private ISpaceProxy _spaceProxy;
-        private List<TestTuple> _list; 
+        //private List<TestTuple> _list; 
 
-        private readonly TupleType TestTupleType = new TupleType(0);
+        private readonly TupleType _testTupleType = new TupleType(0);
+        [SuppressMessage("ReSharper", "NotAccessedField.Local")]
         private class TestTuple
         {
             public TestTuple(int x, int y)
             {
-                X = x;
-                Y = y;
+                _x = x;
+                _y = y;
             }
 
-            public readonly int X;
-            public readonly int Y;
+            private readonly int _x;
+            private readonly int _y;
         }
 
         public LocalSpaceWriteTests()
@@ -31,27 +32,27 @@ namespace SimplyFast.Research.Spaces
         private void ResetSpace()
         {
             _counter = 0;
-            _list = new List<TestTuple>();
+            //_list = new List<TestTuple>();
             _space = SpaceFactory.UnsafeLocal();
             _spaceProxy = _space.CreateProxy();
         }
 
         private void AddTupleNoTransaction()
         {
-            _spaceProxy.Add(TestTupleType, new TestTuple(_counter, _counter));
+            _spaceProxy.Add(_testTupleType, new TestTuple(_counter, _counter));
             _counter++;
         }
 
         private void AddTupleToList()
         {
-            _list.Add(new TestTuple(_counter, _counter));
+            //_list.Add(new TestTuple(_counter, _counter));
             _counter++;
         }
 
         private void AddTupleInTransaction()
         {
             _spaceProxy.BeginTransaction();
-            _spaceProxy.Add(TestTupleType, new TestTuple(_counter, _counter));
+            _spaceProxy.Add(_testTupleType, new TestTuple(_counter, _counter));
             _counter++;
             _spaceProxy.CommitTransaction();
         }
@@ -59,7 +60,7 @@ namespace SimplyFast.Research.Spaces
         private void AddTupleInTransactionAbort()
         {
             _spaceProxy.BeginTransaction();
-            _spaceProxy.Add(TestTupleType, new TestTuple(_counter, _counter));
+            _spaceProxy.Add(_testTupleType, new TestTuple(_counter, _counter));
             _counter++;
             _spaceProxy.RollbackTransaction();
         }

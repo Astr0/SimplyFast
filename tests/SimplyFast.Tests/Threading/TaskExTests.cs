@@ -36,12 +36,13 @@ namespace SF.Tests.Threading
         public void ThenWorks()
         {
             Assert.AreEqual(2.5, Task.FromResult(5).Then(x => x / 2.0).Result);
-            Assert.Throws<InvalidOperationException>(async () =>
+            
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
             {
                 await Throw(0).Then(x => x/2.0);
             });
 
-            Assert.Throws<InvalidOperationException>(async () =>
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
             {
                 await Throw(1).Then(x => x / 2.0);
             });

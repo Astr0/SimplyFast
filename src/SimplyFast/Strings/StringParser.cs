@@ -98,7 +98,6 @@ namespace SF.Strings
 
         public StringParser BackTo(string str)
         {
-            Skip(str.Length);
             BackToEndOf(str);
             return Back(str.Length);
         }
@@ -127,10 +126,10 @@ namespace SF.Strings
         {
             if (str == null)
                 throw new ArgumentNullException("str");
-            Back(str.Length - 1);
+            //Back(str.Length - 1);
             if (Start)
                 return this;
-            var pos = Text.LastIndexOf(str, _index, Length - _index, StringComparison.Ordinal);
+            var pos = Text.LastIndexOf(str, _index, _index, StringComparison.Ordinal);
             _index = pos < 0 ? 0 : pos + str.Length;
             return this;
         }

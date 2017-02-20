@@ -6,7 +6,7 @@ namespace SF.Tests.Reflection.TestData
     public class TestClass2 : TestClass1
     {
         private static object _f3 = "_f3t";
-        private int _f1 = 11;
+        private int _f1;
 
         public TestClass2() : this(string.Empty, 11)
         {

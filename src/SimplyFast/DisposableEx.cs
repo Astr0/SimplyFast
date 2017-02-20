@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 namespace SF
@@ -153,7 +154,8 @@ namespace SF
         private class KeepAliveDisposable : IDisposable
         {
             private readonly IDisposable _underlying;
-            private readonly object _keepAliveObject;
+            [SuppressMessage("ReSharper", "NotAccessedField.Local")]
+            private object _keepAliveObject;
 
             public KeepAliveDisposable(IDisposable underlying, object keepAliveObject)
             {
@@ -163,6 +165,7 @@ namespace SF
 
             public void Dispose()
             {
+                _keepAliveObject = null;
                 _underlying.Dispose();
             }
         }

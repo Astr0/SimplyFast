@@ -35,7 +35,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dynamo\DVector.cs" />
     <Compile Include="Dynamo\DObjectEx.cs" />
     <Compile Include="Dynamo\DObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

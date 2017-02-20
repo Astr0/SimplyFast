@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -89,6 +90,7 @@ namespace SF.Reflection
         ///     Returns declared type of an object. Usefull for reflection with anonymous.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [SuppressMessage("ReSharper", "UnusedParameter.Global")]
         public static Type TypeOf<T>(T obj)
         {
             return typeof (T);
@@ -169,13 +171,13 @@ namespace SF.Reflection
             using (var en = enumerableTypes.GetEnumerator())
             {
                 if (!en.MoveNext())
-                    throw new ArgumentException("Not an IEnumerable", "expressionType");
+                    throw new ArgumentException("Not an IEnumerable", nameof(enumerableType));
                 var res = en.Current;
                 while (en.MoveNext())
                 {
                     // if we found object second, just ignore - it's generic IEnumerable
                     if (en.Current != typeof(object))
-                        throw new ArgumentException("Ambigious IEnumerable", "expressionType");
+                        throw new ArgumentException("Ambigious IEnumerable", nameof(enumerableType));
                 }
                 return res;
             }

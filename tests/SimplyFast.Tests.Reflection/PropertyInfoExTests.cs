@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 using SF.Reflection;
 using SF.Tests.Reflection.TestData;
@@ -6,6 +7,7 @@ using SF.Tests.Reflection.TestData;
 namespace SF.Tests.Reflection
 {
     [TestFixture]
+    [SuppressMessage("ReSharper", "ValueParameterNotUsed")]
     public class PropertyInfoExTests
     {
         [Test]

@@ -133,9 +133,9 @@ namespace SF.Tests.Expressions
             var lambda = EBuilder.Lambda(typeof(TestClass), a =>
             {
                 var aexp = a.EBuilder();
-                return (--aexp.TestField);
+                return --aexp.TestField;
             });
-            Assert.AreEqual("(TestClass p_0) => (p_0.TestField = (p_0.TestField - 1))", lambda.ToDebugString());
+            Assert.AreEqual("(TestClass p_0) => --p_0.TestField", lambda.ToDebugString());
         }
 
         [Test]

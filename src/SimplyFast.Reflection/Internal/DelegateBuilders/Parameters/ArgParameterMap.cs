@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -9,6 +10,7 @@ namespace SF.Reflection.DelegateBuilders
         protected readonly int _delegateParameterIndex;
         protected readonly ParameterInfo _methodParameter;
 
+        [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
         protected ArgParameterMap(ParameterInfo delegateParameter, int delegateParameterIndex,
             ParameterInfo methodParameter)
         {

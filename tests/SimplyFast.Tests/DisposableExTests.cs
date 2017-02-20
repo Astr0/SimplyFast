@@ -11,9 +11,8 @@ namespace SF.Tests
         {
             WeakReference wr;
             {
-                var o = new object();
-                wr = new WeakReference(o);
-                using (DisposableEx.Null().KeepAlive(o))
+                wr = new WeakReference(new object());
+                using (DisposableEx.Null().KeepAlive(wr.Target))
                 {
                     GC.Collect();
                     GC.WaitForFullGCComplete();

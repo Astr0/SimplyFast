@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -21,6 +22,7 @@ namespace SimplyFast.Research
         {
         }
 
+        [SuppressMessage("ReSharper", "ReturnValueOfPureMethodIsNotUsed")]
         protected override void DoRun()
         {
             var live = Enumerable.Range(0, 1000).Select(x => new IntContainer(x)).ToArray();

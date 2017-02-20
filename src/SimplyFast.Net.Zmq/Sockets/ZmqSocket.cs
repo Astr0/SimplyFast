@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,13 +17,13 @@ namespace SF.Net.Sockets
     {
         protected readonly NetMQSocket Socket;
         private readonly ZmqSocketFactory _factory;
-        private volatile Action _receiveAction;
-        private volatile Action _sendAction;
+        private Action _receiveAction;
+        private Action _sendAction;
 
         internal ZmqSocket(ZmqSocketFactory factory, NetMQSocket socket)
         {
             if (socket == null)
-                throw new ArgumentNullException("socket");
+                throw new ArgumentNullException(nameof(socket));
             _factory = factory;
             Socket = socket;
             Socket.SendReady += SendReady;
@@ -112,27 +111,27 @@ namespace SF.Net.Sockets
         private void ReceiveReady(object sender, NetMQSocketEventArgs e)
         {
             var act = Interlocked.Exchange(ref _receiveAction, null);
-            if (act != null)
-                act();
+            act?.Invoke();
         }
 
         private void SendReady(object sender, NetMQSocketEventArgs e)
         {
             var act = Interlocked.Exchange(ref _sendAction, null);
-            if (act != null)
-                act();
+            act?.Invoke();
         }
 
         private void EnqueueReceive(Action action)
         {
-            var res = Interlocked.Exchange(ref _receiveAction, action);
-            Debug.Assert(res == null, "No multithreading here!");
+            var res = Interlocked.CompareExchange(ref _receiveAction, action, null);
+            if(res != null)
+                throw new InvalidOperationException("No multithreading here!");
         }
 
         private void EnqueueSend(Action action)
         {
-            var res = Interlocked.Exchange(ref _sendAction, action);
-            Debug.Assert(res == null, "No multithreading here!");
+            var res = Interlocked.CompareExchange(ref _sendAction, action, null);
+            if (res != null)
+                throw new InvalidOperationException("No multithreading here!");
         }
 
         private void Send(IEnumerable<byte[]> message)

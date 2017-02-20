@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using NUnit.Framework;
-using SimpleFramework.Tests.Common.Comparers;
 
 namespace SF.Tests.Comparers
 {

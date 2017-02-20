@@ -196,22 +196,35 @@ namespace SF.Expressions.Dynamic
 
             public override DynamicMetaObject BindSetMember(SetMemberBinder binder, DynamicMetaObject value)
             {
-                return BuildCallSelf(_setMethod, Expression.Constant(binder.Name), value.Expression.Convert(typeof (object)));
+                return BuildCallSelf(_setMethod, Expression.Constant(binder.Name), value.Expression.Convert(typeof(object)));
+            }
+
+            private static ExpressionType ConvertUnaryOperation(ExpressionType original)
+            {
+                switch (original)
+                {
+                    case ExpressionType.Decrement:
+                        return ExpressionType.PreDecrementAssign;
+                    case ExpressionType.Increment:
+                        return ExpressionType.PreIncrementAssign;
+                    default:
+                        return original;
+                }
             }
 
             public override DynamicMetaObject BindUnaryOperation(UnaryOperationBinder binder)
             {
-                return BuildCallSelf(_unaryMethod, Expression.Constant(binder.Operation));
+                return BuildCallSelf(_unaryMethod, Expression.Constant(ConvertUnaryOperation(binder.Operation)));
             }
 
             public override DynamicMetaObject BindBinaryOperation(BinaryOperationBinder binder, DynamicMetaObject arg)
             {
-                return BuildCallSelf(_binaryMethod, Expression.Constant(binder.Operation), arg.Expression.Convert(typeof (object)));
+                return BuildCallSelf(_binaryMethod, Expression.Constant(binder.Operation), arg.Expression.Convert(typeof(object)));
             }
 
             private static NewArrayExpression ToObjArray(DynamicMetaObject[] args)
             {
-                return Expression.NewArrayInit(typeof (object), Array.ConvertAll(args, a => a.Expression.Convert(typeof (object))));
+                return Expression.NewArrayInit(typeof(object), Array.ConvertAll(args, a => a.Expression.Convert(typeof(object))));
             }
 
             public override DynamicMetaObject BindInvokeMember(InvokeMemberBinder binder, DynamicMetaObject[] args)
@@ -226,7 +239,7 @@ namespace SF.Expressions.Dynamic
 
             public override DynamicMetaObject BindSetIndex(SetIndexBinder binder, DynamicMetaObject[] indexes, DynamicMetaObject value)
             {
-                return BuildCallSelf(_setIndexMethod, ToObjArray(indexes), value.Expression.Convert(typeof (object)));
+                return BuildCallSelf(_setIndexMethod, ToObjArray(indexes), value.Expression.Convert(typeof(object)));
             }
 
             public override DynamicMetaObject BindInvoke(InvokeBinder binder, DynamicMetaObject[] args)

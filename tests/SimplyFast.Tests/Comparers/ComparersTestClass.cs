@@ -1,4 +1,4 @@
-namespace SimpleFramework.Tests.Common.Comparers
+namespace SF.Tests.Comparers
 {
     internal class ComparersTestClass
     {

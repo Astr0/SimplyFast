@@ -77,6 +77,7 @@ namespace SF.Tests.Collections
         [Test]
         public void NotReadOnly()
         {
+            // ReSharper disable once CollectionNeverUpdated.Local
             var wc = new WeakCollection<string>();
             Assert.IsFalse(wc.IsReadOnly);
         }
@@ -86,8 +87,7 @@ namespace SF.Tests.Collections
         {
             var wc = new WeakCollection<string>();
             {
-                var a = new string('a', 1);
-                wc.Add(a);
+                wc.Add(new string('a', 1));
                 Assert.AreEqual("a", wc.First());
             }
             GC.Collect();
@@ -121,10 +121,8 @@ namespace SF.Tests.Collections
             var arr = new[] { "a", "b" };
             var wc = new WeakCollection<string>(arr);
             {
-                var c = new string('c', 1);
-                wc.Add(c);
-                var d = new string('d', 1);
-                wc.Add(d);
+                wc.Add(new string('c', 1));
+                wc.Add(new string('d', 1));
                 Assert.IsTrue(wc.Contains("a"));
                 Assert.IsTrue(wc.Contains("b"));
                 Assert.IsTrue(wc.Contains("c"));

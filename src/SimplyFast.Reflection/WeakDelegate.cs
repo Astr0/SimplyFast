@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -35,6 +34,7 @@ namespace SF.Reflection
     public abstract class WeakDelegate<T>: WeakCollection<T> 
         where T : class
     {
+        [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
         protected WeakDelegate()
         {
             Invoker = BuildInvoker();

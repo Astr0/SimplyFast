@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Castle.Zmq;
 
@@ -22,7 +23,7 @@ namespace SF.Net.Sockets
         public CastleZmqSocketFactory(IZmqContext context)
         {
             if (context == null)
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException(nameof(context));
             _context = context;
         }
 
@@ -43,6 +44,7 @@ namespace SF.Net.Sockets
             return Wrap(_context.CreateSocket(SocketType.Router));
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public CastleZmqSubSocket CreateSubSocket()
         {
             return new CastleZmqSubSocket(this, _context.CreateSocket(SocketType.Sub));
@@ -65,13 +67,12 @@ namespace SF.Net.Sockets
             ExecuteOnPoller(() => _sockets.Remove(socket.Socket));
         }
 
-        private Polling _polling = null;
+        private Polling _polling;
 
         public void Poll()
         {
             ExecutePollerTasks();
-            if (_polling != null)
-                _polling.PollNow();
+            _polling?.PollNow();
         }
 
         private void ExecutePollerTasks()

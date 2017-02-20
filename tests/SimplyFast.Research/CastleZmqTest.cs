@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,7 +10,7 @@ using SF.Pipes;
 
 namespace SimplyFast.Research
 {
-    public class CastleZmqTest: ResearchBase
+    public class CastleZmqTest : ResearchBase
     {
 
         private const int Clients = 300;
@@ -33,6 +33,7 @@ namespace SimplyFast.Research
             await Task.WhenAll(tasks);
         }
 
+        [SuppressMessage("ReSharper", "FunctionNeverReturns")]
         private static async void StartFactory(CastleZmqSocketFactory factory)
         {
             while (true)

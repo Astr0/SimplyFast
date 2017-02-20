@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using NUnit.Framework;
 using SF.Reflection;
@@ -81,6 +82,7 @@ namespace SF.Tests.Reflection
             Assert.Throws<ArgumentException>(() => t.Method("SetM1").ValueType());
         }
 
+        [SuppressMessage("ReSharper", "ValueParameterNotUsed")]
         public class TestInvokable
         {
             public int One()

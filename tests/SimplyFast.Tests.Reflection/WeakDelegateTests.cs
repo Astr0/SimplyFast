@@ -22,6 +22,7 @@ namespace SF.Tests.Reflection
         public void InvokerWorksForAction1()
         {
             var i = 0;
+            // ReSharper disable once AccessToModifiedClosure
             Action<int> add = x => i += x;
 
             var wd1 = WeakDelegate<Action<int>>.Create();
@@ -38,6 +39,7 @@ namespace SF.Tests.Reflection
         public void InvokerWorksForAction2()
         {
             var i = 0;
+            // ReSharper disable once AccessToModifiedClosure
             Action<int, int> add = (x, y) => i += x + y;
 
             var wd1 = WeakDelegate<Action<int, int>>.Create();
@@ -74,7 +76,7 @@ namespace SF.Tests.Reflection
                 _value = value;
             }
 
-            private readonly int _value = 5;
+            private readonly int _value;
 
             public int GetValue()
             {

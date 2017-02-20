@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace SF.Reflection
@@ -8,11 +9,13 @@ namespace SF.Reflection
         private static readonly MethodInfo _exactCreate = typeof(ConvertEx).GetMethod("ExactConverter", BindingFlags.Static | BindingFlags.NonPublic);
         private static readonly MethodInfo _castCreate = typeof(ConvertEx).GetMethod("CastConverter", BindingFlags.Static | BindingFlags.NonPublic);
 
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
         private static T ExactConverter<T>(T value)
         {
             return value;
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
         private static TResult CastConverter<TSource, TResult>(TSource value)
             where TSource : TResult
         {
