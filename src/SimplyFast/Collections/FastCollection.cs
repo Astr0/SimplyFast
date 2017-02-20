@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace SF.Collections
 {
-    public class FastCollection<T> : ICollection<T>
+    public class FastCollection<T> : IList<T>, IReadOnlyList<T>
     {
         private T[] _array;
         private int _count;
@@ -108,6 +108,33 @@ namespace SF.Collections
 
             Array.Copy(items, 0, _array, _count, count);
             _count += count;
+        }
+
+        public void Insert(int index, T item)
+        {
+            var count = _count;
+            if (index < 0 || index > count)
+                throw new IndexOutOfRangeException();
+            if (index == count)
+            {
+                Add(item);
+            }
+            else if (_array.Length == count)
+            {
+                var arr = new T[count * 2];
+                if (index != 0)
+                    Array.Copy(_array, 0, arr, 0, index);
+                Array.Copy(_array, index, arr, index + 1, count - index);
+                arr[index] = item;
+                _count = count + 1;
+                _array = arr;
+            }
+            else
+            {
+                Array.Copy(_array, index, _array, index + 1, count - index);
+                _array[index] = item;
+                _count = count + 1;
+            }
         }
     }
 }

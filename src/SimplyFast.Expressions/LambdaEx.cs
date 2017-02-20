@@ -63,7 +63,7 @@ namespace SF.Expressions
             var parameters = Array.ConvertAll(invokeParameters, p => p.ParameterType);
 
             if (parameters.Length < lambda.Parameters.Count)
-                throw new ArgumentException("Parameters count is less than lambdas", "delegateType");
+                throw new ArgumentException("Parameters count is less than lambdas", nameof(delegateType));
 
             if (SignatureMatch(lambda, result, parameters))
             {
