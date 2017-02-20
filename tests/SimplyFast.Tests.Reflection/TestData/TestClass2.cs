@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+// ReSharper disable All
 
 namespace SF.Tests.Reflection.TestData
 {

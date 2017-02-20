@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using NUnit.Framework;
 using SF.Expressions;
@@ -7,14 +8,15 @@ using SF.Expressions;
 namespace SF.Tests.Expressions
 {
     [TestFixture]
-    public class ExpressionExPartialEvalTests
+    public sealed class ExpressionExPartialEvalTests
     {
-        public static int TestFuncDontEval(int x)
+        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
+        private static int TestFuncDontEval(int x)
         {
             throw new InvalidOperationException("Don't eval me!");
         }
 
-        public static int TestFuncEval(int x)
+        private static int TestFuncEval(int x)
         {
             return x;
         }
@@ -110,6 +112,8 @@ namespace SF.Tests.Expressions
             Assert.AreEqual(ExpressionType.Constant, listInit.Initializers[0].Arguments[0].NodeType);
         }
 
+        [SuppressMessage("ReSharper", "CollectionNeverQueried.Global")]
+        [SuppressMessage("ReSharper", "FieldCanBeMadeReadOnly.Global")]
         public class Test
         {
             public Test()
@@ -117,6 +121,7 @@ namespace SF.Tests.Expressions
                 Next = new Test(5);
             }
 
+            [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
             public Test(int count)
             {
                 if (count > 0)
@@ -128,7 +133,7 @@ namespace SF.Tests.Expressions
         }
 
         [Test]
-        public virtual void PartialEvalMemberInit()
+        public void PartialEvalMemberInit()
         {
             Expression<Func<int, Test>> expr = x => new Test
             {

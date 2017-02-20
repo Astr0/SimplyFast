@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using NUnit.Framework;
 using SF.Expressions;
@@ -9,6 +10,8 @@ namespace SF.Tests.Expressions
     [TestFixture]
     public class EBuilderInstanceTests
     {
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public class TestClass
         {
             public int TestField;

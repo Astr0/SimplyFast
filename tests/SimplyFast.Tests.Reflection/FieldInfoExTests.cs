@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using NUnit.Framework;
 using SF.Reflection;
@@ -66,6 +67,7 @@ namespace SF.Tests.Reflection
             Assert.IsNotNull(typeof(TestClass1).Field("_f1").GetterAs<Func<object, object>>());
             Assert.IsNotNull(typeof(TestClass1).Field("F2").GetterAs<Func<object, object>>());
             Assert.IsNotNull(typeof(TestClass2).Field("_f3").GetterAs<Func<object>>());
+            Assert.IsNotNull(typeof(TestClass2).Field("_f3").GetterAs(typeof(Func<object>)));
         }
 
         [Test]
@@ -99,9 +101,10 @@ namespace SF.Tests.Reflection
         [Test]
         public void SetterExists()
         {
-            Assert.IsNotNull(typeof(TestClass1).Field("_f1").SetterAs<Action<object,object>>());
+            Assert.IsNotNull(typeof(TestClass1).Field("_f1").SetterAs<Action<object, object>>());
             Assert.IsNotNull(typeof(TestClass1).Field("F2").SetterAs<Action<object, object>>());
             Assert.IsNotNull(typeof(TestClass2).Field("_f3").SetterAs<Action<object>>());
+            Assert.IsNotNull(typeof(TestClass2).Field("_f3").SetterAs(typeof(Action<object>)));
         }
 
         [Test]
@@ -148,21 +151,24 @@ namespace SF.Tests.Reflection
         [Test]
         public void FieldsCacheFine()
         {
-            var fields = new HashSet<FieldInfo>(typeof (TestClass1).Fields());
+            var fields = new HashSet<FieldInfo>(typeof(TestClass1).Fields());
             Assert.IsTrue(fields.SetEquals(typeof(TestClass1).GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)));
         }
 
-        public class ClassWithFields
+        private class ClassWithFields
         {
+#pragma warning disable 169
             public int Ok = 1;
-            public readonly int Read = 2; 
+            public readonly int Read = 2;
+            [SuppressMessage("ReSharper", "UnusedMember.Local")]
             public const int Constant = 3;
+#pragma warning restore 169
         }
 
         [Test]
         public void CanWriteTests()
         {
-            var type = typeof (ClassWithFields);
+            var type = typeof(ClassWithFields);
             Assert.IsTrue(type.Field("Ok").CanWrite());
             Assert.IsFalse(type.Field("Read").CanWrite());
             Assert.IsFalse(type.Field("Constant").CanWrite());

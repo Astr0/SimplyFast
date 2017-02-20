@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using NUnit.Framework;
 using SF.Expressions;
@@ -9,7 +10,9 @@ namespace SF.Tests.Expressions
     [TestFixture]
     public class EBuilderStaticTests
     {
-        public class TestClass
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        private class TestClass
         {
             public TestClass(int value)
             {
@@ -33,7 +36,9 @@ namespace SF.Tests.Expressions
                 return TestField * param;
             }
 
+            #pragma warning disable 169
             public static Action<bool> TestAction;
+            #pragma warning restore 169
         }
 
         [Test]

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
@@ -17,7 +18,7 @@ namespace SF.Tests.Reflection
         [Test]
         public void FindOverloadReturnsNullOnMultipleGenericMatches()
         {
-            var parameters = new[] {typeof (int), typeof (int)};
+            var parameters = new[] { typeof(int), typeof(int) };
             var methodGeneric = typeof(TestClass2).FindMethod("Max", parameters);
             Assert.IsNull(methodGeneric);
             var method = typeof(TestClass2).FindMethod("Max", parameters);
@@ -27,17 +28,17 @@ namespace SF.Tests.Reflection
         [Test]
         public void FindOverloadWorks()
         {
-            var intParameters = new[] {typeof (int), typeof (int)};
+            var intParameters = new[] { typeof(int), typeof(int) };
             var normalInt = typeof(TestClass2).FindMethod("Max3", intParameters);
             Assert.IsNotNull(normalInt);
             Assert.AreEqual(7, normalInt.InvokerAs<Func<object, object, object>>()(3, 5));
 
-            var doubleParameters = new[] {typeof (double), typeof (double)};
+            var doubleParameters = new[] { typeof(double), typeof(double) };
             var normalDouble = typeof(TestClass2).FindMethod("Max3", doubleParameters);
             Assert.IsNotNull(normalDouble);
             Assert.AreEqual(6.5, normalDouble.InvokerAs<Func<double, double, double>>()(3.5, 5.5));
 
-            var floatParameters = new[] {typeof (float), typeof (float)};
+            var floatParameters = new[] { typeof(float), typeof(float) };
             var genericFloat = typeof(TestClass2).FindMethod("Max3", floatParameters);
             Assert.IsNotNull(normalDouble);
             Assert.IsTrue(genericFloat.IsGenericMethod);
@@ -49,9 +50,9 @@ namespace SF.Tests.Reflection
         {
             var genericMethod = typeof(TestClass2).Method("Max", 1, Substitute.T[0], Substitute.T[0]);
             Assert.IsNotNull(genericMethod);
-            var method = genericMethod.MakeGeneric(new[] {typeof (int)});
+            var method = genericMethod.MakeGeneric(typeof(int));
             Assert.AreEqual(5, method.InvokerAs<Func<int, int, int>>()(3, 5));
-            var method2 = genericMethod.MakeGeneric(new[] {typeof (double)});
+            var method2 = genericMethod.MakeGeneric(typeof(double));
             Assert.AreEqual(3.7, method2.InvokerAs<Func<object, double, double>>()(3.7, 1.2));
         }
 
@@ -198,7 +199,7 @@ namespace SF.Tests.Reflection
         [Test]
         public void ModifiersWorks()
         {
-            var method = typeof (TestClass2).Method("Sum", typeof (int), typeof (int), typeof (int).MakeByRefType(), typeof (int).MakeByRefType());
+            var method = typeof(TestClass2).Method("Sum", typeof(int), typeof(int), typeof(int).MakeByRefType(), typeof(int).MakeByRefType());
             Assert.IsNotNull(method);
             int c;
             var d = 2;
@@ -241,8 +242,9 @@ namespace SF.Tests.Reflection
             Assert.AreEqual(37, count);
         }
 
-        public class ClassWithInvoke
+        private class ClassWithInvoke
         {
+            [SuppressMessage("ReSharper", "UnusedMember.Local")]
             public void Invoke() { }
         }
 
@@ -253,10 +255,11 @@ namespace SF.Tests.Reflection
             Assert.AreEqual(0, MethodInfoEx.GetInvokeMethod(typeof(Func<string>)).GetParameters().Length);
             Assert.AreEqual(typeof(void), MethodInfoEx.GetInvokeMethod(typeof(Action<string, string>)).ReturnType);
             Assert.AreEqual(2, MethodInfoEx.GetInvokeMethod(typeof(Action<string, string>)).GetParameters().Length);
-            Assert.Throws<ArgumentException>(() => MethodInfoEx.GetInvokeMethod(typeof (string)));
+            Assert.Throws<ArgumentException>(() => MethodInfoEx.GetInvokeMethod(typeof(string)));
             Assert.Throws<ArgumentException>(() => MethodInfoEx.GetInvokeMethod(typeof(ClassWithInvoke)));
         }
 
+        [SuppressMessage("ReSharper", "UnusedParameter.Global")]
         public class Cast1
         {
             public static explicit operator int(Cast1 a)
@@ -275,6 +278,7 @@ namespace SF.Tests.Reflection
             }
         }
 
+        [SuppressMessage("ReSharper", "UnusedParameter.Global")]
         public class Cast2
         {
             public static explicit operator Cast2(int a)
@@ -301,7 +305,7 @@ namespace SF.Tests.Reflection
         [Test]
         public void FindCastToWorks()
         {
-            var t = typeof (Cast1);
+            var t = typeof(Cast1);
             Assert.AreEqual(typeof(int), MethodInfoEx.FindCastToOperator(t, typeof(int)).ReturnType);
             Assert.AreEqual(typeof(double), MethodInfoEx.FindCastToOperator(t, typeof(double)).ReturnType);
             Assert.AreEqual(typeof(Cast2), MethodInfoEx.FindCastToOperator(t, typeof(Cast2)).ReturnType);
@@ -337,6 +341,28 @@ namespace SF.Tests.Reflection
             Assert.IsNull(MethodInfoEx.FindCastOperator(typeof(decimal), t2));
 
             Assert.Throws<AmbiguousMatchException>(() => MethodInfoEx.FindCastOperator(t1, t2));
+        }
+
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        private class ClassWith2Methods
+        {
+            public void TestInstance()
+            {
+            }
+
+            [SuppressMessage("ReSharper", "UnusedParameter.Local")]
+            public static void TestStatic<T>(T v, int x)
+            {
+            }
+        }
+
+        [Test]
+        public void MethodsOk()
+        {
+            Assert.AreEqual(8, typeof(ClassWith2Methods).Methods().Length);
+            Assert.AreEqual(2, typeof(ClassWith2Methods).Methods().Count(x => x.DeclaringType == typeof(ClassWith2Methods)));
+            Assert.AreEqual(1, typeof(ClassWith2Methods).Methods("ToString").Length);
+            Assert.IsNotNull(typeof(ClassWith2Methods).Method("TestStatic", new[] { typeof(string) }, new[] { typeof(string), typeof(int) }));
         }
     }
 }

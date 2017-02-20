@@ -126,7 +126,7 @@ namespace SF.Expressions
         public static Expression Using(Expression disposable, Expression body)
         {
             if (!typeof (IDisposable).IsAssignableFrom(disposable.Type))
-                throw new ArgumentException("Not IDisposable", "disposable");
+                throw new ArgumentException("Not IDisposable", nameof(disposable));
             return Expression.TryFinally(body,
                 Expression.IfThen(disposable.Binary(ExpressionType.NotEqual, Expression.Constant(null, disposable.Type)),
                     disposable.Method(DisposableDispose)));
@@ -174,7 +174,7 @@ namespace SF.Expressions
             else if (typeof (IEnumerable).IsAssignableFrom(enumerable.Type))
                 getEnumerator = EnumerableGetEnumerator;
             if (getEnumerator == null)
-                throw new ArgumentException("Not IEnumerable", "enumerable");
+                throw new ArgumentException("Not IEnumerable", nameof(enumerable));
 
             var enumerator = Expression.Parameter(getEnumerator.ReturnType);
 
@@ -296,9 +296,7 @@ namespace SF.Expressions
             return Expression.Property(expression, property, arguments);
         }
 
-        // ReSharper disable MethodOverloadWithOptionalParameter
         public static IndexExpression Property(this Expression expression, PropertyInfo property, params Expression[] arguments)
-            // ReSharper restore MethodOverloadWithOptionalParameter
         {
             return Expression.Property(expression, property, arguments);
         }
@@ -355,7 +353,7 @@ namespace SF.Expressions
         {
             var method = type.FindInvokableMember(methodOrMemberName, arguments.Select(x => x.Type).ToArray());
             if (method == null)
-                throw new ArgumentException("Method not found.", "methodOrMemberName");
+                throw new ArgumentException("Method not found.", nameof(methodOrMemberName));
             return method.MemberType == MemberTypes.Method
                 ? Expression.Call(null, (MethodInfo) method, arguments)
                 : MemberAccess(null, method).InvokeDelegate(arguments);
@@ -365,7 +363,7 @@ namespace SF.Expressions
         {
             var method = expression.Type.FindInvokableMember(methodOrMemberName, arguments.Select(x => x.Type).ToArray());
             if (method == null)
-                throw new ArgumentException("Method not found.", "methodOrMemberName");
+                throw new ArgumentException("Method not found.", nameof(methodOrMemberName));
             return method.MemberType == MemberTypes.Method
                 ? Expression.Call(expression, (MethodInfo) method, arguments)
                 : expression.MemberAccess(method).InvokeDelegate(arguments);
@@ -379,7 +377,7 @@ namespace SF.Expressions
             }
             var constructor = type.Constructor(System.Array.ConvertAll(arguments, x => x.Type));
             if (constructor == null)
-                throw new ArgumentException("Constructor not found.", "arguments");
+                throw new ArgumentException("Constructor not found.", nameof(arguments));
             return Expression.New(constructor, arguments);
         }
     }

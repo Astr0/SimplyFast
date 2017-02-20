@@ -116,7 +116,7 @@ namespace SF.Reflection
         ///     Returns property getter delegate as delegateType
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static object GetterAs(PropertyInfo propertyInfo, Type delegateType)
+        public static object GetterAs(this PropertyInfo propertyInfo, Type delegateType)
         {
             return propertyInfo.CanRead ? propertyInfo.GetGetMethod(MemberInfoEx.PrivateAccess).InvokerAs(delegateType) : null;
         }
@@ -125,7 +125,7 @@ namespace SF.Reflection
         ///     Returns property setter delegate as delegateType
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static object SetterAs(PropertyInfo propertyInfo, Type delegateType)
+        public static object SetterAs(this PropertyInfo propertyInfo, Type delegateType)
         {
             return propertyInfo.CanWrite ? propertyInfo.GetSetMethod(MemberInfoEx.PrivateAccess).InvokerAs(delegateType) : null;
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -17,6 +18,7 @@ namespace SF.Reflection
             PrivateAccess = true;
         }
 
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public static bool PrivateAccess
         {
             get { return _privateAccess; }
@@ -87,7 +89,7 @@ namespace SF.Reflection
                 case MemberTypes.Property:
                     return ((PropertyInfo) member).PropertyType;
                 default:
-                    throw new ArgumentException("Not a field or property.", "member");
+                    throw new ArgumentException("Not a field or property.", nameof(member));
             }
         }
 

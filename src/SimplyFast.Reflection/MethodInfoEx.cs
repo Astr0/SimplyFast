@@ -94,10 +94,10 @@ namespace SF.Reflection
         public static MethodInfo GetInvokeMethod(Type delegateType)
         {
             if (delegateType.BaseType != typeof (MulticastDelegate))
-                throw new ArgumentException("Not a delegate", "delegateType");
+                throw new ArgumentException("Not a delegate", nameof(delegateType));
             var invokeMethod = delegateType.Method("Invoke");
             if (invokeMethod == null)
-                throw new ArgumentException("Not a delegate", "delegateType");
+                throw new ArgumentException("Not a delegate", nameof(delegateType));
             return invokeMethod;
         }
 
@@ -144,7 +144,7 @@ namespace SF.Reflection
             if (castTo == null) 
                 return castFrom;
             if (castFrom != null)
-                throw new AmbiguousMatchException(string.Format("Both {0} and {1} have conversion operators", from.Name, to.Name));
+                throw new AmbiguousMatchException($"Both {from.Name} and {to.Name} have conversion operators");
             return castTo;
         }
     }

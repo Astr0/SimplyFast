@@ -37,13 +37,11 @@ namespace SF.Reflection
             return t =>
             {
                 int index;
-                if (_genericToIndex.TryGetValue(t, out index))
-                {
-                    if (index < genericArgs.Length)
-                        return genericArgs[index];
-                    throw new ArgumentException("Type out of range");
-                }
-                return null;
+                if (!_genericToIndex.TryGetValue(t, out index))
+                    return null;
+                if (index < genericArgs.Length)
+                    return genericArgs[index];
+                throw new ArgumentException("Type out of range");
             };
         }
     }

@@ -14,8 +14,9 @@ namespace SF.Tests.Reflection
         public void GetterExists()
         {
             Assert.IsNotNull(typeof (TestClass3).Property("P1").GetterAs<Func<object, object>>());
-            Assert.IsNotNull(typeof(TestClass3).Property("Item", new[] { typeof(int) }).GetterAs<Func<object, object, object>>());
+            Assert.IsNotNull(typeof(TestClass3).Property("Item", typeof(int)).GetterAs<Func<object, object, object>>());
             Assert.IsNotNull(typeof(TestClass3).Property("CanGet").GetterAs<Func<object, object>>());
+            Assert.IsNotNull(typeof(TestClass3).Property("CanGet").GetterAs(typeof(Func<object, object>)));
             Assert.IsNull(typeof(TestClass3).Property("CanSet").GetterAs<Func<object, object>>());
         }
 
@@ -54,9 +55,10 @@ namespace SF.Tests.Reflection
         public void SetterExists()
         {
             Assert.IsNotNull(typeof (TestClass3).Property("P1").SetterAs<Action<object, object>>());
-            Assert.IsNotNull(typeof(TestClass3).Property("Item", new[] { typeof(int) }).SetterAs<Action<object, object, object>>());
+            Assert.IsNotNull(typeof(TestClass3).Property("Item", typeof(int)).SetterAs<Action<object, object, object>>());
             Assert.IsNull(typeof(TestClass3).Property("CanGet").SetterAs<Action<object, object>>());
             Assert.IsNotNull(typeof(TestClass3).Property("CanSet").SetterAs<Action<object, object>>());
+            Assert.IsNotNull(typeof(TestClass3).Property("CanSet").SetterAs(typeof(Action<object, object>)));
         }
 
         [Test]
@@ -122,7 +124,9 @@ namespace SF.Tests.Reflection
             Assert.IsFalse(typeof(TestClass3).Property("Priv").IsPublic());
         }
 
-        public class MultiIndexed
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
+        private class MultiIndexed
         {
             public int this[int index] { get { return 0; } set{} }
             public int this[string index] { get { return 0; } set { } }

@@ -40,14 +40,13 @@ namespace SF.Reflection
                 return x => (TResult)Convert.ChangeType(x, typeof(TResult));
 
             // if source is IConvertible, use IConvertible method
-            if (typeof(IConvertible).IsAssignableFrom(typeof(TSource)))
-            {
-                var convertibleTo = FindConvertibleTo<TResult>();
-                if (convertibleTo != null)
-                    return convertibleTo.InvokerAs<Func<TSource, TResult>>();
-                return x => (TResult)((IConvertible)x).ToType(typeof(TResult), null);
-            }
-            return x => { throw new InvalidCastException(); };
+            if (!typeof(IConvertible).IsAssignableFrom(typeof(TSource)))
+                return x => { throw new InvalidCastException(); };
+
+            var convertibleTo = FindConvertibleTo<TResult>();
+            if (convertibleTo != null)
+                return convertibleTo.InvokerAs<Func<TSource, TResult>>();
+            return x => (TResult)((IConvertible)x).ToType(typeof(TResult), null);
         }
 
         private static string GetConvertToMethod<TResult>()
