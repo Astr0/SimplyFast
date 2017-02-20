@@ -12,7 +12,7 @@ namespace SF.Reflection.DelegateBuilders
             : base(delegateType)
         {
             if (constructor == null)
-                throw new ArgumentNullException("constructor");
+                throw new ArgumentNullException(nameof(constructor));
             _constructorInfo = constructor;
         }
 

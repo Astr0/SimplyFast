@@ -12,7 +12,7 @@ namespace SF.Reflection.DelegateBuilders
         public MethodDelegateBuilder(MethodInfo methodInfo, Type delegateType) : base(delegateType)
         {
             if (methodInfo == null)
-                throw new ArgumentNullException("methodInfo");
+                throw new ArgumentNullException(nameof(methodInfo));
             _methodInfo = methodInfo;
         }
 

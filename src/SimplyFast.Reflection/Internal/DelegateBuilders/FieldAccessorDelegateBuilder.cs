@@ -13,7 +13,7 @@ namespace SF.Reflection.DelegateBuilders
             : base(delegateType)
         {
             if (fieldInfo == null)
-                throw new ArgumentNullException("fieldInfo");
+                throw new ArgumentNullException(nameof(fieldInfo));
             FieldInfo = fieldInfo;
         }
 

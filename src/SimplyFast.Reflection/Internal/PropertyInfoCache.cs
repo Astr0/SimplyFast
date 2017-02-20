@@ -17,7 +17,7 @@ namespace SF.Reflection
         // ReSharper restore MemberHidesStaticFromOuterClass
         private readonly Dictionary<string, PropertyInfo[]> _properties;
 
-        public PropertyInfoCache(Type type)
+        private PropertyInfoCache(Type type)
         {
             Properties = type.GetProperties(MemberInfoEx.BindingFlags);
             _properties = Properties.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.ToArray(), StringComparer.Ordinal);

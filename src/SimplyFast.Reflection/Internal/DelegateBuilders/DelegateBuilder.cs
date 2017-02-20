@@ -8,18 +8,18 @@ namespace SF.Reflection.DelegateBuilders
 {
     internal abstract class DelegateBuilder
     {
-        protected readonly ParameterInfo[] _delegateParams;
-        protected readonly Type _delegateReturn;
+        private readonly ParameterInfo[] _delegateParams;
+        private readonly Type _delegateReturn;
         protected readonly Type _delegateType;
         //protected readonly MethodBase _method;
-        protected bool _delegateExcatlyMatch;
-        protected List<IDelegateParameterMap> _parametersMap;
+        private bool _delegateExcatlyMatch;
+        private List<IDelegateParameterMap> _parametersMap;
 
         protected DelegateBuilder(Type delegateType)
         {
             _delegateType = delegateType;
             if (_delegateType == null)
-                throw new ArgumentNullException("delegateType");
+                throw new ArgumentNullException(nameof(delegateType));
             if (_delegateType.BaseType != typeof (MulticastDelegate))
                 throw NotDelegateException();
             var invokeMethod = _delegateType.GetMethod("Invoke");
@@ -95,7 +95,7 @@ namespace SF.Reflection.DelegateBuilders
 
         protected abstract ParameterInfo GetThisParameterForMethod();
 
-        protected virtual Delegate CreateCastDelegate()
+        private Delegate CreateCastDelegate()
         {
             var paramTypes = _delegateParams.Select(x => x.ParameterType).ToArray();
             var m = new DynamicMethod(string.Empty, _delegateReturn, paramTypes,
@@ -130,12 +130,12 @@ namespace SF.Reflection.DelegateBuilders
 
         protected abstract void EmitInvoke(ILGenerator generator);
 
-        protected Exception NotDelegateException()
+        private Exception NotDelegateException()
         {
             return new InvalidOperationException(_delegateType + " is not delegate type.");
         }
 
-        protected Exception InvalidSignatureException(Exception innerException)
+        private Exception InvalidSignatureException(Exception innerException)
         {
             return new InvalidOperationException(_delegateType + " has invalid signature.", innerException);
         }
