@@ -7,8 +7,8 @@
     <ProjectGuid>{E065733F-2A11-462B-8704-6206757CBC29}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SF.Tests</RootNamespace>
-    <AssemblyName>SimplyFast.Tests.Meta</AssemblyName>
+    <RootNamespace>SF.Tests.Expressions</RootNamespace>
+    <AssemblyName>SimplyFast.Tests.Expressions</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,53 +30,25 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework, Version=3.6.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NUnit.3.6.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Expressions\ExpressionExPartialEvalTests.cs" />
-    <Compile Include="Expressions\DynamicControlBuilderTests.cs" />
-    <Compile Include="Expressions\EBuilderInstanceTests.cs" />
-    <Compile Include="Expressions\EBuilderStaticTests.cs" />
-    <Compile Include="Expressions\LambdaExConvertTests.cs" />
-    <Compile Include="Expressions\LambdaExTests.cs" />
+    <Compile Include="ExpressionExPartialEvalTests.cs" />
+    <Compile Include="DynamicControlBuilderTests.cs" />
+    <Compile Include="EBuilderInstanceTests.cs" />
+    <Compile Include="EBuilderStaticTests.cs" />
+    <Compile Include="LambdaExConvertTests.cs" />
+    <Compile Include="LambdaExTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reflection\ConstructorInfoExTests.cs" />
-    <Compile Include="Reflection\Emit\EmitControlTests.cs" />
-    <Compile Include="Reflection\Emit\Todo.cs" />
-    <Compile Include="Reflection\FieldInfoExTests.cs">
+    <Compile Include="LambdaExtractTests.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Reflection\MemberInfoExTests.cs" />
-    <Compile Include="Reflection\PropertyInfoExTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Reflection\MethodInfoExTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Reflection\ConvertExTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Expressions\LambdaExtractTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Reflection\TypeExTests.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Reflection\TestData\TestClass1.cs" />
-    <Compile Include="Reflection\TestData\TestClass2.cs" />
-    <Compile Include="Reflection\TestData\TestClass3.cs" />
-    <Compile Include="Reflection\TestData\TestClassWithConsts.cs" />
-    <Compile Include="Reflection\TestData\TestMeAttribute.cs" />
-    <Compile Include="Reflection\WeakDelegateTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\SimplyFast.Expressions\SimplyFast.Expressions.csproj">
@@ -84,12 +56,16 @@
       <Name>SimplyFast.Expressions</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\SimplyFast.Reflection\SimplyFast.Reflection.csproj">
-      <Project>{0466b054-c102-4b3f-8d89-ac3ee2892d44}</Project>
+      <Project>{0466B054-C102-4B3F-8D89-AC3EE2892D44}</Project>
       <Name>SimplyFast.Reflection</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\SimplyFast\SimplyFast.csproj">
       <Project>{1ED04E22-9459-439D-A7AE-1BF9380E75F2}</Project>
       <Name>SimplyFast</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SimplyFast.Tests.Reflection\SimplyFast.Tests.Reflection.csproj">
+      <Project>{cfdc7e1f-db3e-4439-a7f0-774ee1ff5d81}</Project>
+      <Name>SimplyFast.Tests.Reflection</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

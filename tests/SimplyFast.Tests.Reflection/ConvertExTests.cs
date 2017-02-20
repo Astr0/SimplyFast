@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using SF.Reflection;
+#pragma warning disable 414
+#pragma warning disable 169
 
 namespace SF.Tests.Reflection
 {

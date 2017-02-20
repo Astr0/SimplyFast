@@ -1,26 +1,64 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection.Emit;
 using NUnit.Framework;
 using SF.Reflection.Emit;
-using SF.Tests.Expressions;
 
 namespace SF.Tests.Reflection.Emit
 {
     [TestFixture]
     public class EmitControlTests
     {
+        public class TestClass
+        {
+            public int TestField;
+            public string TestProp
+            {
+                get { return TestField.ToString(CultureInfo.InvariantCulture); }
+                set { TestField = int.Parse(value); }
+            }
+
+            public bool IsOk()
+            {
+                return true;
+            }
+
+            public double TestMethod(float param)
+            {
+                return TestField * param;
+            }
+
+            public Action<bool> TestAction;
+
+            public int this[int index]
+            {
+                get { return TestField * index; }
+                set { TestField = value / index; }
+            }
+
+            public static explicit operator int(TestClass a)
+            {
+                return a.TestField;
+            }
+
+            public static explicit operator TestClass(int a)
+            {
+                return new TestClass { TestField = a };
+            }
+        }
+
         [Test]
         public void CastFromOpTest()
         {
-            var method = EmitEx.CreateMethod<Func<int, EBuilderInstanceTests.TestClass>>();
+            var method = EmitEx.CreateMethod<Func<int, TestClass>>();
             var il = method.GetILGenerator();
             il.EmitLdarg(0);
-            il.EmitCast(typeof(int), typeof(EBuilderInstanceTests.TestClass));
+            il.EmitCast(typeof(int), typeof(TestClass));
             il.Emit(OpCodes.Ret);
-            var del = method.CreateDelegate<Func<int, EBuilderInstanceTests.TestClass>>();
+            var del = method.CreateDelegate<Func<int, TestClass>>();
             Assert.AreEqual(1, del(1).TestField);
             Assert.AreEqual(5, del(5).TestField);
         }
@@ -28,14 +66,14 @@ namespace SF.Tests.Reflection.Emit
         [Test]
         public void CastToOpTest()
         {
-            var method = EmitEx.CreateMethod<Func<EBuilderInstanceTests.TestClass, int>>();
+            var method = EmitEx.CreateMethod<Func<TestClass, int>>();
             var il = method.GetILGenerator();
             il.EmitLdarg(0);
-            il.EmitCast(typeof(EBuilderInstanceTests.TestClass), typeof(int));
+            il.EmitCast(typeof(TestClass), typeof(int));
             il.Emit(OpCodes.Ret);
-            var del = method.CreateDelegate<Func<EBuilderInstanceTests.TestClass, int>>();
-            Assert.AreEqual(1, del(new EBuilderInstanceTests.TestClass{TestField = 1}));
-            Assert.AreEqual(5, del(new EBuilderInstanceTests.TestClass { TestField = 5 }));
+            var del = method.CreateDelegate<Func<TestClass, int>>();
+            Assert.AreEqual(1, del(new TestClass{TestField = 1}));
+            Assert.AreEqual(5, del(new TestClass { TestField = 5 }));
         }
 
         [Test]

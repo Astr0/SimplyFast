@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2F9E0F49-7213-4B9D-95D9-C466EB677EFF}</ProjectGuid>
+    <ProjectGuid>{CFDC7E1F-DB3E-4439-A7F0-774EE1FF5D81}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SF.Tests.Data</RootNamespace>
-    <AssemblyName>SimplyFast.Tests.Data</AssemblyName>
+    <RootNamespace>SF.Tests.Reflection</RootNamespace>
+    <AssemblyName>SimplyFast.Tests.Reflection</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -38,27 +39,35 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConstructorInfoExTests.cs" />
+    <Compile Include="ConvertExTests.cs" />
+    <Compile Include="Emit\EmitControlTests.cs" />
+    <Compile Include="Emit\Todo.cs" />
+    <Compile Include="FieldInfoExTests.cs" />
+    <Compile Include="MemberInfoExTests.cs" />
+    <Compile Include="MethodInfoExTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Spaces\LocalSpaceBasicTest.cs" />
-    <Compile Include="Spaces\SpaceTestsBase.cs" />
-    <Compile Include="Spaces\TestTuple.cs" />
-    <Compile Include="Spaces\TestTupleQuery.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\SimplyFast.Data\SimplyFast.Data.csproj">
-      <Project>{54E4B709-E8E8-4D18-9A42-E7278A0E5374}</Project>
-      <Name>SimplyFast.Data</Name>
-    </ProjectReference>
+    <Compile Include="PropertyInfoExTests.cs" />
+    <Compile Include="TestData\TestClass1.cs" />
+    <Compile Include="TestData\TestClass2.cs" />
+    <Compile Include="TestData\TestClass3.cs" />
+    <Compile Include="TestData\TestClassWithConsts.cs" />
+    <Compile Include="TestData\TestMeAttribute.cs" />
+    <Compile Include="TypeExTests.cs" />
+    <Compile Include="WeakDelegateTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\SimplyFast.Reflection\SimplyFast.Reflection.csproj">
+      <Project>{0466B054-C102-4B3F-8D89-AC3EE2892D44}</Project>
+      <Name>SimplyFast.Reflection</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\SimplyFast\SimplyFast.csproj">
+      <Project>{1ED04E22-9459-439D-A7AE-1BF9380E75F2}</Project>
+      <Name>SimplyFast</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
