@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace SF.Collections
@@ -52,6 +53,48 @@ namespace SF.Collections
         {
             TV v;
             return dictionary.TryGetValue(key, out v) ? v : defaultValue;
+        }
+
+
+        /// <summary>
+        /// Returns value for passed key or add's value using builder. 
+        /// Returns flag indicating if value was added. 
+        /// Builder maybe executed multiple times in concurrent environment.
+        /// </summary>
+        public static T GetOrAdd<TK, T>(this ConcurrentDictionary<TK, T> dictionary, TK key, Func<TK, T> builder, out bool added)
+        {
+            T value;
+
+            // try to get existing
+            if (dictionary.TryGetValue(key, out value))
+            {
+                added = false;
+                return value;
+            }
+
+            // create new value
+            var newValue = builder(key);
+
+            // try to add it
+            if (dictionary.TryAdd(key, newValue))
+            {
+                added = true;
+                return newValue;
+            }
+
+            while (true)
+            {
+                // oh sh1t
+                if (dictionary.TryGetValue(key, out value))
+                {
+                    added = false;
+                    return value;
+                }
+                if (!dictionary.TryAdd(key, newValue))
+                    continue;
+                added = true;
+                return newValue;
+            }
         }
     }
 }

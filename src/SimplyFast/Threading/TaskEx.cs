@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,6 +8,7 @@ namespace SF.Threading
     /// <summary>
     /// TPL helper stuff
     /// </summary>
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class TaskEx
     {
         /// <summary>
