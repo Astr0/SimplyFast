@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Include="Collections\DictionaryExTests.cs" />
     <Compile Include="Collections\EnumerableExTests.cs" />
+    <Compile Include="Collections\FastCollectionTests.cs" />
     <Compile Include="Collections\WeakCollectionTest.cs" />
     <Compile Include="Comparers\CollectionEqualityComparerTests.cs" />
     <Compile Include="Comparers\ArrayEqualityComparerTests.cs" />

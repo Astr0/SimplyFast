@@ -1,26 +1,27 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace SF.Collections
 {
-    public class FastCollection<T> : IList<T>, IReadOnlyList<T>
+    public class FastCollection<T> : ICollection<T>, IReadOnlyList<T>
     {
+        private static readonly T[] EmptyArray = new T[0];
+        private static readonly bool _isReferenceType = !typeof(T).IsValueType;
         private T[] _array;
         private int _count;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FastCollection(int capacity)
         {
-            _array = new T[Math.Max(4, capacity)];
+            _array = capacity > 0? new T[capacity] : EmptyArray;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FastCollection()
         {
-            _array = new T[4];
+            _array = EmptyArray;
         }
 
         public T this[int index]
@@ -34,7 +35,10 @@ namespace SF.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public IEnumerator<T> GetEnumerator()
         {
-            return _array.Take(_count).GetEnumerator();
+            for (var i = 0; i < _count; i++)
+            {
+                yield return _array[i];
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -47,13 +51,15 @@ namespace SF.Collections
         public void Add(T item)
         {
             if (_array.Length == _count)
-                Array.Resize(ref _array, _count * 2);
+                Array.Resize(ref _array, _count == 0 ? 4 : _count * 2);
             _array[_count++] = item;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear()
         {
+            if (_isReferenceType)
+                Array.Clear(_array, 0, _count);
             _count = 0;
         }
 
@@ -81,6 +87,19 @@ namespace SF.Collections
 
         public int Count => _count;
 
+        public int Capacity
+        {
+            get { return _array.Length; }
+            set
+            {
+                if (value < _count)
+                    throw new InvalidOperationException("Collection has more elements that requested capacity");
+                var arr = new T[value];
+                Array.Copy(_array, 0, arr, 0, _count);
+                _array = arr;
+            }
+        }
+
         public bool IsReadOnly => false;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -94,47 +113,44 @@ namespace SF.Collections
         {
             _count--;
             _array[i] = _array[_count];
+            if (_isReferenceType)
+                _array[_count] = default(T);
         }
 
         public void AddRange(T[] items, int count)
         {
             if (_count + count > _array.Length)
-            {
-                var newCount = Math.Max(_array.Length * 2, _count + count);
-                var arr = new T[newCount];
-                Array.Copy(_array, arr, _count);
-                _array = arr;
-            }
+                Capacity = Math.Max(_array.Length * 2, _count + count);
 
             Array.Copy(items, 0, _array, _count, count);
             _count += count;
         }
 
-        public void Insert(int index, T item)
-        {
-            var count = _count;
-            if (index < 0 || index > count)
-                throw new IndexOutOfRangeException();
-            if (index == count)
-            {
-                Add(item);
-            }
-            else if (_array.Length == count)
-            {
-                var arr = new T[count * 2];
-                if (index != 0)
-                    Array.Copy(_array, 0, arr, 0, index);
-                Array.Copy(_array, index, arr, index + 1, count - index);
-                arr[index] = item;
-                _count = count + 1;
-                _array = arr;
-            }
-            else
-            {
-                Array.Copy(_array, index, _array, index + 1, count - index);
-                _array[index] = item;
-                _count = count + 1;
-            }
-        }
+        //public void Insert(int index, T item)
+        //{
+        //    var count = _count;
+        //    if (index < 0 || index > count)
+        //        throw new IndexOutOfRangeException();
+        //    if (index == count)
+        //    {
+        //        Add(item);
+        //    }
+        //    else if (_array.Length == count)
+        //    {
+        //        var arr = new T[count * 2];
+        //        if (index != 0)
+        //            Array.Copy(_array, 0, arr, 0, index);
+        //        Array.Copy(_array, index, arr, index + 1, count - index);
+        //        arr[index] = item;
+        //        _count = count + 1;
+        //        _array = arr;
+        //    }
+        //    else
+        //    {
+        //        Array.Copy(_array, index, _array, index + 1, count - index);
+        //        _array[index] = item;
+        //        _count = count + 1;
+        //    }
+        //}
     }
 }
