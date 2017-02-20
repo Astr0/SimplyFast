@@ -8,21 +8,21 @@ namespace SF.Collections
     public class WeakCollection<T> : ICollection<T>, IReadOnlyCollection<T>
         where T: class
     {
-        private readonly List<WeakReference> _list;
+        private readonly FastCollection<WeakReference> _list;
 
         public WeakCollection(int capacity)
         {
-            _list = new List<WeakReference>(capacity);
+            _list = new FastCollection<WeakReference>(capacity);
         }
 
         public WeakCollection()
         {
-            _list = new List<WeakReference>();
+            _list = new FastCollection<WeakReference>();
         }
 
         public WeakCollection(IEnumerable<T> items)
         {
-            _list = new List<WeakReference>(items.Select(x => new WeakReference(x)));
+            _list = new FastCollection<WeakReference>(items.Select(x => new WeakReference(x)));
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -66,8 +66,8 @@ namespace SF.Collections
 
         public bool Contains(T item)
         {
-            var @default = EqualityComparer<T>.Default;
-            return _list.Any(x => @default.Equals((T)x.Target, item));
+            var comparer = EqualityComparer<T>.Default;
+            return _list.Any(x => comparer.Equals((T)x.Target, item));
         }
 
         public void CopyTo(T[] array, int arrayIndex)
@@ -78,20 +78,20 @@ namespace SF.Collections
         public bool Remove(T item)
         {
             var found = false;
-            var @default = EqualityComparer<T>.Default;
+            var comparer = EqualityComparer<T>.Default;
             _list.RemoveAll(x =>
             {
                 var t = x.Target;
                 if (t == null)
                     return true;
-                if (found || !@default.Equals((T)t, item))
+                if (found || !comparer.Equals((T)t, item))
                     return false;
                  return found = true;
             });
             return found;
         }
 
-        public int CapCount { get { return _list.Count; } }
+        public int CapCount => _list.Count;
 
         public int Count
         {
@@ -107,6 +107,6 @@ namespace SF.Collections
             _list.RemoveAll(x => !x.IsAlive);
         }
 
-        public bool IsReadOnly { get { return false; } }
+        public bool IsReadOnly => false;
     }
 }

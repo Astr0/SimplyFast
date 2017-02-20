@@ -16,6 +16,24 @@ namespace SF.Collections
             _array = capacity > 0? new T[capacity] : TypeHelper<T>.EmptyArray;
         }
 
+        public FastCollection(IEnumerable<T> items)
+        {
+            var col = items as IReadOnlyCollection<T>;
+            if (col != null)
+            {
+                _array = new T[col.Count];
+                AddRange(col, col.Count);
+            }
+            else
+            {
+                _array = TypeHelper<T>.EmptyArray;
+                foreach (var item in items)
+                {
+                    Add(item);
+                }
+            }
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FastCollection()
         {
@@ -115,13 +133,57 @@ namespace SF.Collections
                 _array[_count] = default(T);
         }
 
-        public void AddRange(T[] items, int count)
+        public void AddRange(T[] items, int index, int count)
         {
             if (_count + count > _array.Length)
                 Capacity = Math.Max(_array.Length * 2, _count + count);
 
-            Array.Copy(items, 0, _array, _count, count);
+            Array.Copy(items, index, _array, _count, count);
             _count += count;
+        }
+
+        public void AddRange(T[] items, int count)
+        {
+            AddRange(items, 0, count);
+        }
+
+        public void AddRange(IEnumerable<T> items, int count)
+        {
+            if (_count + count > _array.Length)
+                Capacity = Math.Max(_array.Length * 2, _count + count);
+
+            var c = _count;
+            var i = 0;
+            foreach (var item in items)
+            {
+                if (i == count)
+                    break;
+                _array[c] = item;
+                c++;
+                i++;
+            }
+            _count += i;
+        }
+
+        public void RemoveAll(Func<T, bool> remove)
+        {
+            var c = _count;
+            var i = 0;
+            while (i < c)
+            {
+                if (remove(_array[i]))
+                {
+                    c--;
+                    _array[i] = _array[c];
+                    if (TypeHelper<T>.IsReferenceType)
+                        _array[c] = default(T);
+                }
+                else
+                {
+                    ++i;
+                }
+            }
+            _count = c;
         }
 
         //public void Insert(int index, T item)

@@ -29,7 +29,7 @@ namespace SF.Tests.Collections
         [Test]
         public void ClearWorks()
         {
-            var wc = new WeakCollection<string> { "test" };
+            var wc = new WeakCollection<string>(10) { "test" };
             wc.Clear();
             Assert.AreEqual(0, wc.Count);
             Assert.IsFalse(wc.Any());
@@ -67,11 +67,11 @@ namespace SF.Tests.Collections
             var arr = new[] { "a", "b", "c", "d", "c" };
             var wc = new WeakCollection<string>(arr);
             Assert.IsTrue(wc.Remove("c"));
-            Assert.IsTrue(wc.SequenceEqual(new[]{"a", "b", "d", "c"}));
+            Assert.IsTrue(wc.OrderBy(x => x).SequenceEqual(new[]{"a", "b", "c", "d" }));
             Assert.IsTrue(wc.Remove("c"));
-            Assert.IsTrue(wc.SequenceEqual(new[] { "a", "b", "d" }));
+            Assert.IsTrue(wc.OrderBy(x => x).SequenceEqual(new[] { "a", "b", "d" }));
             Assert.IsFalse(wc.Remove("c"));
-            Assert.IsTrue(wc.SequenceEqual(new[] { "a", "b", "d" }));
+            Assert.IsTrue(wc.OrderBy(x => x).SequenceEqual(new[] { "a", "b", "d" }));
         }
 
         [Test]

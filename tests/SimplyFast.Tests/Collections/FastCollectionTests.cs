@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using SF.Collections;
@@ -59,15 +60,16 @@ namespace SF.Tests.Collections
         }
 
         [Test]
-        public void AddRangeWorks()
+        public void AddRangeEnumerableWorks()
         {
             var c = new FastCollection<int>();
-            var array = Enumerable.Range(0, 10).ToArray();
+            const int count = 10;
+            var array = (IEnumerable<int>)Enumerable.Range(0, count).ToArray();
             c.AddRange(array, 10);
-            Assert.AreEqual(array.Length, c.Count);
+            Assert.AreEqual(count, c.Count);
             Assert.IsTrue(c.All(array.Contains));
             c.AddRange(array, 0);
-            Assert.AreEqual(array.Length, c.Count);
+            Assert.AreEqual(count, c.Count);
             Assert.IsTrue(c.All(array.Contains));
             c.Clear();
             Assert.AreEqual(0, c.Count);
@@ -79,9 +81,32 @@ namespace SF.Tests.Collections
         }
 
         [Test]
+        public void AddRangeArrayWorks()
+        {
+            var c = new FastCollection<int>();
+            var array = Enumerable.Range(0, 10).ToArray();
+            c.AddRange(array, 0, 10);
+            Assert.AreEqual(array.Length, c.Count);
+            Assert.IsTrue(c.All(array.Contains));
+            c.AddRange(array, 5, 0);
+            Assert.AreEqual(array.Length, c.Count);
+            Assert.IsTrue(c.All(array.Contains));
+            c.Clear();
+            Assert.AreEqual(0, c.Count);
+            c.AddRange(array, 0);
+            Assert.AreEqual(0, c.Count);
+            c.AddRange(array, 0, 2);
+            Assert.AreEqual(2, c.Count);
+            Assert.IsTrue(c.All(array.Take(2).Contains));
+            c.AddRange(array, 2, 3);
+            Assert.AreEqual(5, c.Count);
+            Assert.IsTrue(c.All(array.Take(5).Contains));
+        }
+
+        [Test]
         public void IndexOfWorks()
         {
-            var c = new FastCollection<int>{1,2,3};
+            var c = new FastCollection<int> { 1, 2, 3 };
             Assert.AreEqual(1, c[c.IndexOf(1)]);
             Assert.AreEqual(2, c[c.IndexOf(2)]);
             Assert.AreEqual(3, c[c.IndexOf(3)]);
@@ -127,7 +152,7 @@ namespace SF.Tests.Collections
         [Test]
         public void SetterWorks()
         {
-            var c = new FastCollection<int> {1};
+            var c = new FastCollection<int> { 1 };
             Assert.AreEqual(1, c[0]);
             Assert.IsTrue(c.Contains(1));
             Assert.IsFalse(c.Contains(2));
@@ -185,7 +210,7 @@ namespace SF.Tests.Collections
         {
             var wr1 = new WeakReference(new object());
             var wr2 = new WeakReference(new object());
-            var c = new FastCollection<object> {wr1.Target, wr2.Target};
+            var c = new FastCollection<object> { wr1.Target, wr2.Target };
             GC.Collect();
             GC.WaitForFullGCComplete();
             Assert.AreEqual(2, c.Count);
@@ -198,6 +223,49 @@ namespace SF.Tests.Collections
             Assert.IsFalse(wr1.IsAlive);
             Assert.IsTrue(wr2.IsAlive);
             c.Clear();
+            GC.Collect();
+            GC.WaitForFullGCComplete();
+            Assert.AreEqual(0, c.Count);
+            Assert.IsFalse(wr1.IsAlive);
+            Assert.IsFalse(wr2.IsAlive);
+        }
+
+        [Test]
+        public void RemoveAllWorks()
+        {
+            var c = new FastCollection<int> { 1, 2, 3, 4, 5 };
+            c.RemoveAll(x => x % 2 == 0);
+            Assert.AreEqual(3, c.Count);
+            Assert.IsTrue(c.All(new[]{1, 3, 5}.Contains));
+            c.RemoveAll(x => false);
+            Assert.AreEqual(3, c.Count);
+            Assert.IsTrue(c.All(new[] { 1, 3, 5 }.Contains));
+            c.RemoveAll(x => true);
+            Assert.AreEqual(0, c.Count);
+            Assert.IsFalse(c.Any());
+            c.RemoveAll(x => true);
+            Assert.AreEqual(0, c.Count);
+            Assert.IsFalse(c.Any());
+        }
+
+        [Test]
+        public void DoesntHoldReferencesRemoveAll()
+        {
+            var wr1 = new WeakReference(new object());
+            var wr2 = new WeakReference(new object());
+            var c = new FastCollection<object> { wr1.Target, wr2.Target };
+            GC.Collect();
+            GC.WaitForFullGCComplete();
+            Assert.AreEqual(2, c.Count);
+            Assert.IsTrue(wr1.IsAlive);
+            Assert.IsTrue(wr2.IsAlive);
+            c.RemoveAll(x => x == wr1.Target);
+            GC.Collect();
+            GC.WaitForFullGCComplete();
+            Assert.AreEqual(1, c.Count);
+            Assert.IsFalse(wr1.IsAlive);
+            Assert.IsTrue(wr2.IsAlive);
+            c.RemoveAll(x => x == wr2.Target);
             GC.Collect();
             GC.WaitForFullGCComplete();
             Assert.AreEqual(0, c.Count);
