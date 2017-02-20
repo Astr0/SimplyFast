@@ -1,56 +1,53 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SF.Strings
 {
     /// <summary>
     ///     Useful class for string parsing
     /// </summary>
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public class StringParser : ICloneable
     {
         private int _index;
+        private readonly string _text;
+        private int _length;
 
         public StringParser(string text)
         {
             if (text == null)
-                throw new ArgumentNullException("text");
-            Text = text;
-            Length = Text.Length;
+                throw new ArgumentNullException(nameof(text));
+            _text = text;
+            _length = text.Length;
         }
 
         private StringParser(string text, int length)
         {
-            Text = text;
-            Length = length;
+            _text = text;
+            _length = length;
         }
 
-        public int Length { get; private set; }
-        public string Text { get; private set; }
+        public int Length => _length;
+
+        public string Text => _text;
 
         public int Index
         {
             get { return _index; }
-            set { _index = Math.Max(0, Math.Min(value, Length)); }
+            set { _index = Math.Max(0, Math.Min(value, _length)); }
         }
 
-        public bool End
-        {
-            get { return _index == Length; }
-        }
+        public bool End => _index == _length;
 
-        public bool Start
-        {
-            get { return _index == 0; }
-        }
+        public bool Start => _index == 0;
 
-        public string Right
-        {
-            get { return End ? string.Empty : Text.Substring(_index, Length - _index); }
-        }
+        public string View => _text.Substring(0, _length);
+        
+        public string Right => End ? string.Empty : _text.Substring(_index, _length - _index);
 
-        public string Left
-        {
-            get { return Start ? string.Empty : Text.Left(_index); }
-        }
+        public string Left => Start ? string.Empty : _text.Left(_index);
+
+        public int CharactersLeft => _length - _index;
 
         object ICloneable.Clone()
         {
@@ -64,7 +61,7 @@ namespace SF.Strings
 
         public StringParser Skip(int count)
         {
-            _index = (_index + count).Clip(0, Length);
+            _index = (_index + count).Clip(0, _length);
             return this;
         }
 
@@ -76,48 +73,59 @@ namespace SF.Strings
         public StringParser SkipTo(string str)
         {
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
             if (End)
                 return this;
-            var pos = Text.IndexOf(str, _index, Length - _index, StringComparison.Ordinal);
-            _index = pos < 0 ? Length : pos;
+            var pos = _text.IndexOf(str, _index, CharactersLeft, StringComparison.Ordinal);
+            _index = pos < 0 ? _length : pos;
+            return this;
+        }
+
+        public StringParser SkipTo(char c)
+        {
+            if (End)
+                return this;
+            var pos = _text.IndexOf(c, _index, CharactersLeft);
+            _index = pos < 0 ? _length : pos;
             return this;
         }
 
         public StringParser TrimTo(string str)
         {
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
             if (End)
                 return this;
-            var pos = Text.IndexOf(str, _index, Length - _index, StringComparison.Ordinal);
+            var pos = _text.IndexOf(str, _index, CharactersLeft, StringComparison.Ordinal);
             if (pos >= 0)
-                Length = pos;
+                _length = pos;
             return this;
         }
 
         public StringParser BackTo(string str)
         {
-            BackToEndOf(str);
-            return Back(str.Length);
+            return BackToEndOf(str).Back(str.Length);
         }
-
 
         public StringParser SkipToEndOf(string str)
         {
-            SkipTo(str);
-            return Skip(str.Length);
+            return SkipTo(str).Skip(str.Length);
+        }
+
+        public StringParser SkipToEndOf(char c)
+        {
+            return SkipTo(c).Skip(1);
         }
 
         public StringParser TrimToEndOf(string str)
         {
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
             if (End)
                 return this;
-            var pos = Text.IndexOf(str, _index, Length - _index, StringComparison.Ordinal);
+            var pos = _text.IndexOf(str, _index, CharactersLeft, StringComparison.Ordinal);
             if (pos >= 0)
-                Length = pos + str.Length;
+                _length = pos + str.Length;
             return this;
         }
 
@@ -125,11 +133,11 @@ namespace SF.Strings
         public StringParser BackToEndOf(string str)
         {
             if (str == null)
-                throw new ArgumentNullException("str");
-            //Back(str.Length - 1);
+                throw new ArgumentNullException(nameof(str));
+            //Back(str._length - 1);
             if (Start)
                 return this;
-            var pos = Text.LastIndexOf(str, _index, _index, StringComparison.Ordinal);
+            var pos = _text.LastIndexOf(str, _index, _index, StringComparison.Ordinal);
             _index = pos < 0 ? 0 : pos + str.Length;
             return this;
         }
@@ -172,12 +180,81 @@ namespace SF.Strings
                 return string.Empty;
             var oldIndex = _index;
             SkipTo(str);
-            return Text.Substring(oldIndex, _index - oldIndex);
+            return _text.Substring(oldIndex, _index - oldIndex);
+        }
+
+        public string SubstringToAndSkip(string str)
+        {
+            var res = SubstringTo(str);
+            Skip(str.Length);
+            return res;
+        }
+
+        public string SubstringTo(char c)
+        {
+            if (End)
+                return string.Empty;
+            var oldIndex = _index;
+            SkipTo(c);
+            return _text.Substring(oldIndex, _index - oldIndex);
+        }
+
+        public string SubstringToAndSkip(char c)
+        {
+            var res = SubstringTo(c);
+            Skip(1);
+            return res;
+        }
+
+        public char ReadChar()
+        {
+            return End ? '\0' : Text[_index++];
+        }
+
+        public bool NextIs(char c)
+        {
+            if (End)
+                return false;
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            return Text[_index] == c;
+        }
+
+        public bool NextIs(string str)
+        {
+            if (_index + str.Length > Length)
+                return false;
+            // ReSharper disable once LoopCanBeConvertedToQuery
+            for (var i = 0; i < str.Length; i++)
+                if (str[i] != Text[_index + i])
+                    return false;
+            return true;
+        }
+
+        public bool SkipNext(string toSkip)
+        {
+            if (!NextIs(toSkip))
+                return false;
+            Skip(toSkip.Length);
+            return true;
+        }
+
+        public override string ToString()
+        {
+            return Left + "|" + Right;
+        }
+
+        public string Substring(int count)
+        {
+            if (End)
+                return string.Empty;
+            var result = Text.Substring(_index, count);
+            Skip(count);
+            return result;
         }
 
         public StringParser Clone()
         {
-            return new StringParser(Text, Length) { _index = _index };
+            return new StringParser(_text, _length) { _index = _index };
         }
     }
 }

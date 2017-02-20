@@ -15,7 +15,7 @@ namespace SF.Tests.Strings
         private const string TestString = "ab1ab2abab3ababab4ab1ab2abab3ababab4";
         private StringParser _parser;
 
-        public void FullTests()
+        private void FullTests()
         {
             BaseTests();
             _parser.Reset();
@@ -24,6 +24,10 @@ namespace SF.Tests.Strings
             SkipTests();
             _parser.Reset();
             BackTests();
+            _parser.Reset();
+            TrimTests();
+            _parser.Reset();
+            NextIsTests();
         }
 
         [Test]
@@ -35,6 +39,31 @@ namespace SF.Tests.Strings
             Assert.AreEqual("abab", _parser.BackToEndOf("ab", 3).SubstringTo("4"));
             Assert.AreEqual("ababab", _parser.BackTo("ab", 3).SubstringTo("4"));
             Assert.AreEqual("ababab", _parser.BackToEndOf("3").SubstringTo("4"));
+        }
+
+        [Test]
+        public void TrimTests()
+        {
+            var src = _parser.Clone();
+            _parser = _parser.TrimTo("2");
+            Assert.AreEqual("ab1ab", _parser.View);
+            Assert.AreEqual(5, _parser.Length);
+            Assert.AreEqual(0, _parser.Index);
+            Assert.AreEqual(TestString, _parser.Text);
+            _parser.SkipTo("1");
+            Assert.AreEqual("ab1ab", _parser.View);
+            Assert.AreEqual(5, _parser.Length);
+            Assert.AreEqual(2, _parser.Index);
+            Assert.AreEqual(TestString, _parser.Text);
+            Assert.AreEqual("ab", _parser.Left);
+            Assert.AreEqual("1ab", _parser.Right);
+            _parser.SkipTo("2");
+            Assert.IsTrue(_parser.End);
+            src = src.TrimToEndOf("2");
+            Assert.AreEqual("ab1ab2", src.View);
+            Assert.AreEqual(6, src.Length);
+            Assert.AreEqual(0, src.Index);
+            Assert.AreEqual(TestString, src.Text);
         }
 
         [Test]
@@ -101,10 +130,26 @@ namespace SF.Tests.Strings
         [Test]
         public void SkipTests()
         {
-            Assert.AreEqual("1ab", _parser.SkipTo("1").SubstringTo("2"));
+            var clone = _parser.Clone();
+            Assert.AreEqual("ab", clone.SubstringToAndSkip('1'));
+            Assert.AreEqual("1ab", _parser.SkipTo('1').SubstringTo('2'));
             Assert.AreEqual("ab", _parser.SkipToEndOf("ab").SubstringTo("3"));
             Assert.AreEqual("ab", _parser.SkipTo("ab", 3).SubstringTo("4"));
             Assert.AreEqual("3ababab", _parser.SkipToEndOf("ab", 4).SubstringTo("4"));
+        }
+
+        [Test]
+        public void NextIsTests()
+        {
+            Assert.AreEqual("ab", _parser.SubstringToAndSkip('1'));
+            Assert.IsTrue(_parser.NextIs('a'));
+            Assert.IsTrue(_parser.NextIs("ab2"));
+            Assert.AreEqual("ab", _parser.SubstringToAndSkip("2ab"));
+            Assert.IsTrue(_parser.NextIs("ab3"));
+            Assert.IsTrue(_parser.SkipNext("ab"));
+            Assert.IsFalse(_parser.SkipNext("ab"));
+            Assert.AreEqual('3', _parser.ReadChar());
+            Assert.AreEqual("ab1ab", _parser.SkipToEndOf('4').Substring(5));
         }
     }
 }
