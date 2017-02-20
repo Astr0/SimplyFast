@@ -262,5 +262,19 @@ namespace SF.Tests.Strings
             Assert.AreEqual(string.Empty, "test".SubstringSafe(5, 6));
         }
 
+        [Test]
+        public void SkipWorks()
+        {
+            Assert.AreEqual("ab", "12ab".Skip("12"));
+            Assert.AreEqual("12ab", "12ab".Skip("TT"));
+        }
+
+        [Test]
+        public void RemoveAllWorks()
+        {
+            Assert.AreEqual("ZeroCool", "`Zero`[Cool]".RemoveAll('`', '[', ']'));
+            Assert.AreEqual("ZeroCool", "ZeroCool".RemoveAll('`', '[', ']'));
+            Assert.AreEqual("ZeroCool", "ZeroCool".RemoveAll());
+        }
     }
 }

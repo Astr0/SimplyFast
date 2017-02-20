@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
@@ -8,6 +9,7 @@ namespace SF
     /// <summary>
     ///     Utils to work with anonymous objects
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedParameter.Global")]
     public static class AnonymousEx
     {
         /// <summary>

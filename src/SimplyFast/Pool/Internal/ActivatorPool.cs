@@ -13,7 +13,7 @@ namespace SF.Pool
         public ActivatorPool(Func<T> activator, IProducerConsumerCollection<T> storage = null) : base(storage ?? new ConcurrentBag<T>())
         {
             if (activator == null)
-                throw new ArgumentNullException("activator");
+                throw new ArgumentNullException(nameof(activator));
             _activator = activator;
         }
 

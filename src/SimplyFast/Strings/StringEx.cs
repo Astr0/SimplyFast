@@ -10,14 +10,14 @@ namespace SF.Strings
         public static string Left(this string str, int length)
         {
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
             return str.Substring(0, Math.Min(length, str.Length));
         }
 
         public static string Right(this string str, int length)
         {
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
             return str.Substring(Math.Max(0, str.Length - length), Math.Min(length, str.Length));
         }
 
@@ -25,7 +25,7 @@ namespace SF.Strings
         public static string Skip(this string str, string start)
         {
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
             if (start == null)
                 return str;
             return str.StartsWith(start) ? str.Substring(start.Length) : str;
@@ -42,19 +42,19 @@ namespace SF.Strings
 
         public static string RemoveAll(this string str, params char[] characters)
         {
+            if (characters == null || characters.Length == 0 || string.IsNullOrEmpty(str))
+                return str;
             var set = new HashSet<char>(characters);
             var sb = new StringBuilder(str.Length);
             foreach (var t in str.Where(t => !set.Contains(t)))
-            {
                 sb.Append(t);
-            }
             return sb.ToString();
         }
 
         public static string Quote(this string str, char quoteCharacter = '"')
         {
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
             var doubleQuote = quoteCharacter + quoteCharacter.ToString();
             return quoteCharacter + str.Replace(char.ToString(quoteCharacter), doubleQuote) + quoteCharacter;
         }
@@ -79,7 +79,7 @@ namespace SF.Strings
         public static string[] SplitQuoted(this string str, char delimiter = ',', char quoteCharacter = '"')
         {
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
 
             if (str == string.Empty)
                 return new string[0];

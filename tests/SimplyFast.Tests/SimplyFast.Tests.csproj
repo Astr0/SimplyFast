@@ -38,6 +38,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnonymousExTests.cs" />
     <Compile Include="Collections\Concurrent\ConcurrentGrowListTests.cs" />
     <Compile Include="Collections\DictionaryExTests.cs" />
     <Compile Include="Collections\EnumerableExTests.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="Strings\StringParserTests.cs" />
     <Compile Include="Stubs\TestComparable.cs" />
     <Compile Include="Threading\EventLoopTests.cs" />
+    <Compile Include="Threading\SynchronizationContextExTests.cs" />
     <Compile Include="Threading\TaskExTests.cs" />
   </ItemGroup>
   <ItemGroup>
