@@ -7,6 +7,7 @@ namespace SF.Tests.Reflection.TestData
     {
         private static object _f3 = "_f3t";
         private int _f1;
+        public static readonly object FStatic = new object();
 
         public TestClass2() : this(string.Empty, 11)
         {

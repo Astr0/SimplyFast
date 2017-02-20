@@ -17,14 +17,14 @@ namespace SF
         public static T Clip<T>(this T value, T min, T max) where T : IComparable<T>
         {
             if (min.CompareTo(max) > 0)
-                throw new ArgumentException("min should be less then max.", "min");
+                throw new ArgumentException("min should be less then max.", nameof(min));
             return Min(Max(value, min), max);
         }
 
         public static bool InRange<T>(this T value, T lower, T upper) where T : IComparable<T>
         {
             if (lower.CompareTo(upper) > 0)
-                throw new ArgumentException("lower should be less then upper.", "lower");
+                throw new ArgumentException("lower should be less then upper.", nameof(lower));
             return (value.CompareTo(lower) >= 0) && (value.CompareTo(upper) <= 0);
         }
     }

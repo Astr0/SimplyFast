@@ -157,6 +157,10 @@ namespace SF.Tests.Expressions
                             LambdaExtract.Property((Dictionary<string, double> d) => d.Keys));
             Assert.AreEqual(typeof(TestClass3).Property("Item"),
                 LambdaExtract.Property((TestClass3 d) => d[0]));
+            Assert.AreEqual(typeof(TestClass2).Property("F3"),
+                LambdaExtract.Property(() => TestClass2.F3));
+            Assert.AreEqual(typeof(TestClass2).Field("FStatic"),
+                LambdaExtract.Field(() => TestClass2.FStatic));
         }
 
         [Test]
