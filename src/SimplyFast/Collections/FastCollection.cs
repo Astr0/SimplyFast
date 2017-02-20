@@ -7,21 +7,19 @@ namespace SF.Collections
 {
     public class FastCollection<T> : ICollection<T>, IReadOnlyList<T>
     {
-        private static readonly T[] EmptyArray = new T[0];
-        private static readonly bool _isReferenceType = !typeof(T).IsValueType;
         private T[] _array;
         private int _count;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FastCollection(int capacity)
         {
-            _array = capacity > 0? new T[capacity] : EmptyArray;
+            _array = capacity > 0? new T[capacity] : TypeHelper<T>.EmptyArray;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public FastCollection()
         {
-            _array = EmptyArray;
+            _array = TypeHelper<T>.EmptyArray;
         }
 
         public T this[int index]
@@ -58,7 +56,7 @@ namespace SF.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear()
         {
-            if (_isReferenceType)
+            if (TypeHelper<T>.IsReferenceType)
                 Array.Clear(_array, 0, _count);
             _count = 0;
         }
@@ -113,7 +111,7 @@ namespace SF.Collections
         {
             _count--;
             _array[i] = _array[_count];
-            if (_isReferenceType)
+            if (TypeHelper<T>.IsReferenceType)
                 _array[_count] = default(T);
         }
 
