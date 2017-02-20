@@ -57,6 +57,7 @@ namespace SF.Strings
         public void Reset()
         {
             _index = 0;
+            _length = _text.Length;
         }
 
         public StringParser Skip(int count)
