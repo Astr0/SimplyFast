@@ -15,7 +15,7 @@ namespace SF
         public FuncEqualityComparer(Func<T, T, bool> comparer, Func<T, int> hash = null)
         {
             if (comparer == null)
-                throw new ArgumentNullException("comparer");
+                throw new ArgumentNullException(nameof(comparer));
             if (hash == null)
             {
                 if (typeof (T).IsValueType)

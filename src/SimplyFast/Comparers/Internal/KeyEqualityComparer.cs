@@ -16,7 +16,7 @@ namespace SF
         public KeyEqualityComparer(Func<T, TK> keySelector, IEqualityComparer<TK> keyComparer = null)
         {
             if (keySelector == null)
-                throw new ArgumentNullException("keySelector");
+                throw new ArgumentNullException(nameof(keySelector));
             _keySelector = keySelector;
             _keyComparer = keyComparer ?? EqualityComparer<TK>.Default;
         }

@@ -6,7 +6,7 @@ namespace SF.IO
 {
     public static class FileEx
     {
-        public static async Task<byte[]> ReadAllBytesAsync(string path, CancellationToken token = default (CancellationToken))
+        public static async Task<byte[]> ReadAllBytes(string path, CancellationToken token = default (CancellationToken))
         {
             byte[] buffer;
             using (var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.None))
@@ -30,7 +30,7 @@ namespace SF.IO
             return buffer;
     }
 
-        public static async Task WriteAllBytesAsync(string path, byte[] bytes, CancellationToken token = default(CancellationToken))
+        public static async Task WriteAllBytes(string path, byte[] bytes, CancellationToken token = default(CancellationToken))
         {
             using (var fileStream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Read, 4096, FileOptions.None))
                 await fileStream.WriteAsync(bytes, 0, bytes.Length, token);

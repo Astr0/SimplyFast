@@ -50,6 +50,7 @@
     <Compile Include="Comparers\FuncEqualityComparerTests.cs" />
     <Compile Include="Comparers\KeyEqualityComparerTests.cs" />
     <Compile Include="DisposableExTests.cs" />
+    <Compile Include="IO\FileExTests.cs" />
     <Compile Include="MathExTests.cs" />
     <Compile Include="Pipes\ConsumerExTests.cs" />
     <Compile Include="Pool\PoolExTests.cs" />
