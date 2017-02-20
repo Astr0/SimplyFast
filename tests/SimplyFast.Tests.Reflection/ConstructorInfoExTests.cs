@@ -29,7 +29,7 @@ namespace SF.Tests.Reflection
         [Test]
         public void CanCreateObjectUsingParametlessConstructor()
         {
-            var obj = typeof (TestClass1).Constructor().InvokerAs<Func<object>>()();
+            var obj = typeof(TestClass1).Constructor().InvokerAs<Func<object>>()();
             Assert.IsNotNull(obj);
             Assert.IsInstanceOf<TestClass1>(obj);
             var obj2 = typeof(TestClass2).Constructor().InvokerAs<Func<object>>()();
@@ -43,7 +43,7 @@ namespace SF.Tests.Reflection
             var obj2 = typeof(TestClass2).Constructor(typeof(string), typeof(int)).InvokerAs<Func<string, int, object>>()("test1", 88);
             Assert.IsNotNull(obj2);
             Assert.IsInstanceOf<TestClass2>(obj2);
-            var t = (TestClass2) obj2;
+            var t = (TestClass2)obj2;
             Assert.AreEqual(88, t.P1);
             Assert.AreEqual("test1", t.P2);
         }
@@ -71,12 +71,23 @@ namespace SF.Tests.Reflection
         }
 
         [Test]
+        public void CanCreateObjectUsingPrivateConstructorInvoker()
+        {
+            var obj2 = typeof(TestClass2).Constructor(typeof(string), typeof(int)).Invoker()(new object[] { "test1", 88 });
+            Assert.IsNotNull(obj2);
+            Assert.IsInstanceOf<TestClass2>(obj2);
+            var t = (TestClass2)obj2;
+            Assert.AreEqual(88, t.P1);
+            Assert.AreEqual("test1", t.P2);
+        }
+
+        [Test]
         public void CanCreateConstructorDelegate()
         {
             var invoker = typeof(TestClass1).Constructor().InvokerAs(typeof(Func<object>));
             Assert.IsNotNull(invoker);
             Assert.IsInstanceOf<Func<object>>(invoker);
-            var obj = ((Func<object>) invoker)();
+            var obj = ((Func<object>)invoker)();
             Assert.IsNotNull(obj);
             Assert.IsInstanceOf<TestClass1>(obj);
         }
@@ -84,7 +95,7 @@ namespace SF.Tests.Reflection
         [Test]
         public void ConstructorsCacheOk()
         {
-            var constructors = new HashSet<ConstructorInfo>(typeof (string).Constructors());
+            var constructors = new HashSet<ConstructorInfo>(typeof(string).Constructors());
             Assert.IsTrue(constructors.SetEquals(typeof(string).GetConstructors()));
         }
     }

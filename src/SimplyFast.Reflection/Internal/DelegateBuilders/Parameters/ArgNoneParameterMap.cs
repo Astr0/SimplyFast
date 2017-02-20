@@ -29,8 +29,7 @@ namespace SF.Reflection.DelegateBuilders
             if (_methodParameter.ParameterType.IsByRef)
                 throw new ArgumentException("Invalid methodParameter modifier. Should be None.");
             if (_delegateParameter.IsOut)
-                throw new ArgumentException(string.Format("Invalid modifier for parameter {0}. Should be None or Ref.",
-                    _delegateParameterIndex));
+                throw new ArgumentException($"Invalid modifier for parameter {_delegateParameterIndex}. Should be None or Ref.");
 
             var dt = _delegateParameter.ParameterType.RemoveByRef();
             var mt = _delegateParameter.ParameterType.RemoveByRef();

@@ -37,10 +37,14 @@
   <ItemGroup>
     <Compile Include="AssemblyEx.cs" />
     <Compile Include="Emit\EmitEx.cs" />
+    <Compile Include="ConstructorInvoker.cs" />
     <Compile Include="internal\ConstructorDelegateCache.cs" />
     <Compile Include="internal\ConstructorInfoCache.cs" />
     <Compile Include="internal\FieldDelegateCache.cs" />
     <Compile Include="internal\FieldInfoCache.cs" />
+    <Compile Include="internal\ContructorInvokerCache.cs" />
+    <Compile Include="internal\InvokerDelegateBuilder.cs" />
+    <Compile Include="internal\MethodInvokerCache.cs" />
     <Compile Include="internal\GenericMethodInfoCache.cs" />
     <Compile Include="internal\GenericTypeCache.cs" />
     <Compile Include="internal\MethodDelegateCache.cs" />
@@ -63,6 +67,7 @@
     <Compile Include="FieldInfoEx.cs" />
     <Compile Include="MemberInfoEx.cs" />
     <Compile Include="MethodInfoEx.cs" />
+    <Compile Include="MethodInvoker.cs" />
     <Compile Include="PropertyInfoEx.cs" />
     <Compile Include="Substitute.cs" />
     <Compile Include="TypeEx.cs" />

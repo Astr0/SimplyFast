@@ -71,6 +71,17 @@ namespace SF.Tests.Reflection
         }
 
         [Test]
+        public void InvokesIntMethodInvoker()
+        {
+            var t2 = new TestClass2();
+            var t3 = new TestClass3();
+            var method = typeof(TestClass2).Method("GetF1");
+            var invoker = method.Invoker();
+            Assert.AreEqual(11, invoker(t2));
+            Assert.AreEqual(11, invoker(t3));
+        }
+
+        [Test]
         public void InvokesIntMethodAs()
         {
             var t2 = new TestClass2();
@@ -116,6 +127,16 @@ namespace SF.Tests.Reflection
         }
 
         [Test]
+        public void InvokesPrivateMethodInvoker()
+        {
+            var t2 = new TestClass2();
+            var method = typeof(TestClass2).Method("SetP2P3Test", typeof(string), typeof(string));
+            Assert.IsNull(method.Invoker()(t2, "t1", "t2"));
+            Assert.AreEqual("t1", t2.P2);
+            Assert.AreEqual("t2", t2.P3);
+        }
+
+        [Test]
         public void InvokesPrivateMethodAs()
         {
             var t2 = new TestClass2();
@@ -142,6 +163,14 @@ namespace SF.Tests.Reflection
             var method = typeof(TestClass2).Method("Sum", typeof(int), typeof(int), typeof(int[]));
             Assert.AreEqual(10, method.InvokerAs<Func<int, int, int[], int>>()(4, 6, new int[0]));
             Assert.AreEqual(25, method.InvokerAs<Func<object, object, int[], int>>()(4, 6, new[] { 1, 2, 3, 4, 5 }));
+        }
+
+        [Test]
+        public void InvokesStaticOptionalArgsInvoker()
+        {
+            var method = typeof(TestClass2).Method("Sum", typeof(int), typeof(int), typeof(int[]));
+            Assert.AreEqual(10, method.Invoker()(null, 4, 6, new int[0]));
+            Assert.AreEqual(25, method.Invoker()(null, 4, 6, new[] { 1, 2, 3, 4, 5 }));
         }
 
         [Test]

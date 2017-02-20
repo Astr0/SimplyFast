@@ -122,7 +122,7 @@ namespace SF.Reflection.Emit
                     generator.Emit(OpCodes.Ldc_I4_8);
                     break;
                 default:
-                    if (value >= -128 && value <= 127)
+                    if (value > -129 && value < 128)
                         generator.Emit(OpCodes.Ldc_I4_S, (byte) value);
                     else
                         generator.Emit(OpCodes.Ldc_I4, value);
@@ -376,7 +376,7 @@ namespace SF.Reflection.Emit
         /// For loop. condition received body label.  body receives continue label
         /// </summary>
         public static void EmitFor(this ILGenerator g, Action<Label> emitCondition, Action emitAction,
-            Action<Label> emitBody, bool shortBody = true)
+            Action<Label> emitBody)
         {
             g.EmitWhile(emitCondition, l =>
             {

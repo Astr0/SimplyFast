@@ -38,7 +38,7 @@ namespace SF.Reflection.DelegateBuilders
         protected abstract Type GetMethodReturnType();
         protected abstract ParameterInfo[] GetMethodParameters();
 
-        private static bool ParametersEquals(IList<ParameterInfo> first, IList<ParameterInfo> second)
+        private static bool ParametersEquals(ICollection<ParameterInfo> first, IList<ParameterInfo> second)
         {
             if (first.Count != second.Count)
                 return false;

@@ -69,5 +69,14 @@ namespace SF.Reflection
         {
             return (TDelegate) ConstructorDelegateCache.InvokerAs(constructorInfo, typeof (TDelegate));
         }
+
+        /// <summary>
+        ///     Builds generic delegate for invoking constructor
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static ConstructorInvoker Invoker(this ConstructorInfo constructorInfo)
+        {
+            return ContructorInvokerCache.Get(constructorInfo);
+        }
     }
 }

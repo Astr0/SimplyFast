@@ -126,6 +126,16 @@ namespace SF.Reflection
         }
 
 
+        /// <summary>
+        ///     Returns generic method invoker
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static MethodInvoker Invoker(this MethodInfo methodInfo)
+        {
+            return MethodInvokerCache.Get(methodInfo);
+        }
+
+
         public static MethodInfo FindCastToOperator(Type from, Type to)
         {
             return from.Methods("op_Implicit").FirstOrDefault(x => x.ReturnType == to) ??
