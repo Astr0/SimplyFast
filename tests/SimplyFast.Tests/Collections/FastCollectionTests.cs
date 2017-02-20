@@ -231,6 +231,18 @@ namespace SF.Tests.Collections
         }
 
         [Test]
+        public void EnumerableCreateWorks()
+        {
+            var range = Enumerable.Range(0, 10);
+            var arr = Enumerable.Range(0, 10).ToArray();
+            // ReSharper disable once PossibleMultipleEnumeration
+            Assert.IsTrue(arr.SequenceEqual(new FastCollection<int>(range).OrderBy(x => x)));
+            // ReSharper disable once PossibleMultipleEnumeration
+            Assert.IsTrue(arr.SequenceEqual(new FastCollection<int>(arr).OrderBy(x => x)));
+        }
+
+
+        [Test]
         public void RemoveAllWorks()
         {
             var c = new FastCollection<int> { 1, 2, 3, 4, 5 };

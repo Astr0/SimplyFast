@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnonymousEx.cs" />
+    <Compile Include="Collections\Concurrent\ConcurrentGrowList.cs" />
     <Compile Include="Collections\TypeHelper.cs" />
     <Compile Include="Collections\EnumerableEx.cs" />
     <Compile Include="Collections\DictionaryEx.cs" />

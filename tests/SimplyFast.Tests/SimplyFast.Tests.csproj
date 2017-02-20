@@ -38,6 +38,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\Concurrent\ConcurrentGrowListTests.cs" />
     <Compile Include="Collections\DictionaryExTests.cs" />
     <Compile Include="Collections\EnumerableExTests.cs" />
     <Compile Include="Collections\FastCollectionTests.cs" />
