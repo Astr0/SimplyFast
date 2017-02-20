@@ -63,7 +63,11 @@
     <Compile Include="disposable\DisposableEx.KeepAliveDisposable.cs" />
     <Compile Include="disposable\DisposableEx.NullDisposable.cs" />
     <Compile Include="disposable\IAssignDisposable.cs" />
+    <Compile Include="IO\fastbuffers\FastBufferInternal.cs" />
+    <Compile Include="IO\fastbuffers\FastBufferReader.cs" />
+    <Compile Include="IO\fastbuffers\FastBufferWriter.cs" />
     <Compile Include="IO\FileEx.cs" />
+    <Compile Include="IO\VarIntHelper.cs" />
     <Compile Include="Legacy\IO\BufferWriter.cs" />
     <Compile Include="Legacy\IO\StreamEx.cs" />
     <Compile Include="Legacy\Net\Sockets\ISocket.cs" />
