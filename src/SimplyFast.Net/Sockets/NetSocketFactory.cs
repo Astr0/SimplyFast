@@ -9,11 +9,11 @@ namespace SF.Net.Sockets
 {
     public class NetSocketFactory
     {
-        private readonly IPool<SocketAsyncEventArgs> _pool;
+        private readonly IPool<Func<IPooled<SocketAsyncEventArgs>>> _pool;
 
-        public NetSocketFactory(IPool<SocketAsyncEventArgs> pool = null)
+        public NetSocketFactory(IPool<Func<IPooled<SocketAsyncEventArgs>>> pool = null)
         {
-            _pool = pool ?? PoolEx.Basic<SocketAsyncEventArgs>();
+            _pool = pool ?? PoolEx.Basic(PooledEx.Factory<SocketAsyncEventArgs>());
         }
 
         /// <summary>
@@ -34,8 +34,9 @@ namespace SF.Net.Sockets
             ProtocolType protocolType = ProtocolType.IP, CancellationToken cancellation = default (CancellationToken))
         {
             cancellation.ThrowIfCancellationRequested();
-            var e = _pool.Get();
-            var connectToken = new ConnectToken(cancellation, ConnectCancelled, e);
+            var pooled = _pool.Get();
+            var connectToken = new ConnectToken(cancellation, ConnectCancelled, pooled);
+            var e = pooled.Instance;
             e.RemoteEndPoint = endPoint;
             e.UserToken = connectToken;
             e.Completed += ConnectCompleted;
@@ -70,10 +71,11 @@ namespace SF.Net.Sockets
 
         private void ClearConnect(SocketAsyncEventArgs e)
         {
+            var token = (ConnectToken) e.UserToken;
             e.RemoteEndPoint = null;
             e.UserToken = null;
             e.Completed -= ConnectCompleted;
-            _pool.Return(e);
+            token.Dispose();
         }
 
         private void ConnectCancelled(ConnectToken token, SocketAsyncEventArgs e)
@@ -103,15 +105,17 @@ namespace SF.Net.Sockets
 
         private class ConnectToken : IDisposable
         {
+            private readonly IPooled<SocketAsyncEventArgs> _pooled;
             private readonly TaskCompletionSource<ISocket> _tcs;
             private CancellationTokenRegistration _cancellationTokenRegistration;
 
-            public ConnectToken(CancellationToken cancellation, Action<ConnectToken, SocketAsyncEventArgs> cancel, SocketAsyncEventArgs e)
+            public ConnectToken(CancellationToken cancellation, Action<ConnectToken, SocketAsyncEventArgs> cancel, IPooled<SocketAsyncEventArgs> pooled)
             {
+                _pooled = pooled;
                 _tcs = new TaskCompletionSource<ISocket>();
                 if (cancellation.CanBeCanceled)
                 {
-                    _cancellationTokenRegistration = cancellation.Register(() => cancel(this, e));
+                    _cancellationTokenRegistration = cancellation.Register(() => cancel(this, pooled.Instance));
                 }
             }
 
@@ -130,6 +134,7 @@ namespace SF.Net.Sockets
             public void Dispose()
             {
                 _cancellationTokenRegistration.Dispose();
+                _pooled.Dispose();
             }
 
             #endregion

@@ -9,27 +9,23 @@ namespace SF.Net.Sockets
 {
     internal class NetStream : NetworkStream
     {
-        private readonly IPool<SocketAsyncEventArgs> _pool;
+        private readonly IPool<Func<IPooled<SocketAsyncEventArgs>>> _pool;
 
-        public NetStream(Socket socket, IPool<SocketAsyncEventArgs> pool) : base(socket)
+        public NetStream(Socket socket, IPool<Func<IPooled<SocketAsyncEventArgs>>> pool) : base(socket)
         {
             _pool = pool;
         }
 
-        public string SocketName
-        {
-            get { return Socket.LocalEndPoint.ToString(); }
-        }
+        public string SocketName => Socket.LocalEndPoint.ToString();
 
         public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)
                 return TaskEx.FromCancellation<int>(cancellationToken);
 
-            var tcs = new TaskCompletionSource<int>();
-            var e = _pool.Get();
+            var token = new PooledToken<int>(_pool.Get());
+            var e = token.SocketAsyncEventArgs;
             e.SetBuffer(buffer, offset, count);
-            e.UserToken = tcs;
             e.Completed += ReadCompleted;
             //_socket.Available
             try
@@ -40,27 +36,27 @@ namespace SF.Net.Sockets
             catch (Exception ex)
             {
                 ClearRead(e);
-                tcs.SetException(ex);
+                token.TaskCompletionSource.SetException(ex);
             }
-            return tcs.Task;
+            return token.Task;
         }
 
         private void ClearRead(SocketAsyncEventArgs e)
         {
-            e.SetBuffer(null, 0, 0);
-            e.UserToken = null;
-            e.Completed -= ReadCompleted;
-            _pool.Return(e);
+            using ((IDisposable) e.UserToken)
+            {
+                e.SetBuffer(null, 0, 0);
+                e.Completed -= ReadCompleted;
+            }
         }
 
         private void ReadCompleted(object sender, SocketAsyncEventArgs e)
         {
+            var pooledToken = ((PooledToken<int>) e.UserToken);
             if (e.SocketError == SocketError.Success)
-            {
-                ((TaskCompletionSource<int>) e.UserToken).SetResult(e.BytesTransferred);
-            }
+                pooledToken.TaskCompletionSource.SetResult(e.BytesTransferred);
             else
-                ((TaskCompletionSource<int>) e.UserToken).SetException(new SocketException((int) e.SocketError));
+                pooledToken.TaskCompletionSource.SetException(new SocketException((int) e.SocketError));
             ClearRead(e);
         }
 
@@ -69,10 +65,9 @@ namespace SF.Net.Sockets
             if (cancellationToken.IsCancellationRequested)
                 return TaskEx.FromCancellation<int>(cancellationToken);
 
-            var tcs = new TaskCompletionSource<bool>();
-            var e = _pool.Get();
+            var token = new PooledToken<bool>(_pool.Get());
+            var e = token.SocketAsyncEventArgs;
             e.SetBuffer(buffer, offset, count);
-            e.UserToken = tcs;
             e.Completed += WriteCompleted;
             try
             {
@@ -82,25 +77,27 @@ namespace SF.Net.Sockets
             catch (Exception ex)
             {
                 ClearWrite(e);
-                tcs.SetException(ex);
+                token.TaskCompletionSource.SetException(ex);
             }
-            return tcs.Task;
+            return token.Task;
         }
 
         private void ClearWrite(SocketAsyncEventArgs e)
         {
-            e.SetBuffer(null, 0, 0);
-            e.UserToken = null;
-            e.Completed -= WriteCompleted;
-            _pool.Return(e);
+            using ((IDisposable) e.UserToken)
+            {
+                e.SetBuffer(null, 0, 0);
+                e.Completed -= WriteCompleted;
+            }
         }
 
         private void WriteCompleted(object sender, SocketAsyncEventArgs e)
         {
+            var pooledToken = ((PooledToken<bool>) e.UserToken);
             if (e.SocketError == SocketError.Success)
-                ((TaskCompletionSource<bool>) e.UserToken).SetResult(true);
+                pooledToken.TaskCompletionSource.SetResult(true);
             else
-                ((TaskCompletionSource<bool>) e.UserToken).SetException(new SocketException((int) e.SocketError));
+                pooledToken.TaskCompletionSource.SetException(new SocketException((int) e.SocketError));
             ClearWrite(e);
         }
 
@@ -111,9 +108,8 @@ namespace SF.Net.Sockets
 
         public Task Disconnect()
         {
-            var tcs = new TaskCompletionSource<bool>();
-            var e = _pool.Get();
-            e.UserToken = tcs;
+            var token = new PooledToken<bool>(_pool.Get());
+            var e = token.SocketAsyncEventArgs;
             e.Completed += DisconnectCompleted;
             try
             {
@@ -123,24 +119,26 @@ namespace SF.Net.Sockets
             catch (Exception ex)
             {
                 ClearDisconnect(e);
-                tcs.SetException(ex);
+                token.TaskCompletionSource.SetException(ex);
             }
-            return tcs.Task;
+            return token.Task;
         }
 
         private void ClearDisconnect(SocketAsyncEventArgs e)
         {
-            e.UserToken = null;
-            e.Completed -= DisconnectCompleted;
-            _pool.Return(e);
+            using ((IDisposable)e.UserToken)
+            {
+                e.Completed -= DisconnectCompleted;
+            }
         }
 
         private void DisconnectCompleted(object sender, SocketAsyncEventArgs e)
         {
+            var pooledToken = ((PooledToken<bool>) e.UserToken);
             if (e.SocketError == SocketError.Success)
-                ((TaskCompletionSource<bool>) e.UserToken).SetResult(true);
+                pooledToken.TaskCompletionSource.SetResult(true);
             else
-                ((TaskCompletionSource<bool>) e.UserToken).SetException(new SocketException((int) e.SocketError));
+                pooledToken.TaskCompletionSource.SetException(new SocketException((int) e.SocketError));
             ClearDisconnect(e);
         }
     }

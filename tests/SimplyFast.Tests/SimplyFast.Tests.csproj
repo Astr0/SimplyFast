@@ -51,6 +51,7 @@
     <Compile Include="Comparers\FuncEqualityComparerTests.cs" />
     <Compile Include="Comparers\KeyEqualityComparerTests.cs" />
     <Compile Include="DisposableExTests.cs" />
+    <Compile Include="IO\ByteBufferTests.cs" />
     <Compile Include="IO\FastBufferReaderTestsView.cs" />
     <Compile Include="IO\FastBufferReaderTestsSubBuffer.cs" />
     <Compile Include="IO\FastBufferReaderTests.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="IO\VarIntHelperTests.cs" />
     <Compile Include="MathExTests.cs" />
     <Compile Include="Pipes\ConsumerExTests.cs" />
+    <Compile Include="Pool\PooledExTests.cs" />
     <Compile Include="Pool\PoolExTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Strings\StringExTests.cs" />

@@ -1,17 +1,10 @@
 ﻿namespace SF.Pool
 {
-    /// <summary>
-    /// Object pool interface
-    /// </summary>
-    public interface IPool<T>
+    public interface IPool<out TGetter>
     {
-        /// <summary>
-        /// Gets instance of an object
-        /// </summary>
-        T Get();
-        /// <summary>
-        /// Returns instance of an object to a pool
-        /// </summary>
-        bool Return(T instance);
+        TGetter Get { get; }
     }
+
+    public delegate void ReturnToPool<in TGetter>(TGetter getter);
+    public delegate TGetter PooledFactory<out TGetter>(ReturnToPool<TGetter> returnToPool);
 }

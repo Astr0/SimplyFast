@@ -1,36 +1,18 @@
-﻿using System;
-
-namespace SF.Pool
+﻿namespace SF.Pool
 {
-    /// <summary>
-    /// Pool implementation that always creates new instances and destroys returned
-    /// </summary>
-    internal class NullPool<T> : IPool<T>
+    public class NullPool<TGetter>: IPool<TGetter>
     {
-        private readonly Func<T> _activator;
+        private readonly PooledFactory<TGetter> _factory;
 
-        public NullPool(Func<T> activator)
+        public NullPool(PooledFactory<TGetter> factory)
         {
-            if (activator == null)
-                throw new ArgumentNullException("activator");
-            _activator = activator;
+            _factory = factory;
         }
 
-        #region IPool<T> Members
+        public TGetter Get => _factory(NoReturn);
 
-        public T Get()
+        private static void NoReturn(TGetter getter)
         {
-            return _activator();
         }
-
-        public bool Return(T instance)
-        {
-            var disposabe = instance as IDisposable;
-            if (disposabe != null)
-                disposabe.Dispose();
-            return true;
-        }
-
-        #endregion
     }
 }

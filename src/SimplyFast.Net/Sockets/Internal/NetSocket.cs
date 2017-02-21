@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace SF.Net.Sockets
     {
         private readonly NetStream _stream;
 
-        public NetSocket(Socket socket, IPool<SocketAsyncEventArgs> pool)
+        public NetSocket(Socket socket, IPool<Func<IPooled<SocketAsyncEventArgs>>> pool)
         {
             _stream = new NetStream(socket, pool);
         }

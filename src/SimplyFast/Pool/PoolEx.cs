@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Concurrent;
 
 namespace SF.Pool
 {
@@ -8,34 +8,19 @@ namespace SF.Pool
     public static class PoolEx
     {
         /// <summary>
-        /// No pooling, always new T()
+        /// No pooling, always calls factory and no return
         /// </summary>
-        public static IPool<T> None<T>() where T : new()
+        public static IPool<T> None<T>(PooledFactory<T> factory) 
         {
-            return new NullPool<T>(() => new T());
+            return new NullPool<T>(factory);
         }
+       
         /// <summary>
-        /// No pooling, always activator()
+        /// Basic pooling using underlying producer consumer collection
         /// </summary>
-        public static IPool<T> None<T>(Func<T> activator)
+        public static IPool<T> Basic<T>(PooledFactory<T> factory, IProducerConsumerCollection<T> storage = null)
         {
-            return new NullPool<T>(activator);
-        }
-
-        /// <summary>
-        /// Basic pooling using new T()
-        /// </summary>
-        public static IPool<T> Basic<T>() where T : new()
-        {
-            return new ActivatorPool<T>(() => new T());
-        }
-
-        /// <summary>
-        /// Basic pooling using activator()
-        /// </summary>
-        public static IPool<T> Basic<T>(Func<T> activator)
-        {
-            return new ActivatorPool<T>(activator);
+            return new ProducerConsumerPool<T>(factory, storage);
         }
     }
 }
