@@ -17,8 +17,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Net.Zmq", "src\S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Net.CastleZmq", "src\SimplyFast.Net.CastleZmq\SimplyFast.Net.CastleZmq.csproj", "{3EF465F5-B733-48BD-91C3-B106B038D3D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimplyFast.Protobuf", "src\SimplyFast.Protobuf\SimplyFast.Protobuf.csproj", "{E4C67100-C828-4AD6-80B6-4A91814D98F2}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Expressions", "Expressions", "{2D074E55-B8E0-4407-8AFE-05F45004950D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{3BBDF5D9-702E-4A49-96B4-81BD26DF6FE2}"
@@ -77,10 +75,6 @@ Global
 		{3EF465F5-B733-48BD-91C3-B106B038D3D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EF465F5-B733-48BD-91C3-B106B038D3D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EF465F5-B733-48BD-91C3-B106B038D3D4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E4C67100-C828-4AD6-80B6-4A91814D98F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E4C67100-C828-4AD6-80B6-4A91814D98F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E4C67100-C828-4AD6-80B6-4A91814D98F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E4C67100-C828-4AD6-80B6-4A91814D98F2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E1C35C07-DE0E-4619-848B-59554349A6F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E1C35C07-DE0E-4619-848B-59554349A6F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1C35C07-DE0E-4619-848B-59554349A6F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
