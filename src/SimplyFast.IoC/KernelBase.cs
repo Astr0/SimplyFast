@@ -51,5 +51,7 @@ namespace SF.IoC
             var binding = GetArgBinding(type, argName);
             return binding != null;
         }
+
+        public abstract int Version { get; }
     }
 }

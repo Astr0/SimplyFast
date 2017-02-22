@@ -56,5 +56,7 @@ namespace SF.IoC
         {
             return GetBinding(type);
         }
+
+        public override int Version => _bindings.Version;
     }
 }

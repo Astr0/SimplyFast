@@ -8,11 +8,14 @@ namespace SF.IoC.Bindings
         private readonly ConcurrentDictionary<Type, IBinding> _bindings = new ConcurrentDictionary<Type, IBinding>();
         private readonly IKernel _kernel;
         private readonly ConcurrentDictionary<Type, IBinding> _defaultBindings = new ConcurrentDictionary<Type, IBinding>();
+        private volatile int _version;
 
         public BindingCollection(IKernel kernel)
         {
             _kernel = kernel;
         }
+
+        public int Version => _version;
 
         public IBinding GetBinding(Type type)
         {
@@ -28,10 +31,11 @@ namespace SF.IoC.Bindings
 
         public void Bind(Type type, IBinding binding)
         {
-            var hasType = _bindings.ContainsKey(type);
+            var hadType = _bindings.ContainsKey(type);
              _bindings[type] = binding;
-            if (!hasType)
+            if (!hadType)
             {
+                _version++;
                 // type was added, so clear default cache
                 _defaultBindings.Clear();
             }
@@ -42,6 +46,7 @@ namespace SF.IoC.Bindings
             if (!_bindings.TryAdd(type, binding))
                 return false;
             // clear default cache
+            _version++;
             _defaultBindings.Clear();
             return true;
         }

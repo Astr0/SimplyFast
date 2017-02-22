@@ -4,6 +4,7 @@ namespace SF.IoC
 {
     public interface IGetKernel
     {
+        int Version { get; }
         IBinding GetBinding(Type type, params BindArg[] args);
         IBinding GetBinding(Type type);
         IInjector GetInjector(Type type);

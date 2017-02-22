@@ -5,6 +5,8 @@ namespace SF.IoC
 {
     public struct BindArg : IEquatable<BindArg>
     {
+        public static readonly BindArg Empty = new BindArg();
+
         public bool Equals(BindArg other)
         {
             return Type == other.Type && string.Equals(Name, other.Name);
@@ -66,6 +68,8 @@ namespace SF.IoC
         public readonly Type Type;
         public readonly string Name;
         public readonly object Value;
+        
+        public bool IsEmpty => Type == null && Name == null;
 
         public override string ToString()
         {
