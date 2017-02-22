@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SF.IoC
 {
@@ -7,6 +8,7 @@ namespace SF.IoC
         int Version { get; }
         IBinding GetBinding(Type type, params BindArg[] args);
         IBinding GetBinding(Type type);
+        IReadOnlyList<IBinding> GetAllBindings(Type type);
         IBinding GetArgBinding(Type type, string name);
 
         IInjector GetInjector(Type type);

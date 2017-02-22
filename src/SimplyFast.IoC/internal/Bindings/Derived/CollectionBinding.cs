@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using SF.Collections.Concurrent;
 
 namespace SF.IoC.Bindings.Derived
 {
@@ -13,8 +12,6 @@ namespace SF.IoC.Bindings.Derived
         //        throw new InvalidOperationException();
         //}
 
-        private readonly ConcurrentGrowList<IBinding> _itemBindings = new ConcurrentGrowList<IBinding>();
-
         public void RegisterDerivedTypes(IKernel kernel)
         {
             DerivedBindingEx.TryAddDerivedType<IEnumerable<T>>(kernel, ArrayBinder);
@@ -27,29 +24,24 @@ namespace SF.IoC.Bindings.Derived
             DerivedBindingEx.TryAddDerivedType(kernel, ListBinder);
         }
 
-        public void Add(IBinding binding)
-        {
-            _itemBindings.Add(binding);
-        }
-
         #region Binders
 
-        private T[] ArrayBinder(IGetKernel kernel)
+        private static T[] ArrayBinder(IGetKernel kernel)
         {
-            var snapshot = _itemBindings.GetSnapshot();
-            var result = new T[snapshot.Count];
+            var bindings = kernel.GetAllBindings(typeof(T));
+            var result = new T[bindings.Count];
             for (var i = 0; i < result.Length; i++)
-                result[i] = (T) snapshot[i].Get(kernel);
+                result[i] = (T) bindings[i].Get(kernel);
             return result;
         }
 
-        private List<T> ListBinder(IGetKernel kernel)
+        private static List<T> ListBinder(IGetKernel kernel)
         {
-            var snapshot = _itemBindings.GetSnapshot();
-            var result = new List<T>(snapshot.Count);
+            var bindings = kernel.GetAllBindings(typeof(T));
+            var result = new List<T>(bindings.Count);
             // ReSharper disable once LoopCanBeConvertedToQuery
             // ReSharper disable once ForCanBeConvertedToForeach
-            foreach (var binding in snapshot)
+            foreach (var binding in bindings)
                 result.Add((T) binding.Get(kernel));
             return result;
         }

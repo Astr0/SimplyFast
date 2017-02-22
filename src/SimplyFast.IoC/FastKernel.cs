@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using SF.IoC.Bindings;
 using SF.IoC.Bindings.Args;
@@ -57,5 +58,9 @@ namespace SF.IoC
         }
 
         public int Version => _bindings.Version;
+        public IReadOnlyList<IBinding> GetAllBindings(Type type)
+        {
+            return _bindings.GetAllBindings(type);
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace SF.IoC.Bindings.Derived
             var derivedBinding = _bindings.GetOrAdd(type, CreateDerivedRoot, out added);
             if (added)
                 derivedBinding.RegisterDerivedTypes(_kernel);
-            derivedBinding.Add(binding);
+            //derivedBinding.Add(binding);
         }
 
         private static IDerivedBinding CreateDerivedRoot(Type type)

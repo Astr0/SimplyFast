@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
+using SF.Collections;
 using SF.IoC.Injection;
 
 namespace SF.IoC.Bindings.Args
 {
-    internal partial class ArgsBinding 
+    internal partial class ArgsBinding
     {
         private partial class Kernel : IGetKernel
         {
@@ -97,6 +100,17 @@ namespace SF.IoC.Bindings.Args
             }
 
             public int Version => _kernel.Version;
+            public IReadOnlyList<IBinding> GetAllBindings(Type type)
+            {
+                var baseBindings = _kernel.GetAllBindings(type);
+                if (baseBindings.Count > 1)
+                    return baseBindings;
+                if (baseBindings.Count == 1 && !DefaultBindingBuilder.IsDefaultBinding(baseBindings.First()))
+                    return baseBindings;
+                // use our binding
+                var binding = GetBinding(type);
+                return binding != null ? new[] { binding } : TypeHelper<IBinding>.EmptyArray;
+            }
         }
     }
 }

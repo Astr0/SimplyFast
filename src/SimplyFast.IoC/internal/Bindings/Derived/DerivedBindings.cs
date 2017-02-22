@@ -9,12 +9,6 @@
         };
 
 
-        public void Add(IBinding binding)
-        {
-            foreach (var derivedBinding in _bindings)
-                derivedBinding.Add(binding);
-        }
-
         public void RegisterDerivedTypes(IKernel kernel)
         {
             foreach (var derivedBinding in _bindings)

@@ -1,10 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using SF.Collections.Concurrent;
+using SF.Collections;
 
 namespace SF.IoC.Bindings
 {
     internal class BindingCollection
     {
+        private readonly ConcurrentDictionary<Type, ConcurrentGrowList<IBinding>> _allBindings = new ConcurrentDictionary<Type, ConcurrentGrowList<IBinding>>();
         private readonly ConcurrentDictionary<Type, IBinding> _bindings = new ConcurrentDictionary<Type, IBinding>();
         private readonly IKernel _kernel;
         private readonly ConcurrentDictionary<Type, IBinding> _defaultBindings = new ConcurrentDictionary<Type, IBinding>();
@@ -31,24 +35,36 @@ namespace SF.IoC.Bindings
 
         public void Bind(Type type, IBinding binding)
         {
-            var hadType = _bindings.ContainsKey(type);
+            var allBindings = _allBindings.GetOrAdd(type, t => new ConcurrentGrowList<IBinding>(), out bool addedNewType);
+            allBindings.Add(binding);
              _bindings[type] = binding;
-            if (!hadType)
-            {
-                _version++;
-                // type was added, so clear default cache
-                _defaultBindings.Clear();
-            }
+            if (!addedNewType)
+                return;
+            _version++;
+            // type was added, so clear default cache
+            _defaultBindings.Clear();
         }
 
         public bool TryBind(Type type, IBinding binding)
         {
             if (!_bindings.TryAdd(type, binding))
                 return false;
+            // add to all binding
+            _allBindings.GetOrAdd(type, t => new ConcurrentGrowList<IBinding>()).Add(binding);
             // clear default cache
-            _version++;
             _defaultBindings.Clear();
+            _version++;
             return true;
+        }
+
+        public IReadOnlyList<IBinding> GetAllBindings(Type type)
+        {
+            ConcurrentGrowList<IBinding> bindings;
+            if (_allBindings.TryGetValue(type, out bindings))
+                return bindings.GetSnapshot();
+            // return default
+            var defaultBinding = _defaultBindings.GetOrAdd(type, CreateDefaultBinding);
+            return defaultBinding != null ? new[] {defaultBinding} : TypeHelper<IBinding>.EmptyArray;
         }
     }
 }
