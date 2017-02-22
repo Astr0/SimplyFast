@@ -126,5 +126,31 @@ namespace SF.Tests.IoC
             Assert.IsNotNull(test.Longs);
             Assert.IsTrue(test.Longs.SequenceEqual(new long[] { 5 }));
         }
+
+        [Test]
+        public void InjectUsesArgBindings()
+        {
+            var test = new InjectTestClass();
+            Assert.IsNull(test.Longs);
+            _kernel.Inject(test);
+            Assert.AreEqual(null, test.String);
+            Assert.AreEqual(0, test.Long);
+            Assert.IsNotNull(test.Longs);
+            Assert.AreEqual(0, test.Longs.Count);
+
+            _kernel.Bind<long>().ToConstant(5);
+            _kernel.Inject(test);
+            Assert.AreEqual(null, test.String);
+            Assert.AreEqual(5, test.Long);
+            Assert.IsNotNull(test.Longs);
+            Assert.IsTrue(test.Longs.SequenceEqual(new long[] { 5 }));
+
+            var argKernel = _kernel.Get<IGetKernel>(BindArg.Typed("test"));
+            argKernel.Inject(test);
+            Assert.AreEqual("test", test.String);
+            Assert.AreEqual(5, test.Long);
+            Assert.IsNotNull(test.Longs);
+            Assert.IsTrue(test.Longs.SequenceEqual(new long[] { 5 }));
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using SF.IoC.Injection;
 
 namespace SF.IoC.Bindings.Args
 {
@@ -9,11 +10,13 @@ namespace SF.IoC.Bindings.Args
         {
             private readonly TypeWithArgs _args;
             private readonly IGetKernel _kernel;
+            private readonly InjectorCollection _injectors;
 
             public Kernel(IGetKernel kernel, TypeWithArgs args)
             {
                 _args = args;
                 _kernel = kernel;
+                _injectors = new InjectorCollection(this);
             }
 
             private IBinding TryGetArgBinding(Type type, string name)
@@ -77,7 +80,7 @@ namespace SF.IoC.Bindings.Args
 
             public IInjector GetInjector(Type type)
             {
-                return _kernel.GetInjector(type);
+                return _injectors.GetInjector(type);
             }
 
             private IBinding CreateMyBinding()

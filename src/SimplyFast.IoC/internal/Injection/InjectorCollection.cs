@@ -6,10 +6,10 @@ namespace SF.IoC.Injection
     internal class InjectorCollection
     {
         private readonly ConcurrentDictionary<Type, IInjector> _injectors = new ConcurrentDictionary<Type, IInjector>();
-        private readonly IKernel _kernel;
+        private readonly IGetKernel _kernel;
         private volatile int _lastKernelVersion;
 
-        public InjectorCollection(IKernel kernel)
+        public InjectorCollection(IGetKernel kernel)
         {
             _kernel = kernel;
             _lastKernelVersion = _kernel.Version;
