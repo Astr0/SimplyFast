@@ -57,7 +57,7 @@
     <Compile Include="internal\Bindings\Derived\DerivedBindingEx.cs" />
     <Compile Include="internal\Bindings\Derived\FuncFactoryBinding.cs" />
     <Compile Include="internal\Bindings\Derived\IDerivedBinding.cs" />
-    <Compile Include="internal\Bindings\Derived\TinyDerivedBindings.cs" />
+    <Compile Include="internal\Bindings\Derived\DerivedBindings.cs" />
     <Compile Include="bindings\IBinding.cs" />
     <Compile Include="internal\Bindings\MethodBinding.cs" />
     <Compile Include="internal\Bindings\SingletonBinding.cs" />

@@ -7,14 +7,22 @@ namespace SF.IoC.Injection
     {
         private readonly ConcurrentDictionary<Type, IInjector> _injectors = new ConcurrentDictionary<Type, IInjector>();
         private readonly IKernel _kernel;
+        private volatile int _lastKernelVersion;
 
         public InjectorCollection(IKernel kernel)
         {
             _kernel = kernel;
+            _lastKernelVersion = _kernel.Version;
         }
 
         public IInjector GetInjector(Type type)
         {
+            var version = _kernel.Version;
+            if (version == _lastKernelVersion)
+                return _injectors.GetOrAdd(type, CreateInjector);
+            // new binding available, clear cache...
+            _injectors.Clear();
+            _lastKernelVersion = version;
             return _injectors.GetOrAdd(type, CreateInjector);
         }
 

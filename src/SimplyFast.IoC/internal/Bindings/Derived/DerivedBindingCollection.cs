@@ -6,7 +6,7 @@ namespace SF.IoC.Bindings.Derived
 {
     internal class DerivedBindingCollection
     {
-        private static readonly Type _derivedBindingType = typeof(TinyDerivedBindings<>);
+        private static readonly Type _derivedBindingType = typeof(DerivedBindings<>);
 
         private readonly ConcurrentDictionary<Type, IDerivedBinding> _bindings =
             new ConcurrentDictionary<Type, IDerivedBinding>();

@@ -1,6 +1,6 @@
 ﻿namespace SF.IoC.Bindings.Derived
 {
-    internal class TinyDerivedBindings<T> : IDerivedBinding
+    internal class DerivedBindings<T> : IDerivedBinding
     {
         private readonly IDerivedBinding[] _bindings =
         {
