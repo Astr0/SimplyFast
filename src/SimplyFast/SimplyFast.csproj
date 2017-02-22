@@ -33,11 +33,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnonymousEx.cs" />
@@ -76,33 +71,7 @@
     <Compile Include="IO\fastbuffers\FastBufferWriter.cs" />
     <Compile Include="IO\FileEx.cs" />
     <Compile Include="IO\VarIntHelper.cs" />
-    <Compile Include="Legacy\IO\BufferWriter.cs" />
-    <Compile Include="Legacy\IO\StreamEx.cs" />
-    <Compile Include="Legacy\Net\Sockets\ISocket.cs" />
-    <Compile Include="Legacy\Net\Sockets\ISocketServer.cs" />
-    <Compile Include="Legacy\Pipes\StreamPipeEx.cs" />
-    <Compile Include="Legacy\Pipes\Internal\StreamConsumer.cs" />
-    <Compile Include="Legacy\Pipes\Internal\DbDataReaderConsumer.cs" />
     <Compile Include="MathEx.cs" />
-    <Compile Include="Pipes\ConsumerEx.cs" />
-    <Compile Include="Pipes\IConsumer.cs" />
-    <Compile Include="Legacy\Pipes\Internal\IntLengthPrefixedStreamProducer.cs" />
-    <Compile Include="Legacy\Pipes\Internal\IntLengthPrefixedStreamConsumer.cs" />
-    <Compile Include="Pipes\Internal\ConvertConsumer.cs" />
-    <Compile Include="Pipes\Internal\ConvertProducer.cs" />
-    <Compile Include="Pipes\Internal\EventConsumer.cs" />
-    <Compile Include="Pipes\Internal\MethodConsumer.cs" />
-    <Compile Include="Pipes\Internal\MethodProducer.cs" />
-    <Compile Include="Pipes\Internal\WhereConsumer.cs" />
-    <Compile Include="Pipes\Internal\FilterProducer.cs" />
-    <Compile Include="Pipes\IProducer.cs" />
-    <Compile Include="Legacy\Pipes\Internal\StreamProducer.cs" />
-    <Compile Include="Legacy\Pipes\PipeEx.cs" />
-    <Compile Include="Legacy\Pipes\MemoryProducerConsumer.cs" />
-    <Compile Include="Legacy\Pipes\Internal\VarIntLengthPrefixedStreamProducer.cs" />
-    <Compile Include="Legacy\Pipes\Internal\VarIntLengthPrefixedStreamConsumer.cs" />
-    <Compile Include="Pipes\ProducerEx.cs" />
-    <Compile Include="Pipes\Todo.cs" />
     <Compile Include="Pool\internal\BasicPooled.cs" />
     <Compile Include="Pool\internal\NullPool.cs" />
     <Compile Include="Pool\internal\ProducerConsumerPool.cs" />

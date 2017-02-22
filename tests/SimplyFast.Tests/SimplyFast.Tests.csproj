@@ -35,7 +35,6 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnonymousExTests.cs" />
@@ -62,7 +61,6 @@
     <Compile Include="IO\FileExTests.cs" />
     <Compile Include="IO\VarIntHelperTests.cs" />
     <Compile Include="MathExTests.cs" />
-    <Compile Include="Pipes\ConsumerExTests.cs" />
     <Compile Include="Pool\PooledExTests.cs" />
     <Compile Include="Pool\PoolExTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
