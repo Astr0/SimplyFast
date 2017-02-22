@@ -19,7 +19,7 @@ namespace SF.IoC.Bindings.Derived
             kernel.TryBind(binder);
         }
 
-        public static void TryAddDerivedType<TP>(IKernel kernel, Func<IArgKernel, TP> binder)
+        public static void TryAddDerivedType<TP>(IKernel kernel, Func<IGetKernel, TP> binder)
         {
             TryAddDerivedType(kernel, new MethodBinding<TP>(binder));
         }

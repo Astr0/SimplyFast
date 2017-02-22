@@ -4,7 +4,7 @@ namespace SF.IoC
 {
     public interface IBinding
     {
-        object Get(IArgKernel kernel);
+        object Get(IGetKernel kernel);
     }
 
     [SuppressMessage("ReSharper", "TypeParameterCanBeVariant")]

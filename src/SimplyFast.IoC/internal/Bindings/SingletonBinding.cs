@@ -11,7 +11,7 @@
             _firstCall = firstCall;
         }
 
-        public object Get(IArgKernel kernel)
+        public object Get(IGetKernel kernel)
         {
             if (_firstCalled)
                 return _value;

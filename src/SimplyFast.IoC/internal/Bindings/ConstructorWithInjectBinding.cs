@@ -13,7 +13,7 @@ namespace SF.IoC.Bindings
             _injector = injector;
         }
 
-        public object Get(IArgKernel kernel)
+        public object Get(IGetKernel kernel)
         {
             //using (Log.Measure("Construct&Inject: " + _constructor))
             {

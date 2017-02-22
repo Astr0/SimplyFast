@@ -93,24 +93,24 @@ namespace SF.Tests.IoC
         public void ArgBindReturnsItsKernel()
         {
             var kernel = _kernel.Get<IGetKernel>(BindArg.Typed(12L), BindArg.Typed('c'));
-            var argKernel = _kernel.Get<IArgKernel>(BindArg.Typed(12L), BindArg.Typed('d'));
+            var kernel2 = _kernel.Get<IGetKernel>(BindArg.Typed(12L), BindArg.Typed('d'));
             Assert.AreNotEqual(kernel, _kernel);
-            Assert.AreNotEqual(argKernel, _kernel);
+            Assert.AreNotEqual(kernel2, _kernel);
             Assert.Throws<InvalidOperationException>(() => _kernel.Get<TestClass>());
             Assert.AreEqual(new TestClass('c', 12), kernel.Get<TestClass>());
-            Assert.AreEqual(new TestClass('d', 12), argKernel.Get<TestClass>());
+            Assert.AreEqual(new TestClass('d', 12), kernel2.Get<TestClass>());
         }
 
         [Test]
         public void ArgBindCanBeStackedAndOverriden()
         {
-            var argKernel = _kernel.Get<IArgKernel>(BindArg.Typed(12L));
-            Assert.Throws<InvalidOperationException>(() => argKernel.Get<TestClass>());
-            Assert.AreEqual(new TestClass('c', 12), argKernel.Get<TestClass>(BindArg.Typed('c')));
-            Assert.AreEqual(new TestClass('c', 42), argKernel.Get<TestClass>(BindArg.Typed('c'), BindArg.Typed(42L)));
+            var kernel = _kernel.Get<IGetKernel>(BindArg.Typed(12L));
+            Assert.Throws<InvalidOperationException>(() => kernel.Get<TestClass>());
+            Assert.AreEqual(new TestClass('c', 12), kernel.Get<TestClass>(BindArg.Typed('c')));
+            Assert.AreEqual(new TestClass('c', 42), kernel.Get<TestClass>(BindArg.Typed('c'), BindArg.Typed(42L)));
 
-            var argKernel2 = argKernel.Get<IArgKernel>(BindArg.Typed('d'));
-            Assert.AreEqual(new TestClass('d', 12), argKernel2.Get<TestClass>());
+            var kernel2 = kernel.Get<IGetKernel>(BindArg.Typed('d'));
+            Assert.AreEqual(new TestClass('d', 12), kernel2.Get<TestClass>());
         }
 
         [Test]
@@ -131,8 +131,8 @@ namespace SF.Tests.IoC
         public void ArgBindFactoriesCaptureArgBind()
         {
             _kernel.Bind<Func<long, TestClass>>().ToMethod(c => l => c.Get<TestClass>(BindArg.Typed(l)));
-            var argKernel = _kernel.Get<IArgKernel>(BindArg.Typed('c'));
-            var f = argKernel.Get<Func<long, TestClass>>();
+            var kernel = _kernel.Get<IGetKernel>(BindArg.Typed('c'));
+            var f = kernel.Get<Func<long, TestClass>>();
             _kernel.Bind<char>().ToConstant('d');
             Assert.AreEqual(new TestClass('c', 12), f(12));
             Assert.AreEqual(new TestClass('c', 42), f(42));

@@ -61,7 +61,12 @@ namespace SF.IoC.Bindings.Args
 
         public override string ToString()
         {
-            return $"{Type.FullName}({string.Join(",", _args)})";
+            return ToString(Type, _args);
+        }
+
+        public static string ToString(Type type, BindArg[] args)
+        {
+            return $"{type.FullName}({string.Join(",", args)})";
         }
     }
 }

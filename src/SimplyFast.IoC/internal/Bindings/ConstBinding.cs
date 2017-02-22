@@ -9,7 +9,7 @@
             _value = value;
         }
 
-        public object Get(IArgKernel kernel)
+        public object Get(IGetKernel kernel)
         {
             return _value;
         }

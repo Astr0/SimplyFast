@@ -18,7 +18,7 @@ namespace SF.IoC.Bindings
         private static readonly ConcurrentDictionary<Type, FastConstructor[]> _constructorCache =
             new ConcurrentDictionary<Type, FastConstructor[]>();
 
-        private static FastConstructor ChooseConstructor(FastConstructor[] paramConstructors, IArgKernel kernel,
+        private static FastConstructor ChooseConstructor(FastConstructor[] paramConstructors, IGetKernel kernel,
             Func<FastConstructor, bool> filter = null)
         {
             var constructors = filter != null ? paramConstructors.Where(filter) : paramConstructors;
@@ -67,7 +67,7 @@ namespace SF.IoC.Bindings
             return sorted;
         }
 
-        public static IBinding CreateDefaultBinding(Type impl, IArgKernel kernel,
+        public static IBinding CreateDefaultBinding(Type impl, IGetKernel kernel,
             Func<FastConstructor, bool> filter = null)
         {
             if (_noDefaultBindings.Contains(impl))

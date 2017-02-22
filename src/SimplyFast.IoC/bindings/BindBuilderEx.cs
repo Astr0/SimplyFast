@@ -29,14 +29,14 @@ namespace SF.IoC
             return builder.To<T>();
         }
 
-        public static BindingBuilder<T> ToMethod<T>(this BindingBuilder<T> builder, Func<IArgKernel, T> method)
+        public static BindingBuilder<T> ToMethod<T>(this BindingBuilder<T> builder, Func<IGetKernel, T> method)
         {
             builder.CheckBound(false);
             return builder.SetBinding(new MethodBinding<T>(method));
         }
 
         // For syntax compatibility with ninject
-        public static BindingBuilder<T> ToConstructor<T>(this BindingBuilder<T> builder, Func<IArgKernel, T> method)
+        public static BindingBuilder<T> ToConstructor<T>(this BindingBuilder<T> builder, Func<IGetKernel, T> method)
         {
             return ToMethod(builder, method);
         }

@@ -11,7 +11,7 @@ namespace SF.IoC.Injection
             _method = method;
         }
 
-        public void Inject(IArgKernel kernel, object instance)
+        public void Inject(IGetKernel kernel, object instance)
         {
             _method.Invoke(instance, kernel);
         }

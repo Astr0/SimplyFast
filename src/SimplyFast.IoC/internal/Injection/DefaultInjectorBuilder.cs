@@ -12,7 +12,7 @@ namespace SF.IoC.Injection
         private static readonly ConcurrentDictionary<Type, FastMethod[]> _methodCache =
             new ConcurrentDictionary<Type, FastMethod[]>();
 
-        public static IInjector CreateDefaultInjector(Type type, IArgKernel kernel)
+        public static IInjector CreateDefaultInjector(Type type, IGetKernel kernel)
         {
             var methods = GetMethods(type);
 
@@ -24,7 +24,7 @@ namespace SF.IoC.Injection
             return method != null ? (IInjector) new Injector(method) : NullInjector.Instance;
         }
 
-        private static FastMethod ChooseMethod(FastMethod[] methods, IArgKernel kernel)
+        private static FastMethod ChooseMethod(FastMethod[] methods, IGetKernel kernel)
         {
             foreach (var method in methods)
             {

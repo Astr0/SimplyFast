@@ -21,7 +21,7 @@ namespace SF.IoC
             }
         }
 
-        public object Get(IArgKernel kernel)
+        public object Get(IGetKernel kernel)
         {
             if (_called)
                 return _binding.Get(kernel);

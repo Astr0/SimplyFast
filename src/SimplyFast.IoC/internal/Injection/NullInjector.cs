@@ -8,7 +8,7 @@
         {
         }
 
-        public void Inject(IArgKernel kernel, object instance)
+        public void Inject(IGetKernel kernel, object instance)
         {
         }
     }

@@ -34,7 +34,7 @@ namespace SF.IoC.Bindings.Derived
 
         #region Binders
 
-        private T[] ArrayBinder(IArgKernel kernel)
+        private T[] ArrayBinder(IGetKernel kernel)
         {
             var snapshot = _itemBindings.GetSnapshot();
             var result = new T[snapshot.Count];
@@ -43,7 +43,7 @@ namespace SF.IoC.Bindings.Derived
             return result;
         }
 
-        private List<T> ListBinder(IArgKernel kernel)
+        private List<T> ListBinder(IGetKernel kernel)
         {
             var snapshot = _itemBindings.GetSnapshot();
             var result = new List<T>(snapshot.Count);

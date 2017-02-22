@@ -9,7 +9,7 @@
             _args = args;
         }
 
-        public object Get(IArgKernel kernel)
+        public object Get(IGetKernel kernel)
         {
             var argKernel = new Kernel(kernel, _args);
             return argKernel.Get(_args.Type);

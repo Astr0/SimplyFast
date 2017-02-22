@@ -8,7 +8,7 @@ using SF.IoC.Injection;
 namespace SF.IoC
 {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class FastKernel : KernelBase, IKernel
+    public class FastKernel : IKernel
     {
         private readonly BindingCollection _bindings;
         private readonly DerivedBindingCollection _derivedBindings;
@@ -22,21 +22,20 @@ namespace SF.IoC
 
             // Bind kernel to self
             this.Bind(new MethodBinding<IGetKernel>(c => c));
-            this.Bind(new MethodBinding<IArgKernel>(c => c));
             this.Bind(new ConstBinding<IKernel>(this));
         }
 
-        public override IInjector GetInjector(Type type)
+        public IInjector GetInjector(Type type)
         {
             return _injectors.GetInjector(type);
         }
 
-        public override IBinding GetBinding(Type type, params BindArg[] args)
+        public IBinding GetBinding(Type type, params BindArg[] args)
         {
             return DefaultArgBindingBuilder.GetBinding(this, type, args);
         }
 
-        public override IBinding GetBinding(Type type)
+        public IBinding GetBinding(Type type)
         {
             return _bindings.GetBinding(type);
         }
@@ -52,11 +51,11 @@ namespace SF.IoC
             return _bindings.TryBind(type, binding);
         }
 
-        public override IBinding GetArgBinding(Type type, string name)
+        public IBinding GetArgBinding(Type type, string name)
         {
             return GetBinding(type);
         }
 
-        public override int Version => _bindings.Version;
+        public int Version => _bindings.Version;
     }
 }

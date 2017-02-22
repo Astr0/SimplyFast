@@ -21,7 +21,6 @@ namespace SF.Tests.IoC
         {
             Assert.AreEqual(_kernel, _kernel.Get<IKernel>());
             Assert.AreEqual(_kernel, _kernel.Get<IGetKernel>());
-            Assert.AreEqual(_kernel, _kernel.Get<IArgKernel>());
         }
 
         [Test]
@@ -29,7 +28,6 @@ namespace SF.Tests.IoC
         {
             Assert.AreEqual(_kernel, _kernel.Get<Func<IKernel>>()());
             Assert.AreEqual(_kernel, _kernel.Get<Func<IGetKernel>>()());
-            Assert.AreEqual(_kernel, _kernel.Get<Func<IArgKernel>>()());
         }
 
         [Test]
@@ -63,7 +61,7 @@ namespace SF.Tests.IoC
         public void NinjectSytaxOk()
         {
             _kernel.Bind<string>().ToConstructor(c => "test");
-            Assert.AreEqual("test", _kernel.Get<string>());
+            Assert.AreEqual("test", _kernel.Inject<string>());
         }
 
         [Test]

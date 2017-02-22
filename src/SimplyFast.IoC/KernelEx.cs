@@ -1,4 +1,7 @@
-﻿namespace SF.IoC
+﻿using System;
+using SF.IoC.Bindings.Args;
+
+namespace SF.IoC
 {
     public static class KernelEx
     {
@@ -28,9 +31,43 @@
             return (T) kernel.Get(typeof(T), args);
         }
 
-        public static T Arg<T>(this IArgKernel kernel, string name)
+        public static object Get(this IGetKernel kernel, Type type)
         {
-            return (T) kernel.Arg(typeof(T), name);
+            var binding = kernel.GetBinding(type);
+            if (binding == null)
+                throw new InvalidOperationException("Can't create: " + type + " no binding found");
+            return binding.Get(kernel);
+        }
+
+        public static object Get(this IGetKernel kernel, Type type, params BindArg[] args)
+        {
+            var binding = kernel.GetBinding(type, args);
+            if (binding == null)
+                throw new InvalidOperationException("Can't create: " + TypeWithArgs.ToString(type, args) +
+                                                    " no binding found");
+            return binding.Get(kernel);
+        }
+
+        public static void Inject(this IGetKernel kernel, object instance)
+        {
+            if (instance == null)
+                return;
+            var injector = kernel.GetInjector(instance.GetType());
+            injector?.Inject(kernel, instance);
+        }
+
+        public static object Arg(this IGetKernel kernel, Type type, string name)
+        {
+            var binding = kernel.GetArgBinding(type, name);
+            if (binding == null)
+                throw new InvalidOperationException("Can't create: " + type + " for arg " + name + " no binding found");
+            return binding.Get(kernel);
+        }
+
+        public static bool CanBind(this IGetKernel kernel, Type type, string argName)
+        {
+            var binding = kernel.GetArgBinding(type, argName);
+            return binding != null;
         }
     }
 }

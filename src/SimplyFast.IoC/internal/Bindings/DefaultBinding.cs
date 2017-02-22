@@ -12,7 +12,7 @@ namespace SF.IoC.Bindings
             _type = type;
         }
 
-        public object Get(IArgKernel kernel)
+        public object Get(IGetKernel kernel)
         {
             if (_defaultBinding != null)
                 return _defaultBinding.Get(kernel);

@@ -46,8 +46,10 @@
     <Compile Include="ArgBindTest.cs" />
     <Compile Include="BasicBindTests.cs" />
     <Compile Include="DerivedBindTests.cs" />
+    <Compile Include="InjectionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResolvingTests.cs" />
+    <Compile Include="TestData\InjectTestClass.cs" />
     <Compile Include="TestData\TestClass.cs" />
     <Compile Include="TestData\TestClass2.cs" />
   </ItemGroup>

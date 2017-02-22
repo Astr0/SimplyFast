@@ -5,12 +5,12 @@ namespace SF.IoC.Bindings.Args
 {
     internal partial class ArgsBinding 
     {
-        private class Kernel : KernelBase
+        private partial class Kernel : IGetKernel
         {
             private readonly TypeWithArgs _args;
-            private readonly IArgKernel _kernel;
+            private readonly IGetKernel _kernel;
 
-            public Kernel(IArgKernel kernel, TypeWithArgs args)
+            public Kernel(IGetKernel kernel, TypeWithArgs args)
             {
                 _args = args;
                 _kernel = kernel;
@@ -22,15 +22,15 @@ namespace SF.IoC.Bindings.Args
                 return _args.TryGetArg(type, name, out object value) ? new ConstBinding(value) : null;
             }
 
-            public override IBinding GetBinding(Type type)
+            public IBinding GetBinding(Type type)
             {
                 return GetArgBinding(type, null);
             }
 
-            private readonly ConcurrentDictionary<Tuple<Type, string>, IBinding> _cache = new ConcurrentDictionary<Tuple<Type, string>, IBinding>();
+            private readonly ConcurrentDictionary<ArgKey, IBinding> _cache = new ConcurrentDictionary<ArgKey, IBinding>();
             private volatile int _lastKernelVersion;
 
-            public override IBinding GetArgBinding(Type type, string name)
+            public IBinding GetArgBinding(Type type, string name)
             {
                 // check if we can bind type with name
                 // ReSharper disable once ImpureMethodCallOnReadonlyValueField
@@ -40,22 +40,19 @@ namespace SF.IoC.Bindings.Args
                 // check if we have to clear cache
                 var version = _kernel.Version;
                 if (version == _lastKernelVersion)
-                    return _cache.GetOrAdd(Tuple.Create(type, name), FindBinding);
+                    return _cache.GetOrAdd(new ArgKey(type, name), FindBinding);
 
                 _cache.Clear();
                 _lastKernelVersion = version;
 
-                return _cache.GetOrAdd(Tuple.Create(type, name), FindBinding);
+                return _cache.GetOrAdd(new ArgKey(type, name), FindBinding);
             }
 
-            private IBinding FindBinding(Tuple<Type, string> key)
+            private IBinding FindBinding(ArgKey key)
             {
-                return FindBinding(key.Item1, key.Item2);
+                var type = key.Type;
+                var name = key.Name;
 
-            }
-
-            private IBinding FindBinding(Type type, string name)
-            {
                 if (type == _args.Type)
                     return CreateMyBinding();
 
@@ -73,12 +70,12 @@ namespace SF.IoC.Bindings.Args
                 return CreateDefaultArgBinding(type);
             }
 
-            public override IBinding GetBinding(Type type, params BindArg[] args)
+            public IBinding GetBinding(Type type, params BindArg[] args)
             {
                 return DefaultArgBindingBuilder.GetBinding(this, type, args);
             }
 
-            public override IInjector GetInjector(Type type)
+            public IInjector GetInjector(Type type)
             {
                 return _kernel.GetInjector(type);
             }
@@ -96,7 +93,7 @@ namespace SF.IoC.Bindings.Args
                 return DefaultBindingBuilder.CreateDefaultBinding(type, this, _args.ConstructorHaveAllArgs);
             }
 
-            public override int Version => _kernel.Version;
+            public int Version => _kernel.Version;
         }
     }
 }
