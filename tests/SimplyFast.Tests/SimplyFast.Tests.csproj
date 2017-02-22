@@ -50,6 +50,8 @@
     <Compile Include="Comparers\ComparersTestClass.cs" />
     <Compile Include="Comparers\FuncEqualityComparerTests.cs" />
     <Compile Include="Comparers\KeyEqualityComparerTests.cs" />
+    <Compile Include="Configuration\ConfigReadTests.cs" />
+    <Compile Include="Configuration\ConfigUpdateTests.cs" />
     <Compile Include="DisposableExTests.cs" />
     <Compile Include="IO\ByteBufferTests.cs" />
     <Compile Include="IO\FastBufferReaderTestsView.cs" />

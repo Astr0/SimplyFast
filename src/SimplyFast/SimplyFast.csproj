@@ -50,6 +50,11 @@
     <Compile Include="Collections\WeakCollection.cs" />
     <Compile Include="Comparers\Internal\FuncEqualityComparer.cs" />
     <Compile Include="Comparers\Internal\KeyEqualityComparer.cs" />
+    <Compile Include="Configuration\DictionaryConfig.cs" />
+    <Compile Include="Configuration\IConfig.cs" />
+    <Compile Include="Configuration\IReadOnlyConfig.cs" />
+    <Compile Include="Configuration\ConfigUpdateEx.cs" />
+    <Compile Include="Configuration\ConfigReadEx.cs" />
     <Compile Include="disposable\DisposableEx.AlwaysDisposableAction.cs" />
     <Compile Include="disposable\DisposableEx.AssignDisposable.cs" />
     <Compile Include="disposable\DisposableEx.CollectionRemove.cs" />
