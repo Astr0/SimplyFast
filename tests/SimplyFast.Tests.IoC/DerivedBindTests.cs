@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NUnit.Framework;
 using SF.IoC;
@@ -43,6 +44,7 @@ namespace SF.Tests.IoC
             AssertCollectionObj(_kernel.Get<IReadOnlyCollection<object>>());
         }
 
+        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         private static void AssertCollectionObj(IEnumerable<object> collection)
         {
             Assert.IsNotNull(collection.Single());

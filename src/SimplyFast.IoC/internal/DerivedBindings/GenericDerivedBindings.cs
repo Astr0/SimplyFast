@@ -50,7 +50,7 @@ namespace SF.IoC.DerivedBindings
             return _invokers.GetOrAdd(type, CreateInvoker);
         }
 
-        private static readonly MethodInfo TryBindGeneric = typeof(IGenericDerivedBinding).GetMethod("TryBind");
+        private static readonly MethodInfo TryBindGeneric = typeof(IGenericDerivedBinding).Methods()[0];
 
         private static Func<IGenericDerivedBinding, IBinding> CreateInvoker(Type type)
         {
