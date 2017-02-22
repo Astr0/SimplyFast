@@ -1,5 +1,5 @@
 ﻿using System;
-using SF.IoC.Bindings.Args;
+using SF.IoC.ArgBindings;
 
 namespace SF.IoC
 {

@@ -1,29 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using SF.IoC.ArgBindings;
 using SF.IoC.Bindings;
-using SF.IoC.Bindings.Args;
-using SF.IoC.Bindings.Derived;
+using SF.IoC.DerivedBindings;
 using SF.IoC.Injection;
 
 namespace SF.IoC
 {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class FastKernel : IKernel
+    public class FastKernel : IDerivedKernel
     {
         private readonly BindingCollection _bindings;
         private readonly DerivedBindingCollection _derivedBindings;
+        private readonly GenericDerivedBindings _genericDerived;
         private readonly InjectorCollection _injectors;
 
         public FastKernel()
         {
-            _bindings = new BindingCollection(this);
+            _derivedBindings = new DerivedBindingCollection();
+            _genericDerived = new GenericDerivedBindings();
+            _derivedBindings.Add(_genericDerived);
+            _bindings = new BindingCollection(this, _derivedBindings.TryCreateBinding);
             _injectors = new InjectorCollection(this);
-            _derivedBindings = new DerivedBindingCollection(this);
 
+            AddDefaultBindings();
+        }
+
+        private void AddDefaultBindings()
+        {
             // Bind kernel to self
             this.Bind(new MethodBinding<IGetKernel>(c => c));
             this.Bind(new ConstBinding<IKernel>(this));
+
+            // nice derived bindings
+            FuncFactoryBinding.Register(this);
+            CollectionBinding.Register(this);
         }
 
         public IInjector GetInjector(Type type)
@@ -44,7 +56,6 @@ namespace SF.IoC
         public void Bind(Type type, IBinding binding)
         {
             _bindings.Bind(type, binding);
-            _derivedBindings.Add(type, binding);
         }
 
         public bool TryBind(Type type, IBinding binding)
@@ -61,6 +72,16 @@ namespace SF.IoC
         public IReadOnlyList<IBinding> GetAllBindings(Type type)
         {
             return _bindings.GetAllBindings(type);
+        }
+
+        public void BindDerived(IDerivedBinding binding)
+        {
+            _derivedBindings.Add(binding);
+        }
+
+        public void BindDerived(Type genericTypeDefinition, IGenericDerivedBinding binding)
+        {
+            _genericDerived.Add(genericTypeDefinition, binding);
         }
     }
 }

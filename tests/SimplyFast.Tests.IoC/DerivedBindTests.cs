@@ -18,24 +18,34 @@ namespace SF.Tests.IoC
         private IKernel _kernel;
 
         [Test]
-        public void DerivedExistsOnlyIfBinded()
+        public void DerivedExistsEvenIfNotBinded()
         {
-            Assert.Throws<InvalidOperationException>(() => _kernel.Get<Func<object>>());
-            Assert.Throws<InvalidOperationException>(() => _kernel.Get<IEnumerable<object>>());
-            Assert.Throws<InvalidOperationException>(() => _kernel.Get<object[]>());
-            Assert.Throws<InvalidOperationException>(() => _kernel.Get<IList<object>>());
-            Assert.Throws<InvalidOperationException>(() => _kernel.Get<ICollection<object>>());
-            Assert.Throws<InvalidOperationException>(() => _kernel.Get<IReadOnlyList<object>>());
-            Assert.Throws<InvalidOperationException>(() => _kernel.Get<IReadOnlyCollection<object>>());
-            _kernel.Bind<object>().ToSelf();
-            Assert.DoesNotThrow(() => _kernel.Get<Func<object>>());
-            Assert.DoesNotThrow(() => _kernel.Get<IEnumerable<object>>());
-            Assert.DoesNotThrow(() => _kernel.Get<object[]>());
-            Assert.DoesNotThrow(() => _kernel.Get<List<object>>());
-            Assert.DoesNotThrow(() => _kernel.Get<IList<object>>());
-            Assert.DoesNotThrow(() => _kernel.Get<ICollection<object>>());
-            Assert.DoesNotThrow(() => _kernel.Get<IReadOnlyList<object>>());
-            Assert.DoesNotThrow(() => _kernel.Get<IReadOnlyCollection<object>>());
+            Assert.IsNotNull(_kernel.Get<Func<object>>());
+            Assert.IsNotNull(_kernel.Get<IEnumerable<object>>());
+            Assert.IsNotNull(_kernel.Get<object[]>());
+            Assert.IsNotNull(_kernel.Get<List<object>>());
+            Assert.IsNotNull(_kernel.Get<IList<object>>());
+            Assert.IsNotNull(_kernel.Get<ICollection<object>>());
+            Assert.IsNotNull(_kernel.Get<IReadOnlyList<object>>());
+            Assert.IsNotNull(_kernel.Get<IReadOnlyCollection<object>>());
+        }
+
+        [Test]
+        public void DerivedReturnsDefaultIfNotBinded()
+        {
+            Assert.IsNotNull(_kernel.Get<Func<object>>()());
+            AssertCollectionObj(_kernel.Get<IEnumerable<object>>());
+            AssertCollectionObj(_kernel.Get<object[]>());
+            AssertCollectionObj(_kernel.Get<List<object>>());
+            AssertCollectionObj(_kernel.Get<IList<object>>());
+            AssertCollectionObj(_kernel.Get<ICollection<object>>());
+            AssertCollectionObj(_kernel.Get<IReadOnlyList<object>>());
+            AssertCollectionObj(_kernel.Get<IReadOnlyCollection<object>>());
+        }
+
+        private static void AssertCollectionObj(IEnumerable<object> collection)
+        {
+            Assert.IsNotNull(collection.Single());
         }
 
         [Test]

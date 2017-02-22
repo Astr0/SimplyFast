@@ -19,4 +19,10 @@ namespace SF.IoC
         void Bind(Type type, IBinding binding);
         bool TryBind(Type type, IBinding binding);
     }
+
+    public interface IDerivedKernel : IKernel
+    {
+        void BindDerived(IDerivedBinding binding);
+        void BindDerived(Type genericTypeDefinition, IGenericDerivedBinding binding);
+    }
 }

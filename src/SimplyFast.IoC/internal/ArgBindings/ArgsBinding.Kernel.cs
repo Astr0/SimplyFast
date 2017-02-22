@@ -3,9 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using SF.Collections;
+using SF.IoC.Bindings;
 using SF.IoC.Injection;
 
-namespace SF.IoC.Bindings.Args
+namespace SF.IoC.ArgBindings
 {
     internal partial class ArgsBinding
     {

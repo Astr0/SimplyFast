@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SF.IoC.Bindings.Args
+namespace SF.IoC.ArgBindings
 {
     internal static class DefaultArgBindingBuilder
     {

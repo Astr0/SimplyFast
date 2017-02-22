@@ -1,7 +1,8 @@
 ﻿using System;
+using SF.IoC.Bindings;
 using SF.Reflection;
 
-namespace SF.IoC.Bindings.Derived
+namespace SF.IoC.DerivedBindings
 {
     internal static class DerivedBindingEx
     {

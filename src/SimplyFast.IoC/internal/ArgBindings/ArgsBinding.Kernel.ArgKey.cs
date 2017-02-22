@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SF.IoC.Bindings.Args
+namespace SF.IoC.ArgBindings
 {
     internal partial class ArgsBinding 
     {

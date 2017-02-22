@@ -95,7 +95,7 @@ namespace SF.Reflection.DelegateBuilders
 
         protected abstract ParameterInfo GetThisParameterForMethod();
 
-        private Delegate CreateCastDelegate()
+        protected Delegate CreateCastDelegate()
         {
             var paramTypes = _delegateParams.Select(x => x.ParameterType).ToArray();
             var m = new DynamicMethod(string.Empty, _delegateReturn, paramTypes,

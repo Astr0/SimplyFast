@@ -20,6 +20,10 @@ namespace SF.Reflection.DelegateBuilders
 
         protected override Delegate CreateExactDelegate()
         {
+            var declaring = _methodInfo.DeclaringType;
+            // avoid stupid issue in .Net framework...
+            if (declaring != null && declaring.IsInterface && _methodInfo.IsGenericMethod)
+                return CreateCastDelegate();
             return Delegate.CreateDelegate(_delegateType, _methodInfo);
         }
 

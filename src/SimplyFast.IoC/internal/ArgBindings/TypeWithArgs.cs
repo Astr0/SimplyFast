@@ -3,7 +3,7 @@ using System.Linq;
 using SF.Collections;
 using SF.IoC.Reflection;
 
-namespace SF.IoC.Bindings.Args
+namespace SF.IoC.ArgBindings
 {
     internal struct TypeWithArgs
     {

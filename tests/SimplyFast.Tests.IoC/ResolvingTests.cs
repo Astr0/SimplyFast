@@ -23,6 +23,7 @@ namespace SF.Tests.IoC
         {
             _kernel.Bind<long>().ToConstant(100);
             _kernel.Bind<int>().ToConstant(55);
+            _kernel.Bind<List<string>>().ToSelf();
             var list = _kernel.Get<List<string>>();
             Assert.AreEqual(55, list.Capacity);
             Assert.Throws<InvalidOperationException>(() => _kernel.Get<TestClass>());
@@ -47,13 +48,15 @@ namespace SF.Tests.IoC
         {
             var ints = new[] {1, 2, 3, 4};
             _kernel.Bind<IEnumerable<int>>().ToConstant(ints);
+            _kernel.Bind<List<int>>().ToSelf();
             _kernel.Bind<char>().ToConstant('c');
             _kernel.Bind<long>().ToMethod(c => c.Get<IEnumerable<int>>().First());
             var test = _kernel.Get<TestClass2>();
             Assert.IsTrue(test.Ints.SequenceEqual(ints));
             Assert.AreEqual(new TestClass('c', 1), test.Test);
-            Assert.Throws<InvalidOperationException>(() => _kernel.Get<Func<TestClass2>>());
-            _kernel.Bind<TestClass2>().ToSelf();
+            //Assert.Throws<InvalidOperationException>(() => _kernel.Get<Func<TestClass2>>());
+            //_kernel.Bind<TestClass2>().ToSelf();
+            // Funcs are not resolved dynamically
             var func = _kernel.Get<Func<TestClass2>>();
             ints[0] = 10;
             Assert.IsFalse(test.Ints.SequenceEqual(ints));

@@ -11,12 +11,19 @@ namespace SF.IoC.Bindings
         private readonly ConcurrentDictionary<Type, ConcurrentGrowList<IBinding>> _allBindings = new ConcurrentDictionary<Type, ConcurrentGrowList<IBinding>>();
         private readonly ConcurrentDictionary<Type, IBinding> _bindings = new ConcurrentDictionary<Type, IBinding>();
         private readonly IKernel _kernel;
+        private readonly Func<Type, IBinding> _customDefaultBinding;
         private readonly ConcurrentDictionary<Type, IBinding> _defaultBindings = new ConcurrentDictionary<Type, IBinding>();
         private volatile int _version;
 
-        public BindingCollection(IKernel kernel)
+        public BindingCollection(IKernel kernel, Func<Type, IBinding> customDefaultBinding = null)
         {
             _kernel = kernel;
+            _customDefaultBinding = customDefaultBinding ?? NoCustomBinding;
+        }
+
+        private static IBinding NoCustomBinding(Type type)
+        {
+            return null;
         }
 
         public int Version => _version;
@@ -30,7 +37,7 @@ namespace SF.IoC.Bindings
 
         private IBinding CreateDefaultBinding(Type type)
         {
-            return DefaultBindingBuilder.CreateDefaultBinding(type, _kernel);
+            return _customDefaultBinding(type) ?? DefaultBindingBuilder.CreateDefaultBinding(type, _kernel);
         }
 
         public void Bind(Type type, IBinding binding)

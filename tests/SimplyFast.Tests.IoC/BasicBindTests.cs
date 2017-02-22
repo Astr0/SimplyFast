@@ -122,8 +122,8 @@ namespace SF.Tests.IoC
         {
             Assert.Throws<InvalidOperationException>(() => _kernel.Get<int>());
             Assert.Throws<InvalidOperationException>(() => _kernel.Get<string>());
-            _kernel.Bind<ICollection<int>>().To<IList<int>>();
-            Assert.Throws<InvalidOperationException>(() => _kernel.Get<ICollection<int>>());
+            _kernel.Bind<object>().To<string>();
+            Assert.Throws<InvalidOperationException>(() => _kernel.Get<object>());
         }
 
         [Test]

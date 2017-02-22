@@ -393,5 +393,33 @@ namespace SF.Tests.Reflection
             Assert.AreEqual(1, typeof(ClassWith2Methods).Methods("ToString").Length);
             Assert.IsNotNull(typeof(ClassWith2Methods).Method("TestStatic", new[] { typeof(string) }, new[] { typeof(string), typeof(int) }));
         }
+
+
+        private interface ITest
+        {
+            T GetDefault<T>();
+        }
+
+        private class TestInterface : ITest
+        {
+            public T GetDefault<T>()
+            {
+                return default(T);
+            }
+        }
+
+        [Test]
+        public void InvokesGenericInterfaceMethod()
+        {
+            var test = new TestInterface();
+            var method = typeof(ITest).Method("GetDefault").MakeGeneric(typeof(int));
+            var exactInvoker = method.InvokerAs<Func<ITest, int>>();
+            Assert.AreEqual(test.GetDefault<int>(), exactInvoker(test));
+            var returnInvoker = method.InvokerAs<Func<ITest, object>>();
+            Assert.AreEqual(test.GetDefault<int>(), returnInvoker(test));
+            var convertInvoker = method.InvokerAs<Func<object, object>>();
+            Assert.AreEqual(test.GetDefault<int>(), convertInvoker(test));
+        }
+
     }
 }
