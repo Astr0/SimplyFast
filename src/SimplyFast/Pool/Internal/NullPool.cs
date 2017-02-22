@@ -1,4 +1,4 @@
-﻿namespace SF.Pool
+﻿namespace SF.Pool.Internal
 {
     public class NullPool<TGetter>: IPool<TGetter>
     {

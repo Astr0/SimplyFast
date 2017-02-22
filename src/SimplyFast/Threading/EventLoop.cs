@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using SF.Threading.Internal;
 
 namespace SF.Threading
 {

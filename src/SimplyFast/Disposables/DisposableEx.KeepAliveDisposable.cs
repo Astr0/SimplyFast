@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SF
+namespace SF.Disposables
 {
     public static partial class DisposableEx
     {

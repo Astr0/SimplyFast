@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection.Emit;
 using NUnit.Framework;
+using SF.Disposables;
 using SF.Reflection.Emit;
 
 namespace SF.Tests.Reflection.Emit

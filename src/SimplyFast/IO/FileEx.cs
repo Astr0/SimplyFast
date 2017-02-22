@@ -13,7 +13,7 @@ namespace SF.IO
             {
                 var offset = 0;
                 var length = fileStream.Length;
-                var maxLength = (long)int.MaxValue;
+                const long maxLength = (long)int.MaxValue;
                 if (length > maxLength)
                     throw new IOException("File greater than 2Gb");
                 var count = (int)length;

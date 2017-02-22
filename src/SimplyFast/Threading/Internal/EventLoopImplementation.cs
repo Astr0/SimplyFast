@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace SF.Threading
+namespace SF.Threading.Internal
 {
 #pragma warning disable 420
     internal sealed class EventLoopImplementation : IDisposable
@@ -26,24 +25,16 @@ namespace SF.Threading
         private readonly CountdownEvent _operationsZero = new CountdownEvent(0);
         private readonly ConcurrentQueue<WorkItem> _queue = new ConcurrentQueue<WorkItem>();
         private readonly ManualResetEvent _queueHasSomething = new ManualResetEvent(false);
-        private readonly WeakReference _thread;
         private volatile int _queueSize;
         private volatile bool _running;
+        private readonly ThreadLocal<bool> _currentThread;
 
         public EventLoopImplementation()
         {
-            _thread = new WeakReference(Thread.CurrentThread);
-        }
-
-        private Thread Thread
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get
+            _currentThread = new ThreadLocal<bool>(false)
             {
-                if (_thread != null && _thread.IsAlive)
-                    return (Thread)_thread.Target;
-                return null;
-            }
+                Value = true
+            };
         }
 
         #region IDisposable Members
@@ -74,7 +65,7 @@ namespace SF.Threading
         public void Post(SendOrPostCallback action, object state)
         {
             if (!_running)
-                throw new InvalidAsynchronousStateException("Event loop is not running.");
+                throw new InvalidOperationException("Event loop is not running.");
             _queue.Enqueue(new WorkItem(action, state));
             // increment after Enqueue, otherwise DoEvents may fail
             if (Interlocked.Increment(ref _queueSize) == 1)
@@ -85,8 +76,8 @@ namespace SF.Threading
         public void Send(SendOrPostCallback action, object state)
         {
             if (!_running)
-                throw new InvalidAsynchronousStateException("Event loop is not running");
-            if (Thread.CurrentThread == Thread)
+                throw new InvalidOperationException("Event loop is not running");
+            if (_currentThread.IsValueCreated)
             {
                 // Run sync if same thread
                 DoProcessCurrentQueue();
@@ -120,7 +111,7 @@ namespace SF.Threading
                     while (!wh.Wait(1))
                     {
                         if (!_running)
-                            throw new InvalidAsynchronousStateException("Event Loop stopped before completing operation");
+                            throw new InvalidOperationException("Event Loop stopped before completing operation");
                     }
 
                     // Rethrow exception in Send thread if any
@@ -223,7 +214,7 @@ namespace SF.Threading
         {
             if (!_running)
                 throw new InvalidOperationException("Event loop is not running.");
-            if (Thread.CurrentThread != Thread)
+            if (!_currentThread.IsValueCreated)
                 throw new InvalidOperationException("Event loop is not running on current thread.");
             DoProcessCurrentQueue();
         }

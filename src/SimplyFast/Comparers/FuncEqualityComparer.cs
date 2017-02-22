@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using SF.Collections;
 
-namespace SF
+namespace SF.Comparers
 {
     /// <summary>
     ///     Equality comparer that uses Func for comparison and Func for get hash code. Allows functional comparers
@@ -18,10 +19,10 @@ namespace SF
                 throw new ArgumentNullException(nameof(comparer));
             if (hash == null)
             {
-                if (typeof (T).IsValueType)
-                    hash = a => a.GetHashCode();
-                else
+                if (TypeHelper<T>.IsReferenceType)
                     hash = a => !ReferenceEquals(a, null) ? a.GetHashCode() : 0;
+                else
+                    hash = a => a.GetHashCode();
             }
             _comparer = comparer;
             _hash = hash;

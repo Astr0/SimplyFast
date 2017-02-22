@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace SF
+namespace SF.Comparers
 {
     internal class CollectionComparer<TCollection, TItem> : EqualityComparer<TCollection>
         where TCollection: class, IReadOnlyCollection<TItem>

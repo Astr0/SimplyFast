@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace SF.Pool
+namespace SF.Pool.Internal
 {
     internal class ProducerConsumerPool<TGetter> : IPool<TGetter>
     {

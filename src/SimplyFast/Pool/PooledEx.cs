@@ -1,4 +1,5 @@
 ﻿using System;
+using SF.Pool.Internal;
 
 namespace SF.Pool
 {

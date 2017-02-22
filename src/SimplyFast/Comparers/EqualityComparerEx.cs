@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SF
+namespace SF.Comparers
 {
     /// <summary>
     ///     Facade for Comparers

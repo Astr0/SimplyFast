@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using SF.Comparers;
 
 namespace SF.Tests.Serialization.Protobuf.TestData
 {
@@ -22,7 +23,7 @@ namespace SF.Tests.Serialization.Protobuf.TestData
             = EqualityComparerEx.Collection<List<uint>, uint>();
 
         private static readonly IEqualityComparer<byte[]> BytesComparer
-    = EqualityComparerEx.Array<byte>();
+            = EqualityComparerEx.Array<byte>();
 
         public bool Equals(FTestMessage other)
         {

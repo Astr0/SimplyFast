@@ -1,4 +1,4 @@
-﻿namespace SF.Pool
+﻿namespace SF.Pool.Internal
 {
     internal class NotPooledWrapper<T> : IPooled<T>
     {

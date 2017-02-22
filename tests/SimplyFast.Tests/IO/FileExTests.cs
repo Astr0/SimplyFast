@@ -6,7 +6,7 @@ using SF.IO;
 
 namespace SF.Tests.IO
 {
-    [TestFixture]
+    [Ignore("Not supported System.IO.FileSystem in unit tests")]
     public class FileExTests
     {
         private static byte[] GetTestBytes()

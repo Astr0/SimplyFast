@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace SF.Threading
+namespace SF.Threading.Internal
 {
     internal sealed class EventLoopSynchronizationContext : SynchronizationContext
     {

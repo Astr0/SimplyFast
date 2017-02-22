@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SF
+namespace SF.Disposables
 {
     public static partial class DisposableEx
     {

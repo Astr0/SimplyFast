@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using SF.Collections;
+using SF.Disposables;
 
 namespace SF.Data.Spaces.Local
 {
@@ -15,7 +16,7 @@ namespace SF.Data.Spaces.Local
 
         private LocalTable<T> _parent;
         public LocalTable<T> Root;
-        public LinkedList<IWaitingAction> WaitingActions = new LinkedList<IWaitingAction>(); 
+        public readonly LinkedList<IWaitingAction> WaitingActions = new LinkedList<IWaitingAction>(); 
 
         #region Factory
 

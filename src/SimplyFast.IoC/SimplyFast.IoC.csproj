@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SF.IoC</RootNamespace>
     <AssemblyName>SimplyFast.IoC</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="bindings\IDerivedBinding.cs" />
@@ -79,7 +81,7 @@
       <Name>SimplyFast.Reflection</Name>
     </ProjectReference>
     <ProjectReference Include="..\SimplyFast\SimplyFast.csproj">
-      <Project>{1ED04E22-9459-439D-A7AE-1BF9380E75F2}</Project>
+      <Project>{7b14cc11-30ea-4d8b-b0be-324d1f2b8bf7}</Project>
       <Name>SimplyFast</Name>
     </ProjectReference>
   </ItemGroup>

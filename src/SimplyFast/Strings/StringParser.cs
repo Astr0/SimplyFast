@@ -7,7 +7,7 @@ namespace SF.Strings
     ///     Useful class for string parsing
     /// </summary>
     [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-    public class StringParser : ICloneable
+    public class StringParser
     {
         private int _index;
         private readonly string _text;
@@ -48,11 +48,6 @@ namespace SF.Strings
         public string Left => Start ? string.Empty : _text.Left(_index);
 
         public int CharactersLeft => _length - _index;
-
-        object ICloneable.Clone()
-        {
-            return Clone();
-        }
 
         public void Reset()
         {

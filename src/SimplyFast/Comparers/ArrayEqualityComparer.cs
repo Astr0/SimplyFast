@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SF
+namespace SF.Comparers
 {
     internal class ArrayEqualityComparer<T> : EqualityComparer<T[]>
     {

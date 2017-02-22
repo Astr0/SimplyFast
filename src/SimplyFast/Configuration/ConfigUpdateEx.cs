@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 
 namespace SF.Configuration
 {
@@ -35,13 +33,6 @@ namespace SF.Configuration
             return config;
         }
 
-        public static T UpdateFromNameValueCollection<T>(this T config, NameValueCollection collection,
-            Func<string, string> mapKeys = null, Func<string, string> convertValues = null) where T : IConfig
-        {
-            var keyValuePairs = collection.AllKeys.Select(key => new KeyValuePair<string, string>(key, collection[key]));
-            return config.UpdateFromKeyValuePairs(keyValuePairs, mapKeys, convertValues);
-        }
-
         //public static T UpdateFromAppSettings<T>(this T config, Func<string, string> mapKeys = null,
         //    Func<string, string> convertValues = null) where T : IConfig
         //{
@@ -53,14 +44,20 @@ namespace SF.Configuration
         {
             if (!File.Exists(filePath))
                 return config;
-            var dict = ReadConf(filePath);
+            return UpdateFromConf(config, File.ReadAllLines(filePath), mapKeys, convertValues);
+        }
+
+        public static T UpdateFromConf<T>(this T config, string[] lines,
+            Func<string, string> mapKeys = null, Func<string, string> convertValues = null) where T : IConfig
+        {
+
+            var dict = ReadConf(lines);
 
             return config.UpdateFromKeyValuePairs(dict, mapKeys, convertValues);
         }
 
-        private static Dictionary<string, string> ReadConf(string filePath)
+        private static Dictionary<string, string> ReadConf(string[] lines)
         {
-            var lines = File.ReadAllLines(filePath);
             var dict = new Dictionary<string, string>();
             foreach (var srcLine in lines)
             {

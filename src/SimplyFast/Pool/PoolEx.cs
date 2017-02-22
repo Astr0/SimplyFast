@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using SF.Pool.Internal;
 
 namespace SF.Pool
 {

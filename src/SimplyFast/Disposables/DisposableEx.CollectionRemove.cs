@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace SF
+namespace SF.Disposables
 {
     public static partial class DisposableEx
     {

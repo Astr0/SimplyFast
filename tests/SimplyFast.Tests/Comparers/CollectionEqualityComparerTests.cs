@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
+using SF.Comparers;
 
 namespace SF.Tests.Comparers
 {

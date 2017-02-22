@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SF.Pool
+namespace SF.Pool.Internal
 {
     internal class BasicPooled<T, TGetter>: PooledBase<T, TGetter>
     {
