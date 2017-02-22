@@ -47,6 +47,9 @@
     <Compile Include="BasicBindTests.cs" />
     <Compile Include="DerivedBindTests.cs" />
     <Compile Include="InjectionTests.cs" />
+    <Compile Include="ModulesTests.cs" />
+    <Compile Include="Modules\TestModule.cs" />
+    <Compile Include="Modules\TestModule2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResolvingTests.cs" />
     <Compile Include="TestData\InjectTestClass.cs" />

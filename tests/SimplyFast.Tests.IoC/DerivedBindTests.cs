@@ -47,7 +47,9 @@ namespace SF.Tests.IoC
         [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         private static void AssertCollectionObj(IEnumerable<object> collection)
         {
-            Assert.IsNotNull(collection.Single());
+            var item = collection.Single();
+            Assert.IsNotNull(item);
+            Assert.IsInstanceOf<object>(item);
         }
 
         [Test]
