@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 
-namespace SF.Reflection
+namespace SF.Reflection.Internal
 {
     internal static class TypeResolveCache
     {
@@ -22,6 +22,7 @@ namespace SF.Reflection
         private static Type ResolveImpl(string typeName)
         {
             var type = Type.GetType(typeName);
+#if NET
             if (type != null)
                 return type;
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -31,6 +32,9 @@ namespace SF.Reflection
                     return type;
             }
             return null;
+#else
+            return type;
+#endif
         }
     }
 }

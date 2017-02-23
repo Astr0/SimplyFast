@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using SF.Reflection.Internal;
 
 namespace SF.Reflection
 {

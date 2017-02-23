@@ -1,9 +1,12 @@
 using System;
 using System.Reflection;
+using SF.Reflection.Internal.DelegateBuilders.Parameters;
+#if EMIT
 using System.Reflection.Emit;
 using SF.Reflection.Emit;
+#endif
 
-namespace SF.Reflection.DelegateBuilders
+namespace SF.Reflection.Internal.DelegateBuilders
 {
     internal class MethodDelegateBuilder : DelegateBuilder
     {
@@ -18,6 +21,7 @@ namespace SF.Reflection.DelegateBuilders
 
         #region Overrides of DelegateBuilder
 
+#if EMIT
         protected override Delegate CreateExactDelegate()
         {
             var declaring = _methodInfo.DeclaringType;
@@ -31,27 +35,28 @@ namespace SF.Reflection.DelegateBuilders
         {
             generator.EmitMethodCall(_methodInfo);
         }
+#endif
 
         protected override Type GetMethodReturnType()
         {
             return _methodInfo.ReturnType;
         }
 
-        protected override ParameterInfo[] GetMethodParameters()
+        protected override SimpleParameterInfo[] GetMethodParameters()
         {
-            return _methodInfo.GetParameters();
+            return SimpleParameterInfo.FromParameters(_methodInfo.GetParameters());
         }
 
-        protected override ParameterInfo GetThisParameterForMethod()
+        protected override Type GetThisParameterForMethod()
         {
             if (_methodInfo.IsStatic)
                 return null;
             var declaringType = _methodInfo.DeclaringType;
             // ReSharper disable PossibleNullReferenceException
-            return new SimpleParameterInfo(declaringType.IsValueType ? declaringType.MakeByRefType() : declaringType);
+            return declaringType.IsValueType() ? declaringType.MakeByRefType() : declaringType;
             // ReSharper restore PossibleNullReferenceException
         }
 
-        #endregion
+#endregion
     }
 }

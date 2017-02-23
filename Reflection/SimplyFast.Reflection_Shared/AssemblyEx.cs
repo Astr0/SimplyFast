@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if EMIT
+using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -27,3 +28,4 @@ namespace SF.Reflection
         }
     }
 }
+#endif

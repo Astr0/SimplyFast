@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Reflection;
+#if EMIT
 using System.Reflection.Emit;
 using SF.Reflection.Emit;
+#endif
 
-namespace SF.Reflection
+namespace SF.Reflection.Internal
 {
     internal static class InvokerDelegateBuilder
     {
+#if EMIT
         private static DynamicMethod CreateDynamicMethod(MemberInfo memberInfo, Type returnType, Type[] parameterTypes)
         {
             if (memberInfo.DeclaringType == null)
@@ -103,5 +106,16 @@ namespace SF.Reflection
             }
             return locals;
         }
-    }
+#else
+        public static MethodInvoker BuildMethodInvoker(MethodInfo methodInfo)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static ConstructorInvoker BuildConstructorInvoker(ConstructorInfo constructorInfo)
+        {
+            throw new NotImplementedException();
+        }
+#endif
+        }
 }

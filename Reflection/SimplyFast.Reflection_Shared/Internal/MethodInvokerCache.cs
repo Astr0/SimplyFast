@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace SF.Reflection
+namespace SF.Reflection.Internal
 {
     internal static class MethodInvokerCache
     {

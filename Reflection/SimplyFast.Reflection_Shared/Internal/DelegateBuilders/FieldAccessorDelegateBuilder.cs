@@ -1,9 +1,13 @@
 using System;
 using System.Reflection;
+using SF.Reflection.Internal.DelegateBuilders.Parameters;
+
+#if EMIT
 using System.Reflection.Emit;
 using SF.Reflection.Emit;
+#endif
 
-namespace SF.Reflection.DelegateBuilders
+namespace SF.Reflection.Internal.DelegateBuilders
 {
     internal abstract class FieldAccessorDelegateBuilder : DelegateBuilder
     {
@@ -17,19 +21,15 @@ namespace SF.Reflection.DelegateBuilders
             FieldInfo = fieldInfo;
         }
 
-        #region Overrides of DelegateBuilder
-
-        protected override ParameterInfo GetThisParameterForMethod()
+        protected override Type GetThisParameterForMethod()
         {
             if (FieldInfo.IsStatic)
                 return null;
             var declaringType = FieldInfo.DeclaringType;
             // ReSharper disable PossibleNullReferenceException
-            return new SimpleParameterInfo(declaringType.IsValueType ? declaringType.MakeByRefType() : declaringType);
+            return declaringType.IsValueType() ? declaringType.MakeByRefType() : declaringType;
             // ReSharper restore PossibleNullReferenceException
         }
-
-        #endregion
     }
 
     internal class FieldGetDelegateBuilder : FieldAccessorDelegateBuilder
@@ -43,11 +43,12 @@ namespace SF.Reflection.DelegateBuilders
             return FieldInfo.FieldType;
         }
 
-        protected override ParameterInfo[] GetMethodParameters()
+        protected override SimpleParameterInfo[] GetMethodParameters()
         {
-            return new ParameterInfo[0];
+            return new SimpleParameterInfo[0];
         }
 
+#if EMIT
         protected override void EmitInvoke(ILGenerator generator)
         {
             if (FieldInfo.IsLiteral)
@@ -60,6 +61,7 @@ namespace SF.Reflection.DelegateBuilders
                 generator.EmitFieldGet(FieldInfo);
             }
         }
+#endif
     }
 
     internal class FieldSetDelegateBuilder : FieldAccessorDelegateBuilder
@@ -73,14 +75,16 @@ namespace SF.Reflection.DelegateBuilders
             return typeof (void);
         }
 
-        protected override ParameterInfo[] GetMethodParameters()
+        protected override SimpleParameterInfo[] GetMethodParameters()
         {
-            return new ParameterInfo[] {new SimpleParameterInfo(FieldInfo.FieldType)};
+            return new [] {new SimpleParameterInfo(FieldInfo.FieldType)};
         }
 
+#if EMIT
         protected override void EmitInvoke(ILGenerator generator)
         {
             generator.EmitFieldSet(FieldInfo);
         }
+#endif
     }
 }

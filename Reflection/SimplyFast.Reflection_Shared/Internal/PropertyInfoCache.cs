@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace SF.Reflection
+namespace SF.Reflection.Internal
 {
     internal class PropertyInfoCache
     {
@@ -19,9 +19,13 @@ namespace SF.Reflection
 
         private PropertyInfoCache(Type type)
         {
+#if NET
             Properties = type.GetProperties(MemberInfoEx.BindingFlags);
+#else
+            Properties = type.GetRuntimeProperties().ToArray();
+#endif
             _properties = Properties.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.ToArray(), StringComparer.Ordinal);
-            var defaultMember = type.GetCustomAttribute<DefaultMemberAttribute>();
+            var defaultMember = type.TypeInfo().GetCustomAttribute<DefaultMemberAttribute>();
             if (defaultMember != null)
                 IndexerName = defaultMember.MemberName;
         }

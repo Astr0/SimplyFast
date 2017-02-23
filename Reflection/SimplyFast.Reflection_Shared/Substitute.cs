@@ -6,7 +6,7 @@ namespace SF.Reflection
 {
     public static class Substitute
     {
-        public static readonly IList<Type> T = Array.AsReadOnly(new[]
+        public static readonly IReadOnlyList<Type> T = new[]
         {
             typeof (T0),
             typeof (T1),
@@ -24,7 +24,7 @@ namespace SF.Reflection
             typeof (T13),
             typeof (T14),
             typeof (T15)
-        });
+        };
 
         private static readonly Dictionary<Type, int> _genericToIndex = T
             .Select((x, i) => new KeyValuePair<Type, int>(x, i))

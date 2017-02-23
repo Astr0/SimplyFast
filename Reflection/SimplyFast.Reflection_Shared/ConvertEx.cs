@@ -6,8 +6,10 @@ namespace SF.Reflection
 {
     public static class ConvertEx
     {
-        private static readonly MethodInfo _exactCreate = typeof(ConvertEx).GetMethod("ExactConverter", BindingFlags.Static | BindingFlags.NonPublic);
-        private static readonly MethodInfo _castCreate = typeof(ConvertEx).GetMethod("CastConverter", BindingFlags.Static | BindingFlags.NonPublic);
+        private static readonly MethodInfo _exactCreate = typeof(ConvertEx)
+            .Method("ExactConverter");
+        private static readonly MethodInfo _castCreate = typeof(ConvertEx)
+            .Method("CastConverter");
 
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
         private static T ExactConverter<T>(T value)

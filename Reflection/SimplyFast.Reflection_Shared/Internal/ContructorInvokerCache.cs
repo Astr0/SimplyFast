@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace SF.Reflection
+namespace SF.Reflection.Internal
 {
     internal static class ContructorInvokerCache
     {

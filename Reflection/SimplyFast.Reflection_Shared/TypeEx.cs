@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using SF.Reflection.Internal;
 
 namespace SF.Reflection
 {
@@ -18,10 +20,11 @@ namespace SF.Reflection
         /// </summary>
         public static string FriendlyName(this Type type)
         {
-            if (!type.IsGenericType)
+            var typeInfo = type.TypeInfo();
+            if (!typeInfo.IsGenericType)
                 return type.Name;
             var sb = new StringBuilder();
-            var arguments = type.GetGenericArguments();
+            var arguments = typeInfo.GetGenericArguments();
             var genericName = type.Name;
             var index = genericName.IndexOf('`');
             if (index >= 0)
@@ -35,10 +38,11 @@ namespace SF.Reflection
         /// </summary>
         public static string IdentifierFriendlyName(this Type type)
         {
-            if (!type.IsGenericType)
+            var typeInfo = type.TypeInfo();
+            if (!typeInfo.IsGenericType)
                 return type.Name;
             var sb = new StringBuilder();
-            var arguments = type.GetGenericArguments();
+            var arguments = typeInfo.GetGenericArguments();
             var genericName = type.Name;
             var index = genericName.IndexOf('`');
             if (index >= 0)
@@ -59,10 +63,11 @@ namespace SF.Reflection
             if (sub != null && sub != type)
                 return sub;
 
-            if (!type.IsGenericType)
+            var typeInfo = type.TypeInfo();
+            if (!typeInfo.IsGenericType)
                 return type;
 
-            var args = type.GetGenericArguments();
+            var args = typeInfo.GetGenericArguments();
             var changed = false;
             for (var i = 0; i < args.Length; i++)
             {
@@ -93,7 +98,7 @@ namespace SF.Reflection
         [SuppressMessage("ReSharper", "UnusedParameter.Global")]
         public static Type TypeOf<T>(T obj)
         {
-            return typeof (T);
+            return typeof(T);
         }
 
         /// <summary>
@@ -101,19 +106,20 @@ namespace SF.Reflection
         /// </summary>
         public static IEnumerable<Type> FindIEnumerable(Type type)
         {
-            var interfaces = type.GetInterfaces().Concat(new[] {type});
+            var interfaces = type.TypeInfo().ImplementedInterfaces.Concat(new[] { type });
             var normalFound = false;
             foreach (var inter in interfaces)
             {
-                if (inter.IsGenericType && inter.GetGenericTypeDefinition() == typeof (IEnumerable<>))
+                var interTi = inter.TypeInfo();
+                if (interTi.IsGenericType && inter.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                 {
-                    yield return inter.GetGenericArguments()[0];
+                    yield return interTi.GetGenericArguments()[0];
                 }
-                else if (inter == typeof (IEnumerable))
+                else if (inter == typeof(IEnumerable))
                     normalFound = true;
             }
             if (normalFound)
-                yield return typeof (object);
+                yield return typeof(object);
         }
 
         /// <summary>
@@ -124,20 +130,21 @@ namespace SF.Reflection
         /// <returns>First implementation found or null if not found</returns>
         public static Type FindGenericType(Type typeDefinition, Type type)
         {
-            while (type != null && type != typeof (object))
+            while (type != null && type != typeof(object))
             {
-                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeDefinition)
+                var ti = type.TypeInfo();
+                if (ti.IsGenericType && type.GetGenericTypeDefinition() == typeDefinition)
                     return type;
-                if (typeDefinition.IsInterface)
+                if (typeDefinition.TypeInfo().IsInterface)
                 {
-                    foreach (var interfaceType in type.GetInterfaces())
+                    foreach (var interfaceType in ti.ImplementedInterfaces)
                     {
                         var foundType = FindGenericType(typeDefinition, interfaceType);
                         if (foundType != null)
                             return foundType;
                     }
                 }
-                type = type.BaseType;
+                type = ti.BaseType;
             }
             return null;
         }
@@ -182,5 +189,24 @@ namespace SF.Reflection
                 return res;
             }
         }
+
+        public static bool IsValueType(this Type type)
+        {
+            return type.TypeInfo().IsValueType;
+        }
+
+        public static TypeInfo TypeInfo(this Type type)
+        {
+            return type.GetTypeInfo();
+        }
+
+#if !NET
+
+
+        public static bool IsAssignableFrom(this Type type, Type other)
+        {
+            return type.TypeInfo().IsAssignableFrom(other.TypeInfo());
+        }
+#endif
     }
 }

@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using SF.Comparers;
 
-namespace SF.Reflection
+namespace SF.Reflection.Internal
 {
     internal class ConstructorInfoCache
     {
@@ -19,7 +19,11 @@ namespace SF.Reflection
 
         private ConstructorInfoCache(Type type)
         {
+#if NET
             Constructors = type.GetConstructors(MemberInfoEx.BindingFlags & ~BindingFlags.Static);
+#else
+            Constructors = type.TypeInfo().DeclaredConstructors.ToArray();
+#endif
             _constructors = new Dictionary<Type[], ConstructorInfo>(EqualityComparerEx.Array<Type>());
             foreach (var constructorInfo in Constructors)
             {

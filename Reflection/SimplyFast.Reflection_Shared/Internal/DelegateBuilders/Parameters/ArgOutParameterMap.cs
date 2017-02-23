@@ -1,14 +1,15 @@
 using System;
-using System.Reflection;
-using System.Reflection.Emit;
+#if EMIT
 using SF.Reflection.Emit;
+using System.Reflection.Emit;
+#endif
 
-namespace SF.Reflection.DelegateBuilders
+namespace SF.Reflection.Internal.DelegateBuilders.Parameters
 {
     internal class ArgOutParameterMap : ArgLocalVariableParameterMap
     {
-        public ArgOutParameterMap(ParameterInfo delegateParameter, int delegateParameterIndex,
-            ParameterInfo methodParameter)
+        public ArgOutParameterMap(SimpleParameterInfo delegateParameter, int delegateParameterIndex,
+            SimpleParameterInfo methodParameter)
             : base(delegateParameter, delegateParameterIndex, methodParameter)
         {
         }
@@ -19,10 +20,12 @@ namespace SF.Reflection.DelegateBuilders
         {
             if (!_methodParameter.IsOut)
                 throw new ArgumentException("Invalid methodParameter modifier. Should be Out.");
-            if (!(_delegateParameter.IsOut || _delegateParameter.ParameterType.IsByRef))
+            if (!(_delegateParameter.IsOut || _delegateParameter.Type.IsByRef))
                 throw new ArgumentException(
                     $"Invalid modifier for parameter {_delegateParameterIndex}. Should be Out or Ref.");
         }
+
+#if EMIT
 
         public override void EmitLoad(ILGenerator generator)
         {
@@ -42,12 +45,14 @@ namespace SF.Reflection.DelegateBuilders
                 return;
             generator.EmitLdarg(_delegateParameterIndex);
             generator.EmitLdloc(_localVariable.LocalIndex);
-            var mt = _methodParameter.ParameterType.RemoveByRef();
-            var dt = _delegateParameter.ParameterType.RemoveByRef();
+            var mt = _methodParameter.Type.RemoveByRef();
+            var dt = _delegateParameter.Type.RemoveByRef();
             if (mt.IsValueType && !dt.IsValueType)
                 generator.EmitBox(mt);
             generator.EmitStind(dt);
         }
+
+#endif
 
         #endregion
     }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using SF.Comparers;
 
-namespace SF.Reflection
+namespace SF.Reflection.Internal
 {
     internal static class GenericTypeCache
     {

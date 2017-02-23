@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using SF.Comparers;
 
-namespace SF.Reflection
+namespace SF.Reflection.Internal
 {
     internal static class GenericMethodInfoCache
     {
@@ -39,7 +39,7 @@ namespace SF.Reflection
 
             public bool Equals(GenericMethodKey other)
             {
-                return Method == other.Method && _comparer.Equals(Arguments, other.Arguments);
+                return ReferenceEquals(Method, other.Method) && _comparer.Equals(Arguments, other.Arguments);
             }
 
             #endregion

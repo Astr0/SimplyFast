@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)AnonymousEx.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\ArrayEx.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\Concurrent\ConcurrentGrowList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\DictionaryEx.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\EnumerableEx.cs" />

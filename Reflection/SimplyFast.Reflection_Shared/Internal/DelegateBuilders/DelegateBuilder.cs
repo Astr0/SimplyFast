@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+using SF.Collections;
+using SF.Reflection.Internal.DelegateBuilders.Parameters;
+#if EMIT
 using System.Reflection.Emit;
+#endif
 
-namespace SF.Reflection.DelegateBuilders
+namespace SF.Reflection.Internal.DelegateBuilders
 {
     internal abstract class DelegateBuilder
     {
-        private readonly ParameterInfo[] _delegateParams;
+        private readonly SimpleParameterInfo[] _delegateParams;
         private readonly Type _delegateReturn;
         protected readonly Type _delegateType;
         //protected readonly MethodBase _method;
@@ -20,12 +23,12 @@ namespace SF.Reflection.DelegateBuilders
             _delegateType = delegateType;
             if (_delegateType == null)
                 throw new ArgumentNullException(nameof(delegateType));
-            if (_delegateType.BaseType != typeof (MulticastDelegate))
+            if (_delegateType.TypeInfo().BaseType != typeof (MulticastDelegate))
                 throw NotDelegateException();
-            var invokeMethod = _delegateType.GetMethod("Invoke");
+            var invokeMethod = _delegateType.Method("Invoke");
             if (invokeMethod == null)
                 throw NotDelegateException();
-            _delegateParams = invokeMethod.GetParameters();
+            _delegateParams = SimpleParameterInfo.FromParameters(invokeMethod.GetParameters());
             _delegateReturn = invokeMethod.ReturnType;
         }
 
@@ -36,13 +39,11 @@ namespace SF.Reflection.DelegateBuilders
         }
 
         protected abstract Type GetMethodReturnType();
-        protected abstract ParameterInfo[] GetMethodParameters();
+        protected abstract SimpleParameterInfo[] GetMethodParameters();
 
-        private static bool ParametersEquals(ICollection<ParameterInfo> first, IList<ParameterInfo> second)
+        private static bool ParametersEquals(ICollection<SimpleParameterInfo> first, IList<SimpleParameterInfo> second)
         {
-            if (first.Count != second.Count)
-                return false;
-            return !first.Where((t, i) => t.IsOut != second[i].IsOut || t.ParameterType != second[i].ParameterType).Any();
+            return first.Count == second.Count && first.SequenceEqual(second);
         }
 
         private void MapParameters()
@@ -55,13 +56,13 @@ namespace SF.Reflection.DelegateBuilders
                 var parameters = GetMethodParameters();
                 var methodReturn = GetMethodReturnType();
                 // Check return
-                IList<ParameterInfo> methodParameters;
+                IList<SimpleParameterInfo> methodParameters;
                 var _this = GetThisParameterForMethod();
                 if (_this != null)
                 {
-                    var list = new List<ParameterInfo>(parameters.Length + 1)
+                    var list = new List<SimpleParameterInfo>(parameters.Length + 1)
                     {
-                        _this
+                        new SimpleParameterInfo(_this)
                     };
                     list.AddRange(parameters);
                     methodParameters = list;
@@ -93,11 +94,12 @@ namespace SF.Reflection.DelegateBuilders
             }
         }
 
-        protected abstract ParameterInfo GetThisParameterForMethod();
+        protected abstract Type GetThisParameterForMethod();
 
+#if EMIT
         protected Delegate CreateCastDelegate()
         {
-            var paramTypes = _delegateParams.Select(x => x.ParameterType).ToArray();
+            var paramTypes = _delegateParams.ConvertAll(x => x.Type);
             var m = new DynamicMethod(string.Empty, _delegateReturn, paramTypes,
                 typeof(DelegateBuilder), MemberInfoEx.PrivateAccess);
             var cg = m.GetILGenerator();
@@ -123,12 +125,19 @@ namespace SF.Reflection.DelegateBuilders
             return m.CreateDelegate(_delegateType);
         }
 
+        protected abstract void EmitInvoke(ILGenerator generator);
+#else
+        protected Delegate CreateCastDelegate()
+        {
+            throw new NotSupportedException();
+        }
+
+#endif
+
         protected virtual Delegate CreateExactDelegate()
         {
             return CreateCastDelegate();
         }
-
-        protected abstract void EmitInvoke(ILGenerator generator);
 
         private Exception NotDelegateException()
         {

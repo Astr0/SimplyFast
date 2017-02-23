@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using SF.Reflection.Internal;
+using SF.Collections;
 
 namespace SF.Reflection
 {
@@ -93,7 +95,7 @@ namespace SF.Reflection
         /// </summary>
         public static MethodInfo GetInvokeMethod(Type delegateType)
         {
-            if (delegateType.BaseType != typeof (MulticastDelegate))
+            if (delegateType.TypeInfo().BaseType != typeof (MulticastDelegate))
                 throw new ArgumentException("Not a delegate", nameof(delegateType));
             var invokeMethod = delegateType.Method("Invoke");
             if (invokeMethod == null)
@@ -103,7 +105,7 @@ namespace SF.Reflection
 
         public static Type[] GetParameterTypes(this MethodInfo method)
         {
-            return Array.ConvertAll(method.GetParameters(), x => x.ParameterType);
+            return method.GetParameters().ConvertAll(x => x.ParameterType);
         }
 
         /// <summary>

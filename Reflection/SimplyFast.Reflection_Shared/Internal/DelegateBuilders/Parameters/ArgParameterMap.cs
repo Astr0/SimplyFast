@@ -1,18 +1,19 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+#if EMIT
 using System.Reflection.Emit;
+#endif
 
-namespace SF.Reflection.DelegateBuilders
+namespace SF.Reflection.Internal.DelegateBuilders.Parameters
 {
     internal abstract class ArgParameterMap : IDelegateParameterMap
     {
-        protected readonly ParameterInfo _delegateParameter;
+        protected readonly SimpleParameterInfo _delegateParameter;
         protected readonly int _delegateParameterIndex;
-        protected readonly ParameterInfo _methodParameter;
+        protected readonly SimpleParameterInfo _methodParameter;
 
         [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
-        protected ArgParameterMap(ParameterInfo delegateParameter, int delegateParameterIndex,
-            ParameterInfo methodParameter)
+        protected ArgParameterMap(SimpleParameterInfo delegateParameter, int delegateParameterIndex,
+            SimpleParameterInfo methodParameter)
         {
             _delegateParameter = delegateParameter;
             _delegateParameterIndex = delegateParameterIndex;
@@ -22,17 +23,17 @@ namespace SF.Reflection.DelegateBuilders
 
         protected abstract void CheckParameters();
 
-        public static ArgParameterMap CreateParameterMap(ParameterInfo delegateParameter, int delegateParameterIndex,
-            ParameterInfo methodParameter)
+        public static ArgParameterMap CreateParameterMap(SimpleParameterInfo delegateParameter, int delegateParameterIndex,
+            SimpleParameterInfo methodParameter)
         {
             if (methodParameter.IsOut)
                 return new ArgOutParameterMap(delegateParameter, delegateParameterIndex, methodParameter);
-            if (methodParameter.ParameterType.IsByRef)
+            if (methodParameter.Type.IsByRef)
                 return new ArgRefParameterMap(delegateParameter, delegateParameterIndex, methodParameter);
             return new ArgNoneParameterMap(delegateParameter, delegateParameterIndex, methodParameter);
         }
 
-        #region Implementation of IDelegateParameterMap
+#if EMIT
 
         public abstract void EmitPrepare(ILGenerator generator);
 
@@ -40,6 +41,7 @@ namespace SF.Reflection.DelegateBuilders
 
         public abstract void EmitFinish(ILGenerator generator);
 
-        #endregion
+#endif
+        
     }
 }

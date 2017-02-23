@@ -2,9 +2,9 @@
 using System.Collections.Concurrent;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using SF.Reflection.DelegateBuilders;
+using SF.Reflection.Internal.DelegateBuilders;
 
-namespace SF.Reflection
+namespace SF.Reflection.Internal
 {
     internal static class FieldDelegateCache
     {

@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using SF.Collections;
 
-namespace SF.Reflection
+namespace SF.Reflection.Internal
 {
     internal class MethodInfoCache
     {
@@ -17,9 +17,13 @@ namespace SF.Reflection
         // ReSharper restore MemberHidesStaticFromOuterClass
         private readonly Dictionary<string, MethodInfo[]> _methods;
 
-        private MethodInfoCache(IReflect type)
+        private MethodInfoCache(Type type)
         {
+#if NET
             Methods = type.GetMethods(MemberInfoEx.BindingFlags);
+#else
+            Methods = type.GetRuntimeMethods().ToArray();
+#endif
             _methods = Methods.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.ToArray(), StringComparer.Ordinal);
         }
 

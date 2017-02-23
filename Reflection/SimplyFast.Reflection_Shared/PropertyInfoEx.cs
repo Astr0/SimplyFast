@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using SF.Reflection.Internal;
 
 namespace SF.Reflection
 {
@@ -12,10 +13,10 @@ namespace SF.Reflection
         /// </summary>
         public static bool IsStatic(this PropertyInfo propertyInfo)
         {
-            var method = propertyInfo.GetGetMethod(MemberInfoEx.PrivateAccess);
+            var method = propertyInfo.GetMethod;
             if (method != null)
                 return method.IsStatic;
-            method = propertyInfo.GetSetMethod(MemberInfoEx.PrivateAccess);
+            method = propertyInfo.SetMethod;
             return method.IsStatic;
         }
 
@@ -24,10 +25,10 @@ namespace SF.Reflection
         /// </summary>
         public static bool IsPublic(this PropertyInfo propertyInfo)
         {
-            var get = propertyInfo.GetGetMethod();
+            var get = propertyInfo.GetMethod;
             if (get != null && get.IsPublic)
                 return true;
-            var set = propertyInfo.GetSetMethod();
+            var set = propertyInfo.SetMethod;
             if (set != null && set.IsPublic)
                 return true;
             return false;
@@ -90,7 +91,7 @@ namespace SF.Reflection
                     var properties = method.DeclaringType.Properties(propertyName);
                     return
                         properties.FirstOrDefault(
-                            x => (getSet == 1 ? x.GetGetMethod(MemberInfoEx.PrivateAccess) : x.GetSetMethod(MemberInfoEx.PrivateAccess)) == method);
+                            x => ReferenceEquals(getSet == 1 ? x.GetMethod : x.SetMethod, method));
                 }
             }
             // ReSharper disable once PossibleNullReferenceException
@@ -99,7 +100,7 @@ namespace SF.Reflection
             // Euristics failed... try the hard way
             return
                 allProperties.FirstOrDefault(
-                    p => p.GetGetMethod(MemberInfoEx.PrivateAccess) == method || p.GetSetMethod(MemberInfoEx.PrivateAccess) == method);
+                    p => ReferenceEquals(p.GetMethod, method) || ReferenceEquals(p.SetMethod, method));
         }
 
         /// <summary>
@@ -118,7 +119,7 @@ namespace SF.Reflection
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object GetterAs(this PropertyInfo propertyInfo, Type delegateType)
         {
-            return propertyInfo.CanRead ? propertyInfo.GetGetMethod(MemberInfoEx.PrivateAccess).InvokerAs(delegateType) : null;
+            return propertyInfo.CanRead ? propertyInfo.GetMethod.InvokerAs(delegateType) : null;
         }
 
         /// <summary>
@@ -127,7 +128,7 @@ namespace SF.Reflection
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static object SetterAs(this PropertyInfo propertyInfo, Type delegateType)
         {
-            return propertyInfo.CanWrite ? propertyInfo.GetSetMethod(MemberInfoEx.PrivateAccess).InvokerAs(delegateType) : null;
+            return propertyInfo.CanWrite ? propertyInfo.SetMethod.InvokerAs(delegateType) : null;
         }
 
         /// <summary>

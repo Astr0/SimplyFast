@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace SF.Reflection
+namespace SF.Reflection.Internal
 {
     internal class FieldInfoCache
     {
@@ -16,9 +16,13 @@ namespace SF.Reflection
         // ReSharper restore MemberHidesStaticFromOuterClass
         private readonly Dictionary<string, FieldInfo> _fields;
 
-        private FieldInfoCache(IReflect type)
+        private FieldInfoCache(Type type)
         {
+#if NET
             Fields = type.GetFields(MemberInfoEx.BindingFlags);
+#else
+            Fields = type.GetRuntimeFields().ToArray();
+#endif
             _fields = Fields.ToDictionary(x => x.Name, StringComparer.Ordinal);
         }
 

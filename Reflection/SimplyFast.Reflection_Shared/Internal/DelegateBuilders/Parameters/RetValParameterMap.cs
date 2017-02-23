@@ -1,8 +1,10 @@
 using System;
+#if EMIT
 using System.Reflection.Emit;
 using SF.Reflection.Emit;
+#endif
 
-namespace SF.Reflection.DelegateBuilders
+namespace SF.Reflection.Internal.DelegateBuilders.Parameters
 {
     internal class RetValParameterMap : IDelegateParameterMap
     {
@@ -18,7 +20,7 @@ namespace SF.Reflection.DelegateBuilders
             _methodReturn = methodReturn;
         }
 
-        #region Implementation of IDelegateParameterMap
+#if EMIT
 
         public void EmitPrepare(ILGenerator generator)
         {
@@ -38,6 +40,6 @@ namespace SF.Reflection.DelegateBuilders
                 generator.EmitBox(_methodReturn);
         }
 
-        #endregion
+#endif
     }
 }
