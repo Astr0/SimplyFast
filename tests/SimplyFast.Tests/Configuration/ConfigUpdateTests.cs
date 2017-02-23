@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using NUnit.Framework;
 using SF.Configuration;
 
@@ -18,7 +19,7 @@ namespace SF.Tests.Configuration
         [Test]
         public void UpdateFromArgs()
         {
-            var args = new[] {"do_something", "-u", "test", "-p", "other"};
+            var args = new[] { "do_something", "-u", "test", "-p", "other" };
             _config.UpdateFromArgs(args, argsDelimiter: "|");
             Assert.AreEqual(string.Join("|", args), _config[ConfigUpdateEx.ArgsKey]);
         }
@@ -44,6 +45,44 @@ namespace SF.Tests.Configuration
             Assert.AreEqual("2", _config["test"]);
             Assert.AreEqual("2 and space", _config["test2"]);
             Assert.AreEqual("!@#!@#^^", _config["test3"]);
+        }
+
+        [Test]
+        [Ignore("System.IO.FileSystem can't be loaded in unit tests")]
+        public void UpdateFromConfFileOk()
+        {
+            var tmp1 = Path.GetTempFileName();
+            var tmp2 = Path.GetTempFileName();
+            try
+            {
+                File.WriteAllLines(tmp1, new[]
+                {
+                    "//comment",
+                    "test=1",
+                    "test2 = 2 and space"
+                });
+
+                _config.UpdateFromConf(tmp1);
+                Assert.AreEqual("1", _config["test"]);
+                Assert.AreEqual("2 and space", _config["test2"]);
+
+
+                File.WriteAllLines(tmp2, new[]
+                {
+                    "test=2",
+                    "//comment",
+                    "test3 =!@#!@#^^"
+                });
+                _config.UpdateFromConf(tmp2);
+                Assert.AreEqual("2", _config["test"]);
+                Assert.AreEqual("2 and space", _config["test2"]);
+                Assert.AreEqual("!@#!@#^^", _config["test3"]);
+            }
+            finally
+            {
+                File.Delete(tmp1);
+                File.Delete(tmp2);
+            }
         }
 
         [Test]
