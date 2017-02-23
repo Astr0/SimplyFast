@@ -77,8 +77,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SimplyFast.Files\SimplyFast.Files.csproj">
-      <Project>{57CD8FF8-F35F-430F-B5AF-C0CA7D440BD0}</Project>
+    <ProjectReference Include="..\..\src\SimplyFast.Files\SimplyFast.Files.csproj">
+      <Project>{CA232F0B-C1EF-4DB4-9444-F734D78357DC}</Project>
       <Name>SimplyFast.Files</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\src\SimplyFast\SimplyFast.csproj">
