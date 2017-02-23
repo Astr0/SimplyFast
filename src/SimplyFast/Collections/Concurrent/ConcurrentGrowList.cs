@@ -68,7 +68,7 @@ namespace SF.Collections.Concurrent
             finally
             {
                 if (Interlocked.Exchange(ref _lockTaken, 0) == 0)
-                    throw new InvalidProgramException("Shouldn't be here");
+                    throw new InvalidOperationException("Shouldn't be here");
             }
         }
 
