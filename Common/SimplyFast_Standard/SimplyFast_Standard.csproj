@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <AssemblyName>SimplyFast</AssemblyName>
+    <RootNamespace>SF</RootNamespace>
+  </PropertyGroup>
+
+  <Import Project="..\SimplyFast_Shared\SimplyFast_Shared.projitems" Label="Shared" />
+
+</Project>

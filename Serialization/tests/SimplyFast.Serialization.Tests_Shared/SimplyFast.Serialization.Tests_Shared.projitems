@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>27bb0c3e-a228-4355-8af4-5222e3c54be3</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>SF.Serialization.Tests</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Protobuf\MessageTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Protobuf\TestAgainstProtobufNet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Protobuf\TestAgainstSelf.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Protobuf\TestAgainstSelfGeneric.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Protobuf\TestAgainstSelfPooled.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Protobuf\TestAgainstSelfStream.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Protobuf\TestData\InnerMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Protobuf\TestData\TestEnum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Protobuf\TestData\TestMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Protobuf\TestData\TestTools.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Protobuf\TestData\test_fast.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Protobuf\TestData\test_protobuf.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WireFomatTests.cs" />
+  </ItemGroup>
+</Project>

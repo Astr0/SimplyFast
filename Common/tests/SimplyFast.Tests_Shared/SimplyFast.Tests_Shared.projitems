@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>ae047be2-76c7-4842-860b-aeed229f54c5</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>SF.Tests</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AnonymousExTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Concurrent\ConcurrentGrowListTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\DictionaryExTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\EnumerableExTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\FastCollectionTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\FastStackTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\WeakCollectionTest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comparers\ArrayEqualityComparerTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comparers\CollectionEqualityComparerTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comparers\ComparersTestClass.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comparers\FuncEqualityComparerTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Comparers\KeyEqualityComparerTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\ConfigReadTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Configuration\ConfigUpdateTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DisposableExTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\ByteBufferTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\FastBufferReaderTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\FastBufferReaderTestsSubBuffer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\FastBufferReaderTestsView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\FastBufferWriterTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\FastBufferWriterTestsSubBuffer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\FileExTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IO\VarIntHelperTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MathExTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Pool\PooledExTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Pool\PoolExTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Strings\StringExTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Strings\StringParserTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Stubs\TestComparable.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\EventLoopTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\SynchronizationContextExTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Threading\TaskExTests.cs" />
+  </ItemGroup>
+</Project>

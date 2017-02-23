@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>acb9f878-c28f-431a-9d8f-cbc3577d9a31</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>SF.IoC</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)bindings\BindArg.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)bindings\BindBuilderEx.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)bindings\BindingBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)bindings\IBinding.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)bindings\IDerivedBinding.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FastKernel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IKernel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)inject\IInjector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)inject\TinyInject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\ArgBindings\ArgsBinding.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\ArgBindings\ArgsBinding.Kernel.ArgKey.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\ArgBindings\ArgsBinding.Kernel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\ArgBindings\DefaultArgBindingBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\ArgBindings\TypeWithArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\Bindings\BindingCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\Bindings\ConstBinding.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\Bindings\ConstructorWithInjectBinding.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\Bindings\DefaultBinding.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\Bindings\DefaultBindingBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\Bindings\MethodBinding.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\Bindings\SingletonBinding.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\DerivedBindings\CollectionBinding.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\DerivedBindings\DerivedBindingCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\DerivedBindings\DerivedBindingEx.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\DerivedBindings\FuncFactoryBinding.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\DerivedBindings\GenericDerivedBindings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\Injection\DefaultInjectorBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\Injection\Injector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\Injection\InjectorCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\Injection\NullInjector.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\Reflection\FastConstructor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\Reflection\FastMethod.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)internal\Reflection\ReflectionHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)KernelEx.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\FastModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\FastModuleEx.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Modules\IFastModule.cs" />
+  </ItemGroup>
+</Project>

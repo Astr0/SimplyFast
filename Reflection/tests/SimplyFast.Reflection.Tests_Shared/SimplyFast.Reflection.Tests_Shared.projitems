@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>d4df18ef-14d7-4ec9-a67d-b3858a1768a2</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>SF.Reflection.Tests</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ConstructorInfoExTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ConvertExTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Emit\EmitControlTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Emit\Todo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FieldInfoExTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MemberInfoExTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MethodInfoExTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)PropertyInfoExTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestData\TestClass1.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestData\TestClass2.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestData\TestClass3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestData\TestClassWithConsts.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TestData\TestMeAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TypeExTests.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WeakDelegateTests.cs" />
+  </ItemGroup>
+</Project>
