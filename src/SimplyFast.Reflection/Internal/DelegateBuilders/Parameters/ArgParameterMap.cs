@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 #if EMIT
 using System.Reflection.Emit;
 #else
-using System.Collections.Generic;
 using System.Linq.Expressions;
 #endif
 
@@ -41,8 +40,8 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
         public abstract void EmitLoad(ILGenerator generator);
         public abstract void EmitFinish(ILGenerator generator);
 #else
-        public abstract Expression Prepare(List<Expression> block, ParameterExpression parameter);
-        public abstract void Finish(List<Expression> block, Expression parameter);
+        public abstract Expression Prepare(ExpressionBlockBuilder block, ParameterExpression parameter);
+        public abstract void Finish(ExpressionBlockBuilder block, Expression parameter);
 #endif
 
     }

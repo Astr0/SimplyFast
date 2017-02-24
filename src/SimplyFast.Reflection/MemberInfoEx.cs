@@ -9,8 +9,6 @@ namespace SimplyFast.Reflection
     {
         #region Private Access
 
-#if NET
-
         private static bool _privateAccess;
         private static BindingFlags _bindingFlags;
 
@@ -36,10 +34,6 @@ namespace SimplyFast.Reflection
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get { return _bindingFlags; }
         }
-#else
-        public const bool PrivateAccess = false;
-
-#endif
 
         #endregion
 

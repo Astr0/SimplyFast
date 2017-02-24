@@ -4,9 +4,10 @@ using SimplyFast.Collections;
 using SimplyFast.Reflection.Internal.DelegateBuilders.Parameters;
 
 #if EMIT
+using SimplyFast.Comparers;
+using System.Collections.Generic;
 using System.Reflection.Emit;
 #else
-using System.Collections.Generic;
 using System.Linq.Expressions;
 #endif
 
@@ -14,41 +15,50 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
 {
     internal abstract class DelegateBuilder
     {
-        protected readonly SimpleParameterInfo[] _delegateParams;
-        protected readonly Type _delegateReturn;
+        private readonly SimpleParameterInfo[] _delegateParams;
+        private readonly Type _delegateReturn;
         protected readonly Type _delegateType;
-        protected readonly Type _methodReturn;
-        //protected readonly MethodBase _method;
+        private Type _methodReturn;
         private ArgParameterMap[] _parametersMap;
         private RetValMap _retValMap;
-        protected readonly SimpleParameterInfo[] _methodParameters;
+        private SimpleParameterInfo[] _methodParameters;
 
         [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
         protected DelegateBuilder(Type delegateType)
         {
-            _delegateType = delegateType;
-            if (_delegateType == null)
+            if (delegateType == null)
                 throw new ArgumentNullException(nameof(delegateType));
-            if (_delegateType.TypeInfo().BaseType != typeof (MulticastDelegate))
+            _delegateType = delegateType;
+            if (delegateType.TypeInfo().BaseType != typeof (MulticastDelegate))
                 throw NotDelegateException();
-            var invokeMethod = _delegateType.Method("Invoke");
+            var invokeMethod = delegateType.Method("Invoke");
             if (invokeMethod == null)
                 throw NotDelegateException();
             _delegateParams = SimpleParameterInfo.FromParameters(invokeMethod.GetParameters());
             _delegateReturn = invokeMethod.ReturnType;
-
-            _methodReturn = GetMethodReturnType();
-            _methodParameters = BuildMethodParameters();
         }
 
+        protected void Init(Type thisParameter, SimpleParameterInfo[] methodParameters, Type methodReturn)
+        {
+            _methodReturn = methodReturn;
+            // Check return
+            if (thisParameter == null)
+            {
+                _methodParameters = methodParameters;
+                return;
+            }
+            var fullParameters = new SimpleParameterInfo[methodParameters.Length + 1];
+            fullParameters[0] = new SimpleParameterInfo(thisParameter);
+            Array.Copy(methodParameters, 0, fullParameters, 1, methodParameters.Length);
+            _methodParameters = fullParameters;
+        }
+
+        [SuppressMessage("ReSharper", "VirtualMemberNeverOverridden.Global")]
         public virtual Delegate CreateDelegate()
         {
             MapParameters();
             return CreateCastDelegate();
         }
-
-        protected abstract Type GetMethodReturnType();
-        protected abstract SimpleParameterInfo[] GetMethodParameters();
 
         private void MapParameters()
         {
@@ -73,24 +83,18 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
             }
         }
 
-        private SimpleParameterInfo[] BuildMethodParameters()
-        {
-            var parameters = GetMethodParameters();
-            // Check return
-            var _this = GetThisParameterForMethod();
-            if (_this == null)
-            {
-                return parameters;
-            }
-            var fullParameters = new SimpleParameterInfo[parameters.Length + 1];
-            fullParameters[0] = new SimpleParameterInfo(_this);
-            Array.Copy(parameters, 0, fullParameters, 1, parameters.Length);
-            return fullParameters;
-        }
-
-        protected abstract Type GetThisParameterForMethod();
 
 #if EMIT
+        private static readonly EqualityComparer<SimpleParameterInfo[]> ParametersComparer =
+            EqualityComparerEx.Array<SimpleParameterInfo>();
+
+        protected bool IsDelegateExcactlyMatchMethod()
+        {
+            return _delegateReturn == _methodReturn &&
+                                        ParametersComparer.Equals(_delegateParams, _methodParameters);
+        }
+
+
         private Delegate CreateCastDelegate()
         {
             var paramTypes = _delegateParams.ConvertAll(x => x.Type);
@@ -125,22 +129,23 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
         private Delegate CreateCastDelegate()
         {
             var parameters = _delegateParams.ConvertAll(p => Expression.Parameter(p.Type));
-            var block = new List<Expression>();
+            var block = new ExpressionBlockBuilder();
             var invokeParameters = parameters
                 .ConvertAll((p, i) => _parametersMap[i].Prepare(block, p));
-            var ret = Invoke(block, invokeParameters);
+            var invoke = Invoke(invokeParameters);
+            _retValMap.Prepare(block, invoke);
             for (var i = 0; i < parameters.Length; i++)
             {
                 _parametersMap[i].Finish(block, parameters[i]);
             }
-            block.Add(_retValMap.ConvertReturn(ret));
+            _retValMap.ConvertReturn(block);
 
-            var body = block.Count != 1 ? Expression.Block(block) : block[0];
-            var lambda = Expression.Lambda(body, parameters);
+            var body = block.CreateExpression();
+            var lambda = Expression.Lambda(_delegateType, body, parameters);
             return lambda.Compile();
         }
 
-        protected abstract Expression Invoke(List<Expression> block, Expression[] parameters);
+        protected abstract Expression Invoke(Expression[] parameters);
 #endif
 
         private Exception NotDelegateException()

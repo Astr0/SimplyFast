@@ -19,11 +19,7 @@ namespace SimplyFast.Reflection.Internal
 
         private ConstructorInfoCache(Type type)
         {
-#if NET
-            Constructors = type.GetConstructors(MemberInfoEx.BindingFlags & ~BindingFlags.Static);
-#else
-            Constructors = type.TypeInfo().DeclaredConstructors.ToArray();
-#endif
+            Constructors = type.TypeInfo().GetConstructors(MemberInfoEx.BindingFlags & ~BindingFlags.Static);
             _constructors = new Dictionary<Type[], ConstructorInfo>(EqualityComparerEx.Array<Type>());
             foreach (var constructorInfo in Constructors)
             {

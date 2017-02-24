@@ -4,7 +4,6 @@ using System;
 using SimplyFast.Reflection.Emit;
 using System.Reflection.Emit;
 #else
-using System.Collections.Generic;
 using System.Linq.Expressions;
 #endif
 
@@ -54,7 +53,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
             generator.EmitStind(dt);
         }
 #else
-        public override void Finish(List<Expression> block, Expression parameter)
+        public override void Finish(ExpressionBlockBuilder block, Expression parameter)
         {
             if (!_needLocalVariable)
                 return;

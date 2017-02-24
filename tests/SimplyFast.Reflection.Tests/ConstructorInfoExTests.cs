@@ -7,8 +7,9 @@ using SimplyFast.Reflection.Tests.TestData;
 namespace SimplyFast.Reflection.Tests
 {
     [TestFixture]
-    public class ConstructorInfoExTests
+    public class ConstructorInfoExTests: ReflectionTests
     {
+
         [Test]
         public void CanCreateObjectUsingCreateInstance()
         {
@@ -39,10 +40,13 @@ namespace SimplyFast.Reflection.Tests
         [Test]
         public void CanCreateObjectUsingPrivateConstructor()
         {
-            var obj2 = typeof(TestClass2).Constructor(typeof(string), typeof(int)).InvokerAs<Func<string, int, object>>()("test1", 88);
+            CheckPrivateAccess();
+            var obj2 =
+                typeof(TestClass2).Constructor(typeof(string), typeof(int))
+                    .InvokerAs<Func<string, int, object>>()("test1", 88);
             Assert.IsNotNull(obj2);
             Assert.IsInstanceOf<TestClass2>(obj2);
-            var t = (TestClass2)obj2;
+            var t = (TestClass2) obj2;
             Assert.AreEqual(88, t.P1);
             Assert.AreEqual("test1", t.P2);
         }
@@ -61,6 +65,7 @@ namespace SimplyFast.Reflection.Tests
         [Test]
         public void CanCreateObjectUsingPrivateConstructorAs()
         {
+            CheckPrivateAccess();
             var obj2 = typeof(TestClass2).Constructor(typeof(string), typeof(int)).InvokerAs<Func<string, int, object>>()("test1", 88);
             Assert.IsNotNull(obj2);
             Assert.IsInstanceOf<TestClass2>(obj2);
@@ -72,7 +77,8 @@ namespace SimplyFast.Reflection.Tests
         [Test]
         public void CanCreateObjectUsingPrivateConstructorInvoker()
         {
-            var obj2 = typeof(TestClass2).Constructor(typeof(string), typeof(int)).Invoker()(new object[] { "test1", 88 });
+            CheckPrivateAccess();
+            var obj2 = typeof(TestClass2).Constructor(typeof(string), typeof(int)).Invoker()("test1", 88);
             Assert.IsNotNull(obj2);
             Assert.IsInstanceOf<TestClass2>(obj2);
             var t = (TestClass2)obj2;
@@ -95,7 +101,7 @@ namespace SimplyFast.Reflection.Tests
         public void ConstructorsCacheOk()
         {
             var constructors = new HashSet<ConstructorInfo>(typeof(string).Constructors());
-            Assert.IsTrue(constructors.SetEquals(typeof(string).GetConstructors()));
+            Assert.IsTrue(constructors.SetEquals(typeof(string).GetConstructors(MemberInfoEx.BindingFlags)));
         }
     }
 }

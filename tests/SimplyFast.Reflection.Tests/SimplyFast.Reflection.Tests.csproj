@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>    
-    <!--<TargetFrameworks>net45;netcoreapp1.0</TargetFrameworks>-->
-    <TargetFrameworks>netcoreapp1.0</TargetFrameworks>
+    <TargetFrameworks>net45;netcoreapp1.0</TargetFrameworks>
+    <!--<TargetFrameworks>netcoreapp1.0</TargetFrameworks>-->
     <ApplicationIcon />
     <OutputType>exe</OutputType>
     <OutputTypeEx>exe</OutputTypeEx>

@@ -54,5 +54,10 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
         {
             return !left.Equals(right);
         }
+
+        public override string ToString()
+        {
+            return IsOut ? "out " + Type : Type.ToString();
+        }
     }
 }

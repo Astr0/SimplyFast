@@ -1,12 +1,12 @@
 using System;
 using System.Reflection;
+using SimplyFast.Collections;
 using SimplyFast.Reflection.Internal.DelegateBuilders.Parameters;
 
 #if EMIT
 using System.Reflection.Emit;
 using SimplyFast.Reflection.Emit;
 #else
-using System.Collections.Generic;
 using System.Linq.Expressions;
 #endif
 
@@ -24,7 +24,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
             FieldInfo = fieldInfo;
         }
 
-        protected override Type GetThisParameterForMethod()
+        protected Type GetThisParameter()
         {
             if (FieldInfo.IsStatic)
                 return null;
@@ -39,16 +39,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
     {
         public FieldGetDelegateBuilder(FieldInfo fieldInfo, Type delegateType) : base(fieldInfo, delegateType)
         {
-        }
-
-        protected override Type GetMethodReturnType()
-        {
-            return FieldInfo.FieldType;
-        }
-
-        protected override SimpleParameterInfo[] GetMethodParameters()
-        {
-            return new SimpleParameterInfo[0];
+            Init(GetThisParameter(), TypeHelper<SimpleParameterInfo>.EmptyArray, fieldInfo.FieldType);
         }
 
 #if EMIT
@@ -65,7 +56,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
             }
         }
 #else
-        protected override Expression Invoke(List<Expression> block, Expression[] parameters)
+        protected override Expression Invoke(Expression[] parameters)
         {
             var instance = parameters.Length != 0 ? parameters[0] : null;
             return Expression.Field(instance, FieldInfo);
@@ -77,16 +68,8 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
     {
         public FieldSetDelegateBuilder(FieldInfo fieldInfo, Type delegateType) : base(fieldInfo, delegateType)
         {
-        }
-
-        protected override Type GetMethodReturnType()
-        {
-            return typeof (void);
-        }
-
-        protected override SimpleParameterInfo[] GetMethodParameters()
-        {
-            return new [] {new SimpleParameterInfo(FieldInfo.FieldType)};
+            var fieldType = FieldInfo.FieldType;
+            Init(GetThisParameter(), new[] { new SimpleParameterInfo(fieldType) }, fieldType);
         }
 
 #if EMIT
@@ -95,14 +78,12 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
             generator.EmitFieldSet(FieldInfo);
         }
 #else
-        protected override Expression Invoke(List<Expression> block, Expression[] parameters)
+        protected override Expression Invoke(Expression[] parameters)
         {
             var instance = parameters.Length > 1 ? parameters[0] : null;
             var value = parameters.Length > 1 ? parameters[1] : parameters[0];
             var field = Expression.Field(instance, FieldInfo);
-            var assign = Expression.Assign(field, value);
-            block.Add(assign);
-            return null;
+            return Expression.Assign(field, value);
         }
 #endif
     }

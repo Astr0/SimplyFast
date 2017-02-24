@@ -18,11 +18,7 @@ namespace SimplyFast.Reflection.Internal
 
         private FieldInfoCache(Type type)
         {
-#if NET
-            Fields = type.GetFields(MemberInfoEx.BindingFlags);
-#else
-            Fields = type.GetRuntimeFields().ToArray();
-#endif
+            Fields = type.TypeInfo().GetFields(MemberInfoEx.BindingFlags);
             _fields = Fields.ToDictionary(x => x.Name, StringComparer.Ordinal);
         }
 

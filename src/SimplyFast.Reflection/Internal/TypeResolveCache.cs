@@ -22,19 +22,15 @@ namespace SimplyFast.Reflection.Internal
         private static Type ResolveImpl(string typeName)
         {
             var type = Type.GetType(typeName);
-#if NET
             if (type != null)
                 return type;
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (var assembly in AssemblyEx.GetAllAssemblies())
             {
                 type = assembly.GetType(typeName);
                 if (type != null)
                     return type;
             }
             return null;
-#else
-            return type;
-#endif
         }
     }
 }

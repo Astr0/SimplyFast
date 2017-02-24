@@ -1,12 +1,11 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using SimplyFast.Reflection.Internal.DelegateBuilders.Parameters;
 
 #if EMIT
 using System.Reflection.Emit;
 #else
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 #endif
 
@@ -22,13 +21,10 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
             if (constructor == null)
                 throw new ArgumentNullException(nameof(constructor));
             _constructorInfo = constructor;
+            Init(null, SimpleParameterInfo.FromParameters(_constructorInfo.GetParameters()), constructor.DeclaringType);
         }
 
-        protected override SimpleParameterInfo[] GetMethodParameters()
-        {
-            return SimpleParameterInfo.FromParameters(_constructorInfo.GetParameters());
-        }
-
+        
 #if EMIT
         protected override void EmitInvoke(ILGenerator generator)
         {
@@ -36,24 +32,10 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
         }
 #else
         [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
-        protected override Expression Invoke(List<Expression> block, Expression[] parameters)
+        protected override Expression Invoke(Expression[] parameters)
         {
-            var local = Expression.Variable(_methodReturn);
-            var create = Expression.New(_constructorInfo, parameters);
-            var assign = Expression.Assign(local, create);
-            block.Add(assign);
-            return local;
+            return Expression.New(_constructorInfo, parameters);
         }
 #endif
-
-        protected override Type GetMethodReturnType()
-        {
-            return _constructorInfo.DeclaringType;
-        }
-
-        protected override Type GetThisParameterForMethod()
-        {
-            return null;
-        }
     }
 }

@@ -3,7 +3,6 @@ using System;
 using System.Reflection.Emit;
 using SimplyFast.Reflection.Emit;
 #else
-using System.Collections.Generic;
 using System.Linq.Expressions;
 #endif
 
@@ -60,11 +59,11 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
         {
         }
 #else
-        public override void Finish(List<Expression> block, Expression parameter)
+        public override void Finish(ExpressionBlockBuilder block, Expression parameter)
         {
         }
 
-        public override Expression Prepare(List<Expression> block, ParameterExpression parameter)
+        public override Expression Prepare(ExpressionBlockBuilder block, ParameterExpression parameter)
         {
             if (_methodParameter.Type == _delegateParameter.Type)
                 return parameter;

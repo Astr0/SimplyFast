@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 
 #if EMIT
 using System.Reflection.Emit;
+#else
+using System.Linq.Expressions;
 #endif
 
 namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
@@ -33,12 +33,14 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
                 _localVariable = generator.DeclareLocal(_methodType);
         }
 #else
-        protected Expression _localVariable;
-        public override Expression Prepare(List<Expression> block, ParameterExpression parameter)
+        protected ParameterExpression _localVariable;
+        public override Expression Prepare(ExpressionBlockBuilder block, ParameterExpression parameter)
         {
             if (!_needLocalVariable)
                 return parameter;
-            return _localVariable = Expression.Variable(_methodType);
+            _localVariable = Expression.Variable(_methodType);
+            block.AddVariable(_localVariable);
+            return _localVariable;
         }
 #endif
     }

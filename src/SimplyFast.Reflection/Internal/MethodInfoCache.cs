@@ -19,11 +19,7 @@ namespace SimplyFast.Reflection.Internal
 
         private MethodInfoCache(Type type)
         {
-#if NET
-            Methods = type.GetMethods(MemberInfoEx.BindingFlags);
-#else
-            Methods = type.GetRuntimeMethods().ToArray();
-#endif
+            Methods = type.TypeInfo().GetMethods(MemberInfoEx.BindingFlags);
             _methods = Methods.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.ToArray(), StringComparer.Ordinal);
         }
 

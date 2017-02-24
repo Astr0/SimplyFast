@@ -1,10 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 
 #if EMIT
 using System.Reflection.Emit;
 using SimplyFast.Reflection.Emit;
+#else
+using System.Linq.Expressions;
 #endif
 
 
@@ -62,7 +62,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
             generator.EmitStloc(_localVariable.LocalIndex);
         }
 #else
-        public override Expression Prepare(List<Expression> block, ParameterExpression parameter)
+        public override Expression Prepare(ExpressionBlockBuilder block, ParameterExpression parameter)
         {
             if (_delegateParameter.Type.IsByRef && !_needLocalVariable)
                 return parameter;
@@ -79,7 +79,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
             return basePrepare;
         }
 
-        public override void Finish(List<Expression> block, Expression parameter)
+        public override void Finish(ExpressionBlockBuilder block, Expression parameter)
         {
             if (_delegateParameter.Type.IsByRef || _delegateParameter.IsOut)
                 base.Finish(block, parameter);
