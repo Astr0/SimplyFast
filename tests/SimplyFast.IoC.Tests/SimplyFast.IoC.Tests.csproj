@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>    
-    <TargetFramework>net45</TargetFramework>
+    <TargetFrameworks>net45;netcoreapp1.0</TargetFrameworks>
     <!--<TargetFramework>netcoreapp1.0</TargetFramework>-->
     <ApplicationIcon />
     <OutputType>exe</OutputType>
@@ -28,7 +28,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\SimplyFast\SimplyFast.csproj" />
+    <PackageReference Include="NUnit" Version="3.6.0" />
+    <PackageReference Include="NUnitLite" Version="3.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\SimplyFast.IoC\SimplyFast.IoC.csproj" />
   </ItemGroup>
 
 </Project>

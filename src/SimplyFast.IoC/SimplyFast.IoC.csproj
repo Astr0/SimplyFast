@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net45;netstandard1.6</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <DefineConstants>$(DefineConstants);NET;PARALLEL</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SimplyFast\SimplyFast.csproj" />
+    <ProjectReference Include="..\SimplyFast.Reflection\SimplyFast.Reflection.csproj" />
+  </ItemGroup>
+
+</Project>

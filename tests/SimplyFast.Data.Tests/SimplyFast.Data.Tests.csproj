@@ -28,7 +28,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.6.0" />
+    <PackageReference Include="NUnitLite" Version="3.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\SimplyFast\SimplyFast.csproj" />
+    <ProjectReference Include="..\..\src\SimplyFast.Data\SimplyFast.Data.csproj" />
   </ItemGroup>
 
 </Project>

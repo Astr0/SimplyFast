@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.3;net45;</TargetFrameworks>
+    <RootNamespace>SimplyFast</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <DefineConstants>$(DefineConstants);NET</DefineConstants>
+  </PropertyGroup>
+
+</Project>
