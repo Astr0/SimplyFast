@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Reflection;
-
 #if EMIT
 using System.Reflection.Emit;
 using SimplyFast.Reflection.Emit;
+#else
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using SimplyFast.Collections;
 #endif
 
 namespace SimplyFast.Reflection.Internal
@@ -40,10 +43,11 @@ namespace SimplyFast.Reflection.Internal
             }
             var il = dynamicMethod.GetILGenerator();
             var parameters = methodInfo.GetParameters();
-            var locals = EmitParamsToLocals(il, parameters, OpCodes.Ldarg_1);
+            //var locals = EmitParamsToLocals(il, parameters, OpCodes.Ldarg_1);
             if (!methodInfo.IsStatic)
                 il.Emit(OpCodes.Ldarg_0);
-            EmitLoadInvokeLocals(il, locals);
+            EmitLoadParams(il, parameters, OpCodes.Ldarg_1);
+            //EmitLoadInvokeLocals(il, locals);
 
             il.EmitCall(OpCodes.Call, methodInfo, null);
             if (methodInfo.ReturnType == typeof(void))
@@ -70,8 +74,7 @@ namespace SimplyFast.Reflection.Internal
             }
             var il = dynamicMethod.GetILGenerator();
             var parameters = constructorInfo.GetParameters();
-            var locals = EmitParamsToLocals(il, parameters, OpCodes.Ldarg_0);
-            EmitLoadInvokeLocals(il, locals);
+            EmitLoadParams(il, parameters, OpCodes.Ldarg_0);
 
             il.Emit(OpCodes.Newobj, constructorInfo);
             il.EmitBox(constructorInfo.DeclaringType);
@@ -82,41 +85,81 @@ namespace SimplyFast.Reflection.Internal
             return invoker;
         }
 
-        private static void EmitLoadInvokeLocals(ILGenerator il, LocalBuilder[] locals)
+        private static void EmitLoadParams(ILGenerator il, ParameterInfo[] parameters, OpCode ldParams)
         {
-            // ReSharper disable once ForCanBeConvertedToForeach
-            for (var i = 0; i < locals.Length; i++)
-                il.EmitLdloc(locals[i]);
-        }
-
-        private static LocalBuilder[] EmitParamsToLocals(ILGenerator il, ParameterInfo[] parameters, OpCode ldParams)
-        {
-            var paramTypes = new Type[parameters.Length];
-            for (var i = 0; i < paramTypes.Length; i++)
-                paramTypes[i] = parameters[i].ParameterType;
-            var locals = new LocalBuilder[paramTypes.Length];
-            for (var i = 0; i < locals.Length; i++)
-                locals[i] = il.DeclareLocal(paramTypes[i]);
-            for (var i = 0; i < paramTypes.Length; i++)
+            for (var i = 0; i < parameters.Length; i++)
             {
                 il.Emit(ldParams);
                 il.EmitLdcI4(i);
                 il.Emit(OpCodes.Ldelem_Ref);
-                il.EmitUnBoxAnyOrCastClass(paramTypes[i]);
-                il.Emit(OpCodes.Stloc, locals[i]);
+                il.EmitUnBoxAnyOrCastClass(parameters[i].ParameterType);
             }
-            return locals;
         }
 #else
+        private static readonly ParameterExpression _instance = Expression.Parameter(typeof(object), "instance");
+        private static readonly ParameterExpression _args = Expression.Parameter(typeof(object[]), "args");
+        private static readonly Expression _voidToNull = Expression.Default(typeof(object));
+        private static volatile Expression[] _argIndex = TypeHelper<Expression>.EmptyArray;
+
+        private static Expression[] GetArgs(int length)
+        {
+            var arr = _argIndex;
+            if (arr.Length >= length)
+                return arr;
+            lock (_args)
+            {
+                arr = _argIndex;
+                var currLen = arr.Length;
+                if (currLen >= length)
+                    return arr;
+                Array.Resize(ref arr, length);
+                var args = _args;
+                for (; currLen < length; ++currLen)
+                {
+                    arr[currLen] = Expression.ArrayIndex(args, Expression.Constant(currLen));
+                }
+                _argIndex = arr;
+                return arr;
+            }
+        }
+
+
+        private static IEnumerable<Expression> GetInvokeParameters(ParameterInfo[] parameters)
+        {
+            var args = GetArgs(parameters.Length);
+            for (var i = 0; i < parameters.Length; i++)
+            {
+                var arg = args[i];
+                var type = parameters[i].ParameterType;
+                yield return Convert(arg, type);
+            }
+        }
+
+        private static Expression Convert(Expression expression, Type target)
+        {
+            return target != expression.Type ? Expression.Convert(expression, target) : expression;
+        }
+
         public static MethodInvoker BuildMethodInvoker(MethodInfo methodInfo)
         {
-            throw new NotImplementedException();
+            var invokeParameters = GetInvokeParameters(methodInfo.GetParameters());
+            var callInstance = !methodInfo.IsStatic
+                ? (Convert(_instance, methodInfo.DeclaringType))
+                : null;
+            var call = Expression.Call(callInstance, methodInfo, invokeParameters);
+            var result = call.Type != typeof(void) ? Convert(call, typeof(object)) : Expression.Block(call, _voidToNull);
+            var lambda = Expression.Lambda<MethodInvoker>(result, _instance, _args);
+            return lambda.Compile();
         }
 
         public static ConstructorInvoker BuildConstructorInvoker(ConstructorInfo constructorInfo)
         {
-            throw new NotImplementedException();
+            var invokeParameters = GetInvokeParameters(constructorInfo.GetParameters());
+            var call = Expression.New(constructorInfo, invokeParameters);
+            var result = Convert(call, typeof(object));
+            var lambda = Expression.Lambda<ConstructorInvoker>(result, _args);
+            return lambda.Compile();
         }
 #endif
-        }
+    }
 }
