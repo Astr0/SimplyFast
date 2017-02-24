@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+using SimplyFast.Expressions.Tests.TestData;
 using SimplyFast.Reflection;
-using SimplyFast.Expressions;
-using SimplyFast.Reflection.Tests.TestData;
 
-namespace SF.Tests
+namespace SimplyFast.Expressions.Tests
 {
     [TestFixture]
     public class LambdaExtractTests

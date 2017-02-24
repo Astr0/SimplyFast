@@ -3,19 +3,21 @@ using System;
 #if EMIT
 using SimplyFast.Reflection.Emit;
 using System.Reflection.Emit;
+#else
+using System.Collections.Generic;
+using System.Linq.Expressions;
 #endif
 
 namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
 {
     internal class ArgOutParameterMap : ArgLocalVariableParameterMap
     {
+        // Method Out, Delegate Out or Ref, Delegate is assignable from Method
         public ArgOutParameterMap(SimpleParameterInfo delegateParameter, int delegateParameterIndex,
             SimpleParameterInfo methodParameter)
             : base(delegateParameter, delegateParameterIndex, methodParameter)
         {
         }
-
-        #region Overrides of ArgParameterMap
 
         protected override void CheckParameters()
         {
@@ -27,7 +29,6 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
         }
 
 #if EMIT
-
         public override void EmitLoad(ILGenerator generator)
         {
             if (_needLocalVariable)
@@ -52,9 +53,15 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
                 generator.EmitBox(mt);
             generator.EmitStind(dt);
         }
-
+#else
+        public override void Finish(List<Expression> block, Expression parameter)
+        {
+            if (!_needLocalVariable)
+                return;
+            var convertResult = Expression.Convert(_localVariable, _delegateParameter.Type.RemoveByRef());
+            var assign = Expression.Assign(parameter, convertResult);
+            block.Add(assign);
+        }
 #endif
-
-        #endregion
     }
 }

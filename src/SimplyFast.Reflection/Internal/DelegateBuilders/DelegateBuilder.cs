@@ -1,24 +1,29 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
+using SimplyFast.Collections;
 using SimplyFast.Reflection.Internal.DelegateBuilders.Parameters;
 
 #if EMIT
-using SimplyFast.Collections;
 using System.Reflection.Emit;
+#else
+using System.Collections.Generic;
+using System.Linq.Expressions;
 #endif
 
 namespace SimplyFast.Reflection.Internal.DelegateBuilders
 {
     internal abstract class DelegateBuilder
     {
-        private readonly SimpleParameterInfo[] _delegateParams;
-        private readonly Type _delegateReturn;
+        protected readonly SimpleParameterInfo[] _delegateParams;
+        protected readonly Type _delegateReturn;
         protected readonly Type _delegateType;
+        protected readonly Type _methodReturn;
         //protected readonly MethodBase _method;
-        private bool _delegateExcatlyMatch;
-        private List<IDelegateParameterMap> _parametersMap;
+        private ArgParameterMap[] _parametersMap;
+        private RetValMap _retValMap;
+        protected readonly SimpleParameterInfo[] _methodParameters;
 
+        [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
         protected DelegateBuilder(Type delegateType)
         {
             _delegateType = delegateType;
@@ -31,63 +36,36 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
                 throw NotDelegateException();
             _delegateParams = SimpleParameterInfo.FromParameters(invokeMethod.GetParameters());
             _delegateReturn = invokeMethod.ReturnType;
+
+            _methodReturn = GetMethodReturnType();
+            _methodParameters = BuildMethodParameters();
         }
 
-        public Delegate CreateDelegate()
+        public virtual Delegate CreateDelegate()
         {
             MapParameters();
-            return _delegateExcatlyMatch ? CreateExactDelegate() : CreateCastDelegate();
+            return CreateCastDelegate();
         }
 
         protected abstract Type GetMethodReturnType();
         protected abstract SimpleParameterInfo[] GetMethodParameters();
 
-        private static bool ParametersEquals(ICollection<SimpleParameterInfo> first, IList<SimpleParameterInfo> second)
-        {
-            return first.Count == second.Count && first.SequenceEqual(second);
-        }
-
         private void MapParameters()
         {
             if (_parametersMap != null)
                 return;
-            _parametersMap = new List<IDelegateParameterMap>();
             try
             {
-                var parameters = GetMethodParameters();
-                var methodReturn = GetMethodReturnType();
-                // Check return
-                IList<SimpleParameterInfo> methodParameters;
-                var _this = GetThisParameterForMethod();
-                if (_this != null)
-                {
-                    var list = new List<SimpleParameterInfo>(parameters.Length + 1)
-                    {
-                        new SimpleParameterInfo(_this)
-                    };
-                    list.AddRange(parameters);
-                    methodParameters = list;
-                }
-                else
-                {
-                    methodParameters = parameters;
-                }
 
                 // Check param count
-                if (_delegateParams.Length != methodParameters.Count)
+                if (_delegateParams.Length != _methodParameters.Length)
                     throw new Exception("Invalid parameters count.");
 
-                _delegateExcatlyMatch = _delegateReturn == methodReturn &&
-                                        ParametersEquals(_delegateParams, methodParameters);
+                _parametersMap = _delegateParams
+                    .ConvertAll((delegateParam, i) => 
+                    ArgParameterMap.CreateParameterMap(delegateParam, i, _methodParameters[i]));
 
-                // Map params
-                for (var i = 0; i < _delegateParams.Length; i++)
-                {
-                    var delegateParam = _delegateParams[i];
-                    var methodParam = methodParameters[i];
-                    _parametersMap.Add(ArgParameterMap.CreateParameterMap(delegateParam, i, methodParam));
-                }
-                _parametersMap.Add(new RetValParameterMap(_delegateReturn, methodReturn));
+                _retValMap = new RetValMap(_delegateReturn, _methodReturn);
             }
             catch (Exception ex)
             {
@@ -95,10 +73,25 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
             }
         }
 
+        private SimpleParameterInfo[] BuildMethodParameters()
+        {
+            var parameters = GetMethodParameters();
+            // Check return
+            var _this = GetThisParameterForMethod();
+            if (_this == null)
+            {
+                return parameters;
+            }
+            var fullParameters = new SimpleParameterInfo[parameters.Length + 1];
+            fullParameters[0] = new SimpleParameterInfo(_this);
+            Array.Copy(parameters, 0, fullParameters, 1, parameters.Length);
+            return fullParameters;
+        }
+
         protected abstract Type GetThisParameterForMethod();
 
 #if EMIT
-        protected Delegate CreateCastDelegate()
+        private Delegate CreateCastDelegate()
         {
             var paramTypes = _delegateParams.ConvertAll(x => x.Type);
             var m = new DynamicMethod(string.Empty, _delegateReturn, paramTypes,
@@ -122,23 +115,33 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
                 parameterMap.EmitFinish(cg);
             }
             // Emit return
+            _retValMap.EmitConvert(cg);
             cg.Emit(OpCodes.Ret);
             return m.CreateDelegate(_delegateType);
         }
 
         protected abstract void EmitInvoke(ILGenerator generator);
 #else
-        protected Delegate CreateCastDelegate()
+        private Delegate CreateCastDelegate()
         {
-            throw new NotSupportedException();
+            var parameters = _delegateParams.ConvertAll(p => Expression.Parameter(p.Type));
+            var block = new List<Expression>();
+            var invokeParameters = parameters
+                .ConvertAll((p, i) => _parametersMap[i].Prepare(block, p));
+            var ret = Invoke(block, invokeParameters);
+            for (var i = 0; i < parameters.Length; i++)
+            {
+                _parametersMap[i].Finish(block, parameters[i]);
+            }
+            block.Add(_retValMap.ConvertReturn(ret));
+
+            var body = block.Count != 1 ? Expression.Block(block) : block[0];
+            var lambda = Expression.Lambda(body, parameters);
+            return lambda.Compile();
         }
 
+        protected abstract Expression Invoke(List<Expression> block, Expression[] parameters);
 #endif
-
-        protected virtual Delegate CreateExactDelegate()
-        {
-            return CreateCastDelegate();
-        }
 
         private Exception NotDelegateException()
         {

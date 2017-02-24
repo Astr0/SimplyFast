@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using NUnit.Framework;
-using SimplyFast.Expressions;
 
-namespace SF.Tests
+namespace SimplyFast.Expressions.Tests
 {
     [TestFixture]
     public sealed class ExpressionExPartialEvalTests

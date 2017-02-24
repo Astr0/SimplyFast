@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 #if EMIT
 using System.Reflection.Emit;
@@ -10,6 +12,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
 {
     internal class ArgRefParameterMap : ArgOutParameterMap
     {
+        // Method ref, delegate any
         public ArgRefParameterMap(SimpleParameterInfo delegateParameter, int delegateParameterIndex,
             SimpleParameterInfo methodParameter)
             : base(delegateParameter, delegateParameterIndex, methodParameter)
@@ -58,7 +61,29 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
                 generator.EmitUnBoxAnyOrCastClass(mt);
             generator.EmitStloc(_localVariable.LocalIndex);
         }
+#else
+        public override Expression Prepare(List<Expression> block, ParameterExpression parameter)
+        {
+            if (_delegateParameter.Type.IsByRef && !_needLocalVariable)
+                return parameter;
 
+            var basePrepare = base.Prepare(block, parameter);
+            if (!_needLocalVariable)
+                return basePrepare;
+            var mt = _methodParameter.Type.RemoveByRef();
+            var value = _delegateParameter.IsOut
+                ? (Expression)Expression.Default(mt)
+                : Expression.Convert(parameter, mt);
+            var assign = Expression.Assign(basePrepare, value);
+            block.Add(assign);
+            return basePrepare;
+        }
+
+        public override void Finish(List<Expression> block, Expression parameter)
+        {
+            if (_delegateParameter.Type.IsByRef || _delegateParameter.IsOut)
+                base.Finish(block, parameter);
+        }
 #endif
     }
 }

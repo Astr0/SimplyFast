@@ -35,7 +35,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\SimplyFast.Expressions\SimplyFast.Expressions.csproj" />
-    <ProjectReference Include="..\SimplyFast.Reflection.Tests\SimplyFast.Reflection.Tests.csproj" />
   </ItemGroup>
 
 </Project>

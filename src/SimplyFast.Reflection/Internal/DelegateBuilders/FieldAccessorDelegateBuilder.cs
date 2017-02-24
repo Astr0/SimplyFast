@@ -5,6 +5,9 @@ using SimplyFast.Reflection.Internal.DelegateBuilders.Parameters;
 #if EMIT
 using System.Reflection.Emit;
 using SimplyFast.Reflection.Emit;
+#else
+using System.Collections.Generic;
+using System.Linq.Expressions;
 #endif
 
 namespace SimplyFast.Reflection.Internal.DelegateBuilders
@@ -61,6 +64,12 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
                 generator.EmitFieldGet(FieldInfo);
             }
         }
+#else
+        protected override Expression Invoke(List<Expression> block, Expression[] parameters)
+        {
+            var instance = parameters.Length != 0 ? parameters[0] : null;
+            return Expression.Field(instance, FieldInfo);
+        }
 #endif
     }
 
@@ -84,6 +93,16 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
         protected override void EmitInvoke(ILGenerator generator)
         {
             generator.EmitFieldSet(FieldInfo);
+        }
+#else
+        protected override Expression Invoke(List<Expression> block, Expression[] parameters)
+        {
+            var instance = parameters.Length > 1 ? parameters[0] : null;
+            var value = parameters.Length > 1 ? parameters[1] : parameters[0];
+            var field = Expression.Field(instance, FieldInfo);
+            var assign = Expression.Assign(field, value);
+            block.Add(assign);
+            return null;
         }
 #endif
     }

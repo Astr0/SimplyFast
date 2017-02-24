@@ -36,6 +36,8 @@ namespace SimplyFast.Reflection
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get { return _bindingFlags; }
         }
+#else
+        public const bool PrivateAccess = false;
 
 #endif
 

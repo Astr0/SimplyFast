@@ -1,10 +1,15 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using SimplyFast.Reflection.Internal.DelegateBuilders.Parameters;
 
 #if EMIT
+using SimplyFast.Comparers;
 using System.Reflection.Emit;
 using SimplyFast.Reflection.Emit;
+#else
+using System.Linq.Expressions;
 #endif
 
 namespace SimplyFast.Reflection.Internal.DelegateBuilders
@@ -20,21 +25,55 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
             _methodInfo = methodInfo;
         }
 
-        #region Overrides of DelegateBuilder
-
 #if EMIT
-        protected override Delegate CreateExactDelegate()
+        private static readonly EqualityComparer<SimpleParameterInfo[]> ParametersComparer =
+            EqualityComparerEx.Array<SimpleParameterInfo>();
+
+
+        public override Delegate CreateDelegate()
         {
             var declaring = _methodInfo.DeclaringType;
             // avoid stupid issue in .Net framework...
             if (declaring != null && declaring.IsInterface && _methodInfo.IsGenericMethod)
-                return CreateCastDelegate();
-            return Delegate.CreateDelegate(_delegateType, _methodInfo);
+                return base.CreateDelegate();
+
+            var delegateExcatlyMatch = _delegateReturn == _methodReturn &&
+                                        ParametersComparer.Equals(_delegateParams, _methodParameters);
+
+            return delegateExcatlyMatch ? Delegate.CreateDelegate(_delegateType, _methodInfo) : base.CreateDelegate();
         }
 
         protected override void EmitInvoke(ILGenerator generator)
         {
             generator.EmitMethodCall(_methodInfo);
+        }
+#else
+        protected override Expression Invoke(List<Expression> block, Expression[] parameters)
+        {
+            Expression instance;
+            IEnumerable<Expression> invokeParams;
+            if (_methodInfo.IsStatic)
+            {
+                instance = null;
+                invokeParams = parameters;
+            }
+            else
+            {
+                instance = parameters[0];
+                invokeParams = parameters.Skip(1);
+            }
+
+            var invoke = Expression.Call(instance, _methodInfo, invokeParams);
+            if (_methodReturn == typeof(void))
+            {
+                block.Add(invoke);
+                return null;
+            }
+
+            var local = Expression.Variable(_methodReturn);
+            var assign = Expression.Assign(local, invoke);
+            block.Add(assign);
+            return local;
         }
 #endif
 
@@ -57,7 +96,5 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
             return declaringType.IsValueType() ? declaringType.MakeByRefType() : declaringType;
             // ReSharper restore PossibleNullReferenceException
         }
-
-#endregion
     }
 }

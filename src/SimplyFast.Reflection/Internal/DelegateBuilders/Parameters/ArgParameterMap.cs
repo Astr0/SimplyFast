@@ -1,12 +1,14 @@
 using System.Diagnostics.CodeAnalysis;
-
 #if EMIT
 using System.Reflection.Emit;
+#else
+using System.Collections.Generic;
+using System.Linq.Expressions;
 #endif
 
 namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
 {
-    internal abstract class ArgParameterMap : IDelegateParameterMap
+    internal abstract class ArgParameterMap
     {
         protected readonly SimpleParameterInfo _delegateParameter;
         protected readonly int _delegateParameterIndex;
@@ -35,14 +37,13 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
         }
 
 #if EMIT
-
         public abstract void EmitPrepare(ILGenerator generator);
-
         public abstract void EmitLoad(ILGenerator generator);
-
         public abstract void EmitFinish(ILGenerator generator);
-
+#else
+        public abstract Expression Prepare(List<Expression> block, ParameterExpression parameter);
+        public abstract void Finish(List<Expression> block, Expression parameter);
 #endif
-        
+
     }
 }

@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using NUnit.Framework;
-using SimplyFast.Expressions;
 
-namespace SF.Tests
+namespace SimplyFast.Expressions.Tests
 {
     [TestFixture]
     public class LambdaExConvertTests

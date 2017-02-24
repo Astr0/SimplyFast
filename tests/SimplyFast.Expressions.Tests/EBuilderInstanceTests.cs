@@ -2,10 +2,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using NUnit.Framework;
-using SimplyFast.Expressions;
 using SimplyFast.Expressions.Dynamic;
 
-namespace SF.Tests
+namespace SimplyFast.Expressions.Tests
 {
     [TestFixture]
     public class EBuilderInstanceTests

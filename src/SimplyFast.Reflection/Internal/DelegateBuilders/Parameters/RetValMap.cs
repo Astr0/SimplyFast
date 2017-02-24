@@ -1,18 +1,19 @@
 using System;
-
 #if EMIT
 using System.Reflection.Emit;
 using SimplyFast.Reflection.Emit;
+#else
+using System.Linq.Expressions;
 #endif
 
 namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
 {
-    internal class RetValParameterMap : IDelegateParameterMap
+    internal class RetValMap
     {
         private readonly Type _delegateReturn;
         private readonly Type _methodReturn;
 
-        public RetValParameterMap(Type delegateReturn, Type methodReturn)
+        public RetValMap(Type delegateReturn, Type methodReturn)
         {
             if (!delegateReturn.IsAssignableFrom(methodReturn))
                 throw new Exception("Invalid return type.");
@@ -23,15 +24,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
 
 #if EMIT
 
-        public void EmitPrepare(ILGenerator generator)
-        {
-        }
-
-        public void EmitLoad(ILGenerator generator)
-        {
-        }
-
-        public void EmitFinish(ILGenerator generator)
+        public void EmitConvert(ILGenerator generator)
         {
             if (_methodReturn == _delegateReturn)
                 return;
@@ -40,7 +33,17 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
             else if (_methodReturn.IsValueType && !_delegateReturn.IsValueType)
                 generator.EmitBox(_methodReturn);
         }
+#else
+        private static readonly Expression _void = Expression.Empty();
 
+        public Expression ConvertReturn(Expression retVal)
+        {
+            if (retVal == null || _methodReturn == typeof(void))
+                return _void;
+            if (_methodReturn == _delegateReturn)
+                return retVal;
+            return Expression.Convert(retVal, _delegateReturn);
+        }
 #endif
     }
 }

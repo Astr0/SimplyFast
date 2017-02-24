@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 #if EMIT
 using System.Reflection.Emit;
@@ -8,8 +10,8 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
 {
     internal abstract class ArgLocalVariableParameterMap : ArgParameterMap
     {
-        private readonly Type _methodType;
         protected readonly bool _needLocalVariable;
+        private readonly Type _methodType;
 
         protected ArgLocalVariableParameterMap(SimpleParameterInfo delegateParameter, int delegateParameterIndex,
             SimpleParameterInfo methodParameter)
@@ -23,11 +25,20 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
         }
 
 #if EMIT
+        
         protected LocalBuilder _localVariable;
         public override void EmitPrepare(ILGenerator generator)
         {
             if (_needLocalVariable)
                 _localVariable = generator.DeclareLocal(_methodType);
+        }
+#else
+        protected Expression _localVariable;
+        public override Expression Prepare(List<Expression> block, ParameterExpression parameter)
+        {
+            if (!_needLocalVariable)
+                return parameter;
+            return _localVariable = Expression.Variable(_methodType);
         }
 #endif
     }

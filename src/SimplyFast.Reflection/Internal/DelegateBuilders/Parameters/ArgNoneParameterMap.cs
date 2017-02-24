@@ -1,31 +1,32 @@
 using System;
-
 #if EMIT
 using System.Reflection.Emit;
 using SimplyFast.Reflection.Emit;
+#else
+using System.Collections.Generic;
+using System.Linq.Expressions;
 #endif
 
 namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
 {
     internal class ArgNoneParameterMap : ArgParameterMap
     {
+        // Method = None, Delegate = Ref or None
         public ArgNoneParameterMap(SimpleParameterInfo delegateParameter, int delegateParameterIndex,
             SimpleParameterInfo methodParameter)
             : base(delegateParameter, delegateParameterIndex, methodParameter)
         {
         }
 
-        #region Overrides of ArgParameterMap
-
         protected override void CheckParameters()
         {
-            if (_methodParameter.Type.IsByRef)
+            var mt = _methodParameter.Type;
+            if (mt.IsByRef)
                 throw new ArgumentException("Invalid methodParameter modifier. Should be None.");
             if (_delegateParameter.IsOut)
                 throw new ArgumentException($"Invalid modifier for parameter {_delegateParameterIndex}. Should be None or Ref.");
 
             var dt = _delegateParameter.Type.RemoveByRef();
-            var mt = _delegateParameter.Type.RemoveByRef();
             if (!dt.IsAssignableFrom(mt) && !mt.IsAssignableFrom(dt))
                 throw new ArgumentException("Invalid type for parameter " + _delegateParameterIndex);
         }
@@ -47,7 +48,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
         public override void EmitLoad(ILGenerator generator)
         {
             EmitLoadToStack(generator);
-            var mt = _methodParameter.Type.RemoveByRef();
+            var mt = _methodParameter.Type;
             var dt = _delegateParameter.Type.RemoveByRef();
             if (dt.IsValueType && !mt.IsValueType)
                 generator.EmitBox(dt);
@@ -58,8 +59,17 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
         public override void EmitFinish(ILGenerator generator)
         {
         }
-#endif
+#else
+        public override void Finish(List<Expression> block, Expression parameter)
+        {
+        }
 
-        #endregion
+        public override Expression Prepare(List<Expression> block, ParameterExpression parameter)
+        {
+            if (_methodParameter.Type == _delegateParameter.Type)
+                return parameter;
+            return Expression.Convert(parameter, _methodParameter.Type);
+        }
+#endif
     }
 }

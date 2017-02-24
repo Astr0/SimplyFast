@@ -1,9 +1,13 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using SimplyFast.Reflection.Internal.DelegateBuilders.Parameters;
 
 #if EMIT
 using System.Reflection.Emit;
+#else
+using System.Collections.Generic;
+using System.Linq.Expressions;
 #endif
 
 namespace SimplyFast.Reflection.Internal.DelegateBuilders
@@ -29,6 +33,16 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
         protected override void EmitInvoke(ILGenerator generator)
         {
             generator.Emit(OpCodes.Newobj, _constructorInfo);
+        }
+#else
+        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
+        protected override Expression Invoke(List<Expression> block, Expression[] parameters)
+        {
+            var local = Expression.Variable(_methodReturn);
+            var create = Expression.New(_constructorInfo, parameters);
+            var assign = Expression.Assign(local, create);
+            block.Add(assign);
+            return local;
         }
 #endif
 

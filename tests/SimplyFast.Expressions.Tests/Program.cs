@@ -4,7 +4,7 @@ using System.Reflection;
 using NUnit.Common;
 using NUnitLite;
 
-namespace SF.Tests
+namespace SimplyFast.Expressions.Tests
 {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class Program
