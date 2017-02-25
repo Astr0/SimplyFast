@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System;
+using System.Collections.Concurrent;
+using NUnit.Framework;
 using SimplyFast.Pool;
 
 namespace SimplyFast.Tests.Pool
@@ -18,11 +20,10 @@ namespace SimplyFast.Tests.Pool
             }
         }
 
-        [Test]
-        public void BasicStoresOrCreates()
+        private static void TestPool(Func<PooledFactory<Func<IPooled<int>>>, IPool<Func<IPooled<int>>>> makePool)
         {
             var i = 0;
-            var pool = PoolEx.Basic(PooledEx.Factory(() => i++));
+            var pool = makePool(PooledEx.Factory(() => i++));
             using (var item = pool.Get())
                 Assert.AreEqual(0, item.Instance);
             using (var item0 = pool.Get())
@@ -35,6 +36,31 @@ namespace SimplyFast.Tests.Pool
                     Assert.AreEqual(0, pool.Get().Instance);
                 }
             }
+        }
+
+        [Test]
+        public void ThreadSafeOk()
+        {
+            TestPool(PoolEx.ThreadSafe);
+        }
+
+        [Test]
+        public void ThreadSafeLockingOk()
+        {
+            TestPool(PoolEx.ThreadSafeLocking);
+        }
+
+        [Test]
+        public void ThreadUnsafeOk()
+        {
+            TestPool(PoolEx.ThreadUnsafe);
+        }
+
+        [Test]
+        public void ProducerConsumerOk()
+        {
+            TestPool(PoolEx.Concurrent);
+            TestPool(f => PoolEx.Concurrent(f, new ConcurrentQueue<Func<IPooled<int>>>()));
         }
 
         [Test]

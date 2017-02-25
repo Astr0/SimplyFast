@@ -48,7 +48,6 @@ namespace SimplyFast.Tests.Configuration
         }
 
         [Test]
-        [Ignore("System.IO.FileSystem can't be loaded in unit tests")]
         public void UpdateFromConfFileOk()
         {
             var tmp1 = Path.GetTempFileName();

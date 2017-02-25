@@ -6,7 +6,6 @@ using SimplyFast.IO;
 
 namespace SimplyFast.Tests.IO
 {
-    [Ignore("Not supported System.IO.FileSystem in unit tests")]
     public class FileExTests
     {
         private static byte[] GetTestBytes()

@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿#if CONCURRENT
+using System.Collections.Concurrent;
 
 namespace SimplyFast.Pool.Internal
 {
@@ -23,3 +24,4 @@ namespace SimplyFast.Pool.Internal
         }
     }
 }
+#endif

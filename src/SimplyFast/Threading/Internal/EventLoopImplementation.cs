@@ -1,7 +1,12 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using System.Threading;
+#if CONCURRENT
+using System.Collections.Concurrent;
+#else
+using System.Collections.Generic;
+#endif
+
 
 namespace SimplyFast.Threading.Internal
 {
@@ -23,11 +28,47 @@ namespace SimplyFast.Threading.Internal
          * 2. Diffrent thread - send is queued and executed after post
          */
         private readonly CountdownEvent _operationsZero = new CountdownEvent(0);
-        private readonly ConcurrentQueue<WorkItem> _queue = new ConcurrentQueue<WorkItem>();
         private readonly ManualResetEvent _queueHasSomething = new ManualResetEvent(false);
         private volatile int _queueSize;
         private volatile bool _running;
         private readonly ThreadLocal<bool> _currentThread;
+
+#if CONCURRENT
+        private readonly ConcurrentQueue<WorkItem> _queue = new ConcurrentQueue<WorkItem>();
+
+        private void Enqueue(WorkItem wi)
+        {
+            _queue.Enqueue(wi);
+        }
+
+        private bool TryDequeue(out WorkItem wi)
+        {
+            return _queue.TryDequeue(out wi);
+        }
+#else
+        private readonly Queue<WorkItem> _queue = new Queue<WorkItem>();
+
+        private void Enqueue(WorkItem wi)
+        {
+            lock (_queue)
+                _queue.Enqueue(wi);
+        }
+
+        private bool TryDequeue(out WorkItem wi)
+        {
+            lock (_queue)
+            {
+                if (_queue.Count == 0)
+                {
+                    wi = default(WorkItem);
+                    return false;
+                }
+                wi = _queue.Dequeue();
+                return true;
+            }
+        }
+#endif
+
 
         public EventLoopImplementation()
         {
@@ -37,7 +78,7 @@ namespace SimplyFast.Threading.Internal
             };
         }
 
-        #region IDisposable Members
+#region IDisposable Members
 
         public void Dispose()
         {
@@ -46,7 +87,7 @@ namespace SimplyFast.Threading.Internal
             _queueHasSomething.Dispose();
         }
 
-        #endregion
+#endregion
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void OperationStarted()
@@ -66,7 +107,7 @@ namespace SimplyFast.Threading.Internal
         {
             if (!_running)
                 throw new InvalidOperationException("Event loop is not running.");
-            _queue.Enqueue(new WorkItem(action, state));
+            Enqueue(new WorkItem(action, state));
             // increment after Enqueue, otherwise DoEvents may fail
             if (Interlocked.Increment(ref _queueSize) == 1)
                 _queueHasSomething.Set();
@@ -145,7 +186,7 @@ namespace SimplyFast.Threading.Internal
             for (var count = queueSize; count >= 0; count--)
             {
                 WorkItem wi;
-                _queue.TryDequeue(out wi);
+                TryDequeue(out wi);
                 try
                 {
                     wi.Execute();
@@ -186,7 +227,7 @@ namespace SimplyFast.Threading.Internal
                 // Process queue
                 WorkItem wi;
                 var countProcessed = 0;
-                while (_queue.TryDequeue(out wi))
+                while (TryDequeue(out wi))
                 {
                     countProcessed++;
                     try
@@ -219,7 +260,7 @@ namespace SimplyFast.Threading.Internal
             DoProcessCurrentQueue();
         }
 
-        #region Nested type: WorkItem
+#region Nested type: WorkItem
 
         private struct WorkItem
         {
@@ -238,7 +279,7 @@ namespace SimplyFast.Threading.Internal
             }
         }
 
-        #endregion
+#endregion
     }
 #pragma warning restore 420
 }

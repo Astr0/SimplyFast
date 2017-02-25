@@ -1,6 +1,8 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
+#if CONCURRENT
+using System.Collections.Concurrent;
+#endif
 
 namespace SimplyFast.Collections
 {
@@ -55,7 +57,7 @@ namespace SimplyFast.Collections
             return dictionary.TryGetValue(key, out v) ? v : defaultValue;
         }
 
-
+#if CONCURRENT
         /// <summary>
         /// Returns value for passed key or add's value using builder. 
         /// Returns flag indicating if value was added. 
@@ -96,5 +98,6 @@ namespace SimplyFast.Collections
                 return newValue;
             }
         }
+#endif
     }
 }
