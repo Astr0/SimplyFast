@@ -25,6 +25,21 @@ namespace SimplyFast.Reflection.Tests
         }
 
         [Test]
+        public void CanReadWorksWitoutPrivateAccess()
+        {
+            var pa = MemberInfoEx.PrivateAccess;
+            MemberInfoEx.PrivateAccess = false;
+            try
+            {
+                CanReadWorks();
+            }
+            finally
+            {
+                MemberInfoEx.PrivateAccess = pa;
+            }
+        }
+
+        [Test]
         public void CanWriteWorks()
         {
             var t = typeof (Test);

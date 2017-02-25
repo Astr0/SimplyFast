@@ -7,40 +7,14 @@ namespace SimplyFast.Reflection
 {
     public static class MemberInfoEx
     {
-        #region Private Access
-
         static MemberInfoEx()
         {
             PrivateAccess = true;
         }
 
-#if REFLECTIONEX
-        private static bool _privateAccess;
-        private static BindingFlags _bindingFlags;
-        
-        public static bool PrivateAccess
-        {
-            get { return _privateAccess; }
-            set
-            {
-                _privateAccess = value;
-
-                _bindingFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;
-                if (_privateAccess)
-                    _bindingFlags |= BindingFlags.NonPublic;
-            }
-        }
-
-        internal static BindingFlags BindingFlags
-        {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get { return _bindingFlags; }
-        }
-#else
+        // TODO: Clear all caches on change?
         public static bool PrivateAccess { get; set; }
-#endif
-
-#endregion
-
+        
         /// <summary>
         ///     Checks if member can be written to
         /// </summary>
