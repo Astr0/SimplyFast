@@ -35,6 +35,20 @@ namespace SimplyFast.Reflection
         }
 
         /// <summary>
+        ///     Checks if property getter or setter is public
+        /// </summary>
+        public static bool IsPrivate(this PropertyInfo propertyInfo)
+        {
+            var get = propertyInfo.GetMethod;
+            if (get != null && !get.IsPrivate)
+                return false;
+            var set = propertyInfo.SetMethod;
+            if (set != null && !set.IsPrivate)
+                return false;
+            return true;
+        }
+
+        /// <summary>
         ///     Returns all properties of type
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

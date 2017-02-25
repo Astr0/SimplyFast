@@ -125,6 +125,30 @@ namespace SimplyFast.Reflection.Tests
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        private class TestProtected
+        {
+            protected int Full { get; set; }
+            protected int Get => 0;
+            protected int Set { set{} }
+            protected int PSet { get { return 0; } private set{}}
+            protected int PGet { private get { return 0; } set { } }
+        }
+
+        [Test]
+        public void IsPrivateWorks()
+        {
+            Assert.IsFalse(typeof(TestClass3).Property("CanGet").IsPrivate());
+            Assert.IsFalse(typeof(TestClass3).Property("CanSet").IsPrivate());
+            Assert.IsFalse(typeof(TestClass3).Property("P1").IsPrivate());
+            Assert.IsTrue(typeof(TestClass3).Property("Priv").IsPrivate());
+            Assert.IsFalse(typeof(TestProtected).Property("Full").IsPrivate());
+            Assert.IsFalse(typeof(TestProtected).Property("Get").IsPrivate());
+            Assert.IsFalse(typeof(TestProtected).Property("Set").IsPrivate());
+            Assert.IsFalse(typeof(TestProtected).Property("PSet").IsPrivate());
+            Assert.IsFalse(typeof(TestProtected).Property("PSet").IsPrivate());
+        }
+
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
         [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         private class MultiIndexed
         {

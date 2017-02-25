@@ -387,8 +387,15 @@ namespace SimplyFast.Reflection.Tests
         [Test]
         public void MethodsOk()
         {
-            Assert.AreEqual(8, typeof(ClassWith2Methods).Methods().Length);
-            Assert.AreEqual(2, typeof(ClassWith2Methods).Methods().Count(x => x.DeclaringType == typeof(ClassWith2Methods)));
+            var objMethods =
+                typeof(object).GetMethods(BindingFlags.Instance | BindingFlags.Public |
+                                          (MemberInfoEx.PrivateAccess ? BindingFlags.NonPublic : 0))
+                                          .Where(x => (x.Attributes & MethodAttributes.Family) != 0)
+                                          .ToArray();
+
+            var methods = typeof(ClassWith2Methods).Methods();
+            Assert.AreEqual(2 + objMethods.Length, methods.Length);
+            Assert.AreEqual(2, methods.Count(x => x.DeclaringType == typeof(ClassWith2Methods)));
             Assert.AreEqual(1, typeof(ClassWith2Methods).Methods("ToString").Length);
             Assert.IsNotNull(typeof(ClassWith2Methods).Method("TestStatic", new[] { typeof(string) }, new[] { typeof(string), typeof(int) }));
         }
