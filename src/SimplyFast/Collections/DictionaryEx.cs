@@ -25,6 +25,23 @@ namespace SimplyFast.Collections
         }
 
         /// <summary>
+        ///     Returns value for passed key or adds using add delegate
+        /// </summary>
+        public static TV GetOrAdd<TK, TV>(this IDictionary<TK, TV> dictionary, TK key, Func<TK, TV> add, out bool added)
+        {
+            TV v;
+            if (dictionary.TryGetValue(key, out v))
+            {
+                added = false;
+                return v;
+            }
+            v = add(key);
+            dictionary[key] = v;
+            added = true;
+            return v;
+        }
+
+        /// <summary>
         ///     Returns value for passed key or adds new TV()
         /// </summary>
         public static TV GetOrAdd<TK, TV>(this IDictionary<TK, TV> dictionary, TK key)
