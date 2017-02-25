@@ -399,7 +399,7 @@ namespace SimplyFast.Expressions.Internal
 
         protected override Expression VisitBlock(BlockExpression node)
         {
-            BeginBlock();
+            BeginBlock(false);
             foreach (var parameterExpression in node.Variables)
             {
                 NewLine();

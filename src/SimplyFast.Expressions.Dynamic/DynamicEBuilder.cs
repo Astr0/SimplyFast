@@ -4,6 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using SimplyFast.Collections;
 using SimplyFast.Expressions.Dynamic.Internal;
 
 namespace SimplyFast.Expressions.Dynamic
@@ -48,7 +49,7 @@ namespace SimplyFast.Expressions.Dynamic
 
         public static Expression[] ToExpressions(params object[] args)
         {
-            return Array.ConvertAll(args, ToExpression);
+            return args.ConvertAll(ToExpression);
         }
 
         public static Expression[] ToExpressions(IEnumerable<object> args)
@@ -163,10 +164,7 @@ namespace SimplyFast.Expressions.Dynamic
 
             #region System stuff
 
-            private Expression LimitSelf
-            {
-                get { return Expression.Convert(LimitType); }
-            }
+            private Expression LimitSelf => Expression.Convert(LimitType);
 
             private DynamicMetaObject Build(Expression expression)
             {
@@ -225,7 +223,7 @@ namespace SimplyFast.Expressions.Dynamic
 
             private static NewArrayExpression ToObjArray(DynamicMetaObject[] args)
             {
-                return Expression.NewArrayInit(typeof(object), Array.ConvertAll(args, a => a.Expression.Convert(typeof(object))));
+                return Expression.NewArrayInit(typeof(object), args.ConvertAll(a => a.Expression.Convert(typeof(object))));
             }
 
             public override DynamicMetaObject BindInvokeMember(InvokeMemberBinder binder, DynamicMetaObject[] args)

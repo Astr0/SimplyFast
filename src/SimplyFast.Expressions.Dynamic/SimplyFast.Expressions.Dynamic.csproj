@@ -1,10 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45</TargetFrameworks>
+    <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
   </PropertyGroup>
 
   <Import Project="../framework_defines.targets" />
+
+  <ItemGroup Condition=" '$(TargetFramework)' != 'net45'">
+    <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\SimplyFast.Expressions\SimplyFast.Expressions.csproj" />

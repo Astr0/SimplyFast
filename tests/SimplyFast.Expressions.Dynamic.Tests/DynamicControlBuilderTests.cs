@@ -4,10 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using SimplyFast.Disposables;
-using SimplyFast.Expressions.Dynamic;
 using static SimplyFast.Expressions.Dynamic.DynamicControlBuilder;
 
-namespace SimplyFast.Expressions.Tests
+namespace SimplyFast.Expressions.Dynamic.Tests
 {
     [TestFixture]
     public class DynamicControlBuilderTests
