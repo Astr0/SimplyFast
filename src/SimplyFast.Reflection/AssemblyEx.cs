@@ -13,7 +13,7 @@ namespace SimplyFast.Reflection
         {
 #if NET
             return AppDomain.CurrentDomain.GetAssemblies();
-#else
+#else 
             var entry = Assembly.GetEntryAssembly();
             yield return entry;
 

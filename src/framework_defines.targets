@@ -1,9 +1,45 @@
 <Project>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
+    <Standard>10</Standard>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.1' ">
+    <Standard>11</Standard>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.2' ">
+    <Standard>12</Standard>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+    <Standard>13</Standard>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.4' ">
+    <Standard>14</Standard>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+    <Standard>15</Standard>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <Standard>16</Standard>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Standard>45</Standard>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Standard)' == '' ">
+    <Standard>0</Standard>
+  </PropertyGroup>
+  
+  
+  <PropertyGroup Condition=" $(Standard) &gt;= 13 ">
     <DefineConstants>$(DefineConstants);FILES</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" $(Standard) &gt;= 16 ">
+    <DefineConstants>$(DefineConstants);ASSEMBLIES</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" $(Standard) &gt;= 45 ">
+    <DefineConstants>$(DefineConstants);EMIT;PARALLEL</DefineConstants>
+  </PropertyGroup>
+
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <DefineConstants>$(DefineConstants);NET;FILES;EMIT;PARALLEL</DefineConstants>
+    <DefineConstants>$(DefineConstants);NET</DefineConstants>
   </PropertyGroup>
 </Project>
