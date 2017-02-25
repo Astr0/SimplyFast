@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>    
-    <TargetFrameworks>net45;netcoreapp1.0</TargetFrameworks>
+    <TargetFrameworks>net45</TargetFrameworks>
     <!--<TargetFramework>netcoreapp1.0</TargetFramework>-->
     <ApplicationIcon />
     <OutputType>exe</OutputType>
@@ -20,12 +20,19 @@
     <None Remove=".gitignore" />
   </ItemGroup>
 
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  
   <ItemGroup>
     <PackageReference Include="NUnit" Version="3.6.0" />
     <PackageReference Include="NUnitLite" Version="3.6.0" />
   </ItemGroup>
+  
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\SimplyFast.Expressions.Dynamic\SimplyFast.Expressions.Dynamic.csproj" />
+    <ProjectReference Include="..\..\src\SimplyFast.Expressions\SimplyFast.Expressions.csproj" />
     <ProjectReference Include="..\..\src\SimplyFast\SimplyFast.csproj" />
   </ItemGroup>
 

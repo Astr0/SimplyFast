@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1;netstandard1.3;net45;</TargetFrameworks>
-    <RootNamespace>SimplyFast</RootNamespace>
   </PropertyGroup>
 
   <Import Project="../framework_defines.targets" />

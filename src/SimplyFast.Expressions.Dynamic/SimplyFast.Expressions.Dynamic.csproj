@@ -7,8 +7,7 @@
   <Import Project="../framework_defines.targets" />
 
   <ItemGroup>
-    <ProjectReference Include="..\SimplyFast\SimplyFast.csproj" />
-    <ProjectReference Include="..\SimplyFast.Reflection\SimplyFast.Reflection.csproj" />
+    <ProjectReference Include="..\SimplyFast.Expressions\SimplyFast.Expressions.csproj" />
   </ItemGroup>
 
 </Project>
