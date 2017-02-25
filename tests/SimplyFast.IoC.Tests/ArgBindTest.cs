@@ -16,6 +16,14 @@ namespace SimplyFast.IoC.Tests
         }
 
         [Test]
+        public void ArgDeduceType()
+        {
+            Assert.AreEqual(null, new BindArg(null, null, null).Type);
+            Assert.AreEqual(typeof(string), new BindArg(null, null, "test").Type);
+            Assert.AreEqual(typeof(object), new BindArg(typeof(object), null, "test").Type);
+        }
+
+        [Test]
         public void CanBindSelfWithArgs()
         {
             Assert.AreEqual("test", _kernel.Get<string>(BindArg.Typed("test")));
