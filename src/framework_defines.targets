@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+    <DefineConstants>$(DefineConstants);FILES</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <DefineConstants>$(DefineConstants);NET;FILES;EMIT;PARALLEL</DefineConstants>
+  </PropertyGroup>
+</Project>

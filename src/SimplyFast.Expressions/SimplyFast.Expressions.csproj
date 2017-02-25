@@ -4,9 +4,7 @@
     <TargetFramework>net45</TargetFramework>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <DefineConstants>$(DefineConstants);NET;EMIT</DefineConstants>
-  </PropertyGroup>
+  <Import Project="../framework_defines.targets" />
 
   <ItemGroup>
     <ProjectReference Include="..\SimplyFast\SimplyFast.csproj" />

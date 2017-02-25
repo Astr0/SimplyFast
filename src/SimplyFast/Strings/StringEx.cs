@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace SimplyFast.Strings
@@ -46,8 +45,9 @@ namespace SimplyFast.Strings
                 return str;
             var set = new HashSet<char>(characters);
             var sb = new StringBuilder(str.Length);
-            foreach (var t in str.Where(t => !set.Contains(t)))
-                sb.Append(t);
+            foreach (var t in str)
+                if (!set.Contains(t))
+                    sb.Append(t);
             return sb.ToString();
         }
 

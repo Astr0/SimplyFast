@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿#if FILES
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -37,3 +38,4 @@ namespace SimplyFast.IO
         }
     }
 }
+#endif

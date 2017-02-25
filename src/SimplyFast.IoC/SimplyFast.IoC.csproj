@@ -4,9 +4,7 @@
     <TargetFrameworks>net45;netstandard1.6</TargetFrameworks>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <DefineConstants>$(DefineConstants);NET;PARALLEL</DefineConstants>
-  </PropertyGroup>
+  <Import Project="../framework_defines.targets" />
 
   <ItemGroup>
     <ProjectReference Include="..\SimplyFast\SimplyFast.csproj" />

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+#if FILES
 using System.IO;
+#endif
 
 namespace SimplyFast.Configuration
 {
@@ -39,6 +41,7 @@ namespace SimplyFast.Configuration
         //    return config.UpdateFromNameValueCollection(ConfigurationManager.AppSettings, mapKeys, convertValues);
         //}
 
+#if FILES
         public static T UpdateFromConf<T>(this T config, string filePath,
             Func<string, string> mapKeys = null, Func<string, string> convertValues = null) where T : IConfig
         {
@@ -46,6 +49,7 @@ namespace SimplyFast.Configuration
                 return config;
             return config.UpdateFromConf(File.ReadAllLines(filePath), mapKeys, convertValues);
         }
+#endif
 
         public static T UpdateFromConf<T>(this T config, string[] lines,
             Func<string, string> mapKeys = null, Func<string, string> convertValues = null) where T : IConfig
