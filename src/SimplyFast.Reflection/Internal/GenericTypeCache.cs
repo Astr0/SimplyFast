@@ -1,14 +1,14 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using SimplyFast.Cache;
 using SimplyFast.Comparers;
 
 namespace SimplyFast.Reflection.Internal
 {
     internal static class GenericTypeCache
     {
-        private static readonly ConcurrentDictionary<GenericTypeKey, Type> _genericCache = new ConcurrentDictionary<GenericTypeKey, Type>();
+        private static readonly ICache<GenericTypeKey, Type> _genericCache = CacheEx.ThreadSafe<GenericTypeKey, Type>();
 
         /// <summary>
         ///     MakeGenericType with cache lookup
@@ -37,7 +37,7 @@ namespace SimplyFast.Reflection.Internal
 
             public bool Equals(GenericTypeKey other)
             {
-                return (Type == other.Type && _comparer.Equals(Arguments, other.Arguments));
+                return Type == other.Type && _comparer.Equals(Arguments, other.Arguments);
             }
 
             #endregion
@@ -53,7 +53,7 @@ namespace SimplyFast.Reflection.Internal
             {
                 unchecked
                 {
-                    return (Type.GetHashCode()*397) ^ _comparer.GetHashCode(Arguments);
+                    return (Type.GetHashCode() * 397) ^ _comparer.GetHashCode(Arguments);
                 }
             }
         }

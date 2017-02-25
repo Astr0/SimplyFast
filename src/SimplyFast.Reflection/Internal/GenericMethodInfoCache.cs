@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using SimplyFast.Cache;
 using SimplyFast.Comparers;
 
 namespace SimplyFast.Reflection.Internal
 {
     internal static class GenericMethodInfoCache
     {
-        private static readonly ConcurrentDictionary<GenericMethodKey, MethodInfo> _genericCache =
-            new ConcurrentDictionary<GenericMethodKey, MethodInfo>();
+        private static readonly ICache<GenericMethodKey, MethodInfo> _genericCache =
+            CacheEx.ThreadSafe<GenericMethodKey, MethodInfo>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static MethodInfo MakeGeneric(MethodInfo method, params Type[] arguments)

@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using SimplyFast.Cache;
 using SimplyFast.Collections;
 
 namespace SimplyFast.Reflection.Internal
 {
     internal class MethodInfoCache
     {
-        private static readonly ConcurrentDictionary<Type, MethodInfoCache> _methodCache = new ConcurrentDictionary<Type, MethodInfoCache>();
+        private static readonly ICache<Type, MethodInfoCache> _methodCache = CacheEx.ThreadSafe<Type, MethodInfoCache>();
 
         // ReSharper disable MemberHidesStaticFromOuterClass
         public readonly MethodInfo[] Methods;

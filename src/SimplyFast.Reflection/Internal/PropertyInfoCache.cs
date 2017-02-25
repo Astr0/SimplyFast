@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using SimplyFast.Cache;
 
 namespace SimplyFast.Reflection.Internal
 {
     internal class PropertyInfoCache
     {
-        private static readonly ConcurrentDictionary<Type, PropertyInfoCache> _propertyCache = new ConcurrentDictionary<Type, PropertyInfoCache>();
+        private static readonly ICache<Type, PropertyInfoCache> _propertyCache = CacheEx.ThreadSafe<Type, PropertyInfoCache>();
 
         public readonly string IndexerName;
         // ReSharper disable MemberHidesStaticFromOuterClass

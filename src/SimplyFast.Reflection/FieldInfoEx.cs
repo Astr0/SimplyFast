@@ -38,7 +38,7 @@ namespace SimplyFast.Reflection
         ///     Returns field getter delegate as delegateType
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static object GetterAs(this FieldInfo fieldInfo, Type delegateType)
+        public static Delegate GetterAs(this FieldInfo fieldInfo, Type delegateType)
         {
             return FieldDelegateCache.GetterAs(fieldInfo, delegateType);
         }
@@ -47,7 +47,7 @@ namespace SimplyFast.Reflection
         ///     Returns field setter delegate as delegateType
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static object SetterAs(this FieldInfo fieldInfo, Type delegateType)
+        public static Delegate SetterAs(this FieldInfo fieldInfo, Type delegateType)
         {
             return FieldDelegateCache.SetterAs(fieldInfo, delegateType);
         }
@@ -59,7 +59,7 @@ namespace SimplyFast.Reflection
         public static TDelegate GetterAs<TDelegate>(this FieldInfo fieldInfo)
             where TDelegate : class
         {
-            return (TDelegate) FieldDelegateCache.GetterAs(fieldInfo, typeof (TDelegate));
+            return (TDelegate) (object) FieldDelegateCache.GetterAs(fieldInfo, typeof(TDelegate));
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace SimplyFast.Reflection
         public static TDelegate SetterAs<TDelegate>(this FieldInfo fieldInfo)
             where TDelegate : class
         {
-            return (TDelegate) FieldDelegateCache.SetterAs(fieldInfo, typeof (TDelegate));
+            return (TDelegate) (object) FieldDelegateCache.SetterAs(fieldInfo, typeof(TDelegate));
         }
     }
 }

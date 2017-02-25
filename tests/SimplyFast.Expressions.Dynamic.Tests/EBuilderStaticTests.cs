@@ -35,7 +35,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
             }
 
             #pragma warning disable 169
-            public static Action<bool> TestAction;
+            public static Action<bool> TestAction = b => {};
             #pragma warning restore 169
         }
 

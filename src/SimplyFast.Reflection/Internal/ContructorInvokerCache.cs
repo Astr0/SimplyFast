@@ -1,13 +1,14 @@
-﻿using System.Collections.Concurrent;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.CompilerServices;
+using SimplyFast.Cache;
 
 namespace SimplyFast.Reflection.Internal
 {
     internal static class ContructorInvokerCache
     {
-        private static readonly ConcurrentDictionary<ConstructorInfo, ConstructorInvoker> _delegateCache =
-            new ConcurrentDictionary<ConstructorInfo, ConstructorInvoker>();
+        private static readonly ICache<ConstructorInfo, ConstructorInvoker> _delegateCache =
+            CacheEx.ThreadSafe<ConstructorInfo, ConstructorInvoker>();
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ConstructorInvoker Get(ConstructorInfo constructorInfo)
         {

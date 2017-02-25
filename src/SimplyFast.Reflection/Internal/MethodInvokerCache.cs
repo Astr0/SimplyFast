@@ -1,13 +1,13 @@
-using System.Collections.Concurrent;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using SimplyFast.Cache;
 
 namespace SimplyFast.Reflection.Internal
 {
     internal static class MethodInvokerCache
     {
-        private static readonly ConcurrentDictionary<MethodInfo, MethodInvoker> _delegateCache =
-            new ConcurrentDictionary<MethodInfo, MethodInvoker>();
+        private static readonly ICache<MethodInfo, MethodInvoker> _delegateCache =
+            CacheEx.ThreadSafe<MethodInfo, MethodInvoker>();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static MethodInvoker Get(MethodInfo methodInfo)

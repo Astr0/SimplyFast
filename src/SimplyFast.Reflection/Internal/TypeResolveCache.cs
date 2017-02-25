@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
+using SimplyFast.Cache;
 
 namespace SimplyFast.Reflection.Internal
 {
     internal static class TypeResolveCache
     {
-        private static readonly ConcurrentDictionary<string, Type> _resolveCache = new ConcurrentDictionary<string, Type>(StringComparer.Ordinal);
+        private static readonly ICache<string, Type> _resolveCache = CacheEx.ThreadSafe<string, Type>();
 
         /// <summary>
         ///     Cached Type.GetType or search in all assemblies in current AppDomain

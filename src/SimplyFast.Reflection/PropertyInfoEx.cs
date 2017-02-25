@@ -98,7 +98,7 @@ namespace SimplyFast.Reflection
             {
                 // Property getter/setter name is get_x or set_x
                 var prefix = method.Name.Substring(0, 4);
-                var getSet = (prefix == "get_" ? 1 : (prefix == "set_" ? 2 : 0));
+                var getSet = prefix == "get_" ? 1 : (prefix == "set_" ? 2 : 0);
                 if (getSet != 0)
                 {
                     var propertyName = method.Name.Substring(4);
@@ -131,7 +131,7 @@ namespace SimplyFast.Reflection
         ///     Returns property getter delegate as delegateType
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static object GetterAs(this PropertyInfo propertyInfo, Type delegateType)
+        public static Delegate GetterAs(this PropertyInfo propertyInfo, Type delegateType)
         {
             return propertyInfo.CanRead ? propertyInfo.GetMethod.InvokerAs(delegateType) : null;
         }
@@ -140,7 +140,7 @@ namespace SimplyFast.Reflection
         ///     Returns property setter delegate as delegateType
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static object SetterAs(this PropertyInfo propertyInfo, Type delegateType)
+        public static Delegate SetterAs(this PropertyInfo propertyInfo, Type delegateType)
         {
             return propertyInfo.CanWrite ? propertyInfo.SetMethod.InvokerAs(delegateType) : null;
         }
@@ -152,7 +152,7 @@ namespace SimplyFast.Reflection
         public static TDelegate GetterAs<TDelegate>(this PropertyInfo propertyInfo)
             where TDelegate : class
         {
-            return (TDelegate) GetterAs(propertyInfo, typeof (TDelegate));
+            return (TDelegate) (object) GetterAs(propertyInfo, typeof(TDelegate));
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace SimplyFast.Reflection
         public static TDelegate SetterAs<TDelegate>(this PropertyInfo propertyInfo)
             where TDelegate : class
         {
-            return (TDelegate) SetterAs(propertyInfo, typeof (TDelegate));
+            return (TDelegate) (object) SetterAs(propertyInfo, typeof(TDelegate));
         }
     }
 }

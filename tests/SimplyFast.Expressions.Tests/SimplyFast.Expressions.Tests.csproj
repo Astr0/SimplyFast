@@ -9,18 +9,15 @@
     <StartupObject />
   </PropertyGroup>
 
+  <Import Project="../../src/framework_defines.targets" />
+
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <DefineConstants>$(DefineConstants);NET</DefineConstants>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove=".gitignore" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' != 'net45' ">
-    <PackageReference Include="NETStandard.Library" Version="1.6.1" />
   </ItemGroup>
 
   <ItemGroup>

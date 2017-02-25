@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using SimplyFast.Cache;
 
 namespace SimplyFast.Reflection.Internal
 {
     internal class FieldInfoCache
     {
-        private static readonly ConcurrentDictionary<Type, FieldInfoCache> _fieldsCache = new ConcurrentDictionary<Type, FieldInfoCache>();
+        private static readonly ICache<Type, FieldInfoCache> _fieldsCache = CacheEx.ThreadSafe<Type, FieldInfoCache>();
 
         // ReSharper disable MemberHidesStaticFromOuterClass
         public readonly FieldInfo[] Fields;

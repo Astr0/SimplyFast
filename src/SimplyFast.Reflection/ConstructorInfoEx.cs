@@ -56,7 +56,7 @@ namespace SimplyFast.Reflection
         ///     Builds delegate of delegateType for invoking constructor
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static object InvokerAs(this ConstructorInfo constructorInfo, Type delegateType)
+        public static Delegate InvokerAs(this ConstructorInfo constructorInfo, Type delegateType)
         {
             return ConstructorDelegateCache.InvokerAs(constructorInfo, delegateType);
         }
@@ -68,7 +68,7 @@ namespace SimplyFast.Reflection
         public static TDelegate InvokerAs<TDelegate>(this ConstructorInfo constructorInfo)
             where TDelegate : class
         {
-            return (TDelegate) ConstructorDelegateCache.InvokerAs(constructorInfo, typeof (TDelegate));
+            return (TDelegate)(object) ConstructorDelegateCache.InvokerAs(constructorInfo, typeof (TDelegate));
         }
 
         /// <summary>

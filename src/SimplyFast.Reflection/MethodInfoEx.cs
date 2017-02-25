@@ -95,7 +95,7 @@ namespace SimplyFast.Reflection
         /// </summary>
         public static MethodInfo GetInvokeMethod(Type delegateType)
         {
-            if (delegateType.TypeInfo().BaseType != typeof (MulticastDelegate))
+            if (delegateType.TypeInfo().BaseType != typeof(MulticastDelegate))
                 throw new ArgumentException("Not a delegate", nameof(delegateType));
             var invokeMethod = delegateType.Method("Invoke");
             if (invokeMethod == null)
@@ -112,7 +112,7 @@ namespace SimplyFast.Reflection
         ///     Returns method invoker as delegateType
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static object InvokerAs(this MethodInfo methodInfo, Type delegateType)
+        public static Delegate InvokerAs(this MethodInfo methodInfo, Type delegateType)
         {
             return MethodDelegateCache.InvokerAs(methodInfo, delegateType);
         }
@@ -124,7 +124,7 @@ namespace SimplyFast.Reflection
         public static TDelegate InvokerAs<TDelegate>(this MethodInfo methodInfo)
             where TDelegate : class
         {
-            return (TDelegate) MethodDelegateCache.InvokerAs(methodInfo, typeof (TDelegate));
+            return (TDelegate) (object) MethodDelegateCache.InvokerAs(methodInfo, typeof(TDelegate));
         }
 
 
@@ -141,7 +141,7 @@ namespace SimplyFast.Reflection
         public static MethodInfo FindCastToOperator(Type from, Type to)
         {
             return from.Methods("op_Implicit").FirstOrDefault(x => x.ReturnType == to) ??
-                from.Methods("op_Explicit").FirstOrDefault(x => x.ReturnType == to);
+                   from.Methods("op_Explicit").FirstOrDefault(x => x.ReturnType == to);
         }
 
         public static MethodInfo FindCastFromOperator(Type from, Type to)
@@ -153,7 +153,7 @@ namespace SimplyFast.Reflection
         {
             var castTo = FindCastToOperator(from, to);
             var castFrom = FindCastFromOperator(from, to);
-            if (castTo == null) 
+            if (castTo == null)
                 return castFrom;
             if (castFrom != null)
                 throw new AmbiguousMatchException($"Both {from.Name} and {to.Name} have conversion operators");

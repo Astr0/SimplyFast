@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using SimplyFast.Cache;
 using SimplyFast.Comparers;
 
 namespace SimplyFast.Reflection.Internal
 {
     internal class ConstructorInfoCache
     {
-        private static readonly ConcurrentDictionary<Type, ConstructorInfoCache> _constructorCache = new ConcurrentDictionary<Type, ConstructorInfoCache>();
+        private static readonly ICache<Type, ConstructorInfoCache> _constructorCache = CacheEx.ThreadSafe<Type, ConstructorInfoCache>();
 
         // ReSharper disable MemberHidesStaticFromOuterClass
         public readonly ConstructorInfo[] Constructors;
