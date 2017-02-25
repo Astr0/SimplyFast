@@ -8,7 +8,7 @@ namespace SimplyFast.Expressions.Dynamic
     /// <summary>
     ///     Builder for control structures using dynamics
     /// </summary>
-    public class DynamicControlBuilder
+    public static class DynamicControlBuilder
     {
         #region Object to Expr stuff
 
@@ -43,7 +43,7 @@ namespace SimplyFast.Expressions.Dynamic
         ///     Builds lambda expression
         /// </summary>
         /// <param name="bodyBuilder">parameters => body</param>
-        public LambdaExpression Lambda(Func<dynamic, object> bodyBuilder)
+        public static LambdaExpression Lambda(Func<dynamic, object> bodyBuilder)
         {
             var builder = new ParametersEBuilder(false);
             var body = Expr(bodyBuilder(builder));
@@ -54,7 +54,7 @@ namespace SimplyFast.Expressions.Dynamic
         ///     Builds block expression
         /// </summary>
         /// <param name="blockBuilder">localVariables => body</param>
-        public BlockExpression Block(Func<dynamic, IEnumerable<object>> blockBuilder)
+        public static BlockExpression Block(Func<dynamic, IEnumerable<object>> blockBuilder)
         {
             var variables = new ParametersEBuilder(true);
             var body = blockBuilder(variables);
@@ -67,7 +67,7 @@ namespace SimplyFast.Expressions.Dynamic
         /// <param name="test">Test expression</param>
         /// <param name="ifTrue">Then action</param>
         /// <param name="ifFalse">Else action</param>
-        public DynamicEBuilder If(object test, object ifTrue, object ifFalse = null)
+        public static DynamicEBuilder If(object test, object ifTrue, object ifFalse = null)
         {
             return EBuilder.If(Expr(test), Expr(ifTrue), ExprNull(ifFalse));
         }
@@ -77,7 +77,7 @@ namespace SimplyFast.Expressions.Dynamic
         /// </summary>
         /// <param name="aexpr">Expression to case</param>
         /// <param name="type">Target type</param>
-        public DynamicEBuilder Cast(object aexpr, Type type)
+        public static DynamicEBuilder Cast(object aexpr, Type type)
         {
             return Expr(aexpr).CastAs(type);
         }
@@ -87,7 +87,7 @@ namespace SimplyFast.Expressions.Dynamic
         /// </summary>
         /// <param name="aexp">Expression to convert</param>
         /// <param name="type">Target type</param>
-        public DynamicEBuilder Convert(object aexp, Type type)
+        public static DynamicEBuilder Convert(object aexp, Type type)
         {
             return Expression.Convert(Expr(aexp), type);
         }
@@ -95,7 +95,7 @@ namespace SimplyFast.Expressions.Dynamic
         /// <summary>
         ///     Builds Default Expression for type
         /// </summary>
-        public DynamicEBuilder Default(Type type)
+        public static DynamicEBuilder Default(Type type)
         {
             return Expression.Default(type);
         }
@@ -104,7 +104,7 @@ namespace SimplyFast.Expressions.Dynamic
         ///     Builds loop
         /// </summary>
         /// <param name="bodyBuilder">loop => loop body</param>
-        public Expression Loop(Func<ILoopControl, object> bodyBuilder)
+        public static Expression Loop(Func<ILoopControl, object> bodyBuilder)
         {
             return EBuilder.Loop(ExprFunc(bodyBuilder));
         }
@@ -114,7 +114,7 @@ namespace SimplyFast.Expressions.Dynamic
         /// </summary>
         /// <param name="test">() => Test Expression</param>
         /// <param name="bodyBuilder">loop => loop body</param>
-        public Expression While(Func<object> test, Func<ILoopControl, object> bodyBuilder)
+        public static Expression While(Func<object> test, Func<ILoopControl, object> bodyBuilder)
         {
             return EBuilder.While(Expr(test()), ExprFunc(bodyBuilder));
         }
@@ -125,7 +125,7 @@ namespace SimplyFast.Expressions.Dynamic
         /// <param name="test">() => Test Expression</param>
         /// <param name="iterator">() => Iteration expression</param>
         /// <param name="bodyBuilder">loop => loop body</param>
-        public Expression For(Func<object> test, Func<object> iterator, Func<ILoopControl, object> bodyBuilder)
+        public static Expression For(Func<object> test, Func<object> iterator, Func<ILoopControl, object> bodyBuilder)
         {
             return EBuilder.For(ExprNull(test), ExprNull(iterator), ExprFunc(bodyBuilder));
         }
@@ -135,7 +135,7 @@ namespace SimplyFast.Expressions.Dynamic
         /// </summary>
         /// <param name="enumerable">() => Enumerable Expression</param>
         /// <param name="bodyBuilder">loop => loop body</param>
-        public Expression ForEach(Func<object> enumerable, Func<IForeachControl, object> bodyBuilder)
+        public static Expression ForEach(Func<object> enumerable, Func<IForeachControl, object> bodyBuilder)
         {
             return EBuilder.ForEach(Expr(enumerable()), ExprFunc(bodyBuilder));
         }
@@ -146,7 +146,7 @@ namespace SimplyFast.Expressions.Dynamic
         /// <param name="type">Element type</param>
         /// <param name="enumerable">() => Enumerable Expression</param>
         /// <param name="bodyBuilder">loop => loop body</param>
-        public Expression ForEach(Type type, Func<object> enumerable, Func<IForeachControl, object> bodyBuilder)
+        public static Expression ForEach(Type type, Func<object> enumerable, Func<IForeachControl, object> bodyBuilder)
         {
             return EBuilder.ForEach(type, Expr(enumerable()), ExprFunc(bodyBuilder));
         }
@@ -156,7 +156,7 @@ namespace SimplyFast.Expressions.Dynamic
         /// </summary>
         /// <param name="disposable">IDisposable Expression</param>
         /// <param name="body">Body Expression</param>
-        public Expression Using(object disposable, object body)
+        public static Expression Using(object disposable, object body)
         {
             return EBuilder.Using(Expr(disposable), Expr(body));
         }
@@ -167,7 +167,7 @@ namespace SimplyFast.Expressions.Dynamic
         /// <param name="switchValue">switch test expression</param>
         /// <param name="cases">cases</param>
         /// <param name="defaultBody">default expression</param>
-        public SwitchExpression Switch(object switchValue, IEnumerable<SwitchCase> cases, object defaultBody = null)
+        public static SwitchExpression Switch(object switchValue, IEnumerable<SwitchCase> cases, object defaultBody = null)
         {
             return Expression.Switch(Expr(switchValue), ExprNull(defaultBody), null, cases);
         }
@@ -177,7 +177,7 @@ namespace SimplyFast.Expressions.Dynamic
         /// </summary>
         /// <param name="value">Case test value</param>
         /// <param name="body">Case body expression</param>
-        public SwitchCase Case(object value, object body)
+        public static SwitchCase Case(object value, object body)
         {
             return Expression.SwitchCase(Expr(body), Expr(value));
         }
@@ -187,7 +187,7 @@ namespace SimplyFast.Expressions.Dynamic
         /// </summary>
         /// <param name="values">Case test values</param>
         /// <param name="body">Case body</param>
-        public SwitchCase Case(IEnumerable<object> values, object body)
+        public static SwitchCase Case(IEnumerable<object> values, object body)
         {
             return Expression.SwitchCase(Expr(body), Exprs(values));
         }
