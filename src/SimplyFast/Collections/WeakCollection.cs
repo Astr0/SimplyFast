@@ -27,25 +27,17 @@ namespace SimplyFast.Collections
 
         public IEnumerator<T> GetEnumerator()
         {
-            return Items.GetEnumerator();
-        }
-
-        private IEnumerable<T> Items
-        {
-            get
+            var cleanup = false;
+            foreach (var weakReference in _list)
             {
-                var cleanup = false;
-                foreach (var weakReference in _list)
-                {
-                    var t = weakReference.Target;
-                    if (t != null)
-                        yield return (T) t;
-                    else
-                        cleanup = true;
-                }
-                if (cleanup)
-                    Cleanup();
+                var t = weakReference.Target;
+                if (t != null)
+                    yield return (T)t;
+                else
+                    cleanup = true;
             }
+            if (cleanup)
+                Cleanup();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -72,7 +64,7 @@ namespace SimplyFast.Collections
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            Items.CopyTo(array, arrayIndex);
+            EnumerableEx.CopyTo(this, array, arrayIndex);
         }
 
         public bool Remove(T item)

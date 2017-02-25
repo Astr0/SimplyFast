@@ -1,5 +1,4 @@
-﻿#if EMIT
-using System;
+﻿using System;
 using NUnit.Framework;
 
 namespace SimplyFast.Reflection.Tests
@@ -93,8 +92,7 @@ namespace SimplyFast.Reflection.Tests
                 wd1.Add(t.GetValue);
                 Assert.AreEqual(5, wd1.Invoker());
             }
-            GC.Collect();
-            GC.WaitForFullGCComplete();
+            GCEx.CollectAndWait();
             Assert.AreEqual(0, wd1.Invoker());
         }
 
@@ -105,4 +103,3 @@ namespace SimplyFast.Reflection.Tests
         }
     }
 }
-#endif
