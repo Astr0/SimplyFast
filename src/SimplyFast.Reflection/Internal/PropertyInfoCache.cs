@@ -19,7 +19,7 @@ namespace SimplyFast.Reflection.Internal
 
         private PropertyInfoCache(Type type)
         {
-            Properties = type.TypeInfo().GetProperties(MemberInfoEx.BindingFlags);
+            Properties = type.AllProperties();
             _properties = Properties.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.ToArray(), StringComparer.Ordinal);
             var defaultMember = type.TypeInfo().GetCustomAttribute<DefaultMemberAttribute>();
             if (defaultMember != null)

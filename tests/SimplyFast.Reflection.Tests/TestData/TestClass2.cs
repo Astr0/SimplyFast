@@ -8,7 +8,7 @@ namespace SimplyFast.Reflection.Tests.TestData
     public class TestClass2 : TestClass1
     {
         private static object _f3 = "_f3t";
-        private int _f1;
+        private long _f1;
         public static readonly object FStatic = new object();
 
         public TestClass2() : this(string.Empty, 11)
@@ -23,7 +23,7 @@ namespace SimplyFast.Reflection.Tests.TestData
 
         public new int P1
         {
-            get { return _f1; }
+            get { return (int)_f1; }
             set { _f1 = value; }
         }
 
@@ -46,7 +46,7 @@ namespace SimplyFast.Reflection.Tests.TestData
 
         public int GetF1()
         {
-            return _f1;
+            return (int)_f1;
         }
 
         public virtual void SetP2P3(string p2, string p3)

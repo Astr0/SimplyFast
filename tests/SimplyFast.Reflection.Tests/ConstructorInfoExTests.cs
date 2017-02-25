@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using SimplyFast.Reflection.Tests.TestData;
@@ -101,7 +102,9 @@ namespace SimplyFast.Reflection.Tests
         public void ConstructorsCacheOk()
         {
             var constructors = new HashSet<ConstructorInfo>(typeof(string).Constructors());
-            Assert.IsTrue(constructors.SetEquals(typeof(string).GetConstructors(MemberInfoEx.BindingFlags)));
+           
+            var reflectConstructors = typeof(string).GetTypeInfo().DeclaredConstructors.Where(x => !x.IsStatic);
+            Assert.IsTrue(constructors.SetEquals(reflectConstructors));
         }
     }
 }

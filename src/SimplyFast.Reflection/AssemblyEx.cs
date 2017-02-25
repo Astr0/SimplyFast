@@ -1,19 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
-#if EMIT
-using System;
-using System.Reflection.Emit;
-#endif
 
 namespace SimplyFast.Reflection
 {
     public static class AssemblyEx
     {
-        public static IEnumerable<Assembly> GetAllAssemblies()
+        static AssemblyEx()
+        {
+            SetAssemblyLocator(DefaultLocator);
+        }
+
+        private static IEnumerable<Assembly> DefaultLocator()
         {
 #if NET
             return AppDomain.CurrentDomain.GetAssemblies();
-#else 
+#elif ASSEMBLIES
             var entry = Assembly.GetEntryAssembly();
             yield return entry;
 
@@ -22,28 +24,27 @@ namespace SimplyFast.Reflection
             {
                 yield return Assembly.Load(reference);
             }
+#else
+            throw new InvalidOperationException("Assembly locator not set. Use SetAssemblyLocator first.");
 #endif
         }
-#if EMIT
-        private static readonly object _dynamicAssemblyLock = new object();
-        private static volatile AssemblyBuilder _dynamicAssembly;
 
-        public static AssemblyBuilder DynamicAssembly
-        {
-            get
-            {
-                if (_dynamicAssembly != null)
-                    return _dynamicAssembly;
-                lock (_dynamicAssemblyLock)
-                {
-                    if (_dynamicAssembly != null)
-                        return _dynamicAssembly;
-                    var assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("SimplyFast.Reflection.Dynamic"), AssemblyBuilderAccess.Run);
-                    _dynamicAssembly = assembly;
-                    return assembly;
-                }
-            }
-        }
+#if ASSEMBLIES || NET
+        public static bool NeedsAssemblyLocator => false;
+#else
+        public static bool NeedsAssemblyLocator => true;
 #endif
+
+        private static Func<IEnumerable<Assembly>> _assemblyLocator;
+
+        public static void SetAssemblyLocator(Func<IEnumerable<Assembly>> locator)
+        {
+            _assemblyLocator = locator ?? DefaultLocator;
+        }
+
+        public static IEnumerable<Assembly> GetAllAssemblies()
+        {
+            return _assemblyLocator();
+        }
     }
 }

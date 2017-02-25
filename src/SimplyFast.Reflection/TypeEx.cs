@@ -24,7 +24,7 @@ namespace SimplyFast.Reflection
             if (!typeInfo.IsGenericType)
                 return type.Name;
             var sb = new StringBuilder();
-            var arguments = typeInfo.GetGenericArguments();
+            var arguments = typeInfo.GenericArguments();
             var genericName = type.Name;
             var index = genericName.IndexOf('`');
             if (index >= 0)
@@ -42,7 +42,7 @@ namespace SimplyFast.Reflection
             if (!typeInfo.IsGenericType)
                 return type.Name;
             var sb = new StringBuilder();
-            var arguments = typeInfo.GetGenericArguments();
+            var arguments = typeInfo.GenericArguments();
             var genericName = type.Name;
             var index = genericName.IndexOf('`');
             if (index >= 0)
@@ -67,7 +67,7 @@ namespace SimplyFast.Reflection
             if (!typeInfo.IsGenericType)
                 return type;
 
-            var args = typeInfo.GetGenericArguments();
+            var args = typeInfo.GenericTypeArguments;
             var changed = false;
             for (var i = 0; i < args.Length; i++)
             {
@@ -113,7 +113,7 @@ namespace SimplyFast.Reflection
                 var interTi = inter.TypeInfo();
                 if (interTi.IsGenericType && inter.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                 {
-                    yield return interTi.GetGenericArguments()[0];
+                    yield return interTi.GenericArguments()[0];
                 }
                 else if (inter == typeof(IEnumerable))
                     normalFound = true;
@@ -200,6 +200,18 @@ namespace SimplyFast.Reflection
             return type.GetTypeInfo();
         }
 
+        public static Type[] GenericArguments(this Type type)
+        {
+            return type.TypeInfo().GenericArguments();
+        }
+
+        public static Type[] GenericArguments(this TypeInfo type)
+        {
+            return type.IsGenericTypeDefinition
+                ? type.GenericTypeParameters
+                : type.GenericTypeArguments;
+        }
+
 #if !NET
         public static bool IsAssignableFrom(this Type type, Type other)
         {
@@ -212,5 +224,6 @@ namespace SimplyFast.Reflection
             return value != null && type.IsAssignableFrom(value.GetType());
         }
 #endif
+
     }
 }

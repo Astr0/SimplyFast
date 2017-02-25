@@ -24,7 +24,7 @@ namespace SimplyFast.Reflection
                 {
                     if (_module != null)
                         return _module;
-                    var module = AssemblyEx.DynamicAssembly.DefineDynamicModule("WeakDelegate");
+                    var module = EmitAssemblyEx.DynamicAssembly.DefineDynamicModule("WeakDelegate");
                     _module = module;
                     return module;
                 }

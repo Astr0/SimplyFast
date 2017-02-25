@@ -41,14 +41,12 @@ namespace SimplyFast.Reflection
             if (typeof(TSource) == typeof(object))
                 return x => (TResult)Convert.ChangeType(x, typeof(TResult));
 
-            // if source is IConvertible, use IConvertible method
-            if (!typeof(IConvertible).IsAssignableFrom(typeof(TSource)))
-                return x => { throw new InvalidCastException(); };
+            return ConvertibleConvert<TSource, TResult>();
+        }
 
-            var convertibleTo = FindConvertibleTo<TResult>();
-            if (convertibleTo != null)
-                return convertibleTo.InvokerAs<Func<TSource, TResult>>();
-            return x => (TResult)((IConvertible)x).ToType(typeof(TResult), null);
+        private static TResult NoConvert<TSource, TResult>(TSource source)
+        {
+            throw new InvalidCastException();
         }
 
         private static string GetConvertToMethod<TResult>()
@@ -93,10 +91,21 @@ namespace SimplyFast.Reflection
             return method == null ? null : typeof(Convert).Method(method, typeof(TSource));
         }
 
-        private static MethodInfo FindConvertibleTo<TResult>()
+        private static Func<TSource, TResult> ConvertibleConvert<TSource, TResult>()
         {
+#if ICONVERTIBLE
+            // if source is IConvertible, use IConvertible method
+
+            if (!typeof(IConvertible).IsAssignableFrom(typeof(TSource)))
+                return NoConvert<TSource, TResult>;
+
             var method = GetConvertToMethod<TResult>();
-            return method == null ? null : typeof(IConvertible).Method(method);
+            if (method != null)
+                return typeof(IConvertible).Method(method).InvokerAs<Func<TSource, TResult>>();
+            return x => (TResult)((IConvertible)x).ToType(typeof(TResult), null);
+#else
+            return NoConvert<TSource, TResult>;
+#endif
         }
     }
 }

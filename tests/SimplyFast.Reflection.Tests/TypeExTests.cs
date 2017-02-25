@@ -21,7 +21,7 @@ namespace SimplyFast.Reflection.Tests
         public void FieldsReturnValidFields()
         {
             var a2 = typeof(TestClass1).Fields();
-            var fields = new[] {"_f1", "F2"};
+            var fields = new[] { "_f1", "F2" };
             var other = from o in a2
                         where !fields.Contains(o.Name)
                         select o;
@@ -40,7 +40,7 @@ namespace SimplyFast.Reflection.Tests
         public void PropertiesReturnValidProperties()
         {
             var a2 = typeof(TestClass1).Properties();
-            var props = new[] {"P00", "P0", "P1", "P2", "P3", "P4", "P5", "F3"};
+            var props = new[] { "P00", "P0", "P1", "P2", "P3", "P4", "P5", "F3" };
             var other = from o in a2
                         where !props.Contains(o.Name)
                         select o;
@@ -69,26 +69,26 @@ namespace SimplyFast.Reflection.Tests
         [Test]
         public void SubstituteWorks()
         {
-            var type = TypeEx.Substitute(typeof (Tuple<string, int, List<string>, double>),
-                t => t == typeof (string) ? typeof (decimal) : t);
+            var type = TypeEx.Substitute(typeof(Tuple<string, int, List<string>, double>),
+                t => t == typeof(string) ? typeof(decimal) : t);
             Assert.AreEqual(typeof(Tuple<decimal, int, List<decimal>, double>), type);
 
-            var type2 = TypeEx.Substitute(typeof (int), t => typeof (string));
+            var type2 = TypeEx.Substitute(typeof(int), t => typeof(string));
             Assert.AreEqual(typeof(string), type2);
         }
 
         [Test]
         public void RemoveByRefWorks()
         {
-            var refInt = typeof (int).MakeByRefType();
+            var refInt = typeof(int).MakeByRefType();
             Assert.AreEqual(typeof(int), refInt.RemoveByRef());
             Assert.AreEqual(typeof(int), typeof(int).RemoveByRef());
         }
 
         // ReSharper disable once PossibleInterfaceMemberAmbiguity
-        public interface ITestEnumerable: IEnumerable<string>, IEnumerable<int>, IEnumerable<double>
+        private interface ITestEnumerable : IEnumerable<string>, IEnumerable<int>, IEnumerable<double>
         {
-             
+
         }
 
         private class TestEnumerable : IEnumerable
@@ -108,7 +108,7 @@ namespace SimplyFast.Reflection.Tests
             Assert.IsTrue(new[] { typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(TestEnumerable))));
             Assert.IsTrue(new[] { typeof(char), typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(IEnumerable<char>))));
             Assert.IsTrue(new[] { typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(IEnumerable))));
-            
+
             Assert.AreEqual(2, TypeEx.FindIEnumerable(typeof(IEnumerable<>)).Count());
             Assert.IsFalse(TypeEx.FindIEnumerable(typeof(int)).Any());
         }
@@ -141,8 +141,21 @@ namespace SimplyFast.Reflection.Tests
         }
 
         [Test]
+        public void GenericArgumentsWork()
+        {
+            Assert.AreEqual(0, typeof(string).GenericArguments().Length);
+            Assert.AreEqual(1, typeof(IEnumerable<>).GenericArguments().Length);
+            Assert.AreEqual(typeof(string), typeof(IEnumerable<string>).GenericArguments()[0]);
+            Assert.AreEqual(0, typeof(string).TypeInfo().GenericArguments().Length);
+            Assert.AreEqual(1, typeof(IEnumerable<>).TypeInfo().GenericArguments().Length);
+            Assert.AreEqual(typeof(string), typeof(IEnumerable<string>).TypeInfo().GenericArguments()[0]);
+        }
+
+        [Test]
         public void ResolveTypeWorks()
         {
+            if (AssemblyEx.NeedsAssemblyLocator)
+                AssemblyEx.SetAssemblyLocator(() => new[] { typeof(TypeExTests).TypeInfo().Assembly });
             Assert.AreEqual(typeof(string), TypeEx.ResolveType(typeof(string).FullName));
             Assert.AreEqual(typeof(TypeExTests), TypeEx.ResolveType(typeof(TypeExTests).FullName));
             Assert.IsNull(TypeEx.ResolveType("SF.Reflection.Tests.TypeNotExists"));

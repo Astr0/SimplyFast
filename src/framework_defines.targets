@@ -20,6 +20,9 @@
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
     <Standard>16</Standard>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+    <Standard>16</Standard>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <Standard>45</Standard>
   </PropertyGroup>
@@ -29,10 +32,10 @@
   
   
   <PropertyGroup Condition=" $(Standard) &gt;= 13 ">
-    <DefineConstants>$(DefineConstants);FILES</DefineConstants>
+    <DefineConstants>$(DefineConstants);FILES;ICONVERTIBLE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" $(Standard) &gt;= 16 ">
-    <DefineConstants>$(DefineConstants);ASSEMBLIES</DefineConstants>
+    <DefineConstants>$(DefineConstants);ASSEMBLIES;REFLECTIONEX</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" $(Standard) &gt;= 45 ">
     <DefineConstants>$(DefineConstants);EMIT;PARALLEL</DefineConstants>

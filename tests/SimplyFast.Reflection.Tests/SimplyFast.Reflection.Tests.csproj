@@ -9,9 +9,11 @@
     <StartupObject />
   </PropertyGroup>
 
+  <Import Project="../../src/framework_defines.targets" />
+
+
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <DefineConstants>$(DefineConstants);NET;EMIT</DefineConstants>
     <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
   </PropertyGroup>
   

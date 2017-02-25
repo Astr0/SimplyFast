@@ -9,6 +9,7 @@ namespace SimplyFast.Reflection
     {
         #region Private Access
 
+#if REFLECTIONEX
         private static bool _privateAccess;
         private static BindingFlags _bindingFlags;
 
@@ -30,12 +31,15 @@ namespace SimplyFast.Reflection
             }
         }
 
-        public static BindingFlags BindingFlags
+        internal static BindingFlags BindingFlags
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)] get { return _bindingFlags; }
         }
+#else
+        public static bool PrivateAccess => false;
+#endif
 
-        #endregion
+#endregion
 
         /// <summary>
         ///     Checks if member can be written to
