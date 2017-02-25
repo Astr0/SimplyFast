@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq.Expressions;
-using System.Reflection;
 using SimplyFast.Collections;
+using System.Collections.Generic;
 
 #if EMIT
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection.Emit;
 using SimplyFast.Reflection.Emit;
+#else
+using System.Reflection;
+using System.Collections;
+using System.Linq.Expressions;
 #endif
 
 namespace SimplyFast.Reflection
