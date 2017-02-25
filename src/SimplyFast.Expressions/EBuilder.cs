@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using SimplyFast.Collections;
 using SimplyFast.Expressions.Internal;
 using SimplyFast.Reflection;
 
@@ -12,6 +14,8 @@ namespace SimplyFast.Expressions
     /// <summary>
     ///     Expression Builder
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class EBuilder
     {
         public static Expression Const<T>(T value)
@@ -33,8 +37,8 @@ namespace SimplyFast.Expressions
         {
             if (expression.Type == type)
                 return expression;
-            if (type.IsValueType)
-                return expression.Type.IsValueType
+            if (type.IsValueType())
+                return expression.Type.IsValueType()
                     ? Expression.Convert(expression, type)
                     : Expression.Unbox(expression, type);
             return Expression.TypeAs(expression, type);
@@ -152,8 +156,9 @@ namespace SimplyFast.Expressions
             var method = type.FindInvokableMember(methodOrMemberName, arguments.Select(x => x.Type).ToArray());
             if (method == null)
                 throw new ArgumentException("Method not found.", nameof(methodOrMemberName));
-            return method.MemberType == MemberTypes.Method
-                ? Expression.Call(null, (MethodInfo) method, arguments)
+            var methodInfo = method as MethodInfo;
+            return methodInfo != null
+                ? Expression.Call(null, methodInfo, arguments)
                 : MemberAccess(null, method).InvokeDelegate(arguments);
         }
 
@@ -163,8 +168,9 @@ namespace SimplyFast.Expressions
             var method = expression.Type.FindInvokableMember(methodOrMemberName, arguments.Select(x => x.Type).ToArray());
             if (method == null)
                 throw new ArgumentException("Method not found.", nameof(methodOrMemberName));
-            return method.MemberType == MemberTypes.Method
-                ? Expression.Call(expression, (MethodInfo) method, arguments)
+            var methodInfo = method as MethodInfo;
+            return methodInfo != null
+                ? Expression.Call(expression, methodInfo, arguments)
                 : MemberAccess(expression, method).InvokeDelegate(arguments);
         }
 
@@ -172,7 +178,7 @@ namespace SimplyFast.Expressions
         {
             if (type.IsArray)
                 return Expression.NewArrayBounds(type.GetElementType(), arguments);
-            var constructor = type.Constructor(System.Array.ConvertAll(arguments, x => x.Type));
+            var constructor = type.Constructor(arguments.ConvertAll(x => x.Type));
             if (constructor == null)
                 throw new ArgumentException("Constructor not found.", nameof(arguments));
             return Expression.New(constructor, arguments);
@@ -189,7 +195,7 @@ namespace SimplyFast.Expressions
         public static LambdaExpression Lambda(Func<ParameterExpression[], Expression> builder,
             params Type[] parameterTypes)
         {
-            var parameters = System.Array.ConvertAll(parameterTypes, Expression.Parameter);
+            var parameters = parameterTypes.ConvertAll(Expression.Parameter);
             return Expression.Lambda(builder(parameters), parameters);
         }
 
@@ -245,7 +251,7 @@ namespace SimplyFast.Expressions
         public static BlockExpression Block(Func<ParameterExpression[], Expression[]> builder,
             params Type[] variableTypes)
         {
-            var variables = System.Array.ConvertAll(variableTypes, Expression.Variable);
+            var variables = variableTypes.ConvertAll(Expression.Variable);
             return Expression.Block(variables, builder(variables));
         }
 
@@ -295,8 +301,7 @@ namespace SimplyFast.Expressions
 
         private static readonly MethodInfo DisposableDispose = LambdaExtract.Method((IDisposable x) => x.Dispose());
 
-        private static readonly MethodInfo EnumerableGetEnumerator =
-            LambdaExtract.Method((IEnumerable x) => x.GetEnumerator());
+        private static readonly MethodInfo EnumerableGetEnumerator = typeof(IEnumerable).Method("GetEnumerator");
 
         private static readonly MethodInfo EnumeratorMoveNext = LambdaExtract.Method((IEnumerator x) => x.MoveNext());
 
@@ -356,7 +361,7 @@ namespace SimplyFast.Expressions
 
             var enumerator = Expression.Parameter(getEnumerator.ReturnType);
 
-            var needCast = getEnumerator == EnumerableGetEnumerator && type != typeof(object);
+            var needCast = ReferenceEquals(getEnumerator, EnumerableGetEnumerator) && type != typeof(object);
             var whileLoop = While(enumerator.Method(EnumeratorMoveNext), loop =>
             {
                 Expression current = enumerator.Property("Current");

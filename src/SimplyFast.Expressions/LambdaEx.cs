@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using SimplyFast.Collections;
 using SimplyFast.Reflection;
 
 namespace SimplyFast.Expressions
@@ -60,7 +61,7 @@ namespace SimplyFast.Expressions
 
             var result = invoke.ReturnType;
             var invokeParameters = invoke.GetParameters();
-            var parameters = Array.ConvertAll(invokeParameters, p => p.ParameterType);
+            var parameters = invokeParameters.ConvertAll(p => p.ParameterType);
 
             if (parameters.Length < lambda.Parameters.Count)
                 throw new ArgumentException("Parameters count is less than lambdas", nameof(delegateType));
@@ -71,7 +72,7 @@ namespace SimplyFast.Expressions
                 return delegateType == null ? lambda : Expression.Lambda(delegateType, lambda.Body, lambda.Parameters);
             }
 
-            var newParameters = Array.ConvertAll(parameters, Expression.Parameter);
+            var newParameters = parameters.ConvertAll(Expression.Parameter);
 
             var variables = new List<ParameterExpression>();
             var inConversions = new List<Expression>();

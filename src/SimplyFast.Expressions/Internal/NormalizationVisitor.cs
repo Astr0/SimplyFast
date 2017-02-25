@@ -28,17 +28,17 @@ namespace SimplyFast.Expressions.Internal
                 return base.VisitMethodCall(node);
             // rewrite...
             var instance = Visit(node.Object);
-            var isSet = property.GetSetMethod(true) == method;
+            var isSet = ReferenceEquals(property.SetMethod, method);
             if (!isSet)
             {
                 if (node.Arguments.Count == 0)
-                    return EBuilder.Property(instance, property);
+                    return instance.Property(property);
                 return instance.Property(property, node.Arguments.Select(Visit));
             }
             // set method =\
             // last argument is value, other - index
             if (node.Arguments.Count == 1)
-                return EBuilder.Property(instance, property).Assign(Visit(node.Arguments[0]));
+                return instance.Property(property).Assign(Visit(node.Arguments[0]));
             return instance.Property(property, node.Arguments.Take(node.Arguments.Count - 1).Select(Visit))
                 .Assign(node.Arguments[node.Arguments.Count - 1]);
         }

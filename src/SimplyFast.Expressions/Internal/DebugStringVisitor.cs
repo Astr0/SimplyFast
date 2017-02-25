@@ -336,7 +336,7 @@ namespace SimplyFast.Expressions.Internal
 
         protected override Expression VisitParameter(ParameterExpression node)
         {
-            Out(string.IsNullOrEmpty(node.Name) ? ("p_" + GetParameterId(node)) : node.Name);
+            Out(string.IsNullOrEmpty(node.Name) ? "p_" + GetParameterId(node) : node.Name);
             return node;
         }
 
@@ -399,8 +399,7 @@ namespace SimplyFast.Expressions.Internal
 
         protected override Expression VisitBlock(BlockExpression node)
         {
-            Out("{");
-            Indent(1);
+            BeginBlock();
             foreach (var parameterExpression in node.Variables)
             {
                 NewLine();
@@ -411,9 +410,7 @@ namespace SimplyFast.Expressions.Internal
             }
             VisitExpressions(node.Expressions, ";", true);
             Out(';');
-            Indent(-1);
-            NewLine();
-            Out("}");
+            EndBlock();
             return node;
         }
 
@@ -433,12 +430,11 @@ namespace SimplyFast.Expressions.Internal
             Out(node.Kind.ToString().ToLower());
             Out(' ');
             OutLabel(node.Target);
-            if (node.Value != null)
-            {
-                Out('(');
-                Visit(node.Value);
-                Out(')');
-            }
+            if (node.Value == null)
+                return node;
+            Out('(');
+            Visit(node.Value);
+            Out(')');
             return node;
         }
 
@@ -463,12 +459,9 @@ namespace SimplyFast.Expressions.Internal
             if (node.Variable != null)
                 Out(node.Variable.Name);
             Out(')');
-            Out('{');
-            Indent(1);
-            NewLine();
+            BeginBlock();
             Visit(node.Body);
-            Indent(-1);
-            Out('}');
+            EndBlock();
             return node;
         }
 
@@ -536,8 +529,7 @@ namespace SimplyFast.Expressions.Internal
         protected override Expression VisitMemberInit(MemberInitExpression node)
         {
             Visit(node.NewExpression);
-            Out("{");
-            Indent(1);
+            BeginBlock();
             for (var i = 0; i < node.Bindings.Count; ++i)
             {
                 if (i > 0)
@@ -546,10 +538,23 @@ namespace SimplyFast.Expressions.Internal
                 var binding = node.Bindings[i];
                 VisitMemberBinding(binding);
             }
+            EndBlock();
+            return node;
+        }
+
+        private void EndBlock()
+        {
             Indent(-1);
             NewLine();
             Out("}");
-            return node;
+        }
+
+        private void BeginBlock(bool newLine = true)
+        {
+            Out("{");
+            if (newLine)
+                NewLine();
+            Indent(1);
         }
 
         protected override Expression VisitInvocation(InvocationExpression node)
@@ -577,18 +582,45 @@ namespace SimplyFast.Expressions.Internal
 
         protected override Expression VisitTry(TryExpression node)
         {
-            throw new NotImplementedException();
+            Out("try");
+            BeginBlock();
+            Visit(node.Body);
+            EndBlock();
+            if (node.Handlers != null)
+                foreach (var handler in node.Handlers)
+                {
+                    VisitCatchBlock(handler);
+                }
+            if (node.Fault != null)
+            {
+                Out("catch");
+                BeginBlock();
+                Visit(node.Fault);
+                EndBlock();
+            }
+            // ReSharper disable once InvertIf
+            if (node.Finally != null)
+            {
+                Out("finally");
+                BeginBlock();
+                Visit(node.Finally);
+                EndBlock();
+            }
+            return node;
         }
 
         protected override Expression VisitDebugInfo(DebugInfoExpression node)
         {
-            throw new NotImplementedException();
+            Out("/*Debug info*/");
+            return node;
         }
 
+#if NET
         protected override Expression VisitDynamic(DynamicExpression node)
         {
             throw new NotImplementedException();
         }
+#endif
 
         protected override SwitchCase VisitSwitchCase(SwitchCase node)
         {
@@ -612,8 +644,7 @@ namespace SimplyFast.Expressions.Internal
             Out("switch (");
             Visit(node.SwitchValue);
             Out(')');
-            Out('{');
-            Indent(1);
+            BeginBlock(false);
             foreach (var switchCase in node.Cases)
             {
                 VisitSwitchCase(switchCase);
@@ -627,15 +658,16 @@ namespace SimplyFast.Expressions.Internal
                 Visit(node.DefaultBody);
                 Indent(-1);
             }
-            Indent(-1);
-            NewLine();
-            Out('}');
+            EndBlock();
             return node;
         }
 
         protected override Expression VisitRuntimeVariables(RuntimeVariablesExpression node)
         {
-            throw new NotImplementedException();
+            Out("var (");
+            VisitExpressions(node.Variables);
+            Out(')');
+            return node;
         }
 
         protected override Expression VisitNewArray(NewArrayExpression node)
@@ -695,13 +727,9 @@ namespace SimplyFast.Expressions.Internal
             Out("Loop ");
             if (node.ContinueLabel != null)
                 OutLabel(node.ContinueLabel);
-            Out('{');
-            Indent(1);
-            NewLine();
+            BeginBlock();
             Visit(node.Body);
-            Indent(-1);
-            NewLine();
-            Out('}');
+            EndBlock();
             if (node.BreakLabel != null)
                 OutLabel(node.BreakLabel);
             return node;
@@ -724,8 +752,8 @@ namespace SimplyFast.Expressions.Internal
         protected override MemberMemberBinding VisitMemberMemberBinding(MemberMemberBinding node)
         {
             Out(node.Member.Name);
-            Out(" = { ");
-            Indent(1);
+            Out(" = ");
+            BeginBlock(false);
             for (var i = 0; i < node.Bindings.Count; ++i)
             {
                 if (i > 0)
@@ -733,18 +761,13 @@ namespace SimplyFast.Expressions.Internal
                 NewLine();
                 VisitMemberBinding(node.Bindings[i]);
             }
-            Indent(-1);
-            NewLine();
-            Out(" }");
+            EndBlock();
             return node;
         }
 
         protected override Expression VisitExtension(Expression node)
         {
-            if (
-                node.GetType()
-                    .GetMethod("ToString", BindingFlags.Instance | BindingFlags.Public | BindingFlags.ExactBinding, null, Type.EmptyTypes, null)
-                    .DeclaringType != typeof (Expression))
+            if (node.GetType().Method("ToString", TypeHelper<Type>.EmptyArray).DeclaringType != typeof (Expression))
             {
                 Out(node.ToString());
                 return node;
