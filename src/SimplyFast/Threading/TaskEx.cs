@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using SimplyFast.Disposables;
 
 namespace SimplyFast.Threading
 {
@@ -97,29 +98,36 @@ namespace SimplyFast.Threading
         public static Task<TResult> OrCancellation<TResult>(this Task<TResult> task, CancellationToken token)
         {
             // Perf optimization for never cancelled token
-            if (!token.CanBeCanceled)
+            if (!token.CanBeCanceled || task.IsCompleted)
                 return task;
-
-            if (task.IsCompleted)
-                return task;
-            var cancel = FromCancellation<TResult>(token);
             if (token.IsCancellationRequested)
-                return cancel;
-            // when any hack to return first - cancelled or task
-            return Task.WhenAny(task, cancel).Unwrap();
+                return CreateCancelledTask<TResult>();
+            var tcs = new TaskCompletionSource<TResult>();
+
+            var reg = tcs.UseCancellation(token);
+            task.ContinueWith(t =>
+            {
+                reg.Dispose();
+                if (t.IsFaulted)
+                    // ReSharper disable once PossibleNullReferenceException
+                    tcs.TrySetException(t.Exception.InnerExceptions);
+                else if (t.IsCanceled)
+                    tcs.TrySetCanceled();
+                else
+                    tcs.TrySetResult(t.Result);
+            }, TaskContinuationOptions.ExecuteSynchronously);
+            
+            return tcs.Task;
         }
 
-        public static bool UseCancellation<T>(this TaskCompletionSource<T> source, CancellationToken cancellation)
+        public static IDisposable UseCancellation<T>(this TaskCompletionSource<T> source, CancellationToken cancellation)
         {
-            if (!cancellation.CanBeCanceled) 
-                return false;
-            if (cancellation.IsCancellationRequested)
-            {
-                source.TrySetCanceled();
-                return true;
-            }
-            cancellation.Register(x => ((TaskCompletionSource<T>)x).TrySetCanceled(), source);
-            return false;
+            if (!cancellation.CanBeCanceled)
+                return DisposableEx.Null();
+            if (!cancellation.IsCancellationRequested)
+                return cancellation.Register(x => ((TaskCompletionSource<T>) x).TrySetCanceled(), source);
+            source.TrySetCanceled();
+            return DisposableEx.Null();
         }
     }
 }

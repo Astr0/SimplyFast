@@ -3,154 +3,154 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.Collections;
 
 namespace SimplyFast.Tests.Collections
 {
-    [TestFixture]
+    
     public class DictionaryExTests
     {
-        [Test]
+        [Fact]
         public void GetOrDefaultIsAnExtensionMethod()
         {
             IDictionary<int, string> dictionary = new Dictionary<int, string> {{1, "test1"}, {2, "test2"}};
-            Assert.AreEqual("test1", dictionary.GetOrDefault(1, "1"));
-            Assert.AreEqual("test2", dictionary.GetOrDefault(2, "2"));
+            Assert.Equal("test1", dictionary.GetOrDefault(1, "1"));
+            Assert.Equal("test2", dictionary.GetOrDefault(2, "2"));
         }
 
-        [Test]
+        [Fact]
         public void GetOrDefaultUsesDictionary()
         {
             var dictionary = new Dictionary<int, string> {{1, "test1"}, {2, "test2"}};
-            Assert.AreEqual("test1", dictionary.GetOrDefault(1, "t"));
-            Assert.AreEqual("test2", dictionary.GetOrDefault(2, "t"));
+            Assert.Equal("test1", dictionary.GetOrDefault(1, "t"));
+            Assert.Equal("test2", dictionary.GetOrDefault(2, "t"));
             dictionary[1] = "test1m";
-            Assert.AreEqual("test1m", dictionary.GetOrDefault(1, "t"));
-            Assert.AreEqual("t", dictionary.GetOrDefault(3, "t"));
-            Assert.IsFalse(dictionary.ContainsKey(3));
+            Assert.Equal("test1m", dictionary.GetOrDefault(1, "t"));
+            Assert.Equal("t", dictionary.GetOrDefault(3, "t"));
+            Assert.False(dictionary.ContainsKey(3));
         }
 
-        [Test]
+        [Fact]
         public void GetOrDefaultWithDelegateIsAnExtensionMethod()
         {
             IDictionary<int, string> dictionary = new Dictionary<int, string> {{1, "test1"}, {2, "test2"}};
-            Assert.AreEqual("test1", dictionary.GetOrAdd(1, x => "123"));
-            Assert.AreEqual("test2", dictionary.GetOrAdd(2, x => "123"));
+            Assert.Equal("test1", dictionary.GetOrAdd(1, x => "123"));
+            Assert.Equal("test2", dictionary.GetOrAdd(2, x => "123"));
         }
 
-        [Test]
+        [Fact]
         public void GetOrDefaultWithDelegateUsesDictionary()
         {
             var dictionary = new Dictionary<int, string> {{1, "test1"}, {2, "test2"}};
-            Assert.AreEqual("test1", dictionary.GetOrAdd(1, x => "new"));
-            Assert.AreEqual("test2", dictionary.GetOrAdd(2, x => "new"));
+            Assert.Equal("test1", dictionary.GetOrAdd(1, x => "new"));
+            Assert.Equal("test2", dictionary.GetOrAdd(2, x => "new"));
             dictionary[1] = "test1m";
-            Assert.AreEqual("test1m", dictionary.GetOrAdd(1, x => "new"));
+            Assert.Equal("test1m", dictionary.GetOrAdd(1, x => "new"));
             dictionary.GetOrAdd(3, x => "new");
-            Assert.AreEqual("new", dictionary[3]);
+            Assert.Equal("new", dictionary[3]);
         }
 
-        [Test]
+        [Fact]
         public void GetOrDefaultWithDelegateWorks()
         {
             var dictionary = new Dictionary<int, double> {{1, 2.5}, {2, 3}};
-            Assert.AreEqual(2.5, dictionary.GetOrAdd(1, x => 1));
-            Assert.AreEqual(3, dictionary.GetOrAdd(2, x => 1));
-            Assert.AreEqual(1, dictionary.GetOrAdd(3, x => 1));
+            Assert.Equal(2.5, dictionary.GetOrAdd(1, x => 1));
+            Assert.Equal(3, dictionary.GetOrAdd(2, x => 1));
+            Assert.Equal(1, dictionary.GetOrAdd(3, x => 1));
         }
 
-        [Test]
+        [Fact]
         public void GetOrDefaultWorksWithReferenceTypes()
         {
             var dictionary = new Dictionary<int, object> {{1, 2.5}, {2, "test"}};
-            Assert.AreEqual(2.5, dictionary.GetOrDefault(1, 3));
-            Assert.AreEqual("test", dictionary.GetOrDefault(2, "t"));
-            Assert.IsNull(dictionary.GetOrDefault(3, null));
+            Assert.Equal(2.5, dictionary.GetOrDefault(1, 3));
+            Assert.Equal("test", dictionary.GetOrDefault(2, "t"));
+            Assert.Null(dictionary.GetOrDefault(3, null));
         }
 
-        [Test]
+        [Fact]
         public void GetOrDefaultWorksWithValueTypes()
         {
             var dictionary = new Dictionary<int, double> {{1, 2.5}, {2, 3}};
-            Assert.AreEqual(2.5, dictionary.GetOrDefault(1, 2));
-            Assert.AreEqual(3, dictionary.GetOrDefault(2, 2));
-            Assert.AreEqual(5, dictionary.GetOrDefault(3, 5));
+            Assert.Equal(2.5, dictionary.GetOrDefault(1, 2));
+            Assert.Equal(3, dictionary.GetOrDefault(2, 2));
+            Assert.Equal(5, dictionary.GetOrDefault(3, 5));
         }
 
-        [Test]
+        [Fact]
         public void GetOrAddIsAnExtensionMethod()
         {
             IDictionary<int, double> dictionary = new Dictionary<int, double> {{1, 3}, {2, 4.5}};
-            Assert.AreEqual(3, dictionary.GetOrAdd(1));
-            Assert.AreEqual(4.5, dictionary.GetOrAdd(2));
-            Assert.AreEqual(0, dictionary.GetOrAdd(3));
+            Assert.Equal(3, dictionary.GetOrAdd(1));
+            Assert.Equal(4.5, dictionary.GetOrAdd(2));
+            Assert.Equal(0, dictionary.GetOrAdd(3));
         }
 
-        [Test]
+        [Fact]
         public void GetOrAddUsesDictionary()
         {
             var dictionary = new Dictionary<int, double> {{1, 3.5}, {2, 4.5}};
-            Assert.AreEqual(3.5, dictionary.GetOrAdd(1));
-            Assert.AreEqual(4.5, dictionary.GetOrAdd(2));
+            Assert.Equal(3.5, dictionary.GetOrAdd(1));
+            Assert.Equal(4.5, dictionary.GetOrAdd(2));
             dictionary[1] = 5.5;
-            Assert.AreEqual(5.5, dictionary.GetOrAdd(1));
+            Assert.Equal(5.5, dictionary.GetOrAdd(1));
             dictionary.GetOrAdd(3);
-            Assert.AreEqual(0, dictionary[3]);
+            Assert.Equal(0, dictionary[3]);
         }
 
-        [Test]
+        [Fact]
         public void GetOrAddWorksWithReferenceTypes()
         {
             var dictionary = new Dictionary<int, object> {{1, 2.5}, {2, "test"}};
-            Assert.AreEqual(2.5, dictionary.GetOrAdd(1));
-            Assert.AreEqual("test", dictionary.GetOrAdd(2));
+            Assert.Equal(2.5, dictionary.GetOrAdd(1));
+            Assert.Equal("test", dictionary.GetOrAdd(2));
             var newObj = dictionary.GetOrAdd(3);
-            Assert.IsNotNull(newObj);
-            Assert.IsInstanceOf(typeof (object), newObj);
+            Assert.NotNull(newObj);
+            Assert.IsType(typeof (object), newObj);
         }
 
-        [Test]
+        [Fact]
         public void GetOrAddWorksWithValueTypes()
         {
             var dictionary = new Dictionary<int, double> {{1, 2.5}, {2, 3}};
-            Assert.AreEqual(2.5, dictionary.GetOrAdd(1));
-            Assert.AreEqual(3, dictionary.GetOrAdd(2));
-            Assert.AreEqual(0, dictionary.GetOrAdd(3));
+            Assert.Equal(2.5, dictionary.GetOrAdd(1));
+            Assert.Equal(3, dictionary.GetOrAdd(2));
+            Assert.Equal(0, dictionary.GetOrAdd(3));
         }
 
-        [Test]
+        [Fact]
         public void GetOrDefaultWorks()
         {
             var dictionary = new Dictionary<int, object> {{1, 2.5}, {2, "test"}};
-            Assert.AreEqual(2.5, dictionary.GetOrDefault(1));
-            Assert.AreEqual("test", dictionary.GetOrDefault(2));
-            Assert.AreEqual(null, dictionary.GetOrDefault(3));
-            Assert.AreEqual(2, dictionary.Count);
+            Assert.Equal(2.5, dictionary.GetOrDefault(1));
+            Assert.Equal("test", dictionary.GetOrDefault(2));
+            Assert.Equal(null, dictionary.GetOrDefault(3));
+            Assert.Equal(2, dictionary.Count);
         }
 
-        [Test]
+        [Fact]
         public void GetOrAddConcurrentWorks()
         {
             var dictionary = new ConcurrentDictionary<int, object>(new Dictionary<int, object> { { 1, 2.5 }, { 2, "test" } });
             bool added;
-            Assert.AreEqual(2.5, dictionary.GetOrAdd(1, c =>
+            Assert.Equal(2.5, dictionary.GetOrAdd(1, c =>
             {
                 throw new KeyNotFoundException();
             }, out added));
-            Assert.IsFalse(added);
-            Assert.AreEqual("test", dictionary.GetOrAdd(2, c =>
+            Assert.False(added);
+            Assert.Equal("test", dictionary.GetOrAdd(2, c =>
             {
                 throw new KeyNotFoundException();
             }, out added));
-            Assert.IsFalse(added);
+            Assert.False(added);
             var newObj = dictionary.GetOrAdd(3, c => new object(), out added);
-            Assert.IsNotNull(newObj);
-            Assert.IsInstanceOf(typeof(object), newObj);
-            Assert.IsTrue(added);
+            Assert.NotNull(newObj);
+            Assert.IsType(typeof(object), newObj);
+            Assert.True(added);
         }
 
-        [Test]
+        [Fact]
         [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
         public void GetOrAddConcurrentWorksConcurrently()
         {
@@ -188,14 +188,14 @@ namespace SimplyFast.Tests.Collections
                     thread.Start(t);
                     threads.Add(thread);
                 }
-                Assert.AreEqual(threadCount, threads.Count);
+                Assert.Equal(threadCount, threads.Count);
                 start.Set();
                 finish.Wait();
-                Assert.IsFalse(hadErrors);
-                Assert.AreEqual(count, dictionary.Count);
-                Assert.IsTrue(Enumerable.Range(0, count).All(i => dictionary[i] == i));
-                Assert.AreEqual(count, threadAdded.Sum());
-                Assert.GreaterOrEqual(threadCreated.Sum(), count);
+                Assert.False(hadErrors);
+                Assert.Equal(count, dictionary.Count);
+                Assert.True(Enumerable.Range(0, count).All(i => dictionary[i] == i));
+                Assert.Equal(count, threadAdded.Sum());
+                Assert.InRange(threadCreated.Sum(), count, count * threadCount);
             }
         }
         

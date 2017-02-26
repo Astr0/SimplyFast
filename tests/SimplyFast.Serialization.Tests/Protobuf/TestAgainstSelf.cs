@@ -1,10 +1,10 @@
 ﻿using System;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.Serialization.Tests.Protobuf.TestData;
 
 namespace SimplyFast.Serialization.Tests.Protobuf
 {
-    [TestFixture]
+    
     public class TestAgainstSelf : MessageTests
     {
         protected override void Test(FTestMessage message, Action<FTestMessage> customAssert = null)

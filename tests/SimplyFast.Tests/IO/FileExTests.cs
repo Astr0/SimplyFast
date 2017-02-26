@@ -1,7 +1,8 @@
-﻿using System.IO;
+﻿#if FILES
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.IO;
 
 namespace SimplyFast.Tests.IO
@@ -18,7 +19,7 @@ namespace SimplyFast.Tests.IO
             return bytes;
         }
 
-        [Test]
+        [Fact]
         public async Task ReadAllBytesOk()
         {
             var bytes = GetTestBytes();
@@ -27,7 +28,7 @@ namespace SimplyFast.Tests.IO
             {
                 File.WriteAllBytes(tmp, bytes);
                 var read = await FileEx.ReadAllBytes(tmp);
-                Assert.IsTrue(read.SequenceEqual(bytes));
+                Assert.True(read.SequenceEqual(bytes));
             }
             finally
             {
@@ -36,7 +37,7 @@ namespace SimplyFast.Tests.IO
             }
         }
 
-        [Test]
+        [Fact]
         public async Task WriteAllBytesOk()
         {
             var bytes = GetTestBytes();
@@ -45,7 +46,7 @@ namespace SimplyFast.Tests.IO
             {
                 await FileEx.WriteAllBytes(tmp, bytes);
                 var read = File.ReadAllBytes(tmp);
-                Assert.IsTrue(read.SequenceEqual(bytes));
+                Assert.True(read.SequenceEqual(bytes));
             }
             finally
             {
@@ -55,3 +56,4 @@ namespace SimplyFast.Tests.IO
         }
     }
 }
+#endif

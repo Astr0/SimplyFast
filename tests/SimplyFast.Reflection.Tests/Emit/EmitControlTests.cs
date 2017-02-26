@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection.Emit;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.Disposables;
 using SimplyFast.Reflection.Emit;
 
 namespace SimplyFast.Reflection.Tests.Emit
 {
-    [TestFixture]
+    
     public class EmitControlTests
     {
         public class TestClass
@@ -52,7 +52,7 @@ namespace SimplyFast.Reflection.Tests.Emit
             }
         }
 
-        [Test]
+        [Fact]
         public void CastFromOpTest()
         {
             var method = EmitEx.CreateMethod<Func<int, TestClass>>();
@@ -61,11 +61,11 @@ namespace SimplyFast.Reflection.Tests.Emit
             il.EmitCast(typeof(int), typeof(TestClass));
             il.Emit(OpCodes.Ret);
             var del = method.CreateDelegate<Func<int, TestClass>>();
-            Assert.AreEqual(1, del(1).TestField);
-            Assert.AreEqual(5, del(5).TestField);
+            Assert.Equal(1, del(1).TestField);
+            Assert.Equal(5, del(5).TestField);
         }
 
-        [Test]
+        [Fact]
         public void CastToOpTest()
         {
             var method = EmitEx.CreateMethod<Func<TestClass, int>>();
@@ -74,11 +74,11 @@ namespace SimplyFast.Reflection.Tests.Emit
             il.EmitCast(typeof(TestClass), typeof(int));
             il.Emit(OpCodes.Ret);
             var del = method.CreateDelegate<Func<TestClass, int>>();
-            Assert.AreEqual(1, del(new TestClass{TestField = 1}));
-            Assert.AreEqual(5, del(new TestClass { TestField = 5 }));
+            Assert.Equal(1, del(new TestClass{TestField = 1}));
+            Assert.Equal(5, del(new TestClass { TestField = 5 }));
         }
 
-        [Test]
+        [Fact]
         public void CastToBoxTest()
         {
             var method = EmitEx.CreateMethod<Func<int, object>>();
@@ -87,11 +87,11 @@ namespace SimplyFast.Reflection.Tests.Emit
             il.EmitCast(typeof(int), typeof(object));
             il.Emit(OpCodes.Ret);
             var del = method.CreateDelegate<Func<int, object>>();
-            Assert.AreEqual(1, del(1));
-            Assert.AreEqual(5, del(5));
+            Assert.Equal(1, del(1));
+            Assert.Equal(5, del(5));
         }
 
-        [Test]
+        [Fact]
         public void CastToUnBoxTest()
         {
             var method = EmitEx.CreateMethod<Func<object, int>>();
@@ -100,11 +100,11 @@ namespace SimplyFast.Reflection.Tests.Emit
             il.EmitCast(typeof(object), typeof(int));
             il.Emit(OpCodes.Ret);
             var del = method.CreateDelegate<Func<object, int>>();
-            Assert.AreEqual(1, del(1));
-            Assert.AreEqual(5, del(5));
+            Assert.Equal(1, del(1));
+            Assert.Equal(5, del(5));
         }
 
-        [Test]
+        [Fact]
         public void CastToCastClassToObjectTest()
         {
             var method = EmitEx.CreateMethod<Func<string, object>>();
@@ -113,11 +113,11 @@ namespace SimplyFast.Reflection.Tests.Emit
             il.EmitCast(typeof(string), typeof(object));
             il.Emit(OpCodes.Ret);
             var del = method.CreateDelegate<Func<string, object>>();
-            Assert.AreEqual("1", del("1"));
-            Assert.AreEqual("5", del("5"));
+            Assert.Equal("1", del("1"));
+            Assert.Equal("5", del("5"));
         }
 
-        [Test]
+        [Fact]
         public void CastToCastClassFromObjectTest()
         {
             var method = EmitEx.CreateMethod<Func<object, string>>();
@@ -126,11 +126,11 @@ namespace SimplyFast.Reflection.Tests.Emit
             il.EmitCast(typeof(object), typeof(string));
             il.Emit(OpCodes.Ret);
             var del = method.CreateDelegate<Func<object, string>>();
-            Assert.AreEqual("1", del("1"));
-            Assert.AreEqual("5", del("5"));
+            Assert.Equal("1", del("1"));
+            Assert.Equal("5", del("5"));
         }
 
-        [Test]
+        [Fact]
         public void TestFor()
         {
             var method = EmitEx.CreateMethod<Func<int, int>>();
@@ -166,11 +166,11 @@ namespace SimplyFast.Reflection.Tests.Emit
             il.EmitLdloc(s);
             il.Emit(OpCodes.Ret);
             var del = method.CreateDelegate<Func<int, int>>();
-            Assert.AreEqual(Enumerable.Range(0, 6).Sum(), del(5));
-            Assert.AreEqual(Enumerable.Range(0, 4).Sum(), del(3));
+            Assert.Equal(Enumerable.Range(0, 6).Sum(), del(5));
+            Assert.Equal(Enumerable.Range(0, 4).Sum(), del(3));
         }
 
-        [Test]
+        [Fact]
         public void TestForEach()
         {
             var method = EmitEx.CreateMethod<Func<IEnumerable<int>, int>>();
@@ -189,11 +189,11 @@ namespace SimplyFast.Reflection.Tests.Emit
             il.EmitLdloc(s);
             il.Emit(OpCodes.Ret);
             var del = method.CreateDelegate<Func<IEnumerable<int>, int>>();
-            Assert.AreEqual(Enumerable.Range(0, 6).Sum(), del(Enumerable.Range(0, 6)));
-            Assert.AreEqual(Enumerable.Range(0, 4).Sum(), del(Enumerable.Range(0, 4)));
+            Assert.Equal(Enumerable.Range(0, 6).Sum(), del(Enumerable.Range(0, 6)));
+            Assert.Equal(Enumerable.Range(0, 4).Sum(), del(Enumerable.Range(0, 4)));
         }
 
-        [Test]
+        [Fact]
         public void TestForEachEnumerable()
         {
             var method = EmitEx.CreateMethod<Func<IEnumerable, int>>();
@@ -217,11 +217,11 @@ namespace SimplyFast.Reflection.Tests.Emit
             /*list.Insert(2, "test");
             list.Insert(4, 2.3);
             list.Add(null);*/
-            Assert.AreEqual(Enumerable.Range(0, 6).Sum(), del(list));
-            Assert.AreEqual(Enumerable.Range(0, 4).Sum(), del(Enumerable.Range(0, 4)));
+            Assert.Equal(Enumerable.Range(0, 6).Sum(), del(list));
+            Assert.Equal(Enumerable.Range(0, 4).Sum(), del(Enumerable.Range(0, 4)));
         }
 
-        [Test]
+        [Fact]
         public void TestUsing()
         {
             var method = EmitEx.CreateMethod<Func<IDisposable, int>>();
@@ -239,11 +239,11 @@ namespace SimplyFast.Reflection.Tests.Emit
             var compiled = method.CreateDelegate<Func<IDisposable, int>>(); 
             var disposed = false;
             var dis = DisposableEx.Action(() => disposed = true);
-            Assert.AreEqual(42, compiled(dis));
-            Assert.IsTrue(disposed);
+            Assert.Equal(42, compiled(dis));
+            Assert.True(disposed);
         }
 
-        [Test]
+        [Fact]
         public void TestWhile()
         {
             var method = EmitEx.CreateMethod<Func<int, int>>();
@@ -278,7 +278,7 @@ namespace SimplyFast.Reflection.Tests.Emit
             il.Emit(OpCodes.Ret);
 
             var compiled = method.CreateDelegate<Func<int, int>>(); 
-            Assert.AreEqual(Enumerable.Range(0, 6).Sum(), compiled(5));
+            Assert.Equal(Enumerable.Range(0, 6).Sum(), compiled(5));
         }
     }
 }

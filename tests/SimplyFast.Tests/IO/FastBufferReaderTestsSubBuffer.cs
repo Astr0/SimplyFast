@@ -1,10 +1,10 @@
 ﻿using System;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.IO;
 
 namespace SimplyFast.Tests.IO
 {
-    [TestFixture]
+    
     public class FastBufferReaderTestsSubBuffer: FastBufferReaderTests
     {
         private byte[] _buffer;

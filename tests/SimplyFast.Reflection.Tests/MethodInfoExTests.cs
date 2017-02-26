@@ -2,60 +2,60 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.Reflection.Tests.TestData;
 
 namespace SimplyFast.Reflection.Tests
 {
-    [TestFixture]
+    
     public class MethodInfoExTests
     {
         private delegate int SumDelegate(int a, int b, out int c, ref int d);
 
         private delegate object SumDelegateObj(object a, object b, out object c, ref object d);
 
-        [Test]
+        [Fact]
         public void FindOverloadReturnsNullOnMultipleGenericMatches()
         {
             var parameters = new[] { typeof(int), typeof(int) };
             var methodGeneric = typeof(TestClass2).FindMethod("Max", parameters);
-            Assert.IsNull(methodGeneric);
+            Assert.Null(methodGeneric);
             var method = typeof(TestClass2).FindMethod("Max", parameters);
-            Assert.IsNull(method);
+            Assert.Null(method);
         }
 
-        [Test]
+        [Fact]
         public void FindOverloadWorks()
         {
             var intParameters = new[] { typeof(int), typeof(int) };
             var normalInt = typeof(TestClass2).FindMethod("Max3", intParameters);
-            Assert.IsNotNull(normalInt);
-            Assert.AreEqual(7, normalInt.InvokerAs<Func<object, object, object>>()(3, 5));
+            Assert.NotNull(normalInt);
+            Assert.Equal(7, normalInt.InvokerAs<Func<object, object, object>>()(3, 5));
 
             var doubleParameters = new[] { typeof(double), typeof(double) };
             var normalDouble = typeof(TestClass2).FindMethod("Max3", doubleParameters);
-            Assert.IsNotNull(normalDouble);
-            Assert.AreEqual(6.5, normalDouble.InvokerAs<Func<double, double, double>>()(3.5, 5.5));
+            Assert.NotNull(normalDouble);
+            Assert.Equal(6.5, normalDouble.InvokerAs<Func<double, double, double>>()(3.5, 5.5));
 
             var floatParameters = new[] { typeof(float), typeof(float) };
             var genericFloat = typeof(TestClass2).FindMethod("Max3", floatParameters);
-            Assert.IsNotNull(normalDouble);
-            Assert.IsTrue(genericFloat.IsGenericMethod);
-            Assert.AreEqual(5.5f, genericFloat.InvokerAs<Func<float, float, float>>()(3.5f, 5.5f));
+            Assert.NotNull(normalDouble);
+            Assert.True(genericFloat.IsGenericMethod);
+            Assert.Equal(5.5f, genericFloat.InvokerAs<Func<float, float, float>>()(3.5f, 5.5f));
         }
 
-        [Test]
+        [Fact]
         public void GenericWorks()
         {
             var genericMethod = typeof(TestClass2).Method("Max", 1, Substitute.T[0], Substitute.T[0]);
-            Assert.IsNotNull(genericMethod);
+            Assert.NotNull(genericMethod);
             var method = genericMethod.MakeGeneric(typeof(int));
-            Assert.AreEqual(5, method.InvokerAs<Func<int, int, int>>()(3, 5));
+            Assert.Equal(5, method.InvokerAs<Func<int, int, int>>()(3, 5));
             var method2 = genericMethod.MakeGeneric(typeof(double));
-            Assert.AreEqual(3.7, method2.InvokerAs<Func<object, double, double>>()(3.7, 1.2));
+            Assert.Equal(3.7, method2.InvokerAs<Func<object, double, double>>()(3.7, 1.2));
         }
 
-        [Test]
+        [Fact]
         public void InvokesIntMethod()
         {
             var t2 = new TestClass2();
@@ -63,24 +63,24 @@ namespace SimplyFast.Reflection.Tests
             var method = typeof(TestClass2).Method("GetF1");
             var invoker1 = method.InvokerAs<Func<TestClass2, int>>();
             var invoker2 = method.InvokerAs<Func<object, object>>();
-            Assert.AreEqual(11, invoker1(t2));
-            Assert.AreEqual(11, invoker2(t2));
-            Assert.AreEqual(11, invoker1(t3));
-            Assert.AreEqual(11, invoker2(t3));
+            Assert.Equal(11, invoker1(t2));
+            Assert.Equal(11, invoker2(t2));
+            Assert.Equal(11, invoker1(t3));
+            Assert.Equal(11, invoker2(t3));
         }
 
-        [Test]
+        [Fact]
         public void InvokesIntMethodInvoker()
         {
             var t2 = new TestClass2();
             var t3 = new TestClass3();
             var method = typeof(TestClass2).Method("GetF1");
             var invoker = method.Invoker();
-            Assert.AreEqual(11, invoker(t2));
-            Assert.AreEqual(11, invoker(t3));
+            Assert.Equal(11, invoker(t2));
+            Assert.Equal(11, invoker(t3));
         }
 
-        [Test]
+        [Fact]
         public void InvokesIntMethodAs()
         {
             var t2 = new TestClass2();
@@ -88,186 +88,186 @@ namespace SimplyFast.Reflection.Tests
             var method = typeof(TestClass2).Method("GetF1");
             var invoker1 = method.InvokerAs<Func<TestClass2, int>>();
             var invoker2 = method.InvokerAs<Func<object, object>>();
-            Assert.AreEqual(11, invoker1(t2));
-            Assert.AreEqual(11, invoker2(t2));
-            Assert.AreEqual(11, invoker1(t3));
-            Assert.AreEqual(11, invoker2(t3));
+            Assert.Equal(11, invoker1(t2));
+            Assert.Equal(11, invoker2(t2));
+            Assert.Equal(11, invoker1(t3));
+            Assert.Equal(11, invoker2(t3));
         }
 
-        [Test]
+        [Fact]
         public void InvokesNewMethod()
         {
             var t3 = new TestClass3();
             var method = typeof(TestClass3).Method("GetF1");
-            Assert.AreEqual(12, method.InvokerAs<Func<TestClass3, object>>()(t3));
-            Assert.AreEqual(12, method.InvokerAs<Func<TestClass3, int>>()(t3));
+            Assert.Equal(12, method.InvokerAs<Func<TestClass3, object>>()(t3));
+            Assert.Equal(12, method.InvokerAs<Func<TestClass3, int>>()(t3));
         }
 
-        [Test]
+        [Fact]
         public void InvokesNewMethodAs()
         {
             var t3 = new TestClass3();
             var method = typeof(TestClass3).Method("GetF1");
-            Assert.AreEqual(12, method.InvokerAs<Func<TestClass3, object>>()(t3));
-            Assert.AreEqual(12, method.InvokerAs<Func<TestClass3, int>>()(t3));
+            Assert.Equal(12, method.InvokerAs<Func<TestClass3, object>>()(t3));
+            Assert.Equal(12, method.InvokerAs<Func<TestClass3, int>>()(t3));
         }
 
-        [Test]
+        [Fact]
         public void InvokesPrivateMethod()
         {
             var t2 = new TestClass2();
             var method = typeof(TestClass2).Method("SetP2P3Test", typeof(string), typeof(string));
-            Assert.IsNull(method.InvokerAs<Func<object, object, object, object>>()(t2, "t1", "t2"));
-            Assert.AreEqual("t1", t2.P2);
-            Assert.AreEqual("t2", t2.P3);
-            Assert.IsNull(method.InvokerAs<Func<object, string, string, object>>()(t2, "t1!", "t2!"));
-            Assert.AreEqual("t1!", t2.P2);
-            Assert.AreEqual("t2!", t2.P3);
+            Assert.Null(method.InvokerAs<Func<object, object, object, object>>()(t2, "t1", "t2"));
+            Assert.Equal("t1", t2.P2);
+            Assert.Equal("t2", t2.P3);
+            Assert.Null(method.InvokerAs<Func<object, string, string, object>>()(t2, "t1!", "t2!"));
+            Assert.Equal("t1!", t2.P2);
+            Assert.Equal("t2!", t2.P3);
         }
 
-        [Test]
+        [Fact]
         public void InvokesPrivateMethodInvoker()
         {
             var t2 = new TestClass2();
             var method = typeof(TestClass2).Method("SetP2P3Test", typeof(string), typeof(string));
-            Assert.IsNull(method.Invoker()(t2, "t1", "t2"));
-            Assert.AreEqual("t1", t2.P2);
-            Assert.AreEqual("t2", t2.P3);
+            Assert.Null(method.Invoker()(t2, "t1", "t2"));
+            Assert.Equal("t1", t2.P2);
+            Assert.Equal("t2", t2.P3);
         }
 
-        [Test]
+        [Fact]
         public void InvokesPrivateMethodAs()
         {
             var t2 = new TestClass2();
             var method = typeof(TestClass2).Method("SetP2P3Test", typeof(string), typeof(string));
-            Assert.IsNull(method.InvokerAs<Func<object, object, object, object>>()(t2, "t1", "t2"));
-            Assert.AreEqual("t1", t2.P2);
-            Assert.AreEqual("t2", t2.P3);
-            Assert.IsNull(method.InvokerAs<Func<object, string, string, object>>()(t2, "t1!", "t2!"));
-            Assert.AreEqual("t1!", t2.P2);
-            Assert.AreEqual("t2!", t2.P3);
+            Assert.Null(method.InvokerAs<Func<object, object, object, object>>()(t2, "t1", "t2"));
+            Assert.Equal("t1", t2.P2);
+            Assert.Equal("t2", t2.P3);
+            Assert.Null(method.InvokerAs<Func<object, string, string, object>>()(t2, "t1!", "t2!"));
+            Assert.Equal("t1!", t2.P2);
+            Assert.Equal("t2!", t2.P3);
         }
 
-        [Test]
+        [Fact]
         public void InvokesStaticOptionalArgs()
         {
             var method = typeof(TestClass2).Method("Sum", typeof(int), typeof(int), typeof(int[]));
-            Assert.AreEqual(10, method.InvokerAs<Func<int, int, int[], int>>()(4, 6, new int[0]));
-            Assert.AreEqual(25, method.InvokerAs<Func<object, object, int[], int>>()(4, 6, new[] { 1, 2, 3, 4, 5 }));
+            Assert.Equal(10, method.InvokerAs<Func<int, int, int[], int>>()(4, 6, new int[0]));
+            Assert.Equal(25, method.InvokerAs<Func<object, object, int[], int>>()(4, 6, new[] { 1, 2, 3, 4, 5 }));
         }
 
-        [Test]
+        [Fact]
         public void InvokesStaticOptionalArgsAs()
         {
             var method = typeof(TestClass2).Method("Sum", typeof(int), typeof(int), typeof(int[]));
-            Assert.AreEqual(10, method.InvokerAs<Func<int, int, int[], int>>()(4, 6, new int[0]));
-            Assert.AreEqual(25, method.InvokerAs<Func<object, object, int[], int>>()(4, 6, new[] { 1, 2, 3, 4, 5 }));
+            Assert.Equal(10, method.InvokerAs<Func<int, int, int[], int>>()(4, 6, new int[0]));
+            Assert.Equal(25, method.InvokerAs<Func<object, object, int[], int>>()(4, 6, new[] { 1, 2, 3, 4, 5 }));
         }
 
-        [Test]
+        [Fact]
         public void InvokesStaticOptionalArgsInvoker()
         {
             var method = typeof(TestClass2).Method("Sum", typeof(int), typeof(int), typeof(int[]));
-            Assert.AreEqual(10, method.Invoker()(null, 4, 6, new int[0]));
-            Assert.AreEqual(25, method.Invoker()(null, 4, 6, new[] { 1, 2, 3, 4, 5 }));
+            Assert.Equal(10, method.Invoker()(null, 4, 6, new int[0]));
+            Assert.Equal(25, method.Invoker()(null, 4, 6, new[] { 1, 2, 3, 4, 5 }));
         }
 
-        [Test]
+        [Fact]
         public void InvokesVirtualMethod()
         {
             var t2 = new TestClass2();
             var t3 = new TestClass3();
             var method = typeof(TestClass2).Method("SetP2P3", typeof(string), typeof(string));
-            Assert.IsNull(method.InvokerAs<Func<TestClass2, string, string, object>>()(t2, "t1", "t2"));
-            Assert.AreEqual("t1", t2.P2);
-            Assert.AreEqual("t2", t2.P3);
-            Assert.IsNull(method.InvokerAs<Func<object, string, object, object>>()(t2, "t1!", "t2!"));
-            Assert.AreEqual("t1!", t2.P2);
-            Assert.IsNull(method.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t1", "t2"));
-            Assert.AreEqual("t1_", t3.P2);
-            Assert.AreEqual("t2_", t3.P3);
-            Assert.IsNull(method.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t1!", "t2!"));
-            Assert.AreEqual("t1!_", t3.P2);
-            Assert.AreEqual("t2!_", t3.P3);
+            Assert.Null(method.InvokerAs<Func<TestClass2, string, string, object>>()(t2, "t1", "t2"));
+            Assert.Equal("t1", t2.P2);
+            Assert.Equal("t2", t2.P3);
+            Assert.Null(method.InvokerAs<Func<object, string, object, object>>()(t2, "t1!", "t2!"));
+            Assert.Equal("t1!", t2.P2);
+            Assert.Null(method.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t1", "t2"));
+            Assert.Equal("t1_", t3.P2);
+            Assert.Equal("t2_", t3.P3);
+            Assert.Null(method.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t1!", "t2!"));
+            Assert.Equal("t1!_", t3.P2);
+            Assert.Equal("t2!_", t3.P3);
             var method2 = typeof(TestClass3).Method("SetP2P3", typeof(string), typeof(string));
-            Assert.IsNull(method2.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t11", "t22"));
-            Assert.AreEqual("t11_", t3.P2);
-            Assert.AreEqual("t22_", t3.P3);
-            Assert.IsNull(method2.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t11!", "t22!"));
-            Assert.AreEqual("t11!_", t3.P2);
-            Assert.AreEqual("t22!_", t3.P3);
+            Assert.Null(method2.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t11", "t22"));
+            Assert.Equal("t11_", t3.P2);
+            Assert.Equal("t22_", t3.P3);
+            Assert.Null(method2.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t11!", "t22!"));
+            Assert.Equal("t11!_", t3.P2);
+            Assert.Equal("t22!_", t3.P3);
         }
 
-        [Test]
+        [Fact]
         public void InvokesVirtualMethodAs()
         {
             var t2 = new TestClass2();
             var t3 = new TestClass3();
             var method = typeof(TestClass2).Method("SetP2P3", typeof(string), typeof(string));
-            Assert.IsNull(method.InvokerAs<Func<TestClass2, string, string, object>>()(t2, "t1", "t2"));
-            Assert.AreEqual("t1", t2.P2);
-            Assert.AreEqual("t2", t2.P3);
-            Assert.IsNull(method.InvokerAs<Func<object, string, object, object>>()(t2, "t1!", "t2!"));
-            Assert.AreEqual("t1!", t2.P2);
-            Assert.IsNull(method.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t1", "t2"));
-            Assert.AreEqual("t1_", t3.P2);
-            Assert.AreEqual("t2_", t3.P3);
-            Assert.IsNull(method.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t1!", "t2!"));
-            Assert.AreEqual("t1!_", t3.P2);
-            Assert.AreEqual("t2!_", t3.P3);
+            Assert.Null(method.InvokerAs<Func<TestClass2, string, string, object>>()(t2, "t1", "t2"));
+            Assert.Equal("t1", t2.P2);
+            Assert.Equal("t2", t2.P3);
+            Assert.Null(method.InvokerAs<Func<object, string, object, object>>()(t2, "t1!", "t2!"));
+            Assert.Equal("t1!", t2.P2);
+            Assert.Null(method.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t1", "t2"));
+            Assert.Equal("t1_", t3.P2);
+            Assert.Equal("t2_", t3.P3);
+            Assert.Null(method.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t1!", "t2!"));
+            Assert.Equal("t1!_", t3.P2);
+            Assert.Equal("t2!_", t3.P3);
             var method2 = typeof(TestClass3).Method("SetP2P3", typeof(string), typeof(string));
-            Assert.IsNull(method2.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t11", "t22"));
-            Assert.AreEqual("t11_", t3.P2);
-            Assert.AreEqual("t22_", t3.P3);
-            Assert.IsNull(method2.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t11!", "t22!"));
-            Assert.AreEqual("t11!_", t3.P2);
-            Assert.AreEqual("t22!_", t3.P3);
+            Assert.Null(method2.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t11", "t22"));
+            Assert.Equal("t11_", t3.P2);
+            Assert.Equal("t22_", t3.P3);
+            Assert.Null(method2.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t11!", "t22!"));
+            Assert.Equal("t11!_", t3.P2);
+            Assert.Equal("t22!_", t3.P3);
         }
 
-        [Test]
+        [Fact]
         public void ModifiersWorks()
         {
             var method = typeof(TestClass2).Method("Sum", typeof(int), typeof(int), typeof(int).MakeByRefType(), typeof(int).MakeByRefType());
-            Assert.IsNotNull(method);
+            Assert.NotNull(method);
             int c;
             var d = 2;
-            Assert.AreEqual(12, method.InvokerAs<SumDelegate>()(7, 3, out c, ref d));
-            Assert.AreEqual(4, c);
-            Assert.AreEqual(12, d);
+            Assert.Equal(12, method.InvokerAs<SumDelegate>()(7, 3, out c, ref d));
+            Assert.Equal(4, c);
+            Assert.Equal(12, d);
             object cobj;
             object dobj = 2;
             var invoker = method.InvokerAs<SumDelegateObj>();
-            Assert.AreEqual(12, invoker(7, 3, out cobj, ref dobj));
-            Assert.AreEqual(4, cobj);
-            Assert.AreEqual(12, dobj);
+            Assert.Equal(12, invoker(7, 3, out cobj, ref dobj));
+            Assert.Equal(4, cobj);
+            Assert.Equal(12, dobj);
         }
 
-        [Test]
+        [Fact]
         public void ModifiersWorksAs()
         {
             var method = typeof(TestClass2).Method("Sum", typeof(int), typeof(int), typeof(int).MakeByRefType(), typeof(int).MakeByRefType());
-            Assert.IsNotNull(method);
+            Assert.NotNull(method);
             int c;
             var d = 2;
-            Assert.AreEqual(12, method.InvokerAs<SumDelegate>()(7, 3, out c, ref d));
-            Assert.AreEqual(4, c);
-            Assert.AreEqual(12, d);
+            Assert.Equal(12, method.InvokerAs<SumDelegate>()(7, 3, out c, ref d));
+            Assert.Equal(4, c);
+            Assert.Equal(12, d);
             object cobj;
             object dobj = 2;
             var invoker = method.InvokerAs<SumDelegateObj>();
-            Assert.AreEqual(12, invoker(7, 3, out cobj, ref dobj));
-            Assert.AreEqual(4, cobj);
-            Assert.AreEqual(12, dobj);
+            Assert.Equal(12, invoker(7, 3, out cobj, ref dobj));
+            Assert.Equal(4, cobj);
+            Assert.Equal(12, dobj);
         }
 
-        [Test]
+        [Fact]
         public void IsOperatorWorks()
         {
             var methods =
                 typeof(decimal).GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public |
                                             BindingFlags.NonPublic);
             var count = methods.Count(x => x.IsOperator());
-            Assert.AreEqual(37, count);
+            Assert.Equal(37, count);
         }
 
         private class ClassWithInvoke
@@ -276,13 +276,13 @@ namespace SimplyFast.Reflection.Tests
             public void Invoke() { }
         }
 
-        [Test]
+        [Fact]
         public void GetInvokeMethodWorks()
         {
-            Assert.AreEqual(typeof(string), MethodInfoEx.GetInvokeMethod(typeof(Func<string>)).ReturnType);
-            Assert.AreEqual(0, MethodInfoEx.GetInvokeMethod(typeof(Func<string>)).GetParameters().Length);
-            Assert.AreEqual(typeof(void), MethodInfoEx.GetInvokeMethod(typeof(Action<string, string>)).ReturnType);
-            Assert.AreEqual(2, MethodInfoEx.GetInvokeMethod(typeof(Action<string, string>)).GetParameters().Length);
+            Assert.Equal(typeof(string), MethodInfoEx.GetInvokeMethod(typeof(Func<string>)).ReturnType);
+            Assert.Equal(0, MethodInfoEx.GetInvokeMethod(typeof(Func<string>)).GetParameters().Length);
+            Assert.Equal(typeof(void), MethodInfoEx.GetInvokeMethod(typeof(Action<string, string>)).ReturnType);
+            Assert.Equal(2, MethodInfoEx.GetInvokeMethod(typeof(Action<string, string>)).GetParameters().Length);
             Assert.Throws<ArgumentException>(() => MethodInfoEx.GetInvokeMethod(typeof(string)));
             Assert.Throws<ArgumentException>(() => MethodInfoEx.GetInvokeMethod(typeof(ClassWithInvoke)));
         }
@@ -330,43 +330,43 @@ namespace SimplyFast.Reflection.Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void FindCastToWorks()
         {
             var t = typeof(Cast1);
-            Assert.AreEqual(typeof(int), MethodInfoEx.FindCastToOperator(t, typeof(int)).ReturnType);
-            Assert.AreEqual(typeof(double), MethodInfoEx.FindCastToOperator(t, typeof(double)).ReturnType);
-            Assert.AreEqual(typeof(Cast2), MethodInfoEx.FindCastToOperator(t, typeof(Cast2)).ReturnType);
-            Assert.IsNull(MethodInfoEx.FindCastToOperator(t, typeof(string)));
-            Assert.IsNull(MethodInfoEx.FindCastToOperator(t, typeof(decimal)));
+            Assert.Equal(typeof(int), MethodInfoEx.FindCastToOperator(t, typeof(int)).ReturnType);
+            Assert.Equal(typeof(double), MethodInfoEx.FindCastToOperator(t, typeof(double)).ReturnType);
+            Assert.Equal(typeof(Cast2), MethodInfoEx.FindCastToOperator(t, typeof(Cast2)).ReturnType);
+            Assert.Null(MethodInfoEx.FindCastToOperator(t, typeof(string)));
+            Assert.Null(MethodInfoEx.FindCastToOperator(t, typeof(decimal)));
         }
 
-        [Test]
+        [Fact]
         public void FindCastFromWorks()
         {
             var t = typeof(Cast2);
-            Assert.AreEqual(typeof(int), MethodInfoEx.FindCastFromOperator(typeof(int), t).GetParameterTypes()[0]);
-            Assert.AreEqual(typeof(double), MethodInfoEx.FindCastFromOperator(typeof(double), t).GetParameterTypes()[0]);
-            Assert.AreEqual(typeof(Cast1), MethodInfoEx.FindCastFromOperator(typeof(Cast1), t).GetParameterTypes()[0]);
-            Assert.IsNull(MethodInfoEx.FindCastFromOperator(typeof(string), t));
-            Assert.IsNull(MethodInfoEx.FindCastFromOperator(typeof(decimal), t));
+            Assert.Equal(typeof(int), MethodInfoEx.FindCastFromOperator(typeof(int), t).GetParameterTypes()[0]);
+            Assert.Equal(typeof(double), MethodInfoEx.FindCastFromOperator(typeof(double), t).GetParameterTypes()[0]);
+            Assert.Equal(typeof(Cast1), MethodInfoEx.FindCastFromOperator(typeof(Cast1), t).GetParameterTypes()[0]);
+            Assert.Null(MethodInfoEx.FindCastFromOperator(typeof(string), t));
+            Assert.Null(MethodInfoEx.FindCastFromOperator(typeof(decimal), t));
         }
 
-        [Test]
+        [Fact]
         public void FindCastWorks()
         {
             var t1 = typeof(Cast1);
             var t2 = typeof(Cast2);
-            Assert.AreEqual(typeof(int), MethodInfoEx.FindCastOperator(t1, typeof(int)).ReturnType);
-            Assert.AreEqual(typeof(double), MethodInfoEx.FindCastOperator(t1, typeof(double)).ReturnType);
-            Assert.IsNull(MethodInfoEx.FindCastToOperator(t1, typeof(string)));
-            Assert.IsNull(MethodInfoEx.FindCastToOperator(t1, typeof(decimal)));
+            Assert.Equal(typeof(int), MethodInfoEx.FindCastOperator(t1, typeof(int)).ReturnType);
+            Assert.Equal(typeof(double), MethodInfoEx.FindCastOperator(t1, typeof(double)).ReturnType);
+            Assert.Null(MethodInfoEx.FindCastToOperator(t1, typeof(string)));
+            Assert.Null(MethodInfoEx.FindCastToOperator(t1, typeof(decimal)));
 
-            Assert.AreEqual(typeof(int), MethodInfoEx.FindCastOperator(typeof(int), t2).GetParameterTypes()[0]);
-            Assert.AreEqual(typeof(double), MethodInfoEx.FindCastOperator(typeof(double), t2).GetParameterTypes()[0]);
-            Assert.AreEqual(t2, MethodInfoEx.FindCastOperator(t2, t1).GetParameterTypes()[0]);
-            Assert.IsNull(MethodInfoEx.FindCastOperator(typeof(string), t2));
-            Assert.IsNull(MethodInfoEx.FindCastOperator(typeof(decimal), t2));
+            Assert.Equal(typeof(int), MethodInfoEx.FindCastOperator(typeof(int), t2).GetParameterTypes()[0]);
+            Assert.Equal(typeof(double), MethodInfoEx.FindCastOperator(typeof(double), t2).GetParameterTypes()[0]);
+            Assert.Equal(t2, MethodInfoEx.FindCastOperator(t2, t1).GetParameterTypes()[0]);
+            Assert.Null(MethodInfoEx.FindCastOperator(typeof(string), t2));
+            Assert.Null(MethodInfoEx.FindCastOperator(typeof(decimal), t2));
 
             Assert.Throws<AmbiguousMatchException>(() => MethodInfoEx.FindCastOperator(t1, t2));
         }
@@ -384,7 +384,7 @@ namespace SimplyFast.Reflection.Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void MethodsOk()
         {
             var objMethods =
@@ -394,10 +394,10 @@ namespace SimplyFast.Reflection.Tests
                                           .ToArray();
 
             var methods = typeof(ClassWith2Methods).Methods();
-            Assert.AreEqual(2 + objMethods.Length, methods.Length);
-            Assert.AreEqual(2, methods.Count(x => x.DeclaringType == typeof(ClassWith2Methods)));
-            Assert.AreEqual(1, typeof(ClassWith2Methods).Methods("ToString").Length);
-            Assert.IsNotNull(typeof(ClassWith2Methods).Method("TestStatic", new[] { typeof(string) }, new[] { typeof(string), typeof(int) }));
+            Assert.Equal(2 + objMethods.Length, methods.Length);
+            Assert.Equal(2, methods.Count(x => x.DeclaringType == typeof(ClassWith2Methods)));
+            Assert.Equal(1, typeof(ClassWith2Methods).Methods("ToString").Length);
+            Assert.NotNull(typeof(ClassWith2Methods).Method("TestStatic", new[] { typeof(string) }, new[] { typeof(string), typeof(int) }));
         }
 
 
@@ -414,17 +414,17 @@ namespace SimplyFast.Reflection.Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void InvokesGenericInterfaceMethod()
         {
             var test = new TestInterface();
             var method = typeof(ITest).Method("GetDefault").MakeGeneric(typeof(int));
             var exactInvoker = method.InvokerAs<Func<ITest, int>>();
-            Assert.AreEqual(test.GetDefault<int>(), exactInvoker(test));
+            Assert.Equal(test.GetDefault<int>(), exactInvoker(test));
             var returnInvoker = method.InvokerAs<Func<ITest, object>>();
-            Assert.AreEqual(test.GetDefault<int>(), returnInvoker(test));
+            Assert.Equal(test.GetDefault<int>(), returnInvoker(test));
             var convertInvoker = method.InvokerAs<Func<object, object>>();
-            Assert.AreEqual(test.GetDefault<int>(), convertInvoker(test));
+            Assert.Equal(test.GetDefault<int>(), convertInvoker(test));
         }
 
     }

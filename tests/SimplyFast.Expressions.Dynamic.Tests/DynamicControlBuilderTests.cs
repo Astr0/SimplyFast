@@ -2,16 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.Disposables;
 using static SimplyFast.Expressions.Dynamic.DynamicControlBuilder;
 
 namespace SimplyFast.Expressions.Dynamic.Tests
 {
-    [TestFixture]
+    
     public class DynamicControlBuilderTests
     {
-        [Test]
+        [Fact]
         public void BlockTest()
         {
             var lambda = Lambda(p =>
@@ -24,7 +24,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                     p.b = b.t
                 });
             });
-            Assert.AreEqual(@"(Int32 a, Int32 b) => {
+            Assert.Equal(@"(Int32 a, Int32 b) => {
   Int32 t;
   (t = a);
   (a = b);
@@ -33,7 +33,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         }
 
 
-        [Test]
+        [Fact]
         public void BlockTestLastFine()
         {
             var lambda = Lambda(p =>
@@ -46,14 +46,14 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                     b.t
                 });
             });
-            Assert.AreEqual(@"(Int32 a, Int32 b) => {
+            Assert.Equal(@"(Int32 a, Int32 b) => {
   Int32 t;
   (t = (a + b));
   t;
 }", lambda.ToDebugString());
         }
 
-        [Test]
+        [Fact]
         public void BlockTestNoDeclaration()
         {
             var lambda = Lambda(p => Block(b => new[]
@@ -62,7 +62,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 p.a = p(typeof(int), "b"),
                 p.b = b.t
             }));
-            Assert.AreEqual(@"(Int32 a, Int32 b) => {
+            Assert.Equal(@"(Int32 a, Int32 b) => {
   Int32 t;
   (t = a);
   (a = b);
@@ -70,18 +70,18 @@ namespace SimplyFast.Expressions.Dynamic.Tests
 }", lambda.ToDebugString());
         }
 
-        [Test]
+        [Fact]
         public void IfElseTest()
         {
             var lambda = Lambda(p => If(p(typeof(int), "a") >= 0, p.a, -p.a));
-            Assert.AreEqual("(Int32 a) => IF((a >= 0), a, -a)", lambda.ToDebugString());
+            Assert.Equal("(Int32 a) => IF((a >= 0), a, -a)", lambda.ToDebugString());
             var compiled = (Func<int, int>) lambda.Compile();
-            Assert.AreEqual(0, compiled(0));
-            Assert.AreEqual(2, compiled(2));
-            Assert.AreEqual(2, compiled(-2));
+            Assert.Equal(0, compiled(0));
+            Assert.Equal(2, compiled(2));
+            Assert.Equal(2, compiled(-2));
         }
 
-        [Test]
+        [Fact]
         public void IfNoElseTest()
         {
             var lambda = Lambda(p => Block(b =>
@@ -90,33 +90,33 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                     If(p(typeof(int), "a") >= 0, p.a = 2),
                     p.a * 3
                 }));
-            Assert.AreEqual(@"(Int32 a) => {
+            Assert.Equal(@"(Int32 a) => {
   IF((a >= 0), (a = 2), default(Int32));
   (a * 3);
 }", lambda.ToDebugString());
             var compiled = lambda.CompileAs<Func<int, int>>();
-            Assert.AreEqual(6, compiled(1));
-            Assert.AreEqual(6, compiled(12));
-            Assert.AreEqual(6, compiled(0));
-            Assert.AreEqual(-3, compiled(-1));
-            Assert.AreEqual(-6, compiled(-2));
+            Assert.Equal(6, compiled(1));
+            Assert.Equal(6, compiled(12));
+            Assert.Equal(6, compiled(0));
+            Assert.Equal(-3, compiled(-1));
+            Assert.Equal(-6, compiled(-2));
         }
 
-        [Test]
+        [Fact]
         public void LambdaFancyTest()
         {
             var lambda = Lambda(x => x(typeof(int), "a") + x(typeof(int), "b") + x.a);
-            Assert.AreEqual("(Int32 a, Int32 b) => ((a + b) + a)", lambda.ToDebugString());
+            Assert.Equal("(Int32 a, Int32 b) => ((a + b) + a)", lambda.ToDebugString());
         }
 
-        [Test]
+        [Fact]
         public void LambdaMultipleDeclaration()
         {
             var lambda = Lambda(p => p(typeof(int), "a") * p(typeof(int), "a"));
-            Assert.AreEqual("(Int32 a) => (a * a)", lambda.ToDebugString());
+            Assert.Equal("(Int32 a) => (a * a)", lambda.ToDebugString());
         }
 
-        [Test]
+        [Fact]
         public void LambdaNotSoFancyTest()
         {
             var lambda = Lambda(x =>
@@ -124,17 +124,17 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 x(typeof(int), "a", typeof(int), "b");
                 return x.a + x.b;
             });
-            Assert.AreEqual("(Int32 a, Int32 b) => (a + b)", lambda.ToDebugString());
+            Assert.Equal("(Int32 a, Int32 b) => (a + b)", lambda.ToDebugString());
         }
 
-        [Test]
+        [Fact]
         public void LambdaTest()
         {
             var lambda = Lambda(x => x(typeof(int), "a") + x(typeof(int), "b"));
-            Assert.AreEqual("(Int32 a, Int32 b) => (a + b)", lambda.ToDebugString());
+            Assert.Equal("(Int32 a, Int32 b) => (a + b)", lambda.ToDebugString());
         }
 
-        [Test]
+        [Fact]
         public void TestCast()
         {
             var lambda = EBuilder.Lambda(typeof(EBuilderInstanceTests.TestClass), a =>
@@ -142,10 +142,10 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var aexp = a.EBuilder();
                 return Cast(aexp, typeof(object));
             });
-            Assert.AreEqual("(TestClass p_0) => (p_0 As Object)", lambda.ToDebugString());
+            Assert.Equal("(TestClass p_0) => (p_0 As Object)", lambda.ToDebugString());
         }
 
-        [Test]
+        [Fact]
         public void TestConvert()
         {
             var lambda = EBuilder.Lambda(typeof(EBuilderInstanceTests.TestClass), a =>
@@ -153,10 +153,10 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var aexp = a.EBuilder();
                 return Convert(aexp, typeof(int));
             });
-            Assert.AreEqual("(TestClass p_0) => Convert(p_0 As Int32)", lambda.ToDebugString());
+            Assert.Equal("(TestClass p_0) => Convert(p_0 As Int32)", lambda.ToDebugString());
         }
 
-        [Test]
+        [Fact]
         public void TestConvertTo()
         {
             var lambda = EBuilder.Lambda(typeof(int), a =>
@@ -164,17 +164,17 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var aexp = a.EBuilder();
                 return Convert(aexp, typeof(EBuilderInstanceTests.TestClass));
             });
-            Assert.AreEqual("(Int32 p_0) => Convert(p_0 As TestClass)", lambda.ToDebugString());
+            Assert.Equal("(Int32 p_0) => Convert(p_0 As TestClass)", lambda.ToDebugString());
         }
 
-        [Test]
+        [Fact]
         public void TestDefault()
         {
             var lambda = Lambda(a => Default(typeof(int)));
-            Assert.AreEqual("() => default(Int32)", lambda.ToDebugString());
+            Assert.Equal("() => default(Int32)", lambda.ToDebugString());
         }
 
-        [Test]
+        [Fact]
         public void TestFor()
         {
             var lambda = Lambda(p =>
@@ -188,10 +188,10 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 })
             );
             var compiled = (Func<int, int>) lambda.Compile();
-            Assert.AreEqual(Enumerable.Range(0, 6).Sum(), compiled(5));
+            Assert.Equal(Enumerable.Range(0, 6).Sum(), compiled(5));
         }
 
-        [Test]
+        [Fact]
         public void TestForEach()
         {
             var lambda = Lambda(p => Block(b => new[]
@@ -201,10 +201,10 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 b.s
             }));
             var compiled = (Func<IEnumerable<int>, int>) lambda.Compile();
-            Assert.AreEqual(Enumerable.Range(0, 6).Sum(), compiled(Enumerable.Range(0, 6)));
+            Assert.Equal(Enumerable.Range(0, 6).Sum(), compiled(Enumerable.Range(0, 6)));
         }
 
-        [Test]
+        [Fact]
         public void TestForEachEnumerable()
         {
             // TODO: This is not a C# behavior, C# will throw?!
@@ -219,10 +219,10 @@ namespace SimplyFast.Expressions.Dynamic.Tests
             list.Insert(2, "test");
             list.Insert(4, 2.3);
             list.Add(null);
-            Assert.AreEqual(Enumerable.Range(0, 6).Sum(), compiled(list));
+            Assert.Equal(Enumerable.Range(0, 6).Sum(), compiled(list));
         }
 
-        [Test]
+        [Fact]
         public void TestForEachList()
         {
             var lambda = Lambda(p => Block(b => new[]
@@ -232,10 +232,10 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 b.s
             }));
             var compiled = (Func<List<int>, int>) lambda.Compile();
-            Assert.AreEqual(Enumerable.Range(0, 6).Sum(), compiled(Enumerable.Range(0, 6).ToList()));
+            Assert.Equal(Enumerable.Range(0, 6).Sum(), compiled(Enumerable.Range(0, 6).ToList()));
         }
 
-        [Test]
+        [Fact]
         public void TestForEachListAsEnumerable()
         {
             var lambda = Lambda(p => Block(b => new[]
@@ -249,10 +249,10 @@ namespace SimplyFast.Expressions.Dynamic.Tests
             list.Insert(2, "test");
             list.Insert(4, 2.3);
             list.Add(null);
-            Assert.AreEqual(Enumerable.Range(0, 6).Sum(), compiled(list));
+            Assert.Equal(Enumerable.Range(0, 6).Sum(), compiled(list));
         }
 
-        [Test]
+        [Fact]
         public void TestForEachStatic()
         {
             var lambda = Lambda(p => Block(b => new[]
@@ -262,21 +262,21 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 b.s
             }));
             var compiled = (Func<int>) lambda.Compile();
-            Assert.AreEqual(Enumerable.Range(0, 6).Sum(), compiled());
+            Assert.Equal(Enumerable.Range(0, 6).Sum(), compiled());
         }
 
-        [Test]
+        [Fact]
         public void TestIntParse()
         {
             var _int = typeof(int).EBuilder();
             var lambda = Lambda(p => _int.Parse(p(typeof(string), "s")));
             var compiled = lambda.CompileAs<Func<string, int>>();
-            Assert.AreEqual(2, compiled("2"));
-            Assert.AreEqual(-2, compiled("-2"));
-            Assert.AreEqual(20, compiled("20"));
+            Assert.Equal(2, compiled("2"));
+            Assert.Equal(-2, compiled("-2"));
+            Assert.Equal(20, compiled("20"));
         }
 
-        [Test]
+        [Fact]
         public void TestLoop()
         {
             var lambda = Lambda(p =>
@@ -295,10 +295,10 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 });
             });
             var compiled = (Func<int, int>) lambda.Compile();
-            Assert.AreEqual(Enumerable.Range(0, 6).Sum(), compiled(5));
+            Assert.Equal(Enumerable.Range(0, 6).Sum(), compiled(5));
         }
 
-        [Test]
+        [Fact]
         public void TestSwitch()
         {
             var lambda = Lambda(p => Switch(p(typeof(int), "a"), new[]
@@ -307,7 +307,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 Case(2, "Two"),
                 Case(new object[] {3, 4, 5, 6, 7, 8, 9}, "Many")
             }, "Other"));
-            Assert.AreEqual(@"(Int32 a) => switch (a){
+            Assert.Equal(@"(Int32 a) => switch (a){
   case 1: 
     ""One"";
   case 2: 
@@ -324,25 +324,25 @@ namespace SimplyFast.Expressions.Dynamic.Tests
     ""Other""
 }", lambda.ToDebugString());
             var compiled = (Func<int, string>) lambda.Compile();
-            Assert.AreEqual("One", compiled(1));
-            Assert.AreEqual("Two", compiled(2));
-            Assert.AreEqual("Many", compiled(3));
-            Assert.AreEqual("Many", compiled(8));
-            Assert.AreEqual("Other", compiled(11));
+            Assert.Equal("One", compiled(1));
+            Assert.Equal("Two", compiled(2));
+            Assert.Equal("Many", compiled(3));
+            Assert.Equal("Many", compiled(8));
+            Assert.Equal("Other", compiled(11));
         }
 
-        [Test]
+        [Fact]
         public void TestUsing()
         {
             var lambda = Lambda(p => Using(p(typeof(IDisposable), "a"), 2));
             var compiled = (Func<IDisposable, int>) lambda.Compile();
             var disposed = false;
             var dis = DisposableEx.Action(() => disposed = true);
-            Assert.AreEqual(2, compiled(dis));
-            Assert.IsTrue(disposed);
+            Assert.Equal(2, compiled(dis));
+            Assert.True(disposed);
         }
 
-        [Test]
+        [Fact]
         public void TestWhile()
         {
             var lambda = Lambda(p => Block(b => new[]
@@ -357,7 +357,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 b.s
             }));
             var compiled = (Func<int, int>) lambda.Compile();
-            Assert.AreEqual(Enumerable.Range(0, 6).Sum(), compiled(5));
+            Assert.Equal(Enumerable.Range(0, 6).Sum(), compiled(5));
         }
     }
 }

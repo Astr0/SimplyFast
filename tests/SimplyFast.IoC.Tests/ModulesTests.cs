@@ -1,42 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.IoC.Modules;
 using SimplyFast.IoC.Tests.Modules;
 
 namespace SimplyFast.IoC.Tests
 {
-    [TestFixture]
+    
     public class ModulesTests
     {
 
 
-        [Test]
+        [Fact]
         public void CanLoadOneModule()
         {
             var kernel = new FastKernel();
             Assert.Throws<InvalidOperationException>(() => kernel.Get<string>());
-            Assert.IsFalse(kernel.Get<IEnumerable<string>>().Any());
-            Assert.IsFalse(kernel.Get<List<string>>().Any());
+            Assert.False(kernel.Get<IEnumerable<string>>().Any());
+            Assert.False(kernel.Get<List<string>>().Any());
             kernel.Load(new TestModule());
-            Assert.AreEqual("test", kernel.Get<string>());
-            Assert.IsTrue(kernel.Get<IEnumerable<string>>().SequenceEqual(new[] { "str1", "str2" }));
-            Assert.IsInstanceOf<TestModule.TestEnumerable>(kernel.Get<IEnumerable<string>>());
-            Assert.IsTrue(kernel.Get<List<string>>().SequenceEqual(new[] { "test" }));
+            Assert.Equal("test", kernel.Get<string>());
+            Assert.True(kernel.Get<IEnumerable<string>>().SequenceEqual(new[] { "str1", "str2" }));
+            Assert.IsType<TestModule.TestEnumerable>(kernel.Get<IEnumerable<string>>());
+            Assert.True(kernel.Get<List<string>>().SequenceEqual(new[] { "test" }));
             kernel.Load(new TestModule2());
             FinalModuleTests(kernel);
         }
 
         private static void FinalModuleTests(FastKernel kernel)
         {
-            Assert.AreEqual("test", kernel.Get<string>());
-            Assert.IsTrue(kernel.Get<IEnumerable<string>>().SequenceEqual(new[] { "str1", "str2" }));
-            Assert.IsInstanceOf<TestModule.TestEnumerable>(kernel.Get<IEnumerable<string>>());
-            Assert.IsTrue(kernel.Get<List<string>>().SequenceEqual(new[] { "str1", "str2" }));
+            Assert.Equal("test", kernel.Get<string>());
+            Assert.True(kernel.Get<IEnumerable<string>>().SequenceEqual(new[] { "str1", "str2" }));
+            Assert.IsType<TestModule.TestEnumerable>(kernel.Get<IEnumerable<string>>());
+            Assert.True(kernel.Get<List<string>>().SequenceEqual(new[] { "str1", "str2" }));
         }
 
-        [Test]
+        [Fact]
         public void CanLoadTwoModules()
         {
             var kernel = new FastKernel();
@@ -56,7 +56,7 @@ namespace SimplyFast.IoC.Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void CanLoadFromAssembly()
         {
             var kernel = new FastKernel();
@@ -64,7 +64,7 @@ namespace SimplyFast.IoC.Tests
             FinalModuleTests(kernel);
         }
 
-        [Test]
+        [Fact]
         public void CanLoadParallelAssembly()
         {
             TestFewTimes(() =>
@@ -75,7 +75,7 @@ namespace SimplyFast.IoC.Tests
             }, 100);
         }
 
-        [Test]
+        [Fact]
         public void CanLoadParallelAssemblies()
         {
             TestFewTimes(() =>

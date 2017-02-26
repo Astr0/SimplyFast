@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.Collections;
 using SimplyFast.Serialization.Tests.Protobuf.TestData;
 
@@ -16,16 +16,16 @@ namespace SimplyFast.Serialization.Tests.Protobuf
             if (customAssert != null)
                 customAssert(deserialized);
             else
-                Assert.AreEqual(message, deserialized);
+                Assert.Equal(message, deserialized);
         }
 
-        [Test]
+        [Fact]
         public void EmptyOk()
         {
             Test(new FTestMessage());
         }
 
-        [Test]
+        [Fact]
         public void FloatOk()
         {
             new[]
@@ -39,7 +39,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                 }));
         }
 
-        [Test]
+        [Fact]
         public void Int32Ok()
         {
             new[]
@@ -53,7 +53,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                     }));
         }
 
-        [Test]
+        [Fact]
         public void Int64Ok()
         {
             new[]
@@ -67,7 +67,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                     }));
         }
 
-        [Test]
+        [Fact]
         public void UInt32Ok()
         {
             new uint[]
@@ -81,7 +81,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                     }));
         }
 
-        [Test]
+        [Fact]
         public void UInt64Ok()
         {
             new ulong[]
@@ -95,7 +95,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                     }));
         }
 
-        [Test]
+        [Fact]
         public void SInt32Ok()
         {
             new[]
@@ -109,7 +109,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                     }));
         }
 
-        [Test]
+        [Fact]
         public void SInt64Ok()
         {
             new[]
@@ -123,7 +123,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                     }));
         }
 
-        [Test]
+        [Fact]
         public void Fixed32Ok()
         {
             new uint[]
@@ -137,7 +137,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                     }));
         }
 
-        [Test]
+        [Fact]
         public void Fixed64Ok()
         {
             new ulong[]
@@ -151,7 +151,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                     }));
         }
 
-        [Test]
+        [Fact]
         public void SFixed32Ok()
         {
             new[]
@@ -165,7 +165,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                     }));
         }
 
-        [Test]
+        [Fact]
         public void SFixed64Ok()
         {
             new[]
@@ -179,7 +179,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                     }));
         }
 
-        [Test]
+        [Fact]
         public void BoolOk()
         {
             new bool?[]
@@ -193,7 +193,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                     }));
         }
 
-        [Test]
+        [Fact]
         public void StringOk()
         {
             new[]
@@ -209,10 +209,10 @@ namespace SimplyFast.Serialization.Tests.Protobuf
             Test(new FTestMessage
             {
                 Fstring = ""
-            }, x => Assert.IsTrue(string.IsNullOrEmpty(x.Fstring)));
+            }, x => Assert.True(string.IsNullOrEmpty(x.Fstring)));
         }
 
-        [Test]
+        [Fact]
         public void BytesOk()
         {
             new[]
@@ -228,10 +228,10 @@ namespace SimplyFast.Serialization.Tests.Protobuf
             Test(new FTestMessage
             {
                 Fbytes = new byte[0]
-            }, x => Assert.IsTrue(x.Fbytes == null || x.Fbytes.Length == 0));
+            }, x => Assert.True(x.Fbytes == null || x.Fbytes.Length == 0));
         }
 
-        [Test]
+        [Fact]
         public void EnumOk()
         {
             new[]
@@ -245,7 +245,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                     }));
         }
 
-        [Test]
+        [Fact]
         public void InnerOk()
         {
             new[]
@@ -263,7 +263,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                     }));
         }
 
-        [Test]
+        [Fact]
         public void RepeatedInnerOk()
         {
             new[]
@@ -284,10 +284,10 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                         Frep = f
                     }));
             Test(new FTestMessage {Frep = new List<InnerMessage>()},
-                m => Assert.IsTrue(m.Frep == null || m.Frep.Count == 0));
+                m => Assert.True(m.Frep == null || m.Frep.Count == 0));
         }
 
-        [Test]
+        [Fact]
         public void RepeatedEnumOk()
         {
             new[]
@@ -303,10 +303,10 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                         FrepEnum = f
                     }));
             Test(new FTestMessage {FrepEnum = new List<TestEnum>()},
-                m => Assert.IsTrue(m.FrepEnum == null || m.FrepEnum.Count == 0));
+                m => Assert.True(m.FrepEnum == null || m.FrepEnum.Count == 0));
         }
 
-        [Test]
+        [Fact]
         public void RepeatedStringOk()
         {
             new[]
@@ -322,10 +322,10 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                         FrepString = f
                     }));
             Test(new FTestMessage {FrepString = new List<string>()},
-                m => Assert.IsTrue(m.FrepString == null || m.FrepString.Count == 0));
+                m => Assert.True(m.FrepString == null || m.FrepString.Count == 0));
         }
 
-        [Test]
+        [Fact]
         public void RepeatedFixed32Ok()
         {
             new[]
@@ -341,10 +341,10 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                         FrepFixed32 = f
                     }));
             Test(new FTestMessage {FrepFixed32 = new List<uint>()},
-                m => Assert.IsTrue(m.FrepFixed32 == null || m.FrepFixed32.Count == 0));
+                m => Assert.True(m.FrepFixed32 == null || m.FrepFixed32.Count == 0));
         }
 
-        [Test]
+        [Fact]
         public void RepeatedUint32Ok()
         {
             new[]
@@ -360,7 +360,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
                         FrepUint32 = f
                     }));
             Test(new FTestMessage {FrepUint32 = new List<uint>()},
-                m => Assert.IsTrue(m.FrepUint32 == null || m.FrepUint32.Count == 0));
+                m => Assert.True(m.FrepUint32 == null || m.FrepUint32.Count == 0));
         }
     }
 }

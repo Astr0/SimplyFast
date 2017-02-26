@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.Threading;
 
 namespace SimplyFast.Tests.Threading
 {
-    [TestFixture]
+    
     public class TaskExTests
     {
-        [Test]
+        [Fact]
         public void CompletedCompleted()
         {
             var t = TaskEx.Completed;
-            Assert.IsTrue(t.IsCompleted);
-            Assert.IsFalse(t.IsCanceled);
-            Assert.IsFalse(t.IsFaulted);
+            Assert.True(t.IsCompleted);
+            Assert.False(t.IsCanceled);
+            Assert.False(t.IsFaulted);
         }
 
         private static async Task<int> Throw(int milliseconds)
@@ -26,16 +26,16 @@ namespace SimplyFast.Tests.Threading
             throw new InvalidOperationException("ex");
         }
 
-        [Test]
+        [Fact]
         public void CastToBaseWorks()
         {
-            Assert.AreEqual(5, Task.FromResult(5).CastToBase<int, object>().Result);
+            Assert.Equal(5, Task.FromResult(5).CastToBase<int, object>().Result);
         }
 
-        [Test]
+        [Fact]
         public void ThenWorks()
         {
-            Assert.AreEqual(2.5, Task.FromResult(5).Then(x => x / 2.0).Result);
+            Assert.Equal(2.5, Task.FromResult(5).Then(x => x / 2.0).Result);
             
             Assert.ThrowsAsync<InvalidOperationException>(async () =>
             {
@@ -47,38 +47,37 @@ namespace SimplyFast.Tests.Threading
                 await Throw(1).Then(x => x / 2.0);
             });
 
-            Assert.IsTrue(TaskEx.FromCancellation<int>(new CancellationToken(true)).Then(x => x / 2.0).IsCanceled);
+            Assert.True(TaskEx.FromCancellation<int>(new CancellationToken(true)).Then(x => x / 2.0).IsCanceled);
         }
 
-        [Test]
+        [Fact]
         public void FromCancellationWorks()
         {
-            Assert.IsFalse(TaskEx.FromCancellation(CancellationToken.None).IsCanceled);
-            Assert.IsTrue(TaskEx.FromCancellation(new CancellationToken(true)).IsCanceled);
+            Assert.False(TaskEx.FromCancellation(CancellationToken.None).IsCanceled);
+            Assert.True(TaskEx.FromCancellation(new CancellationToken(true)).IsCanceled);
             using (var cts = new CancellationTokenSource())
             {
                 var task = TaskEx.FromCancellation<int>(cts.Token);
-                Assert.IsFalse(task.IsCanceled);
+                Assert.False(task.IsCanceled);
                 cts.Cancel();
-                Assert.IsTrue(task.IsCanceled);
+                Assert.True(task.IsCanceled);
             }
         }
 
-
-        [Test]
+        [Fact]
         public void OrCancellationWorks()
         {
             var comp = Task.FromResult(true);
-            Assert.AreEqual(comp, comp.OrCancellation(new CancellationToken(true)));
-            Assert.AreEqual(comp, comp.OrCancellation(new CancellationToken(false)));
+            Assert.Equal(comp, comp.OrCancellation(new CancellationToken(true)));
+            Assert.Equal(comp, comp.OrCancellation(new CancellationToken(false)));
             var never = new TaskCompletionSource<int>().Task;
-            Assert.IsTrue(never.OrCancellation(new CancellationToken(true)).IsCanceled);
+            Assert.True(never.OrCancellation(new CancellationToken(true)).IsCanceled);
             using (var cts = new CancellationTokenSource())
             {
                 var task = never.OrCancellation(cts.Token);
-                Assert.IsFalse(task.IsCanceled);
+                Assert.False(task.IsCanceled);
                 cts.Cancel();
-                Assert.IsTrue(task.IsCanceled);
+                Assert.True(task.IsCanceled);
             }
         }
     }

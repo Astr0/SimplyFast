@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.Threading;
 
 namespace SimplyFast.Tests.Threading
 {
-    [TestFixture]
+    
     public class SynchronizationContextExTests
     {
         private static void Test(Action<SynchronizationContext> action)
@@ -16,10 +16,10 @@ namespace SimplyFast.Tests.Threading
                 action(SynchronizationContext.Current);
                 done = true;
             });
-            Assert.IsTrue(done);
+            Assert.True(done);
         }
 
-        [Test]
+        [Fact]
         public void SendWorks()
         {
             Test(sc =>
@@ -29,14 +29,14 @@ namespace SimplyFast.Tests.Threading
                 {
                     state = x;
                 });
-                Assert.AreEqual(5, state);
-                Assert.AreEqual(7, sc.Send(2, x => state + x));
-                Assert.AreEqual(5, state);
-                Assert.AreEqual(5, sc.Send(() => state));
+                Assert.Equal(5, state);
+                Assert.Equal(7, sc.Send(2, x => state + x));
+                Assert.Equal(5, state);
+                Assert.Equal(5, sc.Send(() => state));
             });
         }
 
-        [Test]
+        [Fact]
         public void PostWorks()
         {
             Test(async sc =>
@@ -46,15 +46,15 @@ namespace SimplyFast.Tests.Threading
                 {
                     state = x;
                 });
-                Assert.AreEqual(5, state);
-                Assert.AreEqual(7, await sc.PostTask(2, x => state + x));
-                Assert.AreEqual(5, state);
-                Assert.AreEqual(5, await sc.PostTask(() => state));
+                Assert.Equal(5, state);
+                Assert.Equal(7, await sc.PostTask(2, x => state + x));
+                Assert.Equal(5, state);
+                Assert.Equal(5, await sc.PostTask(() => state));
                 await sc.PostTask(() =>
                 {
                     state = 0;
                 });
-                Assert.AreEqual(0, state);
+                Assert.Equal(0, state);
             });
         }
 

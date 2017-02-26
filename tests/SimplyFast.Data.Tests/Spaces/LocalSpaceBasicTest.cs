@@ -1,22 +1,21 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 using SimplyFast.Data.Spaces;
 using SimplyFast.Data.Spaces.Interface;
 
 namespace SimplyFast.Data.Tests.Spaces
 {
-    [TestFixture]
+    
     public class LocalSpaceBasicTests: SpaceTestsBase
     {
-        private ISpace _space;
-        private ISpaceProxy _spaceProxy;
-        [SetUp]
-        public void Setup()
+        private readonly ISpace _space;
+
+        public LocalSpaceBasicTests()
         {
             _space = SpaceFactory.UnsafeLocal();
-            _spaceProxy = _space.CreateProxy();
+            SpaceProxy = _space.CreateProxy();
         }
 
         public override ISpace Space => _space;
-        public override ISpaceProxy SpaceProxy => _spaceProxy;
+        public override ISpaceProxy SpaceProxy { get; }
     }
 }

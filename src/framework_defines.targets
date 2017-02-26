@@ -1,50 +1,56 @@
+<!--EXTERNAL_PROPERTIES: TargetFramework-->
 <Project>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
-    <Standard>10</Standard>
+    <FrameworkType>netstandard</FrameworkType>
+    <FrameworkStandard>10</FrameworkStandard>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.1' ">
-    <Standard>11</Standard>
+    <FrameworkType>netstandard</FrameworkType>
+    <FrameworkStandard>11</FrameworkStandard>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.2' ">
-    <Standard>12</Standard>
+    <FrameworkType>netstandard</FrameworkType>
+    <FrameworkStandard>12</FrameworkStandard>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <Standard>13</Standard>
+    <FrameworkType>netstandard</FrameworkType>
+    <FrameworkStandard>13</FrameworkStandard>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.4' ">
-    <Standard>14</Standard>
+    <FrameworkType>netstandard</FrameworkType>
+    <FrameworkStandard>14</FrameworkStandard>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
-    <Standard>15</Standard>
+    <FrameworkType>netstandard</FrameworkType>
+    <FrameworkStandard>15</FrameworkStandard>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
-    <Standard>16</Standard>
+    <FrameworkType>netstandard</FrameworkType>
+    <FrameworkStandard>16</FrameworkStandard>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
-    <Standard>16</Standard>
+    <FrameworkType>netcoreapp</FrameworkType>
+    <FrameworkStandard>16</FrameworkStandard>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <Standard>45</Standard>
+    <FrameworkType>net</FrameworkType>
+    <FrameworkStandard>45</FrameworkStandard>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Standard)' == '' ">
-    <Standard>0</Standard>
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net451' ">
+    <FrameworkType>net</FrameworkType>
+    <FrameworkStandard>45</FrameworkStandard>
   </PropertyGroup>
-
-  <PropertyGroup Condition=" $(Standard) &gt;= 11 ">
-    <DefineConstants>$(DefineConstants);CONCURRENT</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" $(Standard) &gt;= 13 ">
-    <DefineConstants>$(DefineConstants);FILES;ICONVERTIBLE</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" $(Standard) &gt;= 16 ">
-    <DefineConstants>$(DefineConstants);ASSEMBLIES</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition=" $(Standard) &gt;= 45 ">
-    <DefineConstants>$(DefineConstants);EMIT;PARALLEL</DefineConstants>
+  <PropertyGroup Condition=" '$(FrameworkStandard)' == '' ">
+    <FrameworkStandard>0</FrameworkStandard>
   </PropertyGroup>
 
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <DefineConstants>$(DefineConstants);NET</DefineConstants>
+  <PropertyGroup>
+    <DefineConstants Condition=" $(FrameworkStandard) &gt;= 11 ">$(DefineConstants);CONCURRENT</DefineConstants>
+    <DefineConstants Condition=" $(FrameworkStandard) &gt;= 13 ">$(DefineConstants);FILES;ICONVERTIBLE</DefineConstants>
+    <DefineConstants Condition=" $(FrameworkStandard) &gt;= 15 ">$(DefineConstants);ASSEMBLIES</DefineConstants>
+    <DefineConstants Condition=" $(FrameworkStandard) &gt;= 45 ">$(DefineConstants);EMIT;PARALLEL</DefineConstants>
+    <DefineConstants Condition=" '$(FrameworkType)' == 'netstandard' ">$(DefineConstants);NETSTANDARD</DefineConstants>
+    <DefineConstants Condition=" '$(FrameworkType)' == 'netcoreapp' ">$(DefineConstants);NETCORE</DefineConstants>
+    <DefineConstants Condition=" '$(FrameworkType)' == 'net' ">$(DefineConstants);NET</DefineConstants>
   </PropertyGroup>
 </Project>

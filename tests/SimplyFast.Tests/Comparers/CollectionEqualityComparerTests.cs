@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.Comparers;
 
 namespace SimplyFast.Tests.Comparers
 {
-    [TestFixture]
+    
     public class CollectionEqualityComparerTests
     {
         private static IEqualityComparer<T[]> GetCollectionComparer<T>()
@@ -14,7 +14,7 @@ namespace SimplyFast.Tests.Comparers
             return EqualityComparerEx.Collection<T[], T>();
         }
 
-        [Test]
+        [Fact]
         public void CompareInts()
         {
             var array1 = new[] { 1, 2, 3 };
@@ -26,16 +26,16 @@ namespace SimplyFast.Tests.Comparers
             var hashCode2 = comparer.GetHashCode(array2);
             var hashCode3 = comparer.GetHashCode(array3);
             var hashCode4 = comparer.GetHashCode(array4);
-            Assert.AreEqual(hashCode1, hashCode2);
-            Assert.AreNotEqual(hashCode1, hashCode3);
-            Assert.AreNotEqual(hashCode1, hashCode4);
-            Assert.IsTrue(comparer.Equals(array1, array1));
-            Assert.IsTrue(comparer.Equals(array1, array2));
-            Assert.IsFalse(comparer.Equals(array1, array3));
-            Assert.IsFalse(comparer.Equals(array1, array4));
+            Assert.Equal(hashCode1, hashCode2);
+            Assert.NotEqual(hashCode1, hashCode3);
+            Assert.NotEqual(hashCode1, hashCode4);
+            Assert.True(comparer.Equals(array1, array1));
+            Assert.True(comparer.Equals(array1, array2));
+            Assert.False(comparer.Equals(array1, array3));
+            Assert.False(comparer.Equals(array1, array4));
         }
 
-        [Test]
+        [Fact]
         public void CompareIntsUsingSignComparer()
         {
             var array1 = new[] { 1, 2, 3 };
@@ -47,16 +47,16 @@ namespace SimplyFast.Tests.Comparers
             var hashCode2 = comparer.GetHashCode(array2);
             var hashCode3 = comparer.GetHashCode(array3);
             var hashCode4 = comparer.GetHashCode(array4);
-            Assert.AreEqual(hashCode1, hashCode2);
-            Assert.AreNotEqual(hashCode1, hashCode3);
-            Assert.AreNotEqual(hashCode1, hashCode4);
-            Assert.IsTrue(comparer.Equals(array1, array1));
-            Assert.IsTrue(comparer.Equals(array1, array2));
-            Assert.IsFalse(comparer.Equals(array1, array3));
-            Assert.IsFalse(comparer.Equals(array1, array4));
+            Assert.Equal(hashCode1, hashCode2);
+            Assert.NotEqual(hashCode1, hashCode3);
+            Assert.NotEqual(hashCode1, hashCode4);
+            Assert.True(comparer.Equals(array1, array1));
+            Assert.True(comparer.Equals(array1, array2));
+            Assert.False(comparer.Equals(array1, array3));
+            Assert.False(comparer.Equals(array1, array4));
         }
 
-        [Test]
+        [Fact]
         public void CompareNonGenericInts()
         {
             object array1 = new[] { 1, 2, 3 };
@@ -68,16 +68,16 @@ namespace SimplyFast.Tests.Comparers
             var hashCode2 = comparer.GetHashCode(array2);
             var hashCode3 = comparer.GetHashCode(array3);
             var hashCode4 = comparer.GetHashCode(array4);
-            Assert.AreEqual(hashCode1, hashCode2);
-            Assert.AreNotEqual(hashCode1, hashCode3);
-            Assert.AreNotEqual(hashCode1, hashCode4);
-            Assert.IsTrue(comparer.Equals(array1, array1));
-            Assert.IsTrue(comparer.Equals(array1, array2));
-            Assert.IsFalse(comparer.Equals(array1, array3));
-            Assert.IsFalse(comparer.Equals(array1, array4));
+            Assert.Equal(hashCode1, hashCode2);
+            Assert.NotEqual(hashCode1, hashCode3);
+            Assert.NotEqual(hashCode1, hashCode4);
+            Assert.True(comparer.Equals(array1, array1));
+            Assert.True(comparer.Equals(array1, array2));
+            Assert.False(comparer.Equals(array1, array3));
+            Assert.False(comparer.Equals(array1, array4));
         }
 
-        [Test]
+        [Fact]
         public void CompareNonGenericWrong()
         {
             object array = new[] { 1, 2, 3 };
@@ -90,23 +90,23 @@ namespace SimplyFast.Tests.Comparers
             Assert.Throws<ArgumentException>(() => comparer.GetHashCode(array2));
             Assert.Throws<ArgumentException>(() => comparer.GetHashCode(list));
             Assert.Throws<ArgumentException>(() => comparer.GetHashCode(str));
-            Assert.AreNotEqual(0, hashArray);
+            Assert.NotEqual(0, hashArray);
             Assert.Throws<ArgumentException>(() => comparer.Equals(array, array2));
             Assert.Throws<ArgumentException>(() => comparer.Equals(array, list));
             Assert.Throws<ArgumentException>(() => comparer.Equals(array, str));
-            Assert.IsTrue(comparer.Equals(array, array));
-            Assert.IsTrue(comparer.Equals(array, ((Array)array).Clone()));
+            Assert.True(comparer.Equals(array, array));
+            Assert.True(comparer.Equals(array, ((Array)array).Clone()));
             // ReSharper restore ReturnValueOfPureMethodIsNotUsed
         }
 
-        [Test]
+        [Fact]
         public void CompareNulls()
         {
             var comparer = GetCollectionComparer<int>();
-            Assert.IsTrue(comparer.Equals(null, null));
-            Assert.AreEqual(0, comparer.GetHashCode(null));
-            Assert.IsFalse(comparer.Equals(new int[1], null));
-            Assert.IsFalse(comparer.Equals(null, new int[0]));
+            Assert.True(comparer.Equals(null, null));
+            Assert.Equal(0, comparer.GetHashCode(null));
+            Assert.False(comparer.Equals(new int[1], null));
+            Assert.False(comparer.Equals(null, new int[0]));
         }
 
     }

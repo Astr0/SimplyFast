@@ -2,12 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Text;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.IO;
 
 namespace SimplyFast.Tests.IO
 {
-    [TestFixture]
+    
     public class FastBufferReaderTests
     {
         private byte[] _buffer;
@@ -23,8 +23,8 @@ namespace SimplyFast.Tests.IO
             var bytes = getBytes(expected);
             var reader = Buf(bytes);
             var readValue = read(reader);
-            Assert.IsTrue(reader.End);
-            Assert.AreEqual(expected, readValue);
+            Assert.True(reader.End);
+            Assert.Equal(expected, readValue);
             if (bytes.Length == 0)
                 return;
             Assert.Throws<InvalidDataException>(() => read(reader));
@@ -32,18 +32,18 @@ namespace SimplyFast.Tests.IO
             Assert.Throws<InvalidDataException>(() => read(readFail));
         }
 
-        [Test]
+        [Fact]
         public void SkipBytesOk()
         {
             var buf = Buf(1, 2, 3);
             buf.SkipBytes(1);
-            Assert.IsFalse(buf.End);
+            Assert.False(buf.End);
             buf.SkipBytes(2);
-            Assert.IsTrue(buf.End);
+            Assert.True(buf.End);
             Assert.Throws<InvalidDataException>(() => buf.SkipBytes(1));
         }
 
-        [Test]
+        [Fact]
         public void DoubleOk()
         {
             AssertRead(r => r.ReadDouble(), 324234.324d, BitConverter.GetBytes);
@@ -58,7 +58,7 @@ namespace SimplyFast.Tests.IO
             AssertRead(r => r.ReadDouble(), double.NegativeInfinity, BitConverter.GetBytes);
         }
 
-        [Test]
+        [Fact]
         public void FloatOk()
         {
             AssertRead(r => r.ReadLittleEndianFloat(), 324234.324f, BitConverter.GetBytes);
@@ -73,7 +73,7 @@ namespace SimplyFast.Tests.IO
             AssertRead(r => r.ReadLittleEndianFloat(), float.NegativeInfinity, BitConverter.GetBytes);
         }
 
-        [Test]
+        [Fact]
         public void LittleEndian32Ok()
         {
             AssertRead(r => r.ReadLittleEndian32(), 0U, BitConverter.GetBytes);
@@ -84,7 +84,7 @@ namespace SimplyFast.Tests.IO
             AssertRead(r => r.ReadLittleEndian32(), uint.MinValue, BitConverter.GetBytes);
         }
 
-        [Test]
+        [Fact]
         public void LittleEndian64Ok()
         {
             AssertRead(r => r.ReadLittleEndian64(), 0UL, BitConverter.GetBytes);
@@ -96,15 +96,15 @@ namespace SimplyFast.Tests.IO
             AssertRead(r => r.ReadLittleEndian64(), ulong.MinValue, BitConverter.GetBytes);
         }
 
-        [Test]
+        [Fact]
         public void SkipVarIntOk()
         {
             var buf = Buf(VarIntHelper.GetVarInt32Bytes(889863845U));
             buf.SkipVarInt();
-            Assert.IsTrue(buf.End);
+            Assert.True(buf.End);
             buf = Buf(VarIntHelper.GetVarInt64Bytes(ulong.MaxValue));
             buf.SkipVarInt();
-            Assert.IsTrue(buf.End);
+            Assert.True(buf.End);
             Assert.Throws<InvalidDataException>(() => buf.SkipVarInt());
             buf = Buf(VarIntHelper.GetVarInt64Bytes(ulong.MaxValue).TakeWhile(x => x > 128).ToArray());
             Assert.Throws<InvalidDataException>(() => buf.SkipVarInt());
@@ -112,7 +112,7 @@ namespace SimplyFast.Tests.IO
             Assert.Throws<InvalidDataException>(() => buf.SkipVarInt());
         }
 
-        [Test]
+        [Fact]
         public void ReadVarInt32Ok()
         {
             var buf = Buf(Enumerable.Range(0, 20).Select(x => (byte)128).ToArray());
@@ -125,7 +125,7 @@ namespace SimplyFast.Tests.IO
             AssertRead(r => r.ReadVarInt32(), uint.MaxValue, VarIntHelper.GetVarInt32Bytes);
         }
 
-        [Test]
+        [Fact]
         public void ReadVarInt64Ok()
         {
             var buf = Buf(Enumerable.Range(0, 20).Select(x => (byte)128).ToArray());
@@ -138,7 +138,7 @@ namespace SimplyFast.Tests.IO
             AssertRead(r => r.ReadVarInt64(), ulong.MaxValue, VarIntHelper.GetVarInt64Bytes);
         }
 
-        [Test]
+        [Fact]
         public void ReadByteOk()
         {
             AssertRead(r => r.ReadByte(), (byte)0, x => new[] { x });
@@ -146,7 +146,7 @@ namespace SimplyFast.Tests.IO
             AssertRead(r => r.ReadByte(), (byte)255, x => new[] { x });
         }
 
-        [Test]
+        [Fact]
         public void ReadRawBytesOk()
         {
             AssertRead(r => r.ReadRawBytes(0), new byte[0], x => x);
@@ -154,7 +154,7 @@ namespace SimplyFast.Tests.IO
             AssertRead(r => r.ReadRawBytes(5), new byte[] { 1, 2, 3, 4, 5 }, x => x);
         }
 
-        [Test]
+        [Fact]
         public void ReadRawUtf8StringOk()
         {
             AssertRead(r => r.ReadRawUtf8String(0), "", x => new byte[0]);

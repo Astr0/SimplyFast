@@ -18,7 +18,7 @@ namespace SimplyFast.Reflection
 #elif ASSEMBLIES
             var entry = Assembly.GetEntryAssembly();
             yield return entry;
-
+            
             var references = entry.GetReferencedAssemblies();
             foreach (var reference in references)
             {
@@ -30,9 +30,15 @@ namespace SimplyFast.Reflection
         }
 
 #if ASSEMBLIES || NET
-        public static bool NeedsAssemblyLocator => false;
+        public static bool HasDefaultLocator => false;
 #else
-        public static bool NeedsAssemblyLocator => true;
+        public static bool HasDefaultLocator => true;
+#endif
+
+#if NET
+        public static bool DefaultLocatorIsRuntime => true;
+#else
+        public static bool DefaultLocatorIsRuntime => false;
 #endif
 
         private static Func<IEnumerable<Assembly>> _assemblyLocator;

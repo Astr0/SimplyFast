@@ -1,11 +1,11 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 
 #pragma warning disable 414
 #pragma warning disable 169
 
 namespace SimplyFast.Reflection.Tests
 {
-    [TestFixture]
+    
     public class ConvertExTests
     {
         private class Convert1
@@ -18,47 +18,47 @@ namespace SimplyFast.Reflection.Tests
             public string B;
         }
 
-        [Test]
+        [Fact]
         public void TestExact()
         {
             var convert = ConvertEx.Converter<int, int>();
-            Assert.AreEqual(2, convert(2));
-            Assert.AreEqual(0, convert(0));
-            Assert.AreEqual(5, convert(5));
+            Assert.Equal(2, convert(2));
+            Assert.Equal(0, convert(0));
+            Assert.Equal(5, convert(5));
             var c1 = new Convert1 { A = "2" };
             var convertClass = ConvertEx.Converter<Convert1, Convert1>();
-            Assert.AreEqual(c1, convertClass(c1));
-            Assert.IsTrue(ReferenceEquals(c1, convertClass(c1)));
+            Assert.Equal(c1, convertClass(c1));
+            Assert.True(ReferenceEquals(c1, convertClass(c1)));
             var c2 = new Convert2 { A = "2" };
-            Assert.AreEqual(c2, convertClass(c2));
-            Assert.IsTrue(ReferenceEquals(c2, convertClass(c2)));
+            Assert.Equal(c2, convertClass(c2));
+            Assert.True(ReferenceEquals(c2, convertClass(c2)));
             var convertClass2 = ConvertEx.Converter<Convert2, Convert2>();
-            Assert.AreEqual(c2, convertClass(c2));
-            Assert.IsTrue(ReferenceEquals(c2, convertClass(c2)));
-            Assert.IsNull(convertClass(null));
-            Assert.IsNull(convertClass2(null));
+            Assert.Equal(c2, convertClass(c2));
+            Assert.True(ReferenceEquals(c2, convertClass(c2)));
+            Assert.Null(convertClass(null));
+            Assert.Null(convertClass2(null));
         }
 
-        [Test]
+        [Fact]
         public void TestCast()
         {
             var convert = ConvertEx.Converter<int, object>();
-            Assert.AreEqual(2, convert(2));
-            Assert.AreEqual(0, convert(0));
-            Assert.AreEqual(5, convert(5));
+            Assert.Equal(2, convert(2));
+            Assert.Equal(0, convert(0));
+            Assert.Equal(5, convert(5));
             var c2 = new Convert2 { A = "2" };
             var convertClass = ConvertEx.Converter<Convert2, Convert1>();
-            Assert.AreEqual(c2, convertClass(c2));
-            Assert.IsTrue(ReferenceEquals(c2, convertClass(c2)));
-            Assert.IsNull(convertClass(null));
+            Assert.Equal(c2, convertClass(c2));
+            Assert.True(ReferenceEquals(c2, convertClass(c2)));
+            Assert.Null(convertClass(null));
         }
 
         private static void TestConvert<TSource, TResult>(TResult expected, TSource value)
         {
-            Assert.AreEqual(expected, ConvertEx.Converter<TSource, TResult>()(value));
+            Assert.Equal(expected, ConvertEx.Converter<TSource, TResult>()(value));
         }
 
-        [Test]
+        [Fact]
         public void TestToObject()
         {
             TestConvert((object)2, 2);
@@ -66,7 +66,7 @@ namespace SimplyFast.Reflection.Tests
             TestConvert((object)null, (string)null);
         }
 
-        [Test]
+        [Fact]
         public void TestObject()
         {
             TestConvert(2, (object)2);
@@ -80,7 +80,7 @@ namespace SimplyFast.Reflection.Tests
             TestConvert(false, (object)0);
         }
 
-        [Test]
+        [Fact]
         public void TestBuildIn()
         {
             TestConvert(2, "2");

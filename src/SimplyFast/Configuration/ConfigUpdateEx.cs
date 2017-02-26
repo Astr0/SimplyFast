@@ -47,11 +47,11 @@ namespace SimplyFast.Configuration
         {
             if (!File.Exists(filePath))
                 return config;
-            return config.UpdateFromConf(File.ReadAllLines(filePath), mapKeys, convertValues);
+            return config.UpdateFromConfLines(File.ReadAllLines(filePath), mapKeys, convertValues);
         }
 #endif
 
-        public static T UpdateFromConf<T>(this T config, string[] lines,
+        public static T UpdateFromConfLines<T>(this T config, string[] lines,
             Func<string, string> mapKeys = null, Func<string, string> convertValues = null) where T : IConfig
         {
 

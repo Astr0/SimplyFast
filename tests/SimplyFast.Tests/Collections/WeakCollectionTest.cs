@@ -1,118 +1,118 @@
 ﻿using System.Globalization;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.Collections;
 
 namespace SimplyFast.Tests.Collections
 {
-    [TestFixture]
+    
     public class WeakCollectionTest
     {
-        [Test]
+        [Fact]
         public void WeakCollectionFromEnumerable()
         {
             var items = Enumerable.Range(0, 10).Select(x => x.ToString(CultureInfo.InvariantCulture)).ToArray();
             var wc = new WeakCollection<string>(items);
-            Assert.AreEqual(10, wc.CapCount);
-            Assert.AreEqual(10, wc.Count);
-            Assert.IsTrue(wc.SequenceEqual(items));
+            Assert.Equal(10, wc.CapCount);
+            Assert.Equal(10, wc.Count);
+            Assert.True(wc.SequenceEqual(items));
         }
 
-        [Test]
+        [Fact]
         public void AddWorks()
         {
             var wc = new WeakCollection<string> {"test"};
-            Assert.AreEqual("test", wc.First());
+            Assert.Equal("test", wc.First());
         }
 
-        [Test]
+        [Fact]
         public void ClearWorks()
         {
             var wc = new WeakCollection<string>(10) { "test" };
             wc.Clear();
-            Assert.AreEqual(0, wc.Count);
-            Assert.IsFalse(wc.Any());
+            Assert.Equal(0, wc.Count);
+            Assert.False(wc.Any());
         }
 
-        [Test]
+        [Fact]
         public void ContainsWorks()
         {
             var arr = new[] {"a", "b", "c", "d"};
             var wc = new WeakCollection<string> (arr);
-            Assert.IsTrue(wc.Contains("a"));
-            Assert.IsTrue(wc.Contains("b"));
-            Assert.IsTrue(wc.Contains("c"));
-            Assert.IsTrue(wc.Contains("d"));
-            Assert.IsFalse(wc.Contains("e"));
+            Assert.True(wc.Contains("a"));
+            Assert.True(wc.Contains("b"));
+            Assert.True(wc.Contains("c"));
+            Assert.True(wc.Contains("d"));
+            Assert.False(wc.Contains("e"));
         }
 
-        [Test]
+        [Fact]
         public void CopyToWorks()
         {
             var arr = new[] { "a", "b", "c", "d" };
             var wc = new WeakCollection<string>(arr);
             var target = new string[5];
             wc.CopyTo(target, 0);
-            Assert.IsTrue(arr.SequenceEqual(target.Take(4)));
-            Assert.IsNull(target[4]);
+            Assert.True(arr.SequenceEqual(target.Take(4)));
+            Assert.Null(target[4]);
             target[0] = null;
             wc.CopyTo(target, 1);
-            Assert.IsTrue(arr.SequenceEqual(target.Skip(1)));
+            Assert.True(arr.SequenceEqual(target.Skip(1)));
         }
 
-        [Test]
+        [Fact]
         public void RemoveWorks()
         {
             var arr = new[] { "a", "b", "c", "d", "c" };
             var wc = new WeakCollection<string>(arr);
-            Assert.IsTrue(wc.Remove("c"));
-            Assert.IsTrue(wc.OrderBy(x => x).SequenceEqual(new[]{"a", "b", "c", "d" }));
-            Assert.IsTrue(wc.Remove("c"));
-            Assert.IsTrue(wc.OrderBy(x => x).SequenceEqual(new[] { "a", "b", "d" }));
-            Assert.IsFalse(wc.Remove("c"));
-            Assert.IsTrue(wc.OrderBy(x => x).SequenceEqual(new[] { "a", "b", "d" }));
+            Assert.True(wc.Remove("c"));
+            Assert.True(wc.OrderBy(x => x).SequenceEqual(new[]{"a", "b", "c", "d" }));
+            Assert.True(wc.Remove("c"));
+            Assert.True(wc.OrderBy(x => x).SequenceEqual(new[] { "a", "b", "d" }));
+            Assert.False(wc.Remove("c"));
+            Assert.True(wc.OrderBy(x => x).SequenceEqual(new[] { "a", "b", "d" }));
         }
 
-        [Test]
+        [Fact]
         public void NotReadOnly()
         {
             // ReSharper disable once CollectionNeverUpdated.Local
             var wc = new WeakCollection<string>();
-            Assert.IsFalse(wc.IsReadOnly);
+            Assert.False(wc.IsReadOnly);
         }
 
-        [Test]
+        [Fact]
         public void AddWorksAfterCollect()
         {
             var wc = new WeakCollection<string>();
             {
                 wc.Add(new string('a', 1));
-                Assert.AreEqual("a", wc.First());
+                Assert.Equal("a", wc.First());
             }
             GCEx.CollectAndWait();
-            Assert.IsTrue(wc.CapCount <= 1);
-            //Assert.AreEqual(0, wc.Count);
+            Assert.True(wc.CapCount <= 1);
+            //Assert.Equal(0, wc.Count);
             wc.Add(new string('b', 1));
-            Assert.AreEqual(1, wc.Count);
-            Assert.AreEqual("b", wc.First());
+            Assert.Equal(1, wc.Count);
+            Assert.Equal("b", wc.First());
         }
 
-        [Test]
+        [Fact]
         public void ClearWorksAfterCollect()
         {
             var wc = new WeakCollection<string>();
             {
                 var a = new string('a', 1);
                 wc.Add(a);
-                Assert.AreEqual("a", wc.First());
+                Assert.Equal("a", wc.First());
             }
             GCEx.CollectAndWait();
             wc.Clear();
-            Assert.AreEqual(0, wc.CapCount);
-            Assert.IsFalse(wc.Any());
+            Assert.Equal(0, wc.CapCount);
+            Assert.False(wc.Any());
         }
 
-        [Test]
+        [Fact]
         public void ContainsWorksAfterCollect()
         {
             var arr = new[] { "a", "b" };
@@ -120,20 +120,20 @@ namespace SimplyFast.Tests.Collections
             {
                 wc.Add(new string('c', 1));
                 wc.Add(new string('d', 1));
-                Assert.IsTrue(wc.Contains("a"));
-                Assert.IsTrue(wc.Contains("b"));
-                Assert.IsTrue(wc.Contains("c"));
-                Assert.IsTrue(wc.Contains("d"));
+                Assert.True(wc.Contains("a"));
+                Assert.True(wc.Contains("b"));
+                Assert.True(wc.Contains("c"));
+                Assert.True(wc.Contains("d"));
             }
             GCEx.CollectAndWait();
-            Assert.IsTrue(wc.Contains("a"));
-            Assert.IsTrue(wc.Contains("b"));
-            Assert.IsFalse(wc.Contains("c"));
-            Assert.IsFalse(wc.Contains("d"));
-            Assert.IsFalse(wc.Contains("e"));
+            Assert.True(wc.Contains("a"));
+            Assert.True(wc.Contains("b"));
+            Assert.False(wc.Contains("c"));
+            Assert.False(wc.Contains("d"));
+            Assert.False(wc.Contains("e"));
         }
 
-        [Test]
+        [Fact]
         public void CopyToWorksAfterCollect()
         {
             var arr = new[] { "a", "b" };
@@ -145,13 +145,13 @@ namespace SimplyFast.Tests.Collections
             GCEx.CollectAndWait();
             var target = new string[5];
             wc.CopyTo(target, 1);
-            Assert.IsTrue(arr.SequenceEqual(target.Skip(1).Take(2)));
-            Assert.IsNull(target[0]);
-            Assert.IsNull(target[3]);
-            Assert.IsNull(target[4]);
+            Assert.True(arr.SequenceEqual(target.Skip(1).Take(2)));
+            Assert.Null(target[0]);
+            Assert.Null(target[3]);
+            Assert.Null(target[4]);
         }
 
-        [Test]
+        [Fact]
         public void RemoveWorksAfterCollect()
         {
             var arr = new[] { "a", "b" };
@@ -162,9 +162,9 @@ namespace SimplyFast.Tests.Collections
                 wc.Add(new string('c', 1));
             }
             GCEx.CollectAndWait();
-            Assert.IsFalse(wc.Remove("c"));
-            Assert.IsFalse(wc.Remove("d"));
-            Assert.IsTrue(wc.SequenceEqual(new[] { "a", "b" }));
+            Assert.False(wc.Remove("c"));
+            Assert.False(wc.Remove("d"));
+            Assert.True(wc.SequenceEqual(new[] { "a", "b" }));
         }
     }
 }

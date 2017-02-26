@@ -1,19 +1,18 @@
-﻿using NUnit.Framework;
+﻿using Xunit;
 using SimplyFast.Serialization.interfaces;
 
 namespace SimplyFast.Serialization.Tests
 {
-    [TestFixture]
+    
     public class WireFomatTests
     {
         private static void AssertTagOk(int field, WireType wireType)
         {
             var tag = WireFormat.MakeTag(field, wireType);
-            var msg = $"Invalid: {field}, {wireType}";
-            Assert.AreEqual(field, WireFormat.GetFieldNumber(tag), msg);
-            Assert.AreEqual(wireType, WireFormat.GetWireType(tag), msg);
-            Assert.AreEqual(wireType, (WireType) (tag & 7), msg);
-            Assert.AreEqual(field, (int)(tag >> 3), msg);
+            Assert.Equal(field, WireFormat.GetFieldNumber(tag));
+            Assert.Equal(wireType, WireFormat.GetWireType(tag));
+            Assert.Equal(wireType, (WireType) (tag & 7));
+            Assert.Equal(field, (int)(tag >> 3));
         }
 
         private static void AssertAllFormats(int field)
@@ -26,7 +25,7 @@ namespace SimplyFast.Serialization.Tests
             AssertTagOk(field, WireType.Varint);
         }
 
-        [Test]
+        [Fact]
         public void TestAll()
         {
             AssertAllFormats(1);

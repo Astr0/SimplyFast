@@ -1,155 +1,154 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.IoC.Tests.TestData;
 
 namespace SimplyFast.IoC.Tests
 {
-    [TestFixture]
+    
     public class InjectionTests
     {
-        [SetUp]
-        public void SetUp()
+        public InjectionTests()
         {
             _kernel = new FastKernel();
         }
 
-        private IKernel _kernel;
+        private readonly IKernel _kernel;
 
-        [Test]
+        [Fact]
         public void GetInjects()
         {
             var test = _kernel.Get<InjectTestClass>();
-            Assert.IsNotNull(test.Longs);
-            Assert.AreEqual(0, test.Longs.Count);
-            Assert.AreEqual(0, test.Long);
-            Assert.AreEqual(null, test.String);
+            Assert.NotNull(test.Longs);
+            Assert.Equal(0, test.Longs.Count);
+            Assert.Equal(0, test.Long);
+            Assert.Equal(null, test.String);
         }
 
-        [Test]
+        [Fact]
         public void CanInjectMultipleTimes()
         {
             var test = _kernel.Get<InjectTestClass>();
-            Assert.IsNotNull(test.Longs);
-            Assert.AreEqual(0, test.Longs.Count);
-            Assert.AreEqual(0, test.Long);
-            Assert.AreEqual(null, test.String);
+            Assert.NotNull(test.Longs);
+            Assert.Equal(0, test.Longs.Count);
+            Assert.Equal(0, test.Long);
+            Assert.Equal(null, test.String);
             test.Longs = null;
             _kernel.Inject(test);
-            Assert.IsNotNull(test.Longs);
-            Assert.AreEqual(0, test.Longs.Count);
-            Assert.AreEqual(0, test.Long);
-            Assert.AreEqual(null, test.String);
+            Assert.NotNull(test.Longs);
+            Assert.Equal(0, test.Longs.Count);
+            Assert.Equal(0, test.Long);
+            Assert.Equal(null, test.String);
         }
 
-        [Test]
+        [Fact]
         public void CanInjectNonGetObject()
         {
             var test = new InjectTestClass();
-            Assert.IsNull(test.Longs);
+            Assert.Null(test.Longs);
             _kernel.Inject(test);
-            Assert.IsNotNull(test.Longs);
-            Assert.AreEqual(0, test.Longs.Count);
-            Assert.AreEqual(0, test.Long);
-            Assert.AreEqual(null, test.String);
+            Assert.NotNull(test.Longs);
+            Assert.Equal(0, test.Longs.Count);
+            Assert.Equal(0, test.Long);
+            Assert.Equal(null, test.String);
         }
 
-        [Test]
+        [Fact]
         public void InjectUsesBinding()
         {
             var list = new List<long>(){1,2,3,4};
             _kernel.Bind<List<long>>().ToConstant(list);
             var test = new InjectTestClass();
-            Assert.IsNull(test.Longs);
+            Assert.Null(test.Longs);
             _kernel.Inject(test);
-            Assert.IsTrue(ReferenceEquals(test.Longs, list));
-            Assert.AreEqual(0, test.Long);
-            Assert.AreEqual(null, test.String);
+            Assert.True(ReferenceEquals(test.Longs, list));
+            Assert.Equal(0, test.Long);
+            Assert.Equal(null, test.String);
         }
 
-        [Test]
+        [Fact]
         public void InjectUsesBestMethod()
         {
             _kernel.Bind<long>().ToConstant(5);
             var test = new InjectTestClass();
-            Assert.IsNull(test.Longs);
+            Assert.Null(test.Longs);
             _kernel.Inject(test);
-            Assert.AreEqual(null, test.String);
-            Assert.AreEqual(5, test.Long);
-            Assert.IsNotNull(test.Longs);
-            Assert.IsTrue(test.Longs.SequenceEqual(new long[]{5}));
+            Assert.Equal(null, test.String);
+            Assert.Equal(5, test.Long);
+            Assert.NotNull(test.Longs);
+            Assert.True(test.Longs.SequenceEqual(new long[]{5}));
         }
 
-        [Test]
+        [Fact]
         public void InjectGetsAlways()
         {
             _kernel.Bind<long>().ToConstant(5);
             var test = new InjectTestClass();
-            Assert.IsNull(test.Longs);
+            Assert.Null(test.Longs);
             _kernel.Inject(test);
-            Assert.AreEqual(null, test.String);
-            Assert.AreEqual(5, test.Long);
-            Assert.IsNotNull(test.Longs);
-            Assert.IsTrue(test.Longs.SequenceEqual(new long[] { 5 }));
+            Assert.Equal(null, test.String);
+            Assert.Equal(5, test.Long);
+            Assert.NotNull(test.Longs);
+            Assert.True(test.Longs.SequenceEqual(new long[] { 5 }));
 
             _kernel.Bind<long>().ToConstant(10);
             _kernel.Inject(test);
-            Assert.AreEqual(null, test.String);
-            Assert.AreEqual(10, test.Long);
-            Assert.AreEqual(2, test.Longs.Count);
-            Assert.IsTrue(new HashSet<long>{5, 10}.SetEquals(test.Longs));
+            Assert.Equal(null, test.String);
+            Assert.Equal(10, test.Long);
+            Assert.Equal(2, test.Longs.Count);
+            Assert.True(new HashSet<long>{5, 10}.SetEquals(test.Longs));
         }
 
-        [Test]
+        [Fact]
         public void InjectUpgradesMethodWhenNewBindingAvailable()
         {
             var test = new InjectTestClass();
-            Assert.IsNull(test.Longs);
+            Assert.Null(test.Longs);
             _kernel.Inject(test);
-            Assert.AreEqual(null, test.String);
-            Assert.AreEqual(0, test.Long);
-            Assert.IsNotNull(test.Longs);
-            Assert.AreEqual(0, test.Longs.Count);
+            Assert.Equal(null, test.String);
+            Assert.Equal(0, test.Long);
+            Assert.NotNull(test.Longs);
+            Assert.Equal(0, test.Longs.Count);
 
             _kernel.Bind<long>().ToConstant(5);
             _kernel.Inject(test);
-            Assert.AreEqual(null, test.String);
-            Assert.AreEqual(5, test.Long);
-            Assert.IsNotNull(test.Longs);
-            Assert.IsTrue(test.Longs.SequenceEqual(new long[] { 5 }));
+            Assert.Equal(null, test.String);
+            Assert.Equal(5, test.Long);
+            Assert.NotNull(test.Longs);
+            Assert.True(test.Longs.SequenceEqual(new long[] { 5 }));
 
             _kernel.Bind<string>().ToConstant("test");
             _kernel.Inject(test);
-            Assert.AreEqual("test", test.String);
-            Assert.AreEqual(5, test.Long);
-            Assert.IsNotNull(test.Longs);
-            Assert.IsTrue(test.Longs.SequenceEqual(new long[] { 5 }));
+            Assert.Equal("test", test.String);
+            Assert.Equal(5, test.Long);
+            Assert.NotNull(test.Longs);
+            Assert.True(test.Longs.SequenceEqual(new long[] { 5 }));
         }
 
-        [Test]
+        [Fact]
         public void InjectUsesArgBindings()
         {
             var test = new InjectTestClass();
-            Assert.IsNull(test.Longs);
+            Assert.Null(test.Longs);
             _kernel.Inject(test);
-            Assert.AreEqual(null, test.String);
-            Assert.AreEqual(0, test.Long);
-            Assert.IsNotNull(test.Longs);
-            Assert.AreEqual(0, test.Longs.Count);
+            Assert.Equal(null, test.String);
+            Assert.Equal(0, test.Long);
+            Assert.NotNull(test.Longs);
+            Assert.Equal(0, test.Longs.Count);
 
             _kernel.Bind<long>().ToConstant(5);
             _kernel.Inject(test);
-            Assert.AreEqual(null, test.String);
-            Assert.AreEqual(5, test.Long);
-            Assert.IsNotNull(test.Longs);
-            Assert.IsTrue(test.Longs.SequenceEqual(new long[] { 5 }));
+            Assert.Equal(null, test.String);
+            Assert.Equal(5, test.Long);
+            Assert.NotNull(test.Longs);
+            Assert.True(test.Longs.SequenceEqual(new long[] { 5 }));
 
             var argKernel = _kernel.Get<IGetKernel>(BindArg.Typed("test"));
             argKernel.Inject(test);
-            Assert.AreEqual("test", test.String);
-            Assert.AreEqual(5, test.Long);
-            Assert.IsNotNull(test.Longs);
-            Assert.IsTrue(test.Longs.SequenceEqual(new long[] { 5 }));
+            Assert.Equal("test", test.String);
+            Assert.Equal(5, test.Long);
+            Assert.NotNull(test.Longs);
+            Assert.True(test.Longs.SequenceEqual(new long[] { 5 }));
         }
     }
 }

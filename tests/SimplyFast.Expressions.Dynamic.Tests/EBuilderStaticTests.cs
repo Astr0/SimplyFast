@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using NUnit.Framework;
+using Xunit;
 
 namespace SimplyFast.Expressions.Dynamic.Tests
 {
-    [TestFixture]
+    
     public class EBuilderStaticTests
     {
         [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
@@ -39,7 +39,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
             #pragma warning restore 169
         }
 
-        [Test]
+        [Fact]
         public void TestGetSetField()
         {
             var lambda = EBuilder.Lambda(() =>
@@ -47,10 +47,10 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var testClass = typeof(TestClass).EBuilder();
                 return testClass.TestField = testClass.TestField;
             });
-            Assert.AreEqual("() => (TestClass.TestField = TestClass.TestField)", lambda.ToDebugString());
+            Assert.Equal("() => (TestClass.TestField = TestClass.TestField)", lambda.ToDebugString());
         }
 
-        [Test]
+        [Fact]
         public void TestGetSetProperty()
         {
             var lambda = EBuilder.Lambda(() =>
@@ -58,10 +58,10 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                     var testClass = typeof(TestClass).EBuilder();
                     return testClass.TestProp = testClass.TestProp;
             });
-            Assert.AreEqual("() => (TestClass.TestProp = TestClass.TestProp)", lambda.ToDebugString());
+            Assert.Equal("() => (TestClass.TestProp = TestClass.TestProp)", lambda.ToDebugString());
         }
 
-        [Test]
+        [Fact]
         public void TestMethod()
         {
             var lambda = EBuilder.Lambda(() =>
@@ -69,10 +69,10 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var testClass = typeof(TestClass).EBuilder();
                 return testClass.TestMethod(2.0f);
             });
-            Assert.AreEqual("() => TestClass.TestMethod(2F)", lambda.ToDebugString());
+            Assert.Equal("() => TestClass.TestMethod(2F)", lambda.ToDebugString());
         }
 
-        [Test]
+        [Fact]
         public void TestAction()
         {
             var lambda = EBuilder.Lambda(() =>
@@ -80,10 +80,10 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var testClass = typeof(TestClass).EBuilder();
                 return testClass.TestAction(true);
             });
-            Assert.AreEqual("() => TestClass.TestAction(True)", lambda.ToDebugString());
+            Assert.Equal("() => TestClass.TestAction(True)", lambda.ToDebugString());
         }
 
-        [Test]
+        [Fact]
         public void TestNew()
         {
             var lambda = EBuilder.Lambda(() =>
@@ -91,10 +91,10 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var testClass = typeof(TestClass).EBuilder();
                 return testClass(2);
             });
-            Assert.AreEqual("() => new TestClass(2)", lambda.ToDebugString());
+            Assert.Equal("() => new TestClass(2)", lambda.ToDebugString());
         }
 
-        [Test]
+        [Fact]
         public void TestNewArray()
         {
             var lambda = EBuilder.Lambda(() =>
@@ -102,7 +102,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var testClass = typeof(byte[]).EBuilder();
                 return testClass(2);
             });
-            Assert.AreEqual("() => new Byte[2]", lambda.ToDebugString());
+            Assert.Equal("() => new Byte[2]", lambda.ToDebugString());
         }
     }
 }

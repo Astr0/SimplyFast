@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using NUnit.Framework;
+using Xunit;
 
 namespace SimplyFast.Reflection.Tests
 {
-    [TestFixture]
+    
     public class MemberInfoExTests
     {
         public class Test
@@ -24,7 +24,7 @@ namespace SimplyFast.Reflection.Tests
             public void SetM1(int value) { }
         }
 
-        [Test]
+        [Fact]
         public void CanReadWorksWitoutPrivateAccess()
         {
             var pa = MemberInfoEx.PrivateAccess;
@@ -39,59 +39,59 @@ namespace SimplyFast.Reflection.Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void CanWriteWorks()
         {
             var t = typeof (Test);
-            Assert.IsFalse(MemberInfoEx.CanWrite(t.Field("F1")));
-            Assert.IsFalse(MemberInfoEx.CanWrite(t.Field("F2")));
-            Assert.IsTrue(MemberInfoEx.CanWrite(t.Field("F3")));
-            Assert.IsFalse(t.Property("P1").CanWrite());
-            Assert.IsTrue(t.Property("P2").CanWrite());
-            Assert.IsTrue(t.Property("P3").CanWrite());
-            Assert.IsFalse(t.Method("M1").CanWrite());
-            Assert.IsFalse(t.Method("SetM1").CanWrite());
+            Assert.False(MemberInfoEx.CanWrite(t.Field("F1")));
+            Assert.False(MemberInfoEx.CanWrite(t.Field("F2")));
+            Assert.True(MemberInfoEx.CanWrite(t.Field("F3")));
+            Assert.False(t.Property("P1").CanWrite());
+            Assert.True(t.Property("P2").CanWrite());
+            Assert.True(t.Property("P3").CanWrite());
+            Assert.False(t.Method("M1").CanWrite());
+            Assert.False(t.Method("SetM1").CanWrite());
         }
 
-        [Test]
+        [Fact]
         public void CanReadWorks()
         {
             var t = typeof(Test);
-            Assert.IsTrue(t.Field("F1").CanRead());
-            Assert.IsTrue(t.Field("F2").CanRead());
-            Assert.IsTrue(t.Field("F3").CanRead());
-            Assert.IsTrue(t.Property("P1").CanRead());
-            Assert.IsFalse(t.Property("P2").CanRead());
-            Assert.IsTrue(t.Property("P3").CanRead());
-            Assert.IsFalse(t.Method("M1").CanRead());
-            Assert.IsFalse(t.Method("SetM1").CanRead());
+            Assert.True(t.Field("F1").CanRead());
+            Assert.True(t.Field("F2").CanRead());
+            Assert.True(t.Field("F3").CanRead());
+            Assert.True(t.Property("P1").CanRead());
+            Assert.False(t.Property("P2").CanRead());
+            Assert.True(t.Property("P3").CanRead());
+            Assert.False(t.Method("M1").CanRead());
+            Assert.False(t.Method("SetM1").CanRead());
         }
 
-        [Test]
+        [Fact]
         public void FieldOrPropertyWorks()
         {
             var t = typeof(Test);
-            Assert.AreEqual("F1", t.FieldOrProperty("F1").Name);
-            Assert.AreEqual("F2", t.FieldOrProperty("F2").Name);
-            Assert.AreEqual("F3", t.FieldOrProperty("F3").Name);
-            Assert.AreEqual("P1", t.FieldOrProperty("P1").Name);
-            Assert.AreEqual("P2", t.FieldOrProperty("P2").Name);
-            Assert.AreEqual("P3", t.FieldOrProperty("P3").Name);
-            Assert.IsNull(t.FieldOrProperty("M1"));
-            Assert.IsNull(t.FieldOrProperty("SetM1"));
-            Assert.IsNull(t.FieldOrProperty("Foo"));
+            Assert.Equal("F1", t.FieldOrProperty("F1").Name);
+            Assert.Equal("F2", t.FieldOrProperty("F2").Name);
+            Assert.Equal("F3", t.FieldOrProperty("F3").Name);
+            Assert.Equal("P1", t.FieldOrProperty("P1").Name);
+            Assert.Equal("P2", t.FieldOrProperty("P2").Name);
+            Assert.Equal("P3", t.FieldOrProperty("P3").Name);
+            Assert.Null(t.FieldOrProperty("M1"));
+            Assert.Null(t.FieldOrProperty("SetM1"));
+            Assert.Null(t.FieldOrProperty("Foo"));
         }
 
-        [Test]
+        [Fact]
         public void ValueTypeWorks()
         {
             var t = typeof(Test);
-            Assert.AreEqual(typeof(int), t.FieldOrProperty("F1").ValueType());
-            Assert.AreEqual(typeof(int), t.FieldOrProperty("F2").ValueType());
-            Assert.AreEqual(typeof(int), t.FieldOrProperty("F3").ValueType());
-            Assert.AreEqual(typeof(int), t.FieldOrProperty("P1").ValueType());
-            Assert.AreEqual(typeof(int), t.FieldOrProperty("P2").ValueType());
-            Assert.AreEqual(typeof(int), t.FieldOrProperty("P3").ValueType());
+            Assert.Equal(typeof(int), t.FieldOrProperty("F1").ValueType());
+            Assert.Equal(typeof(int), t.FieldOrProperty("F2").ValueType());
+            Assert.Equal(typeof(int), t.FieldOrProperty("F3").ValueType());
+            Assert.Equal(typeof(int), t.FieldOrProperty("P1").ValueType());
+            Assert.Equal(typeof(int), t.FieldOrProperty("P2").ValueType());
+            Assert.Equal(typeof(int), t.FieldOrProperty("P3").ValueType());
             Assert.Throws<ArgumentException>(() =>t.Method("M1").ValueType());
             Assert.Throws<ArgumentException>(() => t.Method("SetM1").ValueType());
         }
@@ -132,30 +132,30 @@ namespace SimplyFast.Reflection.Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void FindInvokableMemberWorks()
         {
             var t = typeof (TestInvokable);
-            Assert.AreEqual(typeof(int), ((MethodInfo)t.FindInvokableMember("One")).ReturnType);
-            Assert.AreEqual(typeof(void), ((MethodInfo)t.FindInvokableMember("One", typeof(int))).ReturnType);
-            Assert.AreEqual(typeof(string), ((MethodInfo)t.FindInvokableMember("One", typeof(string))).ReturnType);
-            Assert.AreEqual(typeof(Action<int>), t.FindInvokableMember("Two", typeof(int)).ValueType());
-            Assert.AreEqual(typeof(Action<int, int>), t.FindInvokableMember("Three", typeof(int), typeof(int)).ValueType());
-            Assert.AreEqual(typeof(Func<int>), t.FindInvokableMember("Four").ValueType());
-            Assert.IsNull(t.FindInvokableMember("Five"));
-            Assert.IsNull(t.FindInvokableMember("Six"));
-            Assert.IsNull(t.FindInvokableMember("Seven"));
-            Assert.IsNull(t.FindInvokableMember("Eight"));
-            Assert.AreEqual(typeof(int), ((MethodInfo)t.FindInvokableMember("Eight", typeof(int))).ReturnType);
-            Assert.AreEqual(typeof(double), ((MethodInfo)t.FindInvokableMember("Eight", typeof(int), typeof(int))).ReturnType);
-            Assert.AreEqual(typeof(string), ((MethodInfo)t.FindInvokableMember("Eight", typeof(string), typeof(int))).ReturnType);
+            Assert.Equal(typeof(int), ((MethodInfo)t.FindInvokableMember("One")).ReturnType);
+            Assert.Equal(typeof(void), ((MethodInfo)t.FindInvokableMember("One", typeof(int))).ReturnType);
+            Assert.Equal(typeof(string), ((MethodInfo)t.FindInvokableMember("One", typeof(string))).ReturnType);
+            Assert.Equal(typeof(Action<int>), t.FindInvokableMember("Two", typeof(int)).ValueType());
+            Assert.Equal(typeof(Action<int, int>), t.FindInvokableMember("Three", typeof(int), typeof(int)).ValueType());
+            Assert.Equal(typeof(Func<int>), t.FindInvokableMember("Four").ValueType());
+            Assert.Null(t.FindInvokableMember("Five"));
+            Assert.Null(t.FindInvokableMember("Six"));
+            Assert.Null(t.FindInvokableMember("Seven"));
+            Assert.Null(t.FindInvokableMember("Eight"));
+            Assert.Equal(typeof(int), ((MethodInfo)t.FindInvokableMember("Eight", typeof(int))).ReturnType);
+            Assert.Equal(typeof(double), ((MethodInfo)t.FindInvokableMember("Eight", typeof(int), typeof(int))).ReturnType);
+            Assert.Equal(typeof(string), ((MethodInfo)t.FindInvokableMember("Eight", typeof(string), typeof(int))).ReturnType);
 
 
-            Assert.IsNull(t.FindInvokableMember("One", typeof(object)));
-            Assert.IsNull(t.FindInvokableMember("Two", typeof(int), typeof(int)));
-            Assert.IsNull(t.FindInvokableMember("One", typeof(int), typeof(int)));
-            Assert.IsNull(t.FindInvokableMember("Three", typeof(int), typeof(string)));
-            Assert.IsNull(t.FindInvokableMember("Four", typeof(void)));
+            Assert.Null(t.FindInvokableMember("One", typeof(object)));
+            Assert.Null(t.FindInvokableMember("Two", typeof(int), typeof(int)));
+            Assert.Null(t.FindInvokableMember("One", typeof(int), typeof(int)));
+            Assert.Null(t.FindInvokableMember("Three", typeof(int), typeof(string)));
+            Assert.Null(t.FindInvokableMember("Four", typeof(void)));
         }
     }
 }

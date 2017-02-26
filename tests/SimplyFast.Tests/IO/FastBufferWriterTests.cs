@@ -2,12 +2,12 @@
 using System.IO;
 using System.Linq;
 using System.Text;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.IO;
 
 namespace SimplyFast.Tests.IO
 {
-    [TestFixture]
+    
     public class FastBufferWriterTests
     {
         private byte[] _buffer;
@@ -21,7 +21,7 @@ namespace SimplyFast.Tests.IO
         {
             var writer = Buf(bytes.Length);
             write(writer);
-            Assert.AreEqual(bytes.Length, writer.Index);
+            Assert.Equal(bytes.Length, writer.Index);
             AssertWritten(bytes);
             if (bytes.Length == 0)
                 return;
@@ -32,10 +32,10 @@ namespace SimplyFast.Tests.IO
 
         protected virtual void AssertWritten(byte[] bytes)
         {
-            Assert.IsTrue(_buffer.Take(bytes.Length).SequenceEqual(bytes));
+            Assert.True(_buffer.Take(bytes.Length).SequenceEqual(bytes));
         }
 
-        [Test]
+        [Fact]
         public void BytesOk()
         {
             AssertWritten(w => w.WriteByte(1), 1);
@@ -45,7 +45,7 @@ namespace SimplyFast.Tests.IO
             AssertWritten(w => w.WriteBytes(1, 2, 3, 4, 5), 1, 2, 3, 4, 5);
         }
 
-        [Test]
+        [Fact]
         public void LittleEndianOk()
         {
             AssertWritten(w => w.WriteLittleEndian32(324432U), BitConverter.GetBytes(324432U));
@@ -63,7 +63,7 @@ namespace SimplyFast.Tests.IO
             AssertWritten(w => w.WriteLittleEndian64(ulong.MaxValue), BitConverter.GetBytes(ulong.MaxValue));
         }
 
-        [Test]
+        [Fact]
         public void VarInt32SeemsOk()
         {
             AssertWritten(w => w.WriteVarInt32(0U), 0);
@@ -77,7 +77,7 @@ namespace SimplyFast.Tests.IO
             AssertWritten(w => w.WriteVarInt32(1U << 28), 128, 128, 128, 128, 1);
         }
 
-        [Test]
+        [Fact]
         public void VarInt64SeemsOk()
         {
             AssertWritten(w => w.WriteVarInt64(0UL), 0);
@@ -101,7 +101,7 @@ namespace SimplyFast.Tests.IO
             AssertWritten(w => w.WriteVarInt64(1UL << 63), 128, 128, 128, 128, 128, 128, 128, 128, 128, 1);
         }
 
-        [Test]
+        [Fact]
         public void FloatsOk()
         {
             AssertWritten(w => w.WriteLittleEndianFloat(0.234234F), BitConverter.GetBytes(0.234234F));
@@ -117,7 +117,7 @@ namespace SimplyFast.Tests.IO
             AssertWritten(w => w.WriteLittleEndianFloat(0f), BitConverter.GetBytes(0f));
         }
 
-        [Test]
+        [Fact]
         public void DoubleOk()
         {
             AssertWritten(w => w.WriteDouble(0.234234d), BitConverter.GetBytes(0.234234d));
@@ -133,14 +133,14 @@ namespace SimplyFast.Tests.IO
             AssertWritten(w => w.WriteDouble(0d), BitConverter.GetBytes(0d));
         }
 
-        [Test]
+        [Fact]
         public void StringSizeOk()
         {
-            Assert.AreEqual(5, FastBufferWriter.GetUtf8StringSize("testy"));
-            Assert.AreEqual(12, FastBufferWriter.GetUtf8StringSize("Привіт"));
+            Assert.Equal(5, FastBufferWriter.GetUtf8StringSize("testy"));
+            Assert.Equal(12, FastBufferWriter.GetUtf8StringSize("Привіт"));
         }
 
-        [Test]
+        [Fact]
         public void StringWriteOk()
         {
             AssertWritten(w => w.WriteRawUtf8String(""));
@@ -148,7 +148,7 @@ namespace SimplyFast.Tests.IO
             AssertWritten(w => w.WriteRawUtf8String("Привіт"), Encoding.UTF8.GetBytes("Привіт"));
         }
 
-        [Test]
+        [Fact]
         public void BytesWriteOk()
         {
             AssertWritten(w => w.WriteRawBytes(new byte[0]));
@@ -156,7 +156,7 @@ namespace SimplyFast.Tests.IO
             AssertWritten(w => w.WriteRawBytes(new byte[] { 1, 2, 3, 4, 5, 6, 7 }), 1, 2, 3, 4, 5, 6, 7);
         }
 
-        [Test]
+        [Fact]
         public void CaptureOkStart()
         {
             var buf = Buf(10);
@@ -164,11 +164,11 @@ namespace SimplyFast.Tests.IO
             Assert.Throws<InvalidOperationException>(() => buf.CaptureCurrentPosition(1));
             buf.WriteBytes(1, 2, 3, 4, 5);
             AssertWritten(new byte[]{1, 2, 3, 4, 5});
-            Assert.AreEqual(1, buf.Peek(pos));
-            Assert.AreEqual(2, buf.Peek(pos, 1));
-            Assert.AreEqual(3, buf.Peek(pos, 2));
-            Assert.AreEqual(4, buf.Peek(pos, 3));
-            Assert.AreEqual(5, buf.Peek(pos, 4));
+            Assert.Equal(1, buf.Peek(pos));
+            Assert.Equal(2, buf.Peek(pos, 1));
+            Assert.Equal(3, buf.Peek(pos, 2));
+            Assert.Equal(4, buf.Peek(pos, 3));
+            Assert.Equal(5, buf.Peek(pos, 4));
             Assert.Throws<InvalidOperationException>(() => buf.Peek(pos, -1));
             Assert.Throws<InvalidOperationException>(() => buf.Peek(pos, 6));
             buf.WriteCopy(pos, 5);
@@ -176,7 +176,7 @@ namespace SimplyFast.Tests.IO
             Assert.Throws<InvalidDataException>(() => buf.WriteCopy(pos, 1));
         }
 
-        [Test]
+        [Fact]
         public void CaptureOkEnd()
         {
             var buf = Buf(10);
@@ -184,11 +184,11 @@ namespace SimplyFast.Tests.IO
             var pos = buf.CaptureCurrentPosition(5);
             Assert.Throws<InvalidOperationException>(() => buf.CaptureCurrentPosition(6));
             AssertWritten(new byte[] { 1, 2, 3, 4, 5 });
-            Assert.AreEqual(1, buf.Peek(pos));
-            Assert.AreEqual(2, buf.Peek(pos, 1));
-            Assert.AreEqual(3, buf.Peek(pos, 2));
-            Assert.AreEqual(4, buf.Peek(pos, 3));
-            Assert.AreEqual(5, buf.Peek(pos, 4));
+            Assert.Equal(1, buf.Peek(pos));
+            Assert.Equal(2, buf.Peek(pos, 1));
+            Assert.Equal(3, buf.Peek(pos, 2));
+            Assert.Equal(4, buf.Peek(pos, 3));
+            Assert.Equal(5, buf.Peek(pos, 4));
             Assert.Throws<InvalidOperationException>(() => buf.Peek(pos, -1));
             Assert.Throws<InvalidOperationException>(() => buf.Peek(pos, 6));
             buf.WriteCopy(pos, 5);
@@ -196,7 +196,7 @@ namespace SimplyFast.Tests.IO
             Assert.Throws<InvalidDataException>(() => buf.WriteCopy(pos, 1));
         }
 
-        [Test]
+        [Fact]
         public void CaptureOkMiddle()
         {
             var buf = Buf(10);
@@ -205,17 +205,17 @@ namespace SimplyFast.Tests.IO
             Assert.Throws<InvalidOperationException>(() => buf.CaptureCurrentPosition(11));
             buf.WriteBytes(1, 2, 3, 4, 5);
             AssertWritten(new byte[] { 1, 2, 3, 4, 5, 1, 2, 3, 4, 5});
-            Assert.AreEqual(1, buf.Peek(pos));
-            Assert.AreEqual(2, buf.Peek(pos, 1));
-            Assert.AreEqual(3, buf.Peek(pos, 2));
-            Assert.AreEqual(4, buf.Peek(pos, 3));
-            Assert.AreEqual(5, buf.Peek(pos, 4));
+            Assert.Equal(1, buf.Peek(pos));
+            Assert.Equal(2, buf.Peek(pos, 1));
+            Assert.Equal(3, buf.Peek(pos, 2));
+            Assert.Equal(4, buf.Peek(pos, 3));
+            Assert.Equal(5, buf.Peek(pos, 4));
 
-            Assert.AreEqual(1, buf.Peek(pos, -5));
-            Assert.AreEqual(2, buf.Peek(pos, -4));
-            Assert.AreEqual(3, buf.Peek(pos, -3));
-            Assert.AreEqual(4, buf.Peek(pos, -2));
-            Assert.AreEqual(5, buf.Peek(pos, -1));
+            Assert.Equal(1, buf.Peek(pos, -5));
+            Assert.Equal(2, buf.Peek(pos, -4));
+            Assert.Equal(3, buf.Peek(pos, -3));
+            Assert.Equal(4, buf.Peek(pos, -2));
+            Assert.Equal(5, buf.Peek(pos, -1));
             Assert.Throws<InvalidOperationException>(() => buf.Peek(pos, -6));
             Assert.Throws<InvalidOperationException>(() => buf.Peek(pos, 6));
             Assert.Throws<InvalidDataException>(() => buf.WriteCopy(pos, 1));

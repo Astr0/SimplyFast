@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.Disposables;
 using SimplyFast.Threading;
 
 namespace SimplyFast.Tests
 {
-    [TestFixture]
+    
     public class DisposableExTests
     {
-        [Test]
+        [Fact]
         public void ActionInvokesOnDispose()
         {
             var a = 1;
@@ -21,13 +21,13 @@ namespace SimplyFast.Tests
             {
                 a = 2;
             }
-            Assert.AreEqual(3, a);
+            Assert.Equal(3, a);
             a = 5;
             disposable.Dispose();
-            Assert.AreEqual(5, a);
+            Assert.Equal(5, a);
         }
 
-        [Test]
+        [Fact]
         public void AlwaysActionWorks()
         {
             var a = 1;
@@ -36,56 +36,56 @@ namespace SimplyFast.Tests
             {
                 a = 2;
             }
-            Assert.AreEqual(3, a);
+            Assert.Equal(3, a);
             a = 5;
             disposable.Dispose();
-            Assert.AreEqual(3, a);
+            Assert.Equal(3, a);
         }
 
-        [Test]
+        [Fact]
         public void AssignDisposableWorks()
         {
             var i = 0;
             var a = DisposableEx.Assign(DisposableEx.Action(() => i++));
-            Assert.AreEqual(0, i);
+            Assert.Equal(0, i);
             var newItem = DisposableEx.Action(() => i += 10);
             a.Item = newItem;
-            Assert.AreEqual(1, i);
+            Assert.Equal(1, i);
             a.Item = newItem;
-            Assert.AreEqual(1, i);
+            Assert.Equal(1, i);
             a.Dispose();
-            Assert.AreEqual(11, i);
+            Assert.Equal(11, i);
             a.Dispose();
-            Assert.AreEqual(11, i);
+            Assert.Equal(11, i);
             a.Item = DisposableEx.Action(() => i = 0);
-            Assert.AreEqual(11, i);
+            Assert.Equal(11, i);
             a.Item = newItem;
-            Assert.AreEqual(0, i);
+            Assert.Equal(0, i);
             using (var d = DisposableEx.Assign<IDisposable>())
             {
                 d.Item = null;
             }
         }
 
-        [Test]
+        [Fact]
         public void CollectionRemoveWorks()
         {
             var list = new List<int> {1, 2};
             var d1 = DisposableEx.Remove(list, 1);
             var d2 = DisposableEx.Remove(list, 2);
-            Assert.IsTrue(list.SequenceEqual(new[] {1, 2}));
+            Assert.True(list.SequenceEqual(new[] {1, 2}));
             d1.Dispose();
-            Assert.IsTrue(list.SequenceEqual(new[] {2}));
+            Assert.True(list.SequenceEqual(new[] {2}));
             d2.Dispose();
-            Assert.AreEqual(0, list.Count);
+            Assert.Equal(0, list.Count);
             list.AddRange(new[] {1, 2});
-            Assert.IsTrue(list.SequenceEqual(new[] {1, 2}));
+            Assert.True(list.SequenceEqual(new[] {1, 2}));
             d1.Dispose();
             d2.Dispose();
-            Assert.IsTrue(list.SequenceEqual(new[] {1, 2}));
+            Assert.True(list.SequenceEqual(new[] {1, 2}));
         }
 
-        [Test]
+        [Fact]
         public void ConcatDisposableWorks()
         {
             var i = 0;
@@ -93,21 +93,21 @@ namespace SimplyFast.Tests
             using (DisposableEx.Concat(DisposableEx.Action(() => i = 1), DisposableEx.Action(() => j = 1)))
             {
             }
-            Assert.AreEqual(1, i);
-            Assert.AreEqual(1, j);
+            Assert.Equal(1, i);
+            Assert.Equal(1, j);
         }
 
-        [Test]
+        [Fact]
         public void DisposeOnFinalizeWorks()
         {
             var i = 0;
             DisposableEx.Action(() => i++).DisposeOnFinalize();
             GC.Collect();
             GC.WaitForPendingFinalizers();
-            Assert.AreEqual(1, i);
+            Assert.Equal(1, i);
         }
 
-        [Test]
+        [Fact]
         public void KeepAliveTest()
         {
             WeakReference wr;
@@ -116,14 +116,14 @@ namespace SimplyFast.Tests
                 using (DisposableEx.Null().KeepAlive(wr.Target))
                 {
                     GCEx.CollectAndWait();
-                    Assert.IsTrue(wr.IsAlive);
+                    Assert.True(wr.IsAlive);
                 }
             }
             GCEx.CollectAndWait();
-            Assert.IsFalse(wr.IsAlive);
+            Assert.False(wr.IsAlive);
         }
 
-        [Test]
+        [Fact]
         public void UseContextWorks()
         {
             var defaultTaskScheduler = TaskScheduler.Default;
@@ -146,12 +146,12 @@ namespace SimplyFast.Tests
                 
                 while (!done)
                     EventLoop.DoEvents();
-                Assert.AreEqual(ts.Value, threadId);
-                Assert.AreNotEqual(realThreadId, threadId);
+                Assert.Equal(ts.Value, threadId);
+                Assert.NotEqual(realThreadId, threadId);
             });
         }
 
-        [Test]
+        [Fact]
         public void DisposeCollectionWorks()
         {
             var a = 0;
@@ -162,17 +162,17 @@ namespace SimplyFast.Tests
             var list = new List<IDisposable>{ ad };
             list.AddAction(() => b++);
             arr.Dispose();
-            Assert.AreEqual(2, arr.Length);
-            Assert.AreEqual(1, a);
-            Assert.AreEqual(1, b);
+            Assert.Equal(2, arr.Length);
+            Assert.Equal(1, a);
+            Assert.Equal(1, b);
             ((IEnumerable<IDisposable>)list).Dispose();
-            Assert.AreEqual(2, list.Count);
-            Assert.AreEqual(2, a);
-            Assert.AreEqual(2, b);
+            Assert.Equal(2, list.Count);
+            Assert.Equal(2, a);
+            Assert.Equal(2, b);
             list.Dispose();
-            Assert.AreEqual(0, list.Count);
-            Assert.AreEqual(3, a);
-            Assert.AreEqual(2, b);
+            Assert.Equal(0, list.Count);
+            Assert.Equal(3, a);
+            Assert.Equal(2, b);
         }
     }
 }

@@ -1,122 +1,121 @@
 ﻿using System;
 using System.Collections.Generic;
-using NUnit.Framework;
+using Xunit;
 
 namespace SimplyFast.IoC.Tests
 {
-    [TestFixture]
+    
     public class BasicBindTests
     {
         private IKernel _kernel;
 
-        [SetUp]
-        public void SetUp()
+        public BasicBindTests()
         {
             _kernel = new FastKernel();
         }
 
-        [Test]
+        [Fact]
         public void KernelBindsItself()
         {
-            Assert.AreEqual(_kernel, _kernel.Get<IKernel>());
-            Assert.AreEqual(_kernel, _kernel.Get<IGetKernel>());
+            Assert.Equal(_kernel, _kernel.Get<IKernel>());
+            Assert.Equal(_kernel, _kernel.Get<IGetKernel>());
         }
 
-        [Test]
+        [Fact]
         public void KernelBindsItselfAsFactory()
         {
-            Assert.AreEqual(_kernel, _kernel.Get<Func<IKernel>>()());
-            Assert.AreEqual(_kernel, _kernel.Get<Func<IGetKernel>>()());
+            Assert.Equal(_kernel, _kernel.Get<Func<IKernel>>()());
+            Assert.Equal(_kernel, _kernel.Get<Func<IGetKernel>>()());
         }
 
-        [Test]
+        [Fact]
         public void ConstantBindingWorks()
         {
             var o = new object();
             _kernel.Bind<object>().ToConstant(o);
-            Assert.AreEqual(o, _kernel.Get<object>());
-            Assert.AreEqual(o, _kernel.Get<Func<object>>()());
+            Assert.Equal(o, _kernel.Get<object>());
+            Assert.Equal(o, _kernel.Get<Func<object>>()());
         }
 
-        [Test]
+        [Fact]
         public void MethodBindingWorks()
         {
             var i = 0;
             _kernel.Bind<int>().ToMethod(c => i++);
-            Assert.AreEqual(0, i);
-            Assert.AreEqual(0, _kernel.Get<int>());
-            Assert.AreEqual(1, i);
-            Assert.AreEqual(1, _kernel.Get<int>());
-            Assert.AreEqual(2, i);
+            Assert.Equal(0, i);
+            Assert.Equal(0, _kernel.Get<int>());
+            Assert.Equal(1, i);
+            Assert.Equal(1, _kernel.Get<int>());
+            Assert.Equal(2, i);
             var func = _kernel.Get<Func<int>>();
-            Assert.AreEqual(2, i);
-            Assert.AreEqual(2, func());
-            Assert.AreEqual(3, i);
-            Assert.AreEqual(3, func());
-            Assert.AreEqual(4, i);
+            Assert.Equal(2, i);
+            Assert.Equal(2, func());
+            Assert.Equal(3, i);
+            Assert.Equal(3, func());
+            Assert.Equal(4, i);
         }
 
-        [Test]
+        [Fact]
         public void NinjectSytaxOk()
         {
             _kernel.Bind<string>().ToConstructor(c => "test");
-            Assert.AreEqual("test", _kernel.Inject<string>());
+            Assert.Equal("test", _kernel.Inject<string>());
         }
 
-        [Test]
+        [Fact]
         public void SingletonBindingWorksForStruct()
         {
             var i = 0;
             _kernel.Bind<int>().ToMethod(c => i++).InSingletonScope();
-            Assert.AreEqual(0, i);
-            Assert.AreEqual(0, _kernel.Get<int>());
-            Assert.AreEqual(1, i);
-            Assert.AreEqual(0, _kernel.Get<int>());
-            Assert.AreEqual(1, i);
+            Assert.Equal(0, i);
+            Assert.Equal(0, _kernel.Get<int>());
+            Assert.Equal(1, i);
+            Assert.Equal(0, _kernel.Get<int>());
+            Assert.Equal(1, i);
             var func = _kernel.Get<Func<int>>();
-            Assert.AreEqual(1, i);
-            Assert.AreEqual(0, func());
-            Assert.AreEqual(1, i);
-            Assert.AreEqual(0, func());
-            Assert.AreEqual(1, i);
+            Assert.Equal(1, i);
+            Assert.Equal(0, func());
+            Assert.Equal(1, i);
+            Assert.Equal(0, func());
+            Assert.Equal(1, i);
         }
 
-        [Test]
+        [Fact]
         public void SingletonBindingWorksForClass()
         {
             object o = null;
             _kernel.Bind<object>().ToMethod(c => o = new object()).InSingletonScope();
-            Assert.IsNull(o);
+            Assert.Null(o);
             var first = _kernel.Get<object>();
-            Assert.AreEqual(o, first);
-            Assert.AreEqual(first, _kernel.Get<object>());
-            Assert.AreEqual(first, o);
+            Assert.Equal(o, first);
+            Assert.Equal(first, _kernel.Get<object>());
+            Assert.Equal(first, o);
             var func = _kernel.Get<Func<object>>();
-            Assert.AreEqual(first, o);
-            Assert.AreEqual(first, func());
-            Assert.AreEqual(first, o);
-            Assert.AreEqual(first, func());
-            Assert.AreEqual(first, o);
+            Assert.Equal(first, o);
+            Assert.Equal(first, func());
+            Assert.Equal(first, o);
+            Assert.Equal(first, func());
+            Assert.Equal(first, o);
         }
 
-        [Test]
+        [Fact]
         public void ToSelfAndToWorks()
         {
             _kernel.Bind<List<int>>().ToSelf().InSingletonScope();
             _kernel.Bind<IList<int>>().To<List<int>>();
             _kernel.Bind<ICollection<int>>().To<IList<int>>();
             var list = _kernel.Get<List<int>>();
-            Assert.AreEqual(list, _kernel.Get<ICollection<int>>());
-            Assert.AreEqual(list, _kernel.Get<IList<int>>());
-            Assert.AreEqual(list, _kernel.Get<ICollection<int>>());
-            Assert.AreEqual(list, _kernel.Get<IList<int>>());
-            Assert.AreEqual(list, _kernel.Get<List<int>>());
-            Assert.AreEqual(list, _kernel.Get<Func<List<int>>>()());
-            Assert.AreEqual(list, _kernel.Get<Func<ICollection<int>>>()());
-            Assert.AreEqual(list, _kernel.Get<Func<ICollection<int>>>()());
+            Assert.Equal(list, _kernel.Get<ICollection<int>>());
+            Assert.Equal(list, _kernel.Get<IList<int>>());
+            Assert.Equal(list, _kernel.Get<ICollection<int>>());
+            Assert.Equal(list, _kernel.Get<IList<int>>());
+            Assert.Equal(list, _kernel.Get<List<int>>());
+            Assert.Equal(list, _kernel.Get<Func<List<int>>>()());
+            Assert.Equal(list, _kernel.Get<Func<ICollection<int>>>()());
+            Assert.Equal(list, _kernel.Get<Func<ICollection<int>>>()());
         }
 
-        [Test]
+        [Fact]
         public void ThrowsIfNoBinding()
         {
             Assert.Throws<InvalidOperationException>(() => _kernel.Get<int>());
@@ -125,14 +124,14 @@ namespace SimplyFast.IoC.Tests
             Assert.Throws<InvalidOperationException>(() => _kernel.Get<object>());
         }
 
-        [Test]
+        [Fact]
         public void CreatesInstanceWithNoBinding()
         {
             var o1 = _kernel.Get<object>();
-            Assert.IsNotNull(o1);
+            Assert.NotNull(o1);
             var o2 = _kernel.Get<object>();
-            Assert.IsNotNull(o2);
-            Assert.AreNotEqual(o1, o2);
+            Assert.NotNull(o2);
+            Assert.NotEqual(o1, o2);
         }
     }
 }

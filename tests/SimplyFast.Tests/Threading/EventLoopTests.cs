@@ -3,26 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.Threading;
 
 namespace SimplyFast.Tests.Threading
 {
-    [TestFixture]
+    
     public class EventLoopTests
     {
-        [Test]
+        [Fact]
         public void EventLoopEnds()
         {
-            Assert.DoesNotThrow(()=> EventLoop.Run(()=>{}));
+            EventLoop.Run(()=>{});
         }
 
-        [Test]
+        [Fact]
         public void EventLoopRuns()
         {
             var i = 0;
-            Assert.DoesNotThrow(() => EventLoop.Run(() => { i++; }));
-            Assert.AreEqual(1, i);
+            EventLoop.Run(() => { i++; });
+            Assert.Equal(1, i);
         }
 
         private static async Task RecordThreads(List<int> threadIds, int milliseconds, CancellationToken token = default (CancellationToken))
@@ -34,59 +34,59 @@ namespace SimplyFast.Tests.Threading
             threadIds.Add(Thread.CurrentThread.ManagedThreadId);
         }
 
-        [Test]
+        [Fact]
         public void EventLoopRunsOnSameThread()
         {
             var i = 0;
             var threads = new List<int>();
-            Assert.DoesNotThrow(() => EventLoop.Run(async () =>
+            EventLoop.Run(async () =>
             {
                 threads.Add(Thread.CurrentThread.ManagedThreadId);
                 await RecordThreads(threads, 2);
                 await RecordThreads(threads, 1);
                 i++;
-            }));
-            Assert.AreEqual(1, i);
-            Assert.AreEqual(5, threads.Count);
-            Assert.AreEqual(1, threads.Distinct().Count());
+            });
+            Assert.Equal(1, i);
+            Assert.Equal(5, threads.Count);
+            Assert.Equal(1, threads.Distinct().Count());
         }
 
-        [Test]
+        [Fact]
         public void EventLoopWhenAnyAndAllWorks()
         {
             var i = 0;
             var threads = new List<int>();
-            Assert.DoesNotThrow(() => EventLoop.Run(async () =>
+            EventLoop.Run(async () =>
             {
                 threads.Add(Thread.CurrentThread.ManagedThreadId);
                 var tasks = new[] {RecordThreads(threads, 20), RecordThreads(threads, 1)};
                 var finish = await Task.WhenAny(tasks);
-                Assert.AreEqual(finish, tasks[1]);
+                Assert.Equal(finish, tasks[1]);
                 await Task.WhenAll(tasks);
                 i++;
-            }));
-            Assert.AreEqual(1, i);
-            Assert.AreEqual(5, threads.Count);
-            Assert.AreEqual(1, threads.Distinct().Count());
+            });
+            Assert.Equal(1, i);
+            Assert.Equal(5, threads.Count);
+            Assert.Equal(1, threads.Distinct().Count());
         }
 
-        [Test]
+        [Fact]
         public void EventLoopCancellationWorks()
         {
             var i = 0;
             var threads = new List<int>();
-            Assert.DoesNotThrow(() => EventLoop.Run(() =>
+            EventLoop.Run(() =>
             {
                 threads.Add(Thread.CurrentThread.ManagedThreadId);
                 var cts = new CancellationTokenSource();
                 var task = RecordThreads(threads, int.MaxValue, cts.Token);
                 cts.Cancel();
-                Assert.IsTrue(task.IsCanceled);
+                Assert.True(task.IsCanceled);
                 i++;
-            }));
-            Assert.AreEqual(1, i);
-            Assert.AreEqual(2, threads.Count);
-            Assert.AreEqual(1, threads.Distinct().Count());
+            });
+            Assert.Equal(1, i);
+            Assert.Equal(2, threads.Count);
+            Assert.Equal(1, threads.Distinct().Count());
         }
 
         private static async Task Throw(int milliseconds)
@@ -97,12 +97,12 @@ namespace SimplyFast.Tests.Threading
             throw new InvalidOperationException("ex");
         }
 
-        [Test]
+        [Fact]
         public void EventLoopPreAwaitExceptionWorks()
         {
             var i = 0;
             var gotIt = false;
-            Assert.DoesNotThrow(() => EventLoop.Run(async () =>
+            EventLoop.Run(async () =>
             {
                 try
                 {
@@ -113,17 +113,17 @@ namespace SimplyFast.Tests.Threading
                     gotIt = true;
                 }
                 i++;
-            }));
-            Assert.AreEqual(1, i);
-            Assert.IsTrue(gotIt);
+            });
+            Assert.Equal(1, i);
+            Assert.True(gotIt);
         }
 
-        [Test]
+        [Fact]
         public void EventLoopPostAwaitExceptionWorks()
         {
             var i = 0;
             var gotIt = false;
-            Assert.DoesNotThrow(() => EventLoop.Run(async () =>
+            EventLoop.Run(async () =>
             {
                 try
                 {
@@ -134,36 +134,36 @@ namespace SimplyFast.Tests.Threading
                     gotIt = true;
                 }
                 i++;
-            }));
-            Assert.AreEqual(1, i);
-            Assert.IsTrue(gotIt);
+            });
+            Assert.Equal(1, i);
+            Assert.True(gotIt);
         }
 
-        [Test]
+        [Fact]
         public void EventLoopUnhandledPreExceptionWorks()
         {
             var gotIt = false;
-            Assert.DoesNotThrow(() => EventLoop.Run(async () =>
+            EventLoop.Run(async () =>
             {
                 EventLoop.UnhandledException += ex => { gotIt = true; };
                 await Throw(0);
-            }));
-            Assert.IsTrue(gotIt);
+            });
+            Assert.True(gotIt);
         }
 
-        [Test]
+        [Fact]
         public void EventLoopUnhandledPostExceptionWorks()
         {
             var gotIt = false;
-            Assert.DoesNotThrow(() => EventLoop.Run(async () =>
+            EventLoop.Run(async () =>
             {
                 EventLoop.UnhandledException += ex => { gotIt = true; };
                 await Throw(1);
-            }));
-            Assert.IsTrue(gotIt);
+            });
+            Assert.True(gotIt);
         }
 
-        public async Task<int> Recursive(int o)
+        private static async Task<int> Recursive(int o)
         {
             if (o == 0)
                 return 0;
@@ -172,22 +172,22 @@ namespace SimplyFast.Tests.Threading
             return 1 + recursive.Result;
         }
 
-        [Test]
+        [Fact]
         public void NoEventLoopRecursive()
         {
             var res = Recursive(800).Result;
-            Assert.AreEqual(800, res);
+            Assert.Equal(800, res);
         }
 
-        [Test]
+        [Fact]
         public void EventLoopRecursive()
         {
             var res = 0;
-            Assert.DoesNotThrow(() => EventLoop.Run(async () =>
+            EventLoop.Run(async () =>
             {
                 res = await Recursive(800);
-            }));
-            Assert.AreEqual(800, res);
+            });
+            Assert.Equal(800, res);
         }
     }
 }

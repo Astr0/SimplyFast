@@ -2,22 +2,22 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using Xunit;
 using SimplyFast.Reflection.Tests.TestData;
 
 namespace SimplyFast.Reflection.Tests
 {
-    [TestFixture]
+    
     public class TypeExTests
     {
-        [Test]
+        [Fact]
         public void FieldsReturnValidCounts()
         {
             var a1 = typeof(TestClass1).Fields();
-            Assert.AreEqual(7, a1.Length);
+            Assert.Equal(7, a1.Length);
         }
 
-        [Test]
+        [Fact]
         public void FieldsReturnValidFields()
         {
             var a2 = typeof(TestClass1).Fields();
@@ -26,17 +26,17 @@ namespace SimplyFast.Reflection.Tests
                         where !fields.Contains(o.Name)
                         select o;
             // auto-property fields
-            Assert.AreEqual(5, other.Count());
+            Assert.Equal(5, other.Count());
         }
 
-        [Test]
+        [Fact]
         public void PropertiesReturnValidCounts()
         {
             var a1 = typeof(TestClass1).Properties();
-            Assert.AreEqual(7, a1.Length);
+            Assert.Equal(7, a1.Length);
         }
 
-        [Test]
+        [Fact]
         public void PropertiesReturnValidProperties()
         {
             var a2 = typeof(TestClass1).Properties();
@@ -44,45 +44,45 @@ namespace SimplyFast.Reflection.Tests
             var other = from o in a2
                         where !props.Contains(o.Name)
                         select o;
-            Assert.AreEqual(0, other.Count());
+            Assert.Equal(0, other.Count());
         }
 
-        [Test]
+        [Fact]
         public void StringClassWorks()
         {
             var type = typeof(string);
             var publicPropertiesCount = type.Properties().Count(x => x.IsPublic());
-            Assert.AreEqual(2, publicPropertiesCount);
+            Assert.Equal(2, publicPropertiesCount);
         }
 
-        [Test]
+        [Fact]
         public void GetDeclaredTypeWorks()
         {
             IList<int> v1 = new List<int>();
             TestClass1 t = new TestClass2();
 
-            Assert.AreEqual(typeof(IList<int>), TypeEx.TypeOf(v1));
-            Assert.AreEqual(typeof(Dictionary<string, double>), TypeEx.TypeOf((Dictionary<string, double>)null));
-            Assert.AreEqual(typeof(TestClass1), TypeEx.TypeOf(t));
+            Assert.Equal(typeof(IList<int>), TypeEx.TypeOf(v1));
+            Assert.Equal(typeof(Dictionary<string, double>), TypeEx.TypeOf((Dictionary<string, double>)null));
+            Assert.Equal(typeof(TestClass1), TypeEx.TypeOf(t));
         }
 
-        [Test]
+        [Fact]
         public void SubstituteWorks()
         {
             var type = TypeEx.Substitute(typeof(Tuple<string, int, List<string>, double>),
                 t => t == typeof(string) ? typeof(decimal) : t);
-            Assert.AreEqual(typeof(Tuple<decimal, int, List<decimal>, double>), type);
+            Assert.Equal(typeof(Tuple<decimal, int, List<decimal>, double>), type);
 
             var type2 = TypeEx.Substitute(typeof(int), t => typeof(string));
-            Assert.AreEqual(typeof(string), type2);
+            Assert.Equal(typeof(string), type2);
         }
 
-        [Test]
+        [Fact]
         public void RemoveByRefWorks()
         {
             var refInt = typeof(int).MakeByRefType();
-            Assert.AreEqual(typeof(int), refInt.RemoveByRef());
-            Assert.AreEqual(typeof(int), typeof(int).RemoveByRef());
+            Assert.Equal(typeof(int), refInt.RemoveByRef());
+            Assert.Equal(typeof(int), typeof(int).RemoveByRef());
         }
 
         // ReSharper disable once PossibleInterfaceMemberAmbiguity
@@ -99,40 +99,40 @@ namespace SimplyFast.Reflection.Tests
             }
         }
 
-        [Test]
+        [Fact]
         public void FindIEnumerableWorks()
         {
-            Assert.IsTrue(new[] { typeof(string), typeof(int), typeof(double), typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(ITestEnumerable))));
-            Assert.IsTrue(new[] { typeof(char), typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(string))));
-            Assert.IsTrue(new[] { typeof(int), typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(List<int>))));
-            Assert.IsTrue(new[] { typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(TestEnumerable))));
-            Assert.IsTrue(new[] { typeof(char), typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(IEnumerable<char>))));
-            Assert.IsTrue(new[] { typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(IEnumerable))));
+            Assert.True(new[] { typeof(string), typeof(int), typeof(double), typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(ITestEnumerable))));
+            Assert.True(new[] { typeof(char), typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(string))));
+            Assert.True(new[] { typeof(int), typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(List<int>))));
+            Assert.True(new[] { typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(TestEnumerable))));
+            Assert.True(new[] { typeof(char), typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(IEnumerable<char>))));
+            Assert.True(new[] { typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(IEnumerable))));
 
-            Assert.AreEqual(2, TypeEx.FindIEnumerable(typeof(IEnumerable<>)).Count());
-            Assert.IsFalse(TypeEx.FindIEnumerable(typeof(int)).Any());
+            Assert.Equal(2, TypeEx.FindIEnumerable(typeof(IEnumerable<>)).Count());
+            Assert.False(TypeEx.FindIEnumerable(typeof(int)).Any());
         }
 
-        [Test]
+        [Fact]
         public void FindGenericTypeWorks()
         {
-            Assert.AreEqual(typeof(IEnumerable<string>), TypeEx.FindGenericType(typeof(IEnumerable<>), typeof(ITestEnumerable)));
-            Assert.AreEqual(typeof(ICollection<string>), TypeEx.FindGenericType(typeof(ICollection<>), typeof(List<string>)));
-            Assert.AreEqual(null, TypeEx.FindGenericType(typeof(IEnumerable<>), typeof(int)));
+            Assert.Equal(typeof(IEnumerable<string>), TypeEx.FindGenericType(typeof(IEnumerable<>), typeof(ITestEnumerable)));
+            Assert.Equal(typeof(ICollection<string>), TypeEx.FindGenericType(typeof(ICollection<>), typeof(List<string>)));
+            Assert.Equal(null, TypeEx.FindGenericType(typeof(IEnumerable<>), typeof(int)));
         }
 
-        [Test]
+        [Fact]
         public void MakeGenericWorks()
         {
             var generic = typeof(Tuple<,,>);
             var tint1 = generic.MakeGeneric(typeof(int), typeof(int), typeof(string));
             var tint2 = generic.MakeGeneric(typeof(int), typeof(int), typeof(string));
             var tstr = generic.MakeGeneric(typeof(int), typeof(string), typeof(string));
-            Assert.IsNotNull(tint1);
-            Assert.IsNotNull(tint2);
-            Assert.IsNotNull(tstr);
-            Assert.AreSame(tint1, tint2);
-            Assert.AreNotEqual(tint1, tstr);
+            Assert.NotNull(tint1);
+            Assert.NotNull(tint2);
+            Assert.NotNull(tstr);
+            Assert.Equal(tint1, tint2);
+            Assert.NotEqual(tint1, tstr);
             Assert.Throws<ArgumentException>(() => generic.MakeGeneric());
             Assert.Throws<ArgumentException>(() => generic.MakeGeneric(typeof(int)));
             Assert.Throws<ArgumentException>(() => generic.MakeGeneric(typeof(int), typeof(string)));
@@ -140,25 +140,25 @@ namespace SimplyFast.Reflection.Tests
                 () => generic.MakeGeneric(typeof(int), typeof(string), typeof(int), typeof(string)));
         }
 
-        [Test]
+        [Fact]
         public void GenericArgumentsWork()
         {
-            Assert.AreEqual(0, typeof(string).GenericArguments().Length);
-            Assert.AreEqual(1, typeof(IEnumerable<>).GenericArguments().Length);
-            Assert.AreEqual(typeof(string), typeof(IEnumerable<string>).GenericArguments()[0]);
-            Assert.AreEqual(0, typeof(string).TypeInfo().GenericArguments().Length);
-            Assert.AreEqual(1, typeof(IEnumerable<>).TypeInfo().GenericArguments().Length);
-            Assert.AreEqual(typeof(string), typeof(IEnumerable<string>).TypeInfo().GenericArguments()[0]);
+            Assert.Equal(0, typeof(string).GenericArguments().Length);
+            Assert.Equal(1, typeof(IEnumerable<>).GenericArguments().Length);
+            Assert.Equal(typeof(string), typeof(IEnumerable<string>).GenericArguments()[0]);
+            Assert.Equal(0, typeof(string).TypeInfo().GenericArguments().Length);
+            Assert.Equal(1, typeof(IEnumerable<>).TypeInfo().GenericArguments().Length);
+            Assert.Equal(typeof(string), typeof(IEnumerable<string>).TypeInfo().GenericArguments()[0]);
         }
 
-        [Test]
+        [Fact]
         public void ResolveTypeWorks()
         {
-            if (AssemblyEx.NeedsAssemblyLocator)
+            if (!AssemblyEx.HasDefaultLocator || !AssemblyEx.DefaultLocatorIsRuntime)
                 AssemblyEx.SetAssemblyLocator(() => new[] { typeof(TypeExTests).TypeInfo().Assembly });
-            Assert.AreEqual(typeof(string), TypeEx.ResolveType(typeof(string).FullName));
-            Assert.AreEqual(typeof(TypeExTests), TypeEx.ResolveType(typeof(TypeExTests).FullName));
-            Assert.IsNull(TypeEx.ResolveType("SF.Reflection.Tests.TypeNotExists"));
+            Assert.Equal(typeof(string), TypeEx.ResolveType(typeof(string).FullName));
+            Assert.Equal(typeof(TypeExTests), TypeEx.ResolveType(typeof(TypeExTests).FullName));
+            Assert.Null(TypeEx.ResolveType("SF.Reflection.Tests.TypeNotExists"));
         }
     }
 }
