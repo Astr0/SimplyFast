@@ -33,16 +33,16 @@ namespace SimplyFast.Tests.Threading
         }
 
         [Fact]
-        public void ThenWorks()
+        public async Task ThenWorks()
         {
             Assert.Equal(2.5, Task.FromResult(5).Then(x => x / 2.0).Result);
             
-            Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             {
                 await Throw(0).Then(x => x/2.0);
             });
 
-            Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             {
                 await Throw(1).Then(x => x / 2.0);
             });

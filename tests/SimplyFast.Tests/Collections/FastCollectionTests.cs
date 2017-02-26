@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Xunit;
 using System.Linq;
 using SimplyFast.Collections;
@@ -27,6 +28,7 @@ namespace SimplyFast.Tests.Collections
             Assert.Equal(0, new FastCollection<int>(-4).Capacity);
         }
 
+        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         private static void AssertEquals<T>(FastCollection<T> collection, IEnumerable<T> enumerable)
         {
             var array = enumerable as T[] ?? enumerable.ToArray();

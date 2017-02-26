@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq.Expressions;
 using Xunit;
 
 namespace SimplyFast.Expressions.Dynamic.Tests
 {
-    
     public class EBuilderInstanceTests
     {
         [SuppressMessage("ReSharper", "UnusedMember.Global")]
@@ -54,7 +52,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         {
             var lambda = EBuilder.Lambda(typeof(TestClass), a =>
             {
-                var aexp = DynamicEBuilderEx.EBuilder((Expression) a);
+                var aexp = a.EBuilder();
                 return aexp.TestAction(true);
             });
             Assert.Equal("(TestClass p_0) => p_0.TestAction(True)", lambda.ToDebugString());
@@ -65,7 +63,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         {
             var lambda = EBuilder.Lambda(typeof(TestClass), a =>
             {
-                var aexp = DynamicEBuilderEx.EBuilder((Expression) a);
+                var aexp = a.EBuilder();
                 return aexp.TestField + 2;
             });
             Assert.Equal("(TestClass p_0) => (p_0.TestField + 2)", lambda.ToDebugString());
@@ -76,8 +74,8 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         {
             var lambda = EBuilder.Lambda(typeof(TestClass), typeof(TestClass), (a, b) =>
             {
-                var aexp = DynamicEBuilderEx.EBuilder((Expression) a);
-                var bexp = DynamicEBuilderEx.EBuilder((Expression) b);
+                var aexp = a.EBuilder();
+                var bexp = b.EBuilder();
                 return aexp.TestField = bexp.TestField;
             });
             Assert.Equal("(TestClass p_0, TestClass p_1) => (p_0.TestField = p_1.TestField)", lambda.ToDebugString());
@@ -88,8 +86,8 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         {
             var lambda = EBuilder.Lambda(typeof(TestClass), typeof(TestClass), (a, b) =>
             {
-                var aexp = DynamicEBuilderEx.EBuilder((Expression) a);
-                var bexp = DynamicEBuilderEx.EBuilder((Expression) b);
+                var aexp = a.EBuilder();
+                var bexp = b.EBuilder();
                 return aexp[3] = bexp[2];
             });
             Assert.Equal("(TestClass p_0, TestClass p_1) => (p_0.Item[3] = p_1.Item[2])", lambda.ToDebugString());
@@ -100,8 +98,8 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         {
             var lambda = EBuilder.Lambda(typeof(TestClass), typeof(TestClass), (a, b) =>
             {
-                var aexp = DynamicEBuilderEx.EBuilder((Expression) a);
-                var bexp = DynamicEBuilderEx.EBuilder((Expression) b);
+                var aexp = a.EBuilder();
+                var bexp = b.EBuilder();
                 return aexp.TestProp = bexp.TestProp;
             });
             Assert.Equal("(TestClass p_0, TestClass p_1) => (p_0.TestProp = p_1.TestProp)", lambda.ToDebugString());
@@ -112,8 +110,8 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         {
             var lambda = EBuilder.Lambda(typeof(Func<int, bool>), typeof(TestClass), (a, b) =>
             {
-                var aexp = DynamicEBuilderEx.EBuilder((Expression) a);
-                var bexp = DynamicEBuilderEx.EBuilder((Expression) b);
+                var aexp = a.EBuilder();
+                var bexp = b.EBuilder();
                 return !aexp(bexp.TestField);
             });
             Assert.Equal("(Func<Int32, Boolean> p_0, TestClass p_1) => !p_0(p_1.TestField)", lambda.ToDebugString());
@@ -124,7 +122,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         {
             var lambda = EBuilder.Lambda(typeof(TestClass), a =>
             {
-                var aexp = DynamicEBuilderEx.EBuilder((Expression) a);
+                var aexp = a.EBuilder();
                 return aexp.TestMethod(2.0f);
             });
             Assert.Equal("(TestClass p_0) => p_0.TestMethod(2F)", lambda.ToDebugString());
@@ -135,7 +133,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         {
             var lambda = EBuilder.Lambda(typeof(bool), a =>
             {
-                var aexp = DynamicEBuilderEx.EBuilder((Expression) a);
+                var aexp = a.EBuilder();
                 return !aexp;
             });
             Assert.Equal("(Boolean p_0) => !p_0", lambda.ToDebugString());
@@ -146,7 +144,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         {
             var lambda = EBuilder.Lambda(typeof(TestClass), a =>
             {
-                var aexp = DynamicEBuilderEx.EBuilder((Expression) a);
+                var aexp = a.EBuilder();
                 return --aexp.TestField;
             });
             Assert.Equal("(TestClass p_0) => --p_0.TestField", lambda.ToDebugString());

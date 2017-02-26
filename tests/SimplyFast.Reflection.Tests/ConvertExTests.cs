@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System.Diagnostics.CodeAnalysis;
+using Xunit;
 
 #pragma warning disable 414
 #pragma warning disable 169
@@ -53,6 +54,7 @@ namespace SimplyFast.Reflection.Tests
             Assert.Null(convertClass(null));
         }
 
+        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         private static void TestConvert<TSource, TResult>(TResult expected, TSource value)
         {
             Assert.Equal(expected, ConvertEx.Converter<TSource, TResult>()(value));

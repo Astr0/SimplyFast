@@ -1,10 +1,10 @@
 ﻿using System;
-using Xunit;
+using System.Diagnostics.CodeAnalysis;
 using SimplyFast.IO;
 
 namespace SimplyFast.Tests.IO
 {
-    
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class FastBufferReaderTestsSubBuffer: FastBufferReaderTests
     {
         private byte[] _buffer;

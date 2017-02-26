@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+// ReSharper disable once RedundantUsingDirective
 using SimplyFast.IO;
 
 namespace SimplyFast.Tests.IO

@@ -6,7 +6,7 @@
 
   <Import Project="../framework_defines.targets" />
 
-  <ItemGroup Condition=" '$(TargetFramework)' != 'net45'">
+  <ItemGroup Condition=" '$(FrameworkType)' != 'net'">
     <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
   </ItemGroup>
 

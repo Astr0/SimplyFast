@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Xunit;
 using SimplyFast.Serialization.Tests.Protobuf.TestData;
 
 namespace SimplyFast.Serialization.Tests.Protobuf
 {
-    
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public class TestAgainstSelfGeneric : MessageTests
     {
         protected override void Test(FTestMessage message, Action<FTestMessage> customAssert = null)
