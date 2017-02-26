@@ -1,0 +1,25 @@
+<Project>
+  <PropertyGroup>
+    <ApplicationIcon />
+    <OutputType>exe</OutputType>
+    <OutputTypeEx>exe</OutputTypeEx>
+    <StartupObject />
+  </PropertyGroup>
+  
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <Import Project="../src/framework_defines.targets" />
+
+  <ItemGroup>
+    <None Remove=".gitignore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NUnit" Version="3.6.0" />
+    <PackageReference Include="NUnitLite" Version="3.6.0" />
+  </ItemGroup>
+
+</Project>

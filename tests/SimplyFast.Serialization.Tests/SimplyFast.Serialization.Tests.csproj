@@ -3,26 +3,11 @@
   <PropertyGroup>    
     <TargetFrameworks>net45;netcoreapp1.0</TargetFrameworks>
     <!--<TargetFramework>netcoreapp1.0</TargetFramework>-->
-    <ApplicationIcon />
-    <OutputType>exe</OutputType>
-    <OutputTypeEx>exe</OutputTypeEx>
-    <StartupObject />
   </PropertyGroup>
 
-  <Import Project="../../src/framework_defines.targets" />
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
-  </PropertyGroup>
+  <Import Project="../tests.targets" />
   
   <ItemGroup>
-    <None Remove=".gitignore" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="NUnit" Version="3.6.0" />
-    <PackageReference Include="NUnitLite" Version="3.6.0" />
     <PackageReference Include="protobuf-net" Version="2.1.0" />
   </ItemGroup>
 
