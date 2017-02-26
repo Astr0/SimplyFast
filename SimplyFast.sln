@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimplyFast.Expressions.Dyna
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimplyFast.Expressions.Dynamic.Tests", "tests\SimplyFast.Expressions.Dynamic.Tests\SimplyFast.Expressions.Dynamic.Tests.csproj", "{16354AF2-26BD-4AF3-8420-8B0383AB0B1B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimplyFast.Log", "src\SimplyFast.Log\SimplyFast.Log.csproj", "{43A2BCDA-3918-4858-8091-D7E21D5FCC4B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -211,6 +213,18 @@ Global
 		{16354AF2-26BD-4AF3-8420-8B0383AB0B1B}.Release|x64.Build.0 = Release|x64
 		{16354AF2-26BD-4AF3-8420-8B0383AB0B1B}.Release|x86.ActiveCfg = Release|x86
 		{16354AF2-26BD-4AF3-8420-8B0383AB0B1B}.Release|x86.Build.0 = Release|x86
+		{43A2BCDA-3918-4858-8091-D7E21D5FCC4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43A2BCDA-3918-4858-8091-D7E21D5FCC4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43A2BCDA-3918-4858-8091-D7E21D5FCC4B}.Debug|x64.ActiveCfg = Debug|x64
+		{43A2BCDA-3918-4858-8091-D7E21D5FCC4B}.Debug|x64.Build.0 = Debug|x64
+		{43A2BCDA-3918-4858-8091-D7E21D5FCC4B}.Debug|x86.ActiveCfg = Debug|x86
+		{43A2BCDA-3918-4858-8091-D7E21D5FCC4B}.Debug|x86.Build.0 = Debug|x86
+		{43A2BCDA-3918-4858-8091-D7E21D5FCC4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43A2BCDA-3918-4858-8091-D7E21D5FCC4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43A2BCDA-3918-4858-8091-D7E21D5FCC4B}.Release|x64.ActiveCfg = Release|x64
+		{43A2BCDA-3918-4858-8091-D7E21D5FCC4B}.Release|x64.Build.0 = Release|x64
+		{43A2BCDA-3918-4858-8091-D7E21D5FCC4B}.Release|x86.ActiveCfg = Release|x86
+		{43A2BCDA-3918-4858-8091-D7E21D5FCC4B}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

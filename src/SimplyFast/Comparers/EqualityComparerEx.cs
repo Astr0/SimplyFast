@@ -9,6 +9,14 @@ namespace SimplyFast.Comparers
     public static class EqualityComparerEx
     {
         /// <summary>
+        /// Ignores object's IEquatable and compare by reference
+        /// </summary>
+        public static EqualityComparer<object> Reference()
+        {
+            return ReferenceEqualityComparer.Instance;
+        }
+
+        /// <summary>
         /// Array equlity comparer using EqualityComparer.Default for elements
         /// </summary>
         public static EqualityComparer<T[]> Array<T>()
