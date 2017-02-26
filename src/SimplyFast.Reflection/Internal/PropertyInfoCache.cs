@@ -19,8 +19,9 @@ namespace SimplyFast.Reflection.Internal
 
         private PropertyInfoCache(Type type)
         {
-            Properties = type.AllProperties();
-            _properties = Properties.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.ToArray(), StringComparer.Ordinal);
+            var allProperties = type.AllProperties();
+            Properties = allProperties;
+            _properties = allProperties.GroupBy(x => x.Name).ToDictionary(x => x.Key, x => x.ToArray(), StringComparer.Ordinal);
             var defaultMember = type.TypeInfo().GetCustomAttribute<DefaultMemberAttribute>();
             if (defaultMember != null)
                 IndexerName = defaultMember.MemberName;

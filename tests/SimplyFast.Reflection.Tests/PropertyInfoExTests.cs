@@ -131,6 +131,7 @@ namespace SimplyFast.Reflection.Tests
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         private class TestProtected
         {
             protected int Full { get; set; }
@@ -147,6 +148,7 @@ namespace SimplyFast.Reflection.Tests
             Assert.False(typeof(TestClass3).Property("CanSet").IsPrivate());
             Assert.False(typeof(TestClass3).Property("P1").IsPrivate());
             Assert.True(typeof(TestClass3).Property("Priv").IsPrivate());
+            Assert.Equal(5, typeof(TestProtected).Properties().Length);
             Assert.False(typeof(TestProtected).Property("Full").IsPrivate());
             Assert.False(typeof(TestProtected).Property("Get").IsPrivate());
             Assert.False(typeof(TestProtected).Property("Set").IsPrivate());

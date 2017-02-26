@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks;
 using SimplyFast.Threading.Internal;
 
 namespace SimplyFast.Threading
@@ -53,6 +54,15 @@ namespace SimplyFast.Threading
         public static void Run(Action init)
         {
             Run(x => init(), null);
+        }
+
+        /// <summary>
+        ///     Runs event loop on current thread
+        /// </summary>
+        /// <param name="init">First event to be invoked</param>
+        public static void Run(Func<Task> init)
+        {
+            Run(async x => await init(), null);
         }
 
         public static void DoEvents()

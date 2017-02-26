@@ -8,12 +8,16 @@ namespace SimplyFast.Reflection.Tests
     
     public class MemberInfoExTests
     {
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+        [SuppressMessage("ReSharper", "NotAccessedField.Global")]
+        [SuppressMessage("ReSharper", "MemberCanBeMadeStatic.Global")]
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         public class Test
         {
             public readonly int F1 = 1;
             public const int F2 = 2;
             public int F3 = 3;
-            public int P1 { get { return 2; } }
+            public int P1 => 2;
             public int P2 { set { F3 = value; } }
             public int P3 { get { return P1; } protected set { P2 = value; } }
             public int M1()
@@ -21,14 +25,15 @@ namespace SimplyFast.Reflection.Tests
                 return 1;
             }
 
+            [SuppressMessage("ReSharper", "UnusedParameter.Global")]
             public void SetM1(int value) { }
         }
 
         [Fact]
-        public void CanReadWorksWitoutPrivateAccess()
+        public void CanReadWorksWithPrivateAccess()
         {
             var pa = MemberInfoEx.PrivateAccess;
-            MemberInfoEx.PrivateAccess = false;
+            MemberInfoEx.PrivateAccess = true;
             try
             {
                 CanReadWorks();
@@ -97,7 +102,10 @@ namespace SimplyFast.Reflection.Tests
         }
 
         [SuppressMessage("ReSharper", "ValueParameterNotUsed")]
-        public class TestInvokable
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
+#pragma warning disable 169
+        private class TestInvokable
         {
             public int One()
             {
@@ -111,10 +119,10 @@ namespace SimplyFast.Reflection.Tests
             }
             public Action<int> Two;
             public Action<int, int> Three;
-            public Func<int> Four { get { return null; } }
+            public Func<int> Four => null;
             public Func<int> Five { set { } }
             public int Six;
-            public string Seven { get { return null; } }
+            public string Seven => null;
 
             public int Eight<T>(T input)
             {
@@ -131,6 +139,7 @@ namespace SimplyFast.Reflection.Tests
                 return null;
             }
         }
+#pragma warning restore 169
 
         [Fact]
         public void FindInvokableMemberWorks()

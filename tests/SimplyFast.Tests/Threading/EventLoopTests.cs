@@ -8,13 +8,23 @@ using SimplyFast.Threading;
 
 namespace SimplyFast.Tests.Threading
 {
-    
+
     public class EventLoopTests
     {
         [Fact]
         public void EventLoopEnds()
         {
-            EventLoop.Run(()=>{});
+            EventLoop.Run(() => { });
+            EventLoop.Run(x => { }, null);
+        }
+
+        [Fact]
+        public void EventLoopPassesArg()
+        {
+            var test = new object();
+            object received = null;
+            EventLoop.Run(x => { received = x; }, test);
+            Assert.Equal(test, received);
         }
 
         [Fact]
@@ -25,11 +35,24 @@ namespace SimplyFast.Tests.Threading
             Assert.Equal(1, i);
         }
 
-        private static async Task RecordThreads(List<int> threadIds, int milliseconds, CancellationToken token = default (CancellationToken))
+
+        [Fact]
+        public void EventLoopRunsAsync()
+        {
+            var i = 0;
+            EventLoop.Run(async () =>
+            {
+                await Task.Yield();
+                i++;
+            });
+            Assert.Equal(1, i);
+        }
+
+        private static async Task RecordThreads(List<int> threadIds, Task waitTask)
         {
             // Start thread
             threadIds.Add(Thread.CurrentThread.ManagedThreadId);
-            await Task.Delay(milliseconds, token);
+            await waitTask;
             // end thread
             threadIds.Add(Thread.CurrentThread.ManagedThreadId);
         }
@@ -37,13 +60,17 @@ namespace SimplyFast.Tests.Threading
         [Fact]
         public void EventLoopRunsOnSameThread()
         {
-            var i = 0;
             var threads = new List<int>();
+            var i = 0;
             EventLoop.Run(async () =>
             {
                 threads.Add(Thread.CurrentThread.ManagedThreadId);
-                await RecordThreads(threads, 2);
-                await RecordThreads(threads, 1);
+                var tcs = new TaskCompletionSource<bool>();
+                var rt1 = RecordThreads(threads, tcs.Task);
+                var rt2 = RecordThreads(threads, tcs.Task);
+                tcs.TrySetResult(true);
+                await rt1;
+                await rt2;
                 i++;
             });
             Assert.Equal(1, i);
@@ -54,18 +81,25 @@ namespace SimplyFast.Tests.Threading
         [Fact]
         public void EventLoopWhenAnyAndAllWorks()
         {
-            var i = 0;
             var threads = new List<int>();
+            var i = 0;
+            Task[] tasks = null;
+            Task finish = null;
             EventLoop.Run(async () =>
             {
                 threads.Add(Thread.CurrentThread.ManagedThreadId);
-                var tasks = new[] {RecordThreads(threads, 20), RecordThreads(threads, 1)};
-                var finish = await Task.WhenAny(tasks);
-                Assert.Equal(finish, tasks[1]);
+                var first = new TaskCompletionSource<bool>();
+                var second = new TaskCompletionSource<bool>();
+                tasks = new[] {RecordThreads(threads, first.Task), RecordThreads(threads, second.Task)};
+                var finishTask = Task.WhenAny(tasks);
+                second.TrySetResult(true);
+                first.TrySetResult(true);
+                finish = await finishTask;
                 await Task.WhenAll(tasks);
                 i++;
             });
             Assert.Equal(1, i);
+            Assert.Equal(finish, tasks[1]);
             Assert.Equal(5, threads.Count);
             Assert.Equal(1, threads.Distinct().Count());
         }
@@ -78,9 +112,9 @@ namespace SimplyFast.Tests.Threading
             EventLoop.Run(() =>
             {
                 threads.Add(Thread.CurrentThread.ManagedThreadId);
-                var cts = new CancellationTokenSource();
-                var task = RecordThreads(threads, int.MaxValue, cts.Token);
-                cts.Cancel();
+                var tcs = new TaskCompletionSource<bool>();
+                var task = RecordThreads(threads, tcs.Task);
+                tcs.TrySetCanceled();
                 Assert.True(task.IsCanceled);
                 i++;
             });
@@ -100,8 +134,8 @@ namespace SimplyFast.Tests.Threading
         [Fact]
         public void EventLoopPreAwaitExceptionWorks()
         {
-            var i = 0;
             var gotIt = false;
+            var i = 0;
             EventLoop.Run(async () =>
             {
                 try
@@ -112,7 +146,7 @@ namespace SimplyFast.Tests.Threading
                 {
                     gotIt = true;
                 }
-                i++;
+                ++i;
             });
             Assert.Equal(1, i);
             Assert.True(gotIt);
@@ -168,7 +202,7 @@ namespace SimplyFast.Tests.Threading
             if (o == 0)
                 return 0;
             var recursive = Recursive(o - 1);
-            await Task.WhenAll(Task.Delay(Math.Min(o, 100)), recursive);
+            await Task.WhenAll(Task.Delay(Math.Min(o, 10)), recursive);
             return 1 + recursive.Result;
         }
 
