@@ -1,17 +1,17 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Reflection;
+using SimplyFast.Cache;
 using SimplyFast.Reflection;
 
 namespace SimplyFast.IoC.Internal.DerivedBindings
 {
     public class GenericDerivedBindings: IDerivedBinding
     {
-        private readonly ConcurrentDictionary<Type, IGenericDerivedBinding> _bindings = new ConcurrentDictionary<Type, IGenericDerivedBinding>();
+        private readonly ICache<Type, IGenericDerivedBinding> _bindings = CacheEx.ThreadSafe<Type, IGenericDerivedBinding>();
 
         public void Add(Type genericTypeDefinition, IGenericDerivedBinding binding)
         {
-            _bindings[genericTypeDefinition] = binding;
+            _bindings.Upsert(genericTypeDefinition, binding);
         }
 
         public IBinding TryBind(Type type)
@@ -44,7 +44,7 @@ namespace SimplyFast.IoC.Internal.DerivedBindings
             return invoker(binding);
         }
 
-        private static readonly ConcurrentDictionary<Type, Func<IGenericDerivedBinding, IBinding>> _invokers = new ConcurrentDictionary<Type, Func<IGenericDerivedBinding, IBinding>>();
+        private static readonly ICache<Type, Func<IGenericDerivedBinding, IBinding>> _invokers = CacheEx.ThreadSafe<Type, Func<IGenericDerivedBinding, IBinding>>();
         private static Func<IGenericDerivedBinding, IBinding> GetInvoker(Type type)
         {
             return _invokers.GetOrAdd(type, CreateInvoker);

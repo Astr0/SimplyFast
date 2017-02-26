@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
+using SimplyFast.Cache;
 using SimplyFast.IoC.Internal.Reflection;
 using SimplyFast.Reflection;
 
@@ -9,8 +9,8 @@ namespace SimplyFast.IoC.Internal.Injection
 {
     internal static class DefaultInjectorBuilder
     {
-        private static readonly ConcurrentDictionary<Type, FastMethod[]> _methodCache =
-            new ConcurrentDictionary<Type, FastMethod[]>();
+        private static readonly ICache<Type, FastMethod[]> _methodCache =
+            CacheEx.ThreadSafe<Type, FastMethod[]>();
 
         public static IInjector CreateDefaultInjector(Type type, IGetKernel kernel)
         {

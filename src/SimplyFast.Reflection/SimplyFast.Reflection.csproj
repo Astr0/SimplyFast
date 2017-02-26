@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.0;netstandard1.1;netstandard1.6;net45;</TargetFrameworks>
-    <!--<TargetFrameworks>netstandard1.1;</TargetFrameworks>-->
+    <!--1.0-base;1.3-IConvertible;1.6-Assemblies;Net-Native-Emit-->
+    <TargetFrameworks>netstandard1.0;netstandard1.3;netstandard1.6;net45;</TargetFrameworks>
+    <!--<TargetFrameworks>netstandard1.0;</TargetFrameworks>-->
   </PropertyGroup>
 
   <Import Project="../framework_defines.targets" />

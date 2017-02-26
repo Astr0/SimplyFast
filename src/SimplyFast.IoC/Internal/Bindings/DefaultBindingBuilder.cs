@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using SimplyFast.Cache;
 using SimplyFast.IoC.Internal.Reflection;
 using SimplyFast.Reflection;
 
@@ -15,8 +15,8 @@ namespace SimplyFast.IoC.Internal.Bindings
             typeof(IntPtr)
         };
 
-        private static readonly ConcurrentDictionary<Type, FastConstructor[]> _constructorCache =
-            new ConcurrentDictionary<Type, FastConstructor[]>();
+        private static readonly ICache<Type, FastConstructor[]> _constructorCache =
+            CacheEx.ThreadSafe<Type, FastConstructor[]>();
 
         private static FastConstructor ChooseConstructor(FastConstructor[] paramConstructors, IGetKernel kernel,
             Func<FastConstructor, bool> filter = null)

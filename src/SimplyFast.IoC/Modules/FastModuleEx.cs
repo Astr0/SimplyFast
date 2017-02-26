@@ -35,7 +35,7 @@ namespace SimplyFast.IoC.Modules
 
         private static IEnumerable<Type> GetAssemblyModuleCandidates(Assembly assembly)
         {
-            return assembly.GetExportedTypes().Where(IsModuleCandidate);
+            return assembly.ExportedTypes.Where(IsModuleCandidate);
         }
 
 #if PARALLEL

@@ -37,5 +37,11 @@ namespace SimplyFast.Cache
             return new ConcurrentDictionaryCache<TK, T>();
         }
 #endif
+
+        public static bool TryAdd<TK, T>(this ICache<TK, T> cache, TK key, T value)
+        {
+            cache.GetOrAdd(key, x => value, out bool added);
+            return added;
+        }
     }
 }

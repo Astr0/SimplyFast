@@ -6,7 +6,7 @@ namespace SimplyFast.Tests.Cache
     [TestFixture]
     public class CacheTests
     {
-        private void TestCache(ICache<int, string> cache)
+        private static void TestCache(ICache<int, string> cache)
         {
             Assert.IsFalse(cache.TryGetValue(1, out string str0));
             Assert.IsNull(str0);
@@ -32,6 +32,11 @@ namespace SimplyFast.Tests.Cache
             var str7 = cache.GetOrAdd(1, MakeValue);
             Assert.AreEqual("1", str7);
             Assert.IsTrue(ReferenceEquals(str6, str7));
+            const string test = "test";
+            cache.Upsert(1, test);
+            var str8 = cache.GetOrAdd(1, MakeValue);
+            Assert.AreEqual(test, str8);
+            Assert.IsTrue(ReferenceEquals(test, str8));
         }
 
         private static string MakeValue(int key)
@@ -48,6 +53,7 @@ namespace SimplyFast.Tests.Cache
             var str2 = cache.GetOrAdd(1, MakeValue);
             Assert.AreEqual("1", str2);
             Assert.IsFalse(ReferenceEquals(str1, str2));
+            cache.Upsert(1, "test");
             var str3 = cache.GetOrAdd(1, MakeValue, out bool added);
             Assert.IsTrue(added);
             Assert.AreEqual("1", str3);

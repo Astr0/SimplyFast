@@ -21,6 +21,10 @@ namespace SimplyFast.Cache.Internal
             return createValue(key);
         }
 
+        public void Upsert(TKey key, TValue value)
+        {
+        }
+
         public void Clear()
         {
         }

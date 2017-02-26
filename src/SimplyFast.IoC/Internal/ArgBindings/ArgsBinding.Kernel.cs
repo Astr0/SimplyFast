@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using SimplyFast.Cache;
 using SimplyFast.Collections;
 using SimplyFast.IoC.Internal.Bindings;
 using SimplyFast.IoC.Internal.Injection;
@@ -34,7 +34,7 @@ namespace SimplyFast.IoC.Internal.ArgBindings
                 return GetArgBinding(type, null);
             }
 
-            private readonly ConcurrentDictionary<ArgKey, IBinding> _cache = new ConcurrentDictionary<ArgKey, IBinding>();
+            private readonly ICache<ArgKey, IBinding> _cache = CacheEx.ThreadSafe<ArgKey, IBinding>();
             private volatile int _lastKernelVersion;
 
             public IBinding GetArgBinding(Type type, string name)

@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
+using SimplyFast.Cache;
 using SimplyFast.Collections;
 using SimplyFast.Collections.Concurrent;
 
@@ -8,11 +8,11 @@ namespace SimplyFast.IoC.Internal.Bindings
 {
     internal class BindingCollection
     {
-        private readonly ConcurrentDictionary<Type, ConcurrentGrowList<IBinding>> _allBindings = new ConcurrentDictionary<Type, ConcurrentGrowList<IBinding>>();
-        private readonly ConcurrentDictionary<Type, IBinding> _bindings = new ConcurrentDictionary<Type, IBinding>();
+        private readonly ICache<Type, ConcurrentGrowList<IBinding>> _allBindings = CacheEx.ThreadSafe<Type, ConcurrentGrowList<IBinding>>();
+        private readonly ICache<Type, IBinding> _bindings = CacheEx.ThreadSafe<Type, IBinding>();
         private readonly IKernel _kernel;
         private readonly Func<Type, IBinding> _customDefaultBinding;
-        private readonly ConcurrentDictionary<Type, IBinding> _defaultBindings = new ConcurrentDictionary<Type, IBinding>();
+        private readonly ICache<Type, IBinding> _defaultBindings = CacheEx.ThreadSafe<Type, IBinding>();
         private volatile int _version;
 
         public BindingCollection(IKernel kernel, Func<Type, IBinding> customDefaultBinding = null)
@@ -44,7 +44,7 @@ namespace SimplyFast.IoC.Internal.Bindings
         {
             var allBindings = _allBindings.GetOrAdd(type, t => new ConcurrentGrowList<IBinding>(), out bool addedNewType);
             allBindings.Add(binding);
-             _bindings[type] = binding;
+             _bindings.Upsert(type, binding);
             if (!addedNewType)
                 return;
             _version++;

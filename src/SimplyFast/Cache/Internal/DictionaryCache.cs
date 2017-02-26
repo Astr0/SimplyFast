@@ -23,6 +23,11 @@ namespace SimplyFast.Cache.Internal
             return _cache.GetOrAdd(key, createValue);
         }
 
+        public void Upsert(TK key, T value)
+        {
+            _cache[key] = value;
+        }
+
         public void Clear()
         {
             _cache.Clear();

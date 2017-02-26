@@ -37,7 +37,7 @@
     <DefineConstants>$(DefineConstants);FILES;ICONVERTIBLE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" $(Standard) &gt;= 16 ">
-    <DefineConstants>$(DefineConstants);ASSEMBLIES;REFLECTIONEX</DefineConstants>
+    <DefineConstants>$(DefineConstants);ASSEMBLIES</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" $(Standard) &gt;= 45 ">
     <DefineConstants>$(DefineConstants);EMIT;PARALLEL</DefineConstants>

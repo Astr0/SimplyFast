@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using SimplyFast.Cache;
 
 namespace SimplyFast.IoC.Internal.Injection
 {
     internal class InjectorCollection
     {
-        private readonly ConcurrentDictionary<Type, IInjector> _injectors = new ConcurrentDictionary<Type, IInjector>();
+        private readonly ICache<Type, IInjector> _injectors = CacheEx.ThreadSafe<Type, IInjector>();
         private readonly IGetKernel _kernel;
         private volatile int _lastKernelVersion;
 
