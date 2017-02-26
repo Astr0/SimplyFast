@@ -1,10 +1,16 @@
 ﻿using System;
+using SimplyFast.IoC.Internal;
 using SimplyFast.IoC.Internal.ArgBindings;
 
 namespace SimplyFast.IoC
 {
     public static class KernelEx
     {
+        public static IKernel Create()
+        {
+            return new FastKernel();
+        }
+
         public static void Bind<T>(this IKernel kernel, IBinding<T> binding)
         {
             kernel.Bind(typeof(T), binding);

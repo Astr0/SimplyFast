@@ -44,13 +44,25 @@
     <FrameworkStandard>0</FrameworkStandard>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <DefineConstants Condition=" $(FrameworkStandard) &gt;= 11 ">$(DefineConstants);CONCURRENT</DefineConstants>
-    <DefineConstants Condition=" $(FrameworkStandard) &gt;= 13 ">$(DefineConstants);FILES;ICONVERTIBLE</DefineConstants>
-    <DefineConstants Condition=" $(FrameworkStandard) &gt;= 15 ">$(DefineConstants);ASSEMBLIES</DefineConstants>
-    <DefineConstants Condition=" $(FrameworkStandard) &gt;= 45 ">$(DefineConstants);EMIT;PARALLEL</DefineConstants>
-    <DefineConstants Condition=" '$(FrameworkType)' == 'netstandard' ">$(DefineConstants);NETSTANDARD</DefineConstants>
-    <DefineConstants Condition=" '$(FrameworkType)' == 'netcoreapp' ">$(DefineConstants);NETCORE</DefineConstants>
-    <DefineConstants Condition=" '$(FrameworkType)' == 'net' ">$(DefineConstants);NET</DefineConstants>
+  <PropertyGroup Condition=" $(FrameworkStandard) &gt;= 11 ">
+    <DefineConstants>$(DefineConstants);CONCURRENT</DefineConstants>
+  </PropertyGroup>	
+  <PropertyGroup Condition=" $(FrameworkStandard) &gt;= 13 ">
+    <DefineConstants>$(DefineConstants);FILES;ICONVERTIBLE;CONSOLE</DefineConstants>
+  </PropertyGroup>	
+  <PropertyGroup Condition=" $(FrameworkStandard) &gt;= 15 ">
+    <DefineConstants>$(DefineConstants);ASSEMBLIES</DefineConstants>
+  </PropertyGroup>	
+  <PropertyGroup Condition=" $(FrameworkStandard) &gt;= 45 ">
+    <DefineConstants>$(DefineConstants);EMIT;PARALLEL</DefineConstants>
+  </PropertyGroup>	
+  <PropertyGroup Condition=" '$(FrameworkType)' == 'netstandard' ">
+    <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
+  </PropertyGroup>	
+  <PropertyGroup Condition=" '$(FrameworkType)' == 'netcoreapp' ">
+    <DefineConstants>$(DefineConstants);NETCORE</DefineConstants>
+  </PropertyGroup>	
+  <PropertyGroup Condition=" '$(FrameworkType)' == 'net' ">
+    <DefineConstants>$(DefineConstants);NET</DefineConstants>
   </PropertyGroup>
 </Project>

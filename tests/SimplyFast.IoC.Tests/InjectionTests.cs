@@ -10,7 +10,7 @@ namespace SimplyFast.IoC.Tests
     {
         public InjectionTests()
         {
-            _kernel = new FastKernel();
+            _kernel = KernelEx.Create();
         }
 
         private readonly IKernel _kernel;

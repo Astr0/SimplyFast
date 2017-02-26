@@ -3,7 +3,7 @@
 namespace SimplyFast.IoC
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class FastInjectAttribute : Attribute
+    public class InjectAttribute : Attribute
     {
     }
 }

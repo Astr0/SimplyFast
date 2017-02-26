@@ -11,7 +11,7 @@ namespace SimplyFast.IoC.Tests
     {
         public DerivedBindTests()
         {
-            _kernel = new FastKernel();
+            _kernel = KernelEx.Create();
         }
 
         private readonly IKernel _kernel;

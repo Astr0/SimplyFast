@@ -10,26 +10,26 @@ namespace SimplyFast.IoC.Tests.TestData
         public string String;
         public List<long> Longs;
 
-        [FastInject]
+        [Inject]
         public void Init(long value)
         {
             Long = value;
         }
 
-        [FastInject]
+        [Inject]
         public void Init(List<long> longs)
         {
             Longs = longs;
         }
 
-        [FastInject]
+        [Inject]
         public void Init(long value, List<long> longs)
         {
             Long = value;
             Longs = longs;
         }
 
-        [FastInject]
+        [Inject]
         public void Init(long value, List<long> longs, string str)
         {
             Init(value, longs);

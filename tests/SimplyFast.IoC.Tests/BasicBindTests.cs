@@ -7,11 +7,11 @@ namespace SimplyFast.IoC.Tests
     
     public class BasicBindTests
     {
-        private IKernel _kernel;
+        private readonly IKernel _kernel;
 
         public BasicBindTests()
         {
-            _kernel = new FastKernel();
+            _kernel = KernelEx.Create();
         }
 
         [Fact]

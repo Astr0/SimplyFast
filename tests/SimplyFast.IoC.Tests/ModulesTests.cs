@@ -15,7 +15,7 @@ namespace SimplyFast.IoC.Tests
         [Fact]
         public void CanLoadOneModule()
         {
-            var kernel = new FastKernel();
+            var kernel = KernelEx.Create();
             Assert.Throws<InvalidOperationException>(() => kernel.Get<string>());
             Assert.False(kernel.Get<IEnumerable<string>>().Any());
             Assert.False(kernel.Get<List<string>>().Any());
@@ -28,7 +28,7 @@ namespace SimplyFast.IoC.Tests
             FinalModuleTests(kernel);
         }
 
-        private static void FinalModuleTests(FastKernel kernel)
+        private static void FinalModuleTests(IKernel kernel)
         {
             Assert.Equal("test", kernel.Get<string>());
             Assert.True(kernel.Get<IEnumerable<string>>().SequenceEqual(new[] { "str1", "str2" }));
@@ -39,10 +39,10 @@ namespace SimplyFast.IoC.Tests
         [Fact]
         public void CanLoadTwoModules()
         {
-            var kernel = new FastKernel();
+            var kernel = KernelEx.Create();
             kernel.Load(new TestModule(), new TestModule2());
             FinalModuleTests(kernel);
-            var reverseKernel = new FastKernel();
+            var reverseKernel = KernelEx.Create();
             reverseKernel.Load(new TestModule2(), new TestModule());
             FinalModuleTests(reverseKernel);
         }
@@ -59,7 +59,7 @@ namespace SimplyFast.IoC.Tests
         [Fact]
         public void CanLoadFromAssembly()
         {
-            var kernel = new FastKernel();
+            var kernel = KernelEx.Create();
             kernel.Load(typeof(TestModule).Assembly);
             FinalModuleTests(kernel);
         }
@@ -69,7 +69,7 @@ namespace SimplyFast.IoC.Tests
         {
             TestFewTimes(() =>
             {
-                var kernel = new FastKernel();
+                var kernel = KernelEx.Create();
                 kernel.LoadParallel(typeof(TestModule).Assembly);
                 FinalModuleTests(kernel);
             }, 100);
@@ -80,7 +80,7 @@ namespace SimplyFast.IoC.Tests
         {
             TestFewTimes(() =>
             {
-                var kernel = new FastKernel();
+                var kernel = KernelEx.Create();
                 kernel.LoadParallel(new[] { typeof(TestModule).Assembly });
                 FinalModuleTests(kernel);
             }, 100);

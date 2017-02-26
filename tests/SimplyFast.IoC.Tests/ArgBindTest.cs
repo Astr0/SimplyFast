@@ -11,7 +11,7 @@ namespace SimplyFast.IoC.Tests
 
         public ArgBindTest()
         {
-            _kernel = new FastKernel();
+            _kernel = KernelEx.Create();
         }
 
         [Fact]

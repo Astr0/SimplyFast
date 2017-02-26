@@ -60,7 +60,7 @@ namespace SimplyFast.IoC.Internal.Injection
 
         private static bool IsInjectMethod(MethodInfo method)
         {
-            return method.GetCustomAttribute<FastInjectAttribute>(true) != null && !method.IsStatic;
+            return method.GetCustomAttribute<InjectAttribute>(true) != null && !method.IsStatic;
         }
     }
 }

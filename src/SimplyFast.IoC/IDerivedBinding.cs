@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SimplyFast.IoC
 {
@@ -9,6 +10,7 @@ namespace SimplyFast.IoC
 
     public interface IGenericDerivedBinding
     {
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
         IBinding TryBind<TInner>();
     }
 }

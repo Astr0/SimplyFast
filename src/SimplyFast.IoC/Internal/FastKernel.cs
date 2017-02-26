@@ -6,10 +6,10 @@ using SimplyFast.IoC.Internal.Bindings;
 using SimplyFast.IoC.Internal.DerivedBindings;
 using SimplyFast.IoC.Internal.Injection;
 
-namespace SimplyFast.IoC
+namespace SimplyFast.IoC.Internal
 {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class FastKernel : IDerivedKernel
+    internal class FastKernel : IDerivedKernel
     {
         private readonly BindingCollection _bindings;
         private readonly DerivedBindingCollection _derivedBindings;
