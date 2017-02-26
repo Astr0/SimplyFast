@@ -1,8 +1,7 @@
-﻿using System;
-
+﻿
 namespace SimplyFast.Data.Tests.Spaces
 {
-    public class TestTuple : ICloneable
+    public class TestTuple
     {
         public TestTuple(int x, int y)
         {
@@ -13,12 +12,7 @@ namespace SimplyFast.Data.Tests.Spaces
         public int X { get; }
         public int Y { get; }
 
-        public object Clone()
-        {
-            return new TestTuple(X, Y);
-        }
-
-        protected bool Equals(TestTuple other)
+        private bool Equals(TestTuple other)
         {
             return X == other.X && Y == other.Y;
         }
