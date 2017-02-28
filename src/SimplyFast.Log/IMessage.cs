@@ -1,12 +1,14 @@
-﻿namespace SimplyFast.Log
+﻿using SimplyFast.Strings.Tokens;
+
+namespace SimplyFast.Log
 {
     /// <summary>
-    /// Interface for log message
+    ///     Interface for log message
     /// </summary>
-    public interface IMessage: ILogInfoStorage
+    public interface IMessage : IStringTokenStorage
     {
         /// <summary>
-        /// Message severity
+        ///     Message severity
         /// </summary>
         Severity Severity { get; }
     }

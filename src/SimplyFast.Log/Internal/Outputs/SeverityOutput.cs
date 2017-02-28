@@ -1,9 +1,9 @@
 ﻿namespace SimplyFast.Log.Internal.Outputs
 {
-    public class SeverityOutput: IOutput
+    internal class SeverityOutput : IOutput
     {
-        private readonly Severity _severity;
         private readonly IOutput _output;
+        private readonly Severity _severity;
 
         public SeverityOutput(Severity severity, IOutput output)
         {

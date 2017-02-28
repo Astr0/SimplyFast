@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SimplyFast.Strings.Tokens;
 
 namespace SimplyFast.Log
 {
@@ -6,9 +7,10 @@ namespace SimplyFast.Log
     {
         IOutputs Outputs { get; }
         Severity Severity { get; set; }
+
         /// <summary>
-        /// Log message
+        ///     Log message
         /// </summary>
-        void Log(Severity severity, IEnumerable<ILogInfo> info);
+        void Log(Severity severity, IEnumerable<IStringToken> info);
     }
 }

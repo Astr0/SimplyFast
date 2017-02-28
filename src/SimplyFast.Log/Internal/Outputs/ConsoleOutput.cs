@@ -1,11 +1,11 @@
-﻿#if CONSOLE
+﻿
+#if CONSOLE
 using System;
 using System.IO;
-using SimplyFast.Log.Internal.Outputs.Writers;
 
 namespace SimplyFast.Log.Internal.Outputs
 {
-    public class ConsoleOutput : IOutput, IDisposable
+    internal class ConsoleOutput : IOutput, IDisposable
     {
         private readonly IWriter _writer;
         private readonly TextWriterOutput _output;

@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using SimplyFast.Strings;
 
-namespace SimplyFast.Log.Internal.Outputs.Writers
+namespace SimplyFast.Strings.Tokens
 {
-    public class InfoWriter : IWriter
+    public class TokenizedWriter
     {
-        private readonly ILogInfoProvider _provider;
         private readonly List<Part> _parts = new List<Part>();
 
         private struct Part
@@ -24,36 +22,26 @@ namespace SimplyFast.Log.Internal.Outputs.Writers
             }
         }
 
-        public InfoWriter(ILogInfoProvider provider)
-        {
-            _provider = provider;
-        }
-
         public void Add(string str)
         {
             _parts.Add(new Part(null, str));
         }
 
-        public void Add(string name, string format)
+        public void Add(string tokenName, string format)
         {
-            if (name == null)
-                throw new ArgumentNullException(nameof(name));
-            _parts.Add(new Part(name, format));
+            if (tokenName == null)
+                throw new ArgumentNullException(nameof(tokenName));
+            _parts.Add(new Part(tokenName, format));
         }
 
-        public void Write(TextWriter writer, IMessage message)
-        {
-            Write(writer, (ILogInfoProvider)message);
-        }
-
-        public void Write(TextWriter writer, ILogInfoProvider message)
+        public void Write(TextWriter writer, Func<string, IStringToken> resolver)
         {
             foreach (var part in _parts)
             {
                 var format = part.Format;
                 if (part.IsLogInfo)
                 {
-                    var info = message.Get(part.Name) ?? _provider.Get(part.Name);
+                    var info = resolver(part.Name);
                     if (info != null)
                         writer.Write(info.ToString(format));
                 }

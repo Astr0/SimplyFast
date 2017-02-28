@@ -2,7 +2,7 @@
 
 namespace SimplyFast.Log
 {
-    public interface IOutputs: IReadOnlyCollection<IOutput>, IOutput
+    public interface IOutputs : IReadOnlyCollection<IOutput>, IOutput
     {
         void Add(IOutput output);
         void Remove(IOutput output);

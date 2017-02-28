@@ -1,6 +1,6 @@
-﻿namespace SimplyFast.Log
+﻿namespace SimplyFast.Strings.Tokens
 {
-    public interface ILogInfo
+    public interface IStringToken
     {
         string Name { get; }
         string ToString(string format);

@@ -15,23 +15,5 @@ namespace SimplyFast.Log
         {
             return logSeverity <= messageSeverity && logSeverity < Severity.Off;
         }
-
-       
-        public static string ToStr(this Severity severity, string format = null)
-        {
-            if (format == null)
-                return severity.ToString();
-            switch (format)
-            {
-                case "u":
-                case "U":
-                    return severity.ToString().ToUpperInvariant();
-                case "l":
-                case "L":
-                    return severity.ToString().ToLowerInvariant();
-                default:
-                    return severity.ToString(format);
-            }
-        }
     }
 }

@@ -1,18 +1,19 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using SimplyFast.Strings.Tokens;
 
 namespace SimplyFast.Log
 {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class LoggerEx
     {
-        public static void Log(this ILogger logger, Severity severity, params ILogInfo[] info)
+        public static void Log(this ILogger logger, Severity severity, params IStringToken[] info)
         {
             logger.Log(severity, info);
         }
 
         public static void Log(this ILogger logger, Severity severity, string format, params object[] args)
         {
-            logger.Log(severity, LogInfoEx.Message(format, args));
+            logger.Log(severity, LogTokenEx.Message(format, args));
         }
 
         public static void Debug(this ILogger logger, string format, params object[] args)

@@ -2,9 +2,11 @@
 
 namespace SimplyFast.Log.Internal.Outputs
 {
-    public class DefaultOutputs: OutputsBase
+    internal class DefaultOutputs : OutputsBase
     {
         private readonly HashSet<IOutput> _outputs = new HashSet<IOutput>();
+
+        public override int Count => _outputs.Count;
 
         public override void Add(IOutput output)
         {
@@ -20,7 +22,5 @@ namespace SimplyFast.Log.Internal.Outputs
         {
             return _outputs.GetEnumerator();
         }
-
-        public override int Count => _outputs.Count;
     }
 }

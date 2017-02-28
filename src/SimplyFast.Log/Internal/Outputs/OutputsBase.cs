@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SimplyFast.Log.Internal.Outputs
 {
-    public abstract class OutputsBase : IOutputs
+    internal abstract class OutputsBase : IOutputs
     {
         public abstract IEnumerator<IOutput> GetEnumerator();
 
@@ -13,10 +13,10 @@ namespace SimplyFast.Log.Internal.Outputs
         }
 
         public abstract int Count { get; }
+
         public void Log(IMessage message)
         {
             foreach (var output in this)
-            {
                 try
                 {
                     output.Log(message);
@@ -25,7 +25,6 @@ namespace SimplyFast.Log.Internal.Outputs
                 {
                     // we can't do anything in case of failure, but should not throw! Logs are not that important
                 }
-            }
         }
 
         public abstract void Add(IOutput output);

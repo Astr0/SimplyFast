@@ -1,12 +1,12 @@
 ﻿namespace SimplyFast.Log
 {
     /// <summary>
-    /// Log writer
+    ///     Log writer
     /// </summary>
     public interface IOutput
     {
         /// <summary>
-        /// Log passed message
+        ///     Log passed message
         /// </summary>
         void Log(IMessage message);
     }

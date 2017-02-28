@@ -1,11 +1,11 @@
-﻿#if FILES
+﻿
+#if FILES
 using System.IO;
 using System.Text;
-using SimplyFast.Log.Internal.Outputs.Writers;
 
 namespace SimplyFast.Log.Internal.Outputs
 {
-    public class FileOutput : TextWriterOutput
+    internal class FileOutput : TextWriterOutput
     {
         private static StreamWriter CreateFileStreamWriter(string fileName, bool append)
         {

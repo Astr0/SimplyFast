@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace SimplyFast.Log.Internal.Outputs.Writers
+namespace SimplyFast.Log
 {
     public interface IWriter
     {
