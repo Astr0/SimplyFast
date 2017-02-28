@@ -1,21 +1,22 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
 namespace SimplyFast.Strings.Tokens
 {
-    public class TokenizedWriter
+    public class TokenizedWriter: IEnumerable<TokenizedWriter.Token>
     {
-        private readonly List<Part> _parts = new List<Part>();
+        private readonly List<Token> _tokens = new List<Token>();
 
-        private struct Part
+        public struct Token
         {
             public readonly string Name;
             public readonly string Format;
-            public bool IsLogInfo => Name != null;
+            public bool IsStringToken => Name != null;
 
-            public Part(string name, string format)
+            public Token(string name, string format)
             {
                 Name = name;
                 Format = format;
@@ -24,26 +25,37 @@ namespace SimplyFast.Strings.Tokens
 
         public void Add(string str)
         {
-            _parts.Add(new Part(null, str));
+            _tokens.Add(new Token(null, str));
         }
 
         public void Add(string tokenName, string format)
         {
             if (tokenName == null)
                 throw new ArgumentNullException(nameof(tokenName));
-            _parts.Add(new Part(tokenName, format));
+            _tokens.Add(new Token(tokenName, format));
         }
 
         public void Write(TextWriter writer, Func<string, IStringToken> resolver)
         {
-            foreach (var part in _parts)
+            foreach (var part in _tokens)
             {
                 var format = part.Format;
-                if (part.IsLogInfo)
+                if (part.IsStringToken)
                 {
                     var info = resolver(part.Name);
                     if (info != null)
                         writer.Write(info.ToString(format));
+                    else
+                    {
+                        writer.Write('%');
+                        writer.Write(part.Name);
+                        if (format != null)
+                        {
+                            writer.Write(':');
+                            writer.Write(format);
+                        }
+                        writer.Write('%');
+                    }
                 }
                 else if (format != null)
                 {
@@ -96,6 +108,16 @@ namespace SimplyFast.Strings.Tokens
                     inToken = !inToken;
                 }
             }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public IEnumerator<Token> GetEnumerator()
+        {
+            return _tokens.GetEnumerator();
         }
     }
 }

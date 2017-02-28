@@ -12,15 +12,19 @@ namespace SimplyFast.Strings.Tokens
             return NameComparer.Equals(token.Name, name);
         }
 
+        public static IStringToken String(string name, string value)
+        {
+            return new ConstStringToken(name, value);
+        }
+
+        public static IStringToken FormatString(string name, string format, params object[] args)
+        {
+            return new FormatStringToken(name, format, args);
+        }
+
         public static IStringToken DateTime(string name, DateTime value)
         {
             return new DateTimeToken(name, value);
-        }
-
-        
-        public static IStringToken FormatString(string name, string format, object[] args)
-        {
-            return new FormatStringToken(name, format, args);
         }
 
         public static IStringToken Func(string name, Func<string, string> toString)
@@ -28,11 +32,6 @@ namespace SimplyFast.Strings.Tokens
             return new FuncToken(name, toString);
         }
 
-        
-        public static IStringToken String(string name, string value)
-        {
-            return new ConstStringToken(name, value);
-        }
 
         
         private abstract class StringToken : IStringToken

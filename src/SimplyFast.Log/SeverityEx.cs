@@ -1,9 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace SimplyFast.Log
+﻿namespace SimplyFast.Log
 {
-    [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
     public static class SeverityEx
     {
         public static bool ShouldLog(this Severity logSeverity, IMessage message)
@@ -13,7 +9,7 @@ namespace SimplyFast.Log
 
         public static bool ShouldLog(this Severity logSeverity, Severity messageSeverity)
         {
-            return logSeverity <= messageSeverity && logSeverity < Severity.Off;
+            return logSeverity <= messageSeverity && messageSeverity < Severity.Off;
         }
     }
 }
