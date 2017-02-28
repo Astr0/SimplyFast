@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading;
 
 namespace SimplyFast.Disposables
@@ -58,15 +59,13 @@ namespace SimplyFast.Disposables
             return new AssignDisposable<T>();
         }
 
-        public static void Dispose<T>(this IEnumerable<T> collection)
-            where T : IDisposable
+        public static void Dispose<T>(IEnumerable<T> collection)
         {
-            foreach (var disposable in collection)
+            foreach (var disposable in collection.OfType<IDisposable>())
                 disposable.Dispose();
         }
 
-        public static void Dispose<T>(this ICollection<T> collection)
-            where T : IDisposable
+        public static void Dispose<T>(ICollection<T> collection)
         {
             Dispose((IEnumerable<T>) collection);
             if (!(collection is T[]) && !collection.IsReadOnly)

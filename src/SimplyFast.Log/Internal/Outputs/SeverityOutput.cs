@@ -16,5 +16,10 @@
             if (_severity.ShouldLog(message))
                 _output.Log(message);
         }
+
+        public void Dispose()
+        {
+            _output?.Dispose();
+        }
     }
 }

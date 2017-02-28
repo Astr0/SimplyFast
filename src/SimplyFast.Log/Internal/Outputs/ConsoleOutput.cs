@@ -1,28 +1,18 @@
 ﻿
 #if CONSOLE
 using System;
-using System.IO;
 
 namespace SimplyFast.Log.Internal.Outputs
 {
-    internal class ConsoleOutput : IOutput, IDisposable
+    internal class ConsoleOutput : IOutput
     {
-        private readonly IWriter _writer;
         private readonly TextWriterOutput _output;
         private readonly TextWriterOutput _error;
 
-        private TextWriterOutput CreateConsoleStreamOutput(Stream consoleStream)
-        {
-            var streamWriter = new StreamWriter(consoleStream, Console.OutputEncoding, 256, true);
-            return new TextWriterOutput(streamWriter, _writer, true);
-
-        }
-
         public ConsoleOutput(IWriter writer)
         {
-            _writer = writer;
-            _output = CreateConsoleStreamOutput(Console.OpenStandardOutput());
-            _error = CreateConsoleStreamOutput(Console.OpenStandardError());
+            _output = new TextWriterOutput(Console.Out, writer, true);
+            _error = new TextWriterOutput(Console.Error, writer, true);
         }
 
         public void Log(IMessage message)

@@ -1,9 +1,11 @@
-﻿namespace SimplyFast.Log
+﻿using System;
+
+namespace SimplyFast.Log
 {
     /// <summary>
     ///     Log writer
     /// </summary>
-    public interface IOutput
+    public interface IOutput: IDisposable
     {
         /// <summary>
         ///     Log passed message

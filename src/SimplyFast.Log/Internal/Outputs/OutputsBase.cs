@@ -30,5 +30,13 @@ namespace SimplyFast.Log.Internal.Outputs
         public abstract void Add(IOutput output);
 
         public abstract void Remove(IOutput output);
+
+        public void Dispose()
+        {
+            foreach (var output in this)
+            {
+                output.Dispose();
+            }
+        }
     }
 }

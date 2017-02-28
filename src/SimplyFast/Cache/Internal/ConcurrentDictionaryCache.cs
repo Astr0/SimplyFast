@@ -33,6 +33,17 @@ namespace SimplyFast.Cache.Internal
         {
             _cache.Clear();
         }
+
+        public void Dispose()
+        {
+            var arr = _cache.ToArray();
+            foreach (var pair in arr)
+            {
+                T exist;
+                if (_cache.TryRemove(pair.Key, out exist))
+                    (exist as IDisposable)?.Dispose();
+            }
+        }
     }
 }
 #endif

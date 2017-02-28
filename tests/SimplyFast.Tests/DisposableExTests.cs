@@ -161,15 +161,15 @@ namespace SimplyFast.Tests
             var arr = new[] {ad, bd};
             var list = new List<IDisposable>{ ad };
             list.AddAction(() => b++);
-            arr.Dispose();
+            DisposableEx.Dispose(arr);
             Assert.Equal(2, arr.Length);
             Assert.Equal(1, a);
             Assert.Equal(1, b);
-            ((IEnumerable<IDisposable>)list).Dispose();
+            DisposableEx.Dispose((IEnumerable<IDisposable>)list);
             Assert.Equal(2, list.Count);
             Assert.Equal(2, a);
             Assert.Equal(2, b);
-            list.Dispose();
+            DisposableEx.Dispose(list);
             Assert.Equal(0, list.Count);
             Assert.Equal(3, a);
             Assert.Equal(2, b);

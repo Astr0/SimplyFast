@@ -14,12 +14,12 @@ namespace SimplyFast.Log.Internal.Loggers
 
         public Logger(string name, Func<Severity, IMessage> messageFactory)
         {
+            Outputs = new DefaultOutputs();
             _name = name;
             _messageFactory = messageFactory;
             _loggerInfo = LogTokenEx.Logger(this);
             _severity = Severity.Info;
             // ReSharper disable once VirtualMemberCallInConstructor
-            Outputs = new DefaultOutputs();
         }
 
         public void Log(IMessage message)
@@ -45,6 +45,7 @@ namespace SimplyFast.Log.Internal.Loggers
             message.Add(LogTokenEx.Now());
             foreach (var item in info)
                 message.Add(item);
+            Log(message);
         }
 
         protected virtual void DoLog(IMessage message)
@@ -55,6 +56,11 @@ namespace SimplyFast.Log.Internal.Loggers
         public override string ToString()
         {
             return _name;
+        }
+
+        public void Dispose()
+        {
+            Outputs.Dispose();
         }
     }
 }

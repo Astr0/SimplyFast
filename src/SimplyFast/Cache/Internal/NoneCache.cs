@@ -28,5 +28,9 @@ namespace SimplyFast.Cache.Internal
         public void Clear()
         {
         }
+
+        public void Dispose()
+        {
+        }
     }
 }

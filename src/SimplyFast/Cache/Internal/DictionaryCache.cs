@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using SimplyFast.Collections;
+using SimplyFast.Disposables;
 
 namespace SimplyFast.Cache.Internal
 {
@@ -30,6 +31,12 @@ namespace SimplyFast.Cache.Internal
 
         public void Clear()
         {
+            _cache.Clear();
+        }
+
+        public void Dispose()
+        {
+            DisposableEx.Dispose(_cache.Values);
             _cache.Clear();
         }
     }

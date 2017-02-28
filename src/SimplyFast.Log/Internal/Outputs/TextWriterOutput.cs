@@ -1,9 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace SimplyFast.Log.Internal.Outputs
 {
-    internal class TextWriterOutput : IOutput, IDisposable
+    internal class TextWriterOutput : IOutput
     {
         private readonly bool _leaveOpen;
         private readonly object _lock = new object();
