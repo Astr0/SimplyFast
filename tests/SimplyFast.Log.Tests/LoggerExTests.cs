@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using SimplyFast.Strings.Tokens;
 using Xunit;
@@ -26,6 +27,7 @@ namespace SimplyFast.Log.Tests
             private Severity? _lastSeverity;
             private IStringToken[] _lastTokens;
 
+            [SuppressMessage("ReSharper", "UnusedParameter.Local")]
             public void LastWas(Severity severity, string name, string str)
             {
                 Assert.Equal(severity, _lastSeverity);
