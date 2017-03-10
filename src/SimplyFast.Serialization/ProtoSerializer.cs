@@ -31,7 +31,7 @@ namespace SimplyFast.Serialization
             if (stream.CanSeek)
             {
                 hasLength = true;
-                count = (int)stream.Length;
+                count = (int)(stream.Length - stream.Position);
                 pooled = SerializerBuffers.Get(count);
             }
             else
