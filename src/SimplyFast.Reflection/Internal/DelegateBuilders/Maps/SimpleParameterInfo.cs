@@ -4,10 +4,11 @@ using SimplyFast.Collections;
 
 namespace SimplyFast.Reflection.Internal.DelegateBuilders.Maps
 {
-    public struct SimpleParameterInfo : IEquatable<SimpleParameterInfo>
+    internal struct SimpleParameterInfo : IEquatable<SimpleParameterInfo>
     {
         public readonly Type Type;
         public readonly bool IsOut;
+        // Out is also is by ref, be careful
         public bool IsByRef => Type.IsByRef;
 
         public SimpleParameterInfo(Type type) : this()

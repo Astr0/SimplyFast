@@ -82,8 +82,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
             // out or ref
             var mt = map.Method.Type.RemoveByRef();
             var dt = map.Delegate.Type.RemoveByRef();
-            var typesSame = mt == dt;
-            if (typesSame)
+            if (mt == dt)
                 return p;
             
             var localVariable = Expression.Variable(mt);
@@ -109,8 +108,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
             // out/ref and typeSame - do nothing
             var mt = map.Method.Type.RemoveByRef();
             var dt = map.Delegate.Type.RemoveByRef();
-            var typesSame = mt == dt;
-            if (typesSame)
+            if (mt == dt)
                 return;
 
             // convert and assign back
@@ -121,13 +119,13 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
 
         private static ParameterExpression PrepareInvoke(RetValMap retValMap, ExpressionBlockBuilder block, Expression invoke)
         {
-            if (retValMap.MethodReturn == typeof(void) || retValMap.DelegateReturn == typeof(void))
+            if (retValMap.Method == typeof(void) || retValMap.Delegate == typeof(void))
             {
                 // no local variables for void
                 block.Add(invoke);
                 return null;
             }
-            var variable = Expression.Variable(retValMap.MethodReturn);
+            var variable = Expression.Variable(retValMap.Method);
             var assign = Expression.Assign(variable, invoke);
             block.AddVariable(variable);
             block.Add(assign);
@@ -137,12 +135,12 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
         private static readonly Expression _void = Expression.Empty();
         private static void ConvertReturn(RetValMap retValMap, ExpressionBlockBuilder block, Expression invoke, ParameterExpression retVal)
         {
-            if (retValMap.MethodReturn == typeof(void))
+            if (retValMap.Method == typeof(void))
             {
-                if (retValMap.DelegateReturn != typeof(void))
+                if (retValMap.Delegate != typeof(void))
                 {
                     // add default(_delegateReturn)
-                    block.Add(Expression.Default(retValMap.DelegateReturn));
+                    block.Add(Expression.Default(retValMap.Delegate));
                 }
                 else if (block.Last != invoke)
                 {
@@ -151,7 +149,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
                 }
                 return;
             }
-            if (retValMap.DelegateReturn == typeof(void))
+            if (retValMap.Delegate == typeof(void))
             {
                 block.Add(_void);
                 return;
@@ -169,7 +167,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
             {
                 result = retVal;
             }
-            block.Add(retValMap.MethodReturn == retValMap.DelegateReturn ? result : Expression.Convert(result, retValMap.DelegateReturn));
+            block.Add(retValMap.Method == retValMap.Delegate ? result : Expression.Convert(result, retValMap.Delegate));
         }
 
         private class ExpressionBlockBuilder

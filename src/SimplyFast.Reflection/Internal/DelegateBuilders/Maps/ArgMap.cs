@@ -2,7 +2,7 @@
 
 namespace SimplyFast.Reflection.Internal.DelegateBuilders.Maps
 {
-    public struct ArgMap
+    internal struct ArgMap
     {
         public readonly SimpleParameterInfo Delegate;
         public readonly SimpleParameterInfo Method;
@@ -47,5 +47,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Maps
 
             
         }
+
+        public bool Matches => Method.Equals(Delegate);
     }
 }

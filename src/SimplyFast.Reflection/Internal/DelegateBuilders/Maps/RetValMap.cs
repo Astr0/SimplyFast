@@ -4,27 +4,18 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Maps
 {
     internal struct RetValMap
     {
-        public readonly Type DelegateReturn;
-        public readonly Type MethodReturn;
+        public readonly Type Delegate;
+        public readonly Type Method;
 
-        public RetValMap(Type delegateReturn, Type methodReturn)
+        public RetValMap(Type @delegate, Type method)
         {
-            if (delegateReturn != typeof(void) && !delegateReturn.IsAssignableFrom(methodReturn))
+            if (@delegate != typeof(void) && !@delegate.IsAssignableFrom(method))
                 throw new Exception("Invalid return type.");
 
-            DelegateReturn = delegateReturn;
-            MethodReturn = methodReturn;
+            Delegate = @delegate;
+            Method = method;
         }
 
-
-        //public void EmitConvert(ILGenerator generator)
-        //{
-        //    if (_methodReturn == _delegateReturn || _delegateReturn == typeof(void))
-        //        return;
-        //    if (_methodReturn == typeof (void))
-        //        generator.Emit(OpCodes.Ldnull);
-        //    else if (_methodReturn.IsValueType && !_delegateReturn.IsValueType)
-        //        generator.EmitBox(_methodReturn);
-        //}
+        public bool Matches => Delegate == Method;
     }
 }
