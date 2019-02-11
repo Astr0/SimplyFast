@@ -2,7 +2,7 @@
 using System.Reflection;
 using SimplyFast.Collections;
 
-namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
+namespace SimplyFast.Reflection.Internal.DelegateBuilders
 {
     public struct SimpleParameterInfo : IEquatable<SimpleParameterInfo>
     {
@@ -14,7 +14,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
             Type = type;
         }
 
-        public SimpleParameterInfo(ParameterInfo parameter) : this()
+        private SimpleParameterInfo(ParameterInfo parameter) : this()
         {
             Type = parameter.ParameterType;
             IsOut = parameter.IsOut;
@@ -33,7 +33,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is SimpleParameterInfo && Equals((SimpleParameterInfo) obj);
+            return obj is SimpleParameterInfo p && Equals(p);
         }
 
 

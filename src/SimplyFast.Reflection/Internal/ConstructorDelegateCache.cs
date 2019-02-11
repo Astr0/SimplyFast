@@ -14,7 +14,7 @@ namespace SimplyFast.Reflection.Internal
         public static Delegate InvokerAs(ConstructorInfo constructorInfo, Type delegateType)
         {
             return _delegateCache.GetOrAdd(Tuple.Create(constructorInfo, delegateType),
-                t => new ConstructorDelegateBuilder(t.Item1, t.Item2).CreateDelegate());
+                t => DelegateBuilder.Current.Constructor(t.Item1, t.Item2));
         }
     }
 }

@@ -1,8 +1,7 @@
-﻿#if !EMIT
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace SimplyFast.Reflection.Internal.DelegateBuilders
+namespace SimplyFast.Reflection.Internal.DelegateBuilders.Expressions
 {
     public class ExpressionBlockBuilder
     {
@@ -50,4 +49,3 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
         }
     }
 }
-#endif

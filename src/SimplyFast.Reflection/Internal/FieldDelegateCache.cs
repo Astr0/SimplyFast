@@ -17,14 +17,14 @@ namespace SimplyFast.Reflection.Internal
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Delegate GetterAs(FieldInfo fieldInfo, Type delegateType)
         {
-            return _getCache.GetOrAdd(Tuple.Create(fieldInfo, delegateType), t => new FieldGetDelegateBuilder(fieldInfo, delegateType).CreateDelegate());
+            return _getCache.GetOrAdd(Tuple.Create(fieldInfo, delegateType), t => DelegateBuilder.Current.FieldGet(fieldInfo, delegateType));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Delegate SetterAs(FieldInfo fieldInfo, Type delegateType)
         {
             return fieldInfo.CanWrite()
-                ? _setCache.GetOrAdd(Tuple.Create(fieldInfo, delegateType), t => new FieldSetDelegateBuilder(fieldInfo, delegateType).CreateDelegate())
+                ? _setCache.GetOrAdd(Tuple.Create(fieldInfo, delegateType), t => DelegateBuilder.Current.FieldSet(fieldInfo, delegateType))
                 : null;
         }
     }
