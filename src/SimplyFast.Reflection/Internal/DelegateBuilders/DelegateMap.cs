@@ -52,7 +52,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
 
         private MethodInfo GetDelegateInvokeMethod()
         {
-            if (DelegateType.TypeInfo().BaseType != typeof(MulticastDelegate))
+            if (DelegateType.BaseType != typeof(MulticastDelegate))
                 throw NotDelegateException();
             var invokeMethod = DelegateType.Method("Invoke");
             if (invokeMethod == null)

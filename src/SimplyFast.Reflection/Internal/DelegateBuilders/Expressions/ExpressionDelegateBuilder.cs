@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using SimplyFast.Collections;
+using SimplyFast.Reflection.Internal.DelegateBuilders.Parameters;
 
 namespace SimplyFast.Reflection.Internal.DelegateBuilders.Expressions
 {
@@ -61,13 +62,66 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Expressions
             var invokeParameters = parameters
                 .ConvertAll((p, i) => map.ParametersMap[i].Prepare(block, p));
             var invoke = buildInvoke(invokeParameters);
-            map.RetValMap.Prepare(block, invoke);
+            var retVal = PrepareInvoke(map.RetValMap, block, invoke);
             for (var i = 0; i < parameters.Length; i++) map.ParametersMap[i].Finish(block, parameters[i]);
-            map.RetValMap.ConvertReturn(block);
+            ConvertReturn(map.RetValMap, block, invoke, retVal);
 
             var body = block.CreateExpression();
             var lambda = Expression.Lambda(map.DelegateType, body, parameters);
             return lambda.Compile();
+        }
+
+        private static ParameterExpression PrepareInvoke(RetValMap retValMap, ExpressionBlockBuilder block, Expression invoke)
+        {
+            if (retValMap.MethodReturn == typeof(void) || retValMap.DelegateReturn == typeof(void))
+            {
+                // no local variables for void
+                block.Add(invoke);
+                return null;
+            }
+            var variable = Expression.Variable(retValMap.MethodReturn);
+            var assign = Expression.Assign(variable, invoke);
+            block.AddVariable(variable);
+            block.Add(assign);
+            return variable;
+        }
+
+        private static readonly Expression _void = Expression.Empty();
+        private static void ConvertReturn(RetValMap retValMap, ExpressionBlockBuilder block, Expression invoke, ParameterExpression retVal)
+        {
+            if (retValMap.MethodReturn == typeof(void))
+            {
+                if (retValMap.DelegateReturn != typeof(void))
+                {
+                    // add default(_delegateReturn)
+                    block.Add(Expression.Default(retValMap.DelegateReturn));
+                }
+                else if (block.Last != invoke)
+                {
+                    // should we return void?
+                    block.Add(_void);
+                }
+                return;
+            }
+            if (retValMap.DelegateReturn == typeof(void))
+            {
+                block.Add(_void);
+                return;
+            }
+            
+            // try optimize local variable
+            Expression result;
+            if (block.Last is BinaryExpression binary && binary.NodeType == ExpressionType.Assign && binary.Left == retVal)
+            {
+                result = binary.Right;
+                block.RemoveVariable(retVal);
+                block.RemoveLast();
+            }
+            else
+            {
+                result = retVal;
+            }
+            block.Add(retValMap.MethodReturn == retValMap.DelegateReturn ? result : Expression.Convert(result, retValMap.DelegateReturn));
         }
     }
 }
