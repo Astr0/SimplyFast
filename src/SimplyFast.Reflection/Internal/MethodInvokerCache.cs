@@ -12,7 +12,7 @@ namespace SimplyFast.Reflection.Internal
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static MethodInvoker Get(MethodInfo methodInfo)
         {
-            return _delegateCache.GetOrAdd(methodInfo, InvokerDelegateBuilder.BuildMethodInvoker);
+            return _delegateCache.GetOrAdd(methodInfo, InvokerDelegateBuilder.Current.BuildMethodInvoker);
         }
     }
 }

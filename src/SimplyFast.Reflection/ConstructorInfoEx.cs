@@ -77,7 +77,7 @@ namespace SimplyFast.Reflection
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ConstructorInvoker Invoker(this ConstructorInfo constructorInfo)
         {
-            return ContructorInvokerCache.Get(constructorInfo);
+            return ConstructorInvokerCache.Get(constructorInfo);
         }
     }
 }

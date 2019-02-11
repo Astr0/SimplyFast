@@ -4,7 +4,7 @@ using SimplyFast.Cache;
 
 namespace SimplyFast.Reflection.Internal
 {
-    internal static class ContructorInvokerCache
+    internal static class ConstructorInvokerCache
     {
         private static readonly ICache<ConstructorInfo, ConstructorInvoker> _delegateCache =
             CacheEx.ThreadSafe<ConstructorInfo, ConstructorInvoker>();
@@ -12,7 +12,7 @@ namespace SimplyFast.Reflection.Internal
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ConstructorInvoker Get(ConstructorInfo constructorInfo)
         {
-            return _delegateCache.GetOrAdd(constructorInfo, InvokerDelegateBuilder.BuildConstructorInvoker);
+            return _delegateCache.GetOrAdd(constructorInfo, InvokerDelegateBuilder.Current.BuildConstructorInvoker);
         }
     }
 }
