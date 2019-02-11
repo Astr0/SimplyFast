@@ -4,7 +4,11 @@
     <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
 
-  <Import Project="../tests.targets" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.*" />
+    <PackageReference Include="xunit" Version="2.2.*" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.*" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\SimplyFast.Expressions\SimplyFast.Expressions.csproj" />
