@@ -117,7 +117,6 @@ namespace SimplyFast.Log.Tests
             }
         }
 
-#if CONSOLE
         [Fact]
         public void ConsoleOk()
         {
@@ -137,9 +136,7 @@ namespace SimplyFast.Log.Tests
             Assert.Equal(Console.Error, writer.Written[3].Item1);
             Assert.True(writer.Written.Select(x => x.Item2).SequenceEqual(new[] { debug, info, error, fatal }));
         }
-#endif
 
-#if FILES
         private static string ReadAllTextTest(string fileName)
         {
             using (var file = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -182,7 +179,6 @@ namespace SimplyFast.Log.Tests
                 File.Delete(tmp);
             }
         }
-#endif
 
         private class TestWriter : IWriter
         {

@@ -1,5 +1,4 @@
-﻿#if FILES
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -57,4 +56,3 @@ namespace SimplyFast.Tests.IO
         }
     }
 }
-#endif

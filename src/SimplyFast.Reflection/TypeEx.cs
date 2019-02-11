@@ -211,19 +211,5 @@ namespace SimplyFast.Reflection
                 ? type.GenericTypeParameters
                 : type.GenericTypeArguments;
         }
-
-#if !NET
-        public static bool IsAssignableFrom(this Type type, Type other)
-        {
-            return type.TypeInfo().IsAssignableFrom(other.TypeInfo());
-        }
-
-        [SuppressMessage("ReSharper", "UseMethodIsInstanceOfType")]
-        public static bool IsInstanceOfType(this Type type, object value)
-        {
-            return value != null && type.IsAssignableFrom(value.GetType());
-        }
-#endif
-
     }
 }

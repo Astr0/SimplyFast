@@ -4,10 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using SimplyFast.Reflection;
-
-#if PARALLEL
 using System.Threading.Tasks;
-#endif
 
 namespace SimplyFast.IoC.Modules
 {
@@ -38,7 +35,6 @@ namespace SimplyFast.IoC.Modules
             return assembly.ExportedTypes.Where(IsModuleCandidate);
         }
 
-#if PARALLEL
         public static void LoadParallel(this IKernel kernel, Assembly assembly)
         {
             Parallel.ForEach(GetAssemblyModuleCandidates(assembly), t =>
@@ -55,7 +51,6 @@ namespace SimplyFast.IoC.Modules
         {
             Parallel.ForEach(assembly, kernel.LoadParallel);
         }
-#endif
 
         private static readonly TypeInfo _iFastModule = typeof(IFastModule).TypeInfo();
 

@@ -113,6 +113,7 @@ namespace SimplyFast.Reflection
            
             _invokeLoop = Expression.TryFinally(loop, destroyEnumerator);
         }
+
         private static T CreateInvoke(WeakDelegate<T> target)
         {
             var getEnumerator = Expression.Call(Expression.Constant(target), _getEnumerator);

@@ -1,7 +1,5 @@
 ﻿using SimplyFast.Pool.Internal;
-#if CONCURRENT
 using System.Collections.Concurrent;
-#endif
 
 namespace SimplyFast.Pool
 {
@@ -20,11 +18,7 @@ namespace SimplyFast.Pool
        
         public static IPool<T> ThreadSafe<T>(PooledFactory<T> factory)
         {
-#if CONCURRENT
             return Concurrent(factory, new ConcurrentBag<T>());
-#else
-            return ThreadSafeLocking(factory);
-#endif
         }
 
         public static IPool<T> ThreadSafeLocking<T>(PooledFactory<T> factory)
@@ -37,7 +31,6 @@ namespace SimplyFast.Pool
             return new StackPool<T>(factory);
         }
 
-#if CONCURRENT
         /// <summary>
         /// Basic pooling using underlying producer consumer collection
         /// </summary>
@@ -53,6 +46,5 @@ namespace SimplyFast.Pool
         {
             return Concurrent(factory, new ConcurrentBag<T>());
         }
-#endif
     }
 }

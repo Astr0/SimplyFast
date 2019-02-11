@@ -20,22 +20,15 @@ namespace SimplyFast.Reflection
         /// </summary>
         public static bool CanWrite(this MemberInfo memberInfo)
         {
-#if NET
             switch (memberInfo.MemberType)
             {
                 case MemberTypes.Field:
                     return ((FieldInfo) memberInfo).CanWrite();
                 case MemberTypes.Property:
                     return ((PropertyInfo) memberInfo).CanWrite;
+                default:
+                    return false;
             }
-            return false;
-#else
-            var field = memberInfo as FieldInfo;
-            if (field != null)
-                return field.CanWrite();
-            var property = memberInfo as PropertyInfo;
-            return property != null && property.CanWrite;
-#endif
         }
 
         /// <summary>
@@ -43,21 +36,15 @@ namespace SimplyFast.Reflection
         /// </summary>
         public static bool CanRead(this MemberInfo memberInfo)
         {
-#if NET
             switch (memberInfo.MemberType)
             {
                 case MemberTypes.Field:
                     return true;
                 case MemberTypes.Property:
                     return ((PropertyInfo) memberInfo).CanRead;
+                default:
+                    return false;
             }
-            return false;
-#else
-            if (memberInfo is FieldInfo)
-                return true;
-            var propertyInfo = memberInfo as PropertyInfo;
-            return propertyInfo != null && propertyInfo.CanRead;
-#endif
         }
 
         /// <summary>
@@ -74,7 +61,6 @@ namespace SimplyFast.Reflection
         /// </summary>
         public static Type ValueType(this MemberInfo member)
         {
-#if NET
             switch (member.MemberType)
             {
                 case MemberTypes.Field:
@@ -82,14 +68,6 @@ namespace SimplyFast.Reflection
                 case MemberTypes.Property:
                     return ((PropertyInfo) member).PropertyType;
             }
-#else
-            var field = member as FieldInfo;
-            if (field != null)
-                return field.FieldType;
-            var property = member as PropertyInfo;
-            if (property != null)
-                return property.PropertyType;
-#endif
             throw new ArgumentException("Not a field or property.", nameof(member));
         }
 

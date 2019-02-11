@@ -1,5 +1,4 @@
 ﻿
-#if FILES
 using System.IO;
 using System.Text;
 
@@ -27,4 +26,3 @@ namespace SimplyFast.Log.Internal.Outputs
         }
     }
 }
-#endif

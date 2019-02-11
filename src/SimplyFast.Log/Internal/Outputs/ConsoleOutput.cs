@@ -1,5 +1,4 @@
 ﻿
-#if CONSOLE
 using System;
 
 namespace SimplyFast.Log.Internal.Outputs
@@ -28,4 +27,3 @@ namespace SimplyFast.Log.Internal.Outputs
         }
     }
 }
-#endif

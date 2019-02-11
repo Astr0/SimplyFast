@@ -154,8 +154,6 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void ResolveTypeWorks()
         {
-            if (!AssemblyEx.HasDefaultLocator || !AssemblyEx.DefaultLocatorIsRuntime)
-                AssemblyEx.SetAssemblyLocator(() => new[] { typeof(TypeExTests).TypeInfo().Assembly });
             Assert.Equal(typeof(string), TypeEx.ResolveType(typeof(string).FullName));
             Assert.Equal(typeof(TypeExTests), TypeEx.ResolveType(typeof(TypeExTests).FullName));
             Assert.Null(TypeEx.ResolveType("SF.Reflection.Tests.TypeNotExists"));

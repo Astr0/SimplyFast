@@ -93,7 +93,6 @@ namespace SimplyFast.Reflection
 
         private static Func<TSource, TResult> ConvertibleConvert<TSource, TResult>()
         {
-#if ICONVERTIBLE
             // if source is IConvertible, use IConvertible method
 
             if (!typeof(IConvertible).IsAssignableFrom(typeof(TSource)))
@@ -103,9 +102,6 @@ namespace SimplyFast.Reflection
             if (method != null)
                 return typeof(IConvertible).Method(method).InvokerAs<Func<TSource, TResult>>();
             return x => (TResult)((IConvertible)x).ToType(typeof(TResult), null);
-#else
-            return NoConvert<TSource, TResult>;
-#endif
         }
     }
 }

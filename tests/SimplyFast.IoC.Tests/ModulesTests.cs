@@ -47,7 +47,6 @@ namespace SimplyFast.IoC.Tests
             FinalModuleTests(reverseKernel);
         }
 
-#if NET
         private static void TestFewTimes(Action action, int times)
         {
             for (var i = 0; i < times; i++)
@@ -85,6 +84,5 @@ namespace SimplyFast.IoC.Tests
                 FinalModuleTests(kernel);
             }, 100);
         }
-#endif
     }
 }

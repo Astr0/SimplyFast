@@ -79,12 +79,10 @@ namespace SimplyFast.Tests.Cache
         {
             TestCache(CacheEx.ThreadUnsafe<int, string>());
         }
-#if CONCURRENT
         [Fact]
         public void ConcurrentOk()
         {
             TestCache(CacheEx.Concurrent<int, string>());
         }
-#endif
     }
 }

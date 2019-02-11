@@ -56,14 +56,12 @@ namespace SimplyFast.Tests.Pool
             TestPool(PoolEx.ThreadUnsafe);
         }
 
-#if CONCURRENT
         [Fact]
         public void ConcurrentOk()
         {
             TestPool(PoolEx.Concurrent);
             TestPool(f => PoolEx.Concurrent(f, new ConcurrentQueue<Func<IPooled<int>>>()));
         }
-#endif
 
         [Fact]
         public void NoneCreatesAlways()

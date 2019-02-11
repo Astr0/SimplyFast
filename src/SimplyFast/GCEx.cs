@@ -7,6 +7,7 @@ namespace SimplyFast
         public static void CollectAndWait()
         {
             GC.Collect();
+            GC.WaitForFullGCComplete();
             GC.WaitForPendingFinalizers();
         }
     }

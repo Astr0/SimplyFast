@@ -46,7 +46,6 @@ namespace SimplyFast.Tests.Configuration
             Assert.Equal("!@#!@#^^", _config["test3"]);
         }
 
-#if FILES
         [Fact]
         public void UpdateFromConfFileOk()
         {
@@ -83,7 +82,6 @@ namespace SimplyFast.Tests.Configuration
                 File.Delete(tmp2);
             }
         }
-#endif
 
         [Fact]
         public void UpdateFromKeyValuePairsMapOk()

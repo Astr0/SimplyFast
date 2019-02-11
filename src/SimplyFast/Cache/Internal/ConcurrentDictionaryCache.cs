@@ -1,5 +1,4 @@
-﻿#if CONCURRENT
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using SimplyFast.Collections;
 
@@ -46,4 +45,3 @@ namespace SimplyFast.Cache.Internal
         }
     }
 }
-#endif

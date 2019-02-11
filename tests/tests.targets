@@ -1,12 +1,5 @@
 <Project>
- 
-  <Import Project="../src/framework_defines.targets" />
-
-  <ItemGroup>
-    <None Remove=".gitignore" />
-  </ItemGroup>
-
-  <ItemGroup>
+   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.*" />
     <PackageReference Include="xunit" Version="2.2.*" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.*" />

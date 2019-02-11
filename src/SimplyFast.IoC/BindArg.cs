@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-#if !NET
-using SimplyFast.Reflection;
-#endif
 
 namespace SimplyFast.IoC
 {

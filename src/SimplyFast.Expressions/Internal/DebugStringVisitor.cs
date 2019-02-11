@@ -614,12 +614,10 @@ namespace SimplyFast.Expressions.Internal
             return node;
         }
 
-#if NET
         protected override Expression VisitDynamic(DynamicExpression node)
         {
             throw new NotImplementedException();
         }
-#endif
 
         protected override SwitchCase VisitSwitchCase(SwitchCase node)
         {

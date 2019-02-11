@@ -11,11 +11,7 @@ namespace SimplyFast.Cache
 
         public static ICache<TK, T> ThreadSafe<TK, T>()
         {
-#if CONCURRENT
             return Concurrent<TK, T>();
-#else
-            return ThreadSafeLocking<TK, T>();
-#endif
         }
 
         public static ICache<TK, T> ThreadSafeLocking<TK, T>()
@@ -28,7 +24,6 @@ namespace SimplyFast.Cache
             return new DictionaryCache<TK, T>();
         }
 
-#if CONCURRENT
         /// <summary>
         /// Basic pooling using underlying producer consumer collection
         /// </summary>
@@ -36,7 +31,6 @@ namespace SimplyFast.Cache
         {
             return new ConcurrentDictionaryCache<TK, T>();
         }
-#endif
 
         public static bool TryAdd<TK, T>(this ICache<TK, T> cache, TK key, T value)
         {

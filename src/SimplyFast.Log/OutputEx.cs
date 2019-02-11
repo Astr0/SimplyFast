@@ -20,17 +20,13 @@ namespace SimplyFast.Log
             return new SeverityOutput(severity, output);
         }
 
-#if CONSOLE
         public static IOutput Console(IWriter writer)
         {
             return new ConsoleOutput(writer);
         }
-#endif
-#if FILES
         public static IOutput File(string fileName, IWriter writer, bool append = true)
         {
             return new FileOutput(fileName, writer, append);
         }
-#endif
     }
 }

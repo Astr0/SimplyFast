@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
-#if CONCURRENT
 using System.Collections.Concurrent;
-#else
-using System.Collections.Generic;
-#endif
 
 
 namespace SimplyFast.Threading.Internal
@@ -33,7 +29,6 @@ namespace SimplyFast.Threading.Internal
         private volatile bool _running;
         private readonly ThreadLocal<bool> _currentThread;
 
-#if CONCURRENT
         private readonly ConcurrentQueue<WorkItem> _queue = new ConcurrentQueue<WorkItem>();
 
         private void Enqueue(WorkItem wi)
@@ -45,29 +40,27 @@ namespace SimplyFast.Threading.Internal
         {
             return _queue.TryDequeue(out wi);
         }
-#else
-        private readonly Queue<WorkItem> _queue = new Queue<WorkItem>();
+        //private readonly Queue<WorkItem> _queue = new Queue<WorkItem>();
 
-        private void Enqueue(WorkItem wi)
-        {
-            lock (_queue)
-                _queue.Enqueue(wi);
-        }
+        //private void Enqueue(WorkItem wi)
+        //{
+        //    lock (_queue)
+        //        _queue.Enqueue(wi);
+        //}
 
-        private bool TryDequeue(out WorkItem wi)
-        {
-            lock (_queue)
-            {
-                if (_queue.Count == 0)
-                {
-                    wi = default(WorkItem);
-                    return false;
-                }
-                wi = _queue.Dequeue();
-                return true;
-            }
-        }
-#endif
+        //private bool TryDequeue(out WorkItem wi)
+        //{
+        //    lock (_queue)
+        //    {
+        //        if (_queue.Count == 0)
+        //        {
+        //            wi = default(WorkItem);
+        //            return false;
+        //        }
+        //        wi = _queue.Dequeue();
+        //        return true;
+        //    }
+        //}
 
 
         public EventLoopImplementation()
