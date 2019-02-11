@@ -2,12 +2,13 @@
 using System.Reflection;
 using SimplyFast.Collections;
 
-namespace SimplyFast.Reflection.Internal.DelegateBuilders
+namespace SimplyFast.Reflection.Internal.DelegateBuilders.Maps
 {
     public struct SimpleParameterInfo : IEquatable<SimpleParameterInfo>
     {
         public readonly Type Type;
         public readonly bool IsOut;
+        public bool IsByRef => Type.IsByRef;
 
         public SimpleParameterInfo(Type type) : this()
         {

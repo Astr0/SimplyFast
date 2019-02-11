@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using SimplyFast.Collections;
-using SimplyFast.Reflection.Internal.DelegateBuilders.Parameters;
+using SimplyFast.Reflection.Internal.DelegateBuilders.Maps;
 
 namespace SimplyFast.Reflection.Internal.DelegateBuilders.Expressions
 {
@@ -57,18 +57,66 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Expressions
 
         private static Delegate BuildDelegate(DelegateMap map, Func<Expression[], Expression> buildInvoke)
         {
-            var parameters = map.ParametersMap.ConvertAll(p => Expression.Parameter(p.DelegateParameter.Type));
+            var pm = map.ParametersMap;
+            var parameters = pm.ConvertAll(p => Expression.Parameter(p.Delegate.Type));
             var block = new ExpressionBlockBuilder();
-            var invokeParameters = parameters
-                .ConvertAll((p, i) => map.ParametersMap[i].Prepare(block, p));
+            var invokeParameters = parameters.ConvertAll((p, i) => Prepare(pm[i], block, p));
             var invoke = buildInvoke(invokeParameters);
             var retVal = PrepareInvoke(map.RetValMap, block, invoke);
-            for (var i = 0; i < parameters.Length; i++) map.ParametersMap[i].Finish(block, parameters[i]);
+            for (var i = 0; i < parameters.Length; i++) 
+                Finish(pm[i], block, invokeParameters[i], parameters[i]);
             ConvertReturn(map.RetValMap, block, invoke, retVal);
 
             var body = block.CreateExpression();
             var lambda = Expression.Lambda(map.DelegateType, body, parameters);
             return lambda.Compile();
+        }
+
+        private static Expression Prepare(ArgMap map, ExpressionBlockBuilder block, ParameterExpression p)
+        {
+            if (!map.Method.IsOut && !map.Method.IsByRef)
+            {
+                // normal parameter
+                return map.Method.Type == map.Delegate.Type ? (Expression)p : Expression.Convert(p, map.Method.Type);
+            }
+            // out or ref
+            var mt = map.Method.Type.RemoveByRef();
+            var dt = map.Delegate.Type.RemoveByRef();
+            var typesSame = mt == dt;
+            if (typesSame)
+                return p;
+            
+            var localVariable = Expression.Variable(mt);
+            block.AddVariable(localVariable);
+            if (map.Method.IsOut)
+                return localVariable;
+
+            // ref
+            var value = map.Delegate.IsOut
+                ? (Expression)Expression.Default(mt)
+                : Expression.Convert(p, mt);
+            var assign = Expression.Assign(localVariable, value);
+            block.Add(assign);
+            
+            return localVariable;
+        }
+
+        private static void Finish(ArgMap map, ExpressionBlockBuilder block, Expression prepare, ParameterExpression p)
+        {
+            // Not out and (Not By Ref or ([byRef] and not (delegate ref or delegate out)
+            if (!map.Method.IsOut && (!map.Method.IsByRef || !(map.Delegate.IsByRef || map.Delegate.IsOut)))
+                return;
+            // out/ref and typeSame - do nothing
+            var mt = map.Method.Type.RemoveByRef();
+            var dt = map.Delegate.Type.RemoveByRef();
+            var typesSame = mt == dt;
+            if (typesSame)
+                return;
+
+            // convert and assign back
+            var convertResult = Expression.Convert(prepare, dt);
+            var assign = Expression.Assign(p, convertResult);
+            block.Add(assign);
         }
 
         private static ParameterExpression PrepareInvoke(RetValMap retValMap, ExpressionBlockBuilder block, Expression invoke)

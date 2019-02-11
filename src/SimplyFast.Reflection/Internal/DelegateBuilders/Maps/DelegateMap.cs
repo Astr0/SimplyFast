@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Reflection;
 using SimplyFast.Collections;
-using SimplyFast.Reflection.Internal.DelegateBuilders.Parameters;
 
-namespace SimplyFast.Reflection.Internal.DelegateBuilders
+namespace SimplyFast.Reflection.Internal.DelegateBuilders.Maps
 {
     internal class DelegateMap
     {
         public readonly Type DelegateType;
-        public readonly ArgParameterMap[] ParametersMap;
+        public readonly ArgMap[] ParametersMap;
         public readonly RetValMap RetValMap;
 
         private DelegateMap(Type delegateType, Type thisParameter, SimpleParameterInfo[] methodParameters, Type methodReturn)
@@ -30,7 +29,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
                 if (delegateParams.Length != methodParameters.Length + (hasThis ? 1 : 0))
                     throw new Exception("Invalid parameters count.");
 
-                ParametersMap = new ArgParameterMap[delegateParams.Length];
+                ParametersMap = new ArgMap[delegateParams.Length];
                 for (var i = 0; i < ParametersMap.Length; i++)
                 {
                     var methodParam = hasThis
@@ -39,7 +38,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
                             : methodParameters[i - 1]
                         : methodParameters[i];
 
-                    ParametersMap[i] = ArgParameterMap.CreateParameterMap(delegateParams[i], i, methodParam);
+                    ParametersMap[i] = new ArgMap(i, delegateParams[i], methodParam);
                 }
 
                 RetValMap = new RetValMap(delegateReturn, methodReturn);

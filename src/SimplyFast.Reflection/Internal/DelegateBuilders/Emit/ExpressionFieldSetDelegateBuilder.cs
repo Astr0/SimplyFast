@@ -6,11 +6,9 @@
 //{
 //    internal class ExpressionFieldSetDelegateBuilder : ExpressionFieldAccessorDelegateBuilder
 //    {
-//#if EMIT
 //        protected override void EmitInvoke(ILGenerator generator)
 //        {
 //            generator.EmitFieldSet(_fieldInfo);
 //        }
-//#endif
 //    }
 //}
