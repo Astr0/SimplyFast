@@ -18,7 +18,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf.TestData
     {
         // Fields
         private static readonly RepeatedType<InnerMessage> _tinyRepeatedTypeTestroot_Classes_InnerMessage = RepeatedTypes.Message<InnerMessage>();
-        private static readonly RepeatedType<TestEnum> _tinyRepeatedTypeTestroot_Classes_TestEnum = RepeatedTypes.Enum<TestEnum>(x => (TestEnum)x, x => (int)x);
+        private static readonly RepeatedType<SomeEnum> _tinyRepeatedTypeTestroot_Classes_TestEnum = RepeatedTypes.Enum<SomeEnum>(x => (SomeEnum)x, x => (int)x);
         private double _fdouble;
         private float _ffloat;
         private int _fint32;
@@ -34,10 +34,10 @@ namespace SimplyFast.Serialization.Tests.Protobuf.TestData
         private bool? _fbool;
         private string _fstring;
         private byte[] _fbytes;
-        private TestEnum? _fenum;
+        private SomeEnum? _fenum;
         private InnerMessage _finner;
         private global::System.Collections.Generic.List<InnerMessage> _frep;
-        private global::System.Collections.Generic.List<TestEnum> _frepEnum;
+        private global::System.Collections.Generic.List<SomeEnum> _frepEnum;
         private global::System.Collections.Generic.List<string> _frepString;
         private global::System.Collections.Generic.List<uint> _frepFixed32;
         private global::System.Collections.Generic.List<uint> _frepUint32;
@@ -134,7 +134,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf.TestData
             set { _fbytes = value; }
         }
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-        public TestEnum? Fenum
+        public SomeEnum? Fenum
         {
             get { return _fenum; }
             set { _fenum = value; }
@@ -152,7 +152,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf.TestData
             set { _frep = value; }
         }
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-        public global::System.Collections.Generic.List<TestEnum> FrepEnum
+        public global::System.Collections.Generic.List<SomeEnum> FrepEnum
         {
             get { return _frepEnum; }
             set { _frepEnum = value; }
@@ -336,7 +336,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf.TestData
                         _fbytes = input.ReadBytes();
                         break;
                     case 128:
-                        _fenum = (TestEnum)input.ReadEnum();
+                        _fenum = (SomeEnum)input.ReadEnum();
                         break;
                     case 138:
                         if (_finner == null)
@@ -355,7 +355,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf.TestData
                     case 152:
                         if (_frepEnum == null)
                         {
-                            _frepEnum = new global::System.Collections.Generic.List<TestEnum>();
+                            _frepEnum = new global::System.Collections.Generic.List<SomeEnum>();
                         }
                         input.ReadRepeated(_frepEnum.Add, _tinyRepeatedTypeTestroot_Classes_TestEnum, x => _frepEnum.Capacity = _frepEnum.Count + x);
                         break;

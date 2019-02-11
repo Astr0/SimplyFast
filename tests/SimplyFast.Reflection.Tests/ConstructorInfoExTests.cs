@@ -14,11 +14,11 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void CanCreateObjectUsingCreateInstance()
         {
-            var obj = typeof(TestClass1).CreateInstance();
+            var obj = typeof(SomeClass1).CreateInstance();
             Assert.NotNull(obj);
-            Assert.IsType<TestClass1>(obj);
+            Assert.IsType<SomeClass1>(obj);
 
-            var obj2 = typeof(TestClass2).CreateInstance<TestClass1>();
+            var obj2 = typeof(TestClass2).CreateInstance<SomeClass1>();
             Assert.NotNull(obj2);
             Assert.IsType<TestClass2>(obj2);
 
@@ -30,9 +30,9 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void CanCreateObjectUsingParametlessConstructor()
         {
-            var obj = typeof(TestClass1).Constructor().InvokerAs<Func<object>>()();
+            var obj = typeof(SomeClass1).Constructor().InvokerAs<Func<object>>()();
             Assert.NotNull(obj);
-            Assert.IsType<TestClass1>(obj);
+            Assert.IsType<SomeClass1>(obj);
             var obj2 = typeof(TestClass2).Constructor().InvokerAs<Func<object>>()();
             Assert.NotNull(obj2);
             Assert.IsType<TestClass2>(obj2);
@@ -54,9 +54,9 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void CanCreateObjectUsingParametlessConstructorAs()
         {
-            var obj = typeof(TestClass1).Constructor().InvokerAs<Func<object>>()();
+            var obj = typeof(SomeClass1).Constructor().InvokerAs<Func<object>>()();
             Assert.NotNull(obj);
-            Assert.IsType<TestClass1>(obj);
+            Assert.IsType<SomeClass1>(obj);
             var obj2 = typeof(TestClass2).Constructor().InvokerAs<Func<object>>()();
             Assert.NotNull(obj2);
             Assert.IsType<TestClass2>(obj2);
@@ -87,12 +87,12 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void CanCreateConstructorDelegate()
         {
-            var invoker = typeof(TestClass1).Constructor().InvokerAs(typeof(Func<object>));
+            var invoker = typeof(SomeClass1).Constructor().InvokerAs(typeof(Func<object>));
             Assert.NotNull(invoker);
             Assert.IsType<Func<object>>(invoker);
             var obj = ((Func<object>)invoker)();
             Assert.NotNull(obj);
-            Assert.IsType<TestClass1>(obj);
+            Assert.IsType<SomeClass1>(obj);
         }
 
         [Fact]

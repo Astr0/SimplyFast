@@ -5,6 +5,7 @@ using SimplyFast.IO;
 namespace SimplyFast.Tests.IO
 {
     
+    // ReSharper disable once InconsistentNaming
     public class VarIntHelperTests
     {
         [Fact]

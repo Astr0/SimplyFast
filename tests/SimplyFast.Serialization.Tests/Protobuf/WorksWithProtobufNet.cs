@@ -6,17 +6,17 @@ using SimplyFast.Serialization.Tests.Protobuf.TestData;
 namespace SimplyFast.Serialization.Tests.Protobuf
 {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class TestAgainstProtobufNet : MessageTests
+    public class WorksWithProtobufNet : MessageTests
     {
         protected override void Test(FTestMessage message, Action<FTestMessage> customAssert = null)
         {
-            var d1 = TestFastWriteProtoRead(message);
+            var d1 = FastWriteProtoReadOk(message);
             AssertDeserialized(message, d1, customAssert);
-            var d2 = TestProtoWriteFastRead(message);
+            var d2 = ProtoWriteFastReadOk(message);
             AssertDeserialized(message, d2, customAssert);
         }
 
-        private static FTestMessage TestProtoWriteFastRead(FTestMessage message)
+        private static FTestMessage ProtoWriteFastReadOk(FTestMessage message)
         {
             using (var ms = new MemoryStream())
             {
@@ -26,7 +26,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
             }
         }
 
-        private static FTestMessage TestFastWriteProtoRead(FTestMessage message)
+        private static FTestMessage FastWriteProtoReadOk(FTestMessage message)
         {
             var serialized = ProtoSerializer.Serialize(message);
             using (var ms = new MemoryStream(serialized))

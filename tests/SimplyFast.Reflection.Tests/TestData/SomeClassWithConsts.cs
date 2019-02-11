@@ -1,10 +1,10 @@
 namespace SimplyFast.Reflection.Tests.TestData
 {
-    public class TestClassWithConsts
+    public class SomeClassWithConsts
     {
-        #region TestEnumType enum
+        #region SomeEnumType enum
 
-        public enum TestEnumType : long
+        public enum SomeEnumType : long
         {
             My1 = 34543523423423423,
             My2 = 34534543
@@ -19,7 +19,7 @@ namespace SimplyFast.Reflection.Tests.TestData
         public const char TestC = 'c';
         public const double TestD = 23.23;
         public const decimal TestDec = 323423123142342324;
-        public const TestEnumType TestEnum = TestEnumType.My1;
+        public const SomeEnumType TestEnum = SomeEnumType.My1;
         public const float TestF = 23.43f;
         public const int TestI = -34;
 

@@ -7,20 +7,20 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
 {
     internal class DelegateMap
     {
-        public readonly SimpleParameterInfo[] _delegateParams;
-        public readonly Type _delegateType;
-        public readonly ArgParameterMap[] _parametersMap;
-        public readonly RetValMap _retValMap;
+        public readonly SimpleParameterInfo[] DelegateParams;
+        public readonly Type DelegateType;
+        public readonly ArgParameterMap[] ParametersMap;
+        public readonly RetValMap RetValMap;
 
-        public DelegateMap(Type delegateType, Type thisParameter, SimpleParameterInfo[] methodParameters, Type methodReturn)
+        private DelegateMap(Type delegateType, Type thisParameter, SimpleParameterInfo[] methodParameters, Type methodReturn)
         {
             if (delegateType == null)
                 throw new ArgumentNullException(nameof(delegateType));
-            _delegateType = delegateType;
+            DelegateType = delegateType;
             
             // delegate info
             var invokeMethod = GetDelegateInvokeMethod();
-            _delegateParams = SimpleParameterInfo.FromParameters(invokeMethod.GetParameters());
+            DelegateParams = SimpleParameterInfo.FromParameters(invokeMethod.GetParameters());
             var delegateReturn = invokeMethod.ReturnType;
 
 
@@ -42,14 +42,14 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
             try
             {
                 // Check param count
-                if (_delegateParams.Length != fullMethodParameters.Length)
+                if (DelegateParams.Length != fullMethodParameters.Length)
                     throw new Exception("Invalid parameters count.");
 
-                _parametersMap = _delegateParams
+                ParametersMap = DelegateParams
                     .ConvertAll((delegateParam, i) => 
                         ArgParameterMap.CreateParameterMap(delegateParam, i, fullMethodParameters[i]));
 
-                _retValMap = new RetValMap(delegateReturn, methodReturn);
+                RetValMap = new RetValMap(delegateReturn, methodReturn);
             }
             catch (Exception ex)
             {
@@ -59,9 +59,9 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
 
         private MethodInfo GetDelegateInvokeMethod()
         {
-            if (_delegateType.TypeInfo().BaseType != typeof(MulticastDelegate))
+            if (DelegateType.TypeInfo().BaseType != typeof(MulticastDelegate))
                 throw NotDelegateException();
-            var invokeMethod = _delegateType.Method("Invoke");
+            var invokeMethod = DelegateType.Method("Invoke");
             if (invokeMethod == null)
                 throw NotDelegateException();
             return invokeMethod;
@@ -69,12 +69,12 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
 
         private Exception NotDelegateException()
         {
-            return new InvalidOperationException(_delegateType + " is not delegate type.");
+            return new InvalidOperationException(DelegateType + " is not delegate type.");
         }
 
         private Exception InvalidSignatureException(Exception innerException)
         {
-            return new InvalidOperationException(_delegateType + " has invalid signature.", innerException);
+            return new InvalidOperationException(DelegateType + " has invalid signature.", innerException);
         }
 
 

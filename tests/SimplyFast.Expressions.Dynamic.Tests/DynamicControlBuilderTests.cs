@@ -135,9 +135,9 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         }
 
         [Fact]
-        public void TestCast()
+        public void CastOk()
         {
-            var lambda = EBuilder.Lambda(typeof(EBuilderInstanceTests.TestClass), a =>
+            var lambda = EBuilder.Lambda(typeof(EBuilderInstanceTests.SomeClass), a =>
             {
                 var aexp = a.EBuilder();
                 return Cast(aexp, typeof(object));
@@ -146,9 +146,9 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         }
 
         [Fact]
-        public void TestConvert()
+        public void ConvertOk()
         {
-            var lambda = EBuilder.Lambda(typeof(EBuilderInstanceTests.TestClass), a =>
+            var lambda = EBuilder.Lambda(typeof(EBuilderInstanceTests.SomeClass), a =>
             {
                 var aexp = a.EBuilder();
                 return Convert(aexp, typeof(int));
@@ -157,25 +157,25 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         }
 
         [Fact]
-        public void TestConvertTo()
+        public void ConvertToOk()
         {
             var lambda = EBuilder.Lambda(typeof(int), a =>
             {
                 var aexp = a.EBuilder();
-                return Convert(aexp, typeof(EBuilderInstanceTests.TestClass));
+                return Convert(aexp, typeof(EBuilderInstanceTests.SomeClass));
             });
             Assert.Equal("(Int32 p_0) => Convert(p_0 As TestClass)", lambda.ToDebugString());
         }
 
         [Fact]
-        public void TestDefault()
+        public void DefaultOk()
         {
             var lambda = Lambda(a => Default(typeof(int)));
             Assert.Equal("() => default(Int32)", lambda.ToDebugString());
         }
 
         [Fact]
-        public void TestFor()
+        public void ForOk()
         {
             var lambda = Lambda(p =>
                 Block(b => new[]
@@ -192,7 +192,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         }
 
         [Fact]
-        public void TestForEach()
+        public void ForEachOk()
         {
             var lambda = Lambda(p => Block(b => new[]
             {
@@ -205,7 +205,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         }
 
         [Fact]
-        public void TestForEachEnumerable()
+        public void ForEachEnumerableOk()
         {
             // TODO: This is not a C# behavior, C# will throw?!
             var lambda = Lambda(p => Block(b => new[]
@@ -223,7 +223,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         }
 
         [Fact]
-        public void TestForEachList()
+        public void ForEachListOk()
         {
             var lambda = Lambda(p => Block(b => new[]
             {
@@ -236,7 +236,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         }
 
         [Fact]
-        public void TestForEachListAsEnumerable()
+        public void ForEachListAsEnumerableOk()
         {
             var lambda = Lambda(p => Block(b => new[]
             {
@@ -253,7 +253,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         }
 
         [Fact]
-        public void TestForEachStatic()
+        public void ForEachStaticOk()
         {
             var lambda = Lambda(p => Block(b => new[]
             {
@@ -266,7 +266,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         }
 
         [Fact]
-        public void TestIntParse()
+        public void IntParseOk()
         {
             var _int = typeof(int).EBuilder();
             var lambda = Lambda(p => _int.Parse(p(typeof(string), "s")));
@@ -277,7 +277,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         }
 
         [Fact]
-        public void TestLoop()
+        public void LoopOk()
         {
             var lambda = Lambda(p =>
             {
@@ -299,7 +299,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         }
 
         [Fact]
-        public void TestSwitch()
+        public void SwitchOk()
         {
             var lambda = Lambda(p => Switch(p(typeof(int), "a"), new[]
             {
@@ -332,7 +332,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         }
 
         [Fact]
-        public void TestUsing()
+        public void UsingOk()
         {
             var lambda = Lambda(p => Using(p(typeof(IDisposable), "a"), 2));
             var compiled = (Func<IDisposable, int>) lambda.Compile();
@@ -343,7 +343,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
         }
 
         [Fact]
-        public void TestWhile()
+        public void WhileOk()
         {
             var lambda = Lambda(p => Block(b => new[]
             {

@@ -5,7 +5,7 @@ using SimplyFast.IoC.Modules;
 namespace SimplyFast.IoC.Tests.Modules
 {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class TestModule2: FastModule
+    public class SomeModule2: FastModule
     {
         public override void Load()
         {

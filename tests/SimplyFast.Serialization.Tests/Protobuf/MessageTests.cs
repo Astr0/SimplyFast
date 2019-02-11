@@ -236,7 +236,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
         {
             new[]
             {
-                (TestEnum?) null, TestEnum.Value0, TestEnum.Value1
+                (SomeEnum?) null, SomeEnum.Value0, SomeEnum.Value1
             }.ForEach(
                 f =>
                     Test(new FTestMessage
@@ -293,16 +293,16 @@ namespace SimplyFast.Serialization.Tests.Protobuf
             new[]
             {
                 null,
-                new List<TestEnum> {TestEnum.Value0},
-                new List<TestEnum> {TestEnum.Value0, TestEnum.Value0},
-                new List<TestEnum> {TestEnum.Value0, TestEnum.Value1, TestEnum.Value0, TestEnum.Value1}
+                new List<SomeEnum> {SomeEnum.Value0},
+                new List<SomeEnum> {SomeEnum.Value0, SomeEnum.Value0},
+                new List<SomeEnum> {SomeEnum.Value0, SomeEnum.Value1, SomeEnum.Value0, SomeEnum.Value1}
             }.ForEach(
                 f =>
                     Test(new FTestMessage
                     {
                         FrepEnum = f
                     }));
-            Test(new FTestMessage {FrepEnum = new List<TestEnum>()},
+            Test(new FTestMessage {FrepEnum = new List<SomeEnum>()},
                 m => Assert.True(m.FrepEnum == null || m.FrepEnum.Count == 0));
         }
 

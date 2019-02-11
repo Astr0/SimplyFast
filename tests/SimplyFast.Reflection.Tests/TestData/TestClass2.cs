@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SimplyFast.Reflection.Tests.TestData
 {
-    public class TestClass2 : TestClass1
+    public class TestClass2 : SomeClass1
     {
         private static object _f3 = "_f3t";
         private long _f1;
@@ -27,13 +27,13 @@ namespace SimplyFast.Reflection.Tests.TestData
             set { _f1 = value; }
         }
 
-        [TestMe]
+        [Some]
         public new string P2 { get; set; }
 
-        [TestMe(Value = 35)]
+        [Some(Value = 35)]
         public new string P3 { get; set; }
 
-        [TestMe(Value = 45)]
+        [Some(Value = 45)]
         public override string P4 { get; set; }
 
         public override string P5 { get; set; }

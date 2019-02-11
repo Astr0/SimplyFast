@@ -22,7 +22,7 @@ namespace SimplyFast.Reflection.Tests
         }
 
         [Fact]
-        public void TestExact()
+        public void ExactOk()
         {
             var convert = ConvertEx.Converter<int, int>();
             Assert.Equal(2, convert(2));
@@ -43,7 +43,7 @@ namespace SimplyFast.Reflection.Tests
         }
 
         [Fact]
-        public void TestCast()
+        public void CastOk()
         {
             var convert = ConvertEx.Converter<int, object>();
             Assert.Equal(2, convert(2));
@@ -58,46 +58,46 @@ namespace SimplyFast.Reflection.Tests
 
         [SuppressMessage("ReSharper", "UnusedParameter.Local")]
         [SuppressMessage("ReSharper", "ParameterOnlyUsedForPreconditionCheck.Local")]
-        private static void TestConvert<TSource, TResult>(TResult expected, TSource value)
+        private static void ConvertOk<TSource, TResult>(TResult expected, TSource value)
         {
             Assert.Equal(expected, ConvertEx.Converter<TSource, TResult>()(value));
         }
 
         [Fact]
-        public void TestToObject()
+        public void ToObjectOk()
         {
-            TestConvert((object)2, 2);
-            TestConvert((object)"2", "2");
-            TestConvert((object)null, (string)null);
+            ConvertOk((object)2, 2);
+            ConvertOk((object)"2", "2");
+            ConvertOk((object)null, (string)null);
         }
 
         [Fact]
-        public void TestObject()
+        public void ObjectOk()
         {
-            TestConvert(2, (object)2);
-            TestConvert("2", (object)2);
-            TestConvert("2", (object)"2");
-            TestConvert(2, (object)"2");
-            TestConvert(2L, (object)"2");
-            TestConvert(2.0, (object)"2");
-            TestConvert(2.0d, (object)"2");
-            TestConvert(true, (object)1);
-            TestConvert(false, (object)0);
+            ConvertOk(2, (object)2);
+            ConvertOk("2", (object)2);
+            ConvertOk("2", (object)"2");
+            ConvertOk(2, (object)"2");
+            ConvertOk(2L, (object)"2");
+            ConvertOk(2.0, (object)"2");
+            ConvertOk(2.0d, (object)"2");
+            ConvertOk(true, (object)1);
+            ConvertOk(false, (object)0);
         }
 
         [Fact]
-        public void TestBuildIn()
+        public void BuildInOk()
         {
-            TestConvert(2, "2");
-            TestConvert("2", 2);
-            TestConvert(2.0, 2);
-            TestConvert(2, 2.0);
-            TestConvert(2.0d, 2);
-            TestConvert(2, 2.0d);
-            TestConvert(true, 1);
-            TestConvert(1, true);
-            TestConvert(false, 0);
-            TestConvert(0, false);
+            ConvertOk(2, "2");
+            ConvertOk("2", 2);
+            ConvertOk(2.0, 2);
+            ConvertOk(2, 2.0);
+            ConvertOk(2.0d, 2);
+            ConvertOk(2, 2.0d);
+            ConvertOk(true, 1);
+            ConvertOk(1, true);
+            ConvertOk(false, 0);
+            ConvertOk(0, false);
         }
     }
 }

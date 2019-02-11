@@ -10,7 +10,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
 {
     internal abstract class ArgLocalVariableParameterMap : ArgParameterMap
     {
-        protected readonly bool _needLocalVariable;
+        protected readonly bool NeedLocalVariable;
         private readonly Type _methodType;
 
         protected ArgLocalVariableParameterMap(SimpleParameterInfo delegateParameter, int delegateParameterIndex,
@@ -21,7 +21,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
             var delegateType = delegateParameter.Type.RemoveByRef();
             if (!delegateType.IsAssignableFrom(_methodType))
                 throw new ArgumentException("Invalid type for parameter " + delegateParameterIndex);
-            _needLocalVariable = delegateType != _methodType;
+            NeedLocalVariable = delegateType != _methodType;
         }
 
 #if EMIT
@@ -33,14 +33,14 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
                 _localVariable = generator.DeclareLocal(_methodType);
         }
 #else
-        protected ParameterExpression _localVariable;
+        protected ParameterExpression LocalVariable;
         public override Expression Prepare(ExpressionBlockBuilder block, ParameterExpression parameter)
         {
-            if (!_needLocalVariable)
+            if (!NeedLocalVariable)
                 return parameter;
-            _localVariable = Expression.Variable(_methodType);
-            block.AddVariable(_localVariable);
-            return _localVariable;
+            LocalVariable = Expression.Variable(_methodType);
+            block.AddVariable(LocalVariable);
+            return LocalVariable;
         }
 #endif
     }

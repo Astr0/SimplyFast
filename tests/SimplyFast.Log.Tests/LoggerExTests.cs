@@ -9,7 +9,7 @@ namespace SimplyFast.Log.Tests
 {
     public class LoggerExTests
     {
-        private class TestLogger : ILogger
+        private class SomeLogger : ILogger
         {
             public void Dispose()
             {
@@ -54,7 +54,7 @@ namespace SimplyFast.Log.Tests
         [Fact]
         public void StaticMessagesWorks()
         {
-            var l = new TestLogger();
+            var l = new SomeLogger();
             l.Log(Severity.Debug);
             l.LastWas(Severity.Debug, null, null);
             l.Log(Severity.Error, LogTokenEx.Message("test"));
@@ -76,7 +76,7 @@ namespace SimplyFast.Log.Tests
         [Fact]
         public void FormatMessagesWorks()
         {
-            var l = new TestLogger();
+            var l = new SomeLogger();
             l.Log(Severity.Fatal, "test{0}", 1);
             l.LastWas(Severity.Fatal, LogTokenEx.Names.Message, "test1");
             l.Debug("test{0}", "D");

@@ -59,7 +59,7 @@ namespace SimplyFast.Reflection.Tests
         public void InvokesIntMethod()
         {
             var t2 = new TestClass2();
-            var t3 = new TestClass3();
+            var t3 = new SomeClass3();
             var method = typeof(TestClass2).Method("GetF1");
             var invoker1 = method.InvokerAs<Func<TestClass2, int>>();
             var invoker2 = method.InvokerAs<Func<object, object>>();
@@ -73,7 +73,7 @@ namespace SimplyFast.Reflection.Tests
         public void InvokesIntMethodInvoker()
         {
             var t2 = new TestClass2();
-            var t3 = new TestClass3();
+            var t3 = new SomeClass3();
             var method = typeof(TestClass2).Method("GetF1");
             var invoker = method.Invoker();
             Assert.Equal(11, invoker(t2));
@@ -84,7 +84,7 @@ namespace SimplyFast.Reflection.Tests
         public void InvokesIntMethodAs()
         {
             var t2 = new TestClass2();
-            var t3 = new TestClass3();
+            var t3 = new SomeClass3();
             var method = typeof(TestClass2).Method("GetF1");
             var invoker1 = method.InvokerAs<Func<TestClass2, int>>();
             var invoker2 = method.InvokerAs<Func<object, object>>();
@@ -97,19 +97,19 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void InvokesNewMethod()
         {
-            var t3 = new TestClass3();
-            var method = typeof(TestClass3).Method("GetF1");
-            Assert.Equal(12, method.InvokerAs<Func<TestClass3, object>>()(t3));
-            Assert.Equal(12, method.InvokerAs<Func<TestClass3, int>>()(t3));
+            var t3 = new SomeClass3();
+            var method = typeof(SomeClass3).Method("GetF1");
+            Assert.Equal(12, method.InvokerAs<Func<SomeClass3, object>>()(t3));
+            Assert.Equal(12, method.InvokerAs<Func<SomeClass3, int>>()(t3));
         }
 
         [Fact]
         public void InvokesNewMethodAs()
         {
-            var t3 = new TestClass3();
-            var method = typeof(TestClass3).Method("GetF1");
-            Assert.Equal(12, method.InvokerAs<Func<TestClass3, object>>()(t3));
-            Assert.Equal(12, method.InvokerAs<Func<TestClass3, int>>()(t3));
+            var t3 = new SomeClass3();
+            var method = typeof(SomeClass3).Method("GetF1");
+            Assert.Equal(12, method.InvokerAs<Func<SomeClass3, object>>()(t3));
+            Assert.Equal(12, method.InvokerAs<Func<SomeClass3, int>>()(t3));
         }
 
         [Fact]
@@ -176,7 +176,7 @@ namespace SimplyFast.Reflection.Tests
         public void InvokesVirtualMethod()
         {
             var t2 = new TestClass2();
-            var t3 = new TestClass3();
+            var t3 = new SomeClass3();
             var method = typeof(TestClass2).Method("SetP2P3", typeof(string), typeof(string));
             Assert.Null(method.InvokerAs<Func<TestClass2, string, string, object>>()(t2, "t1", "t2"));
             Assert.Equal("t1", t2.P2);
@@ -189,7 +189,7 @@ namespace SimplyFast.Reflection.Tests
             Assert.Null(method.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t1!", "t2!"));
             Assert.Equal("t1!_", t3.P2);
             Assert.Equal("t2!_", t3.P3);
-            var method2 = typeof(TestClass3).Method("SetP2P3", typeof(string), typeof(string));
+            var method2 = typeof(SomeClass3).Method("SetP2P3", typeof(string), typeof(string));
             Assert.Null(method2.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t11", "t22"));
             Assert.Equal("t11_", t3.P2);
             Assert.Equal("t22_", t3.P3);
@@ -202,7 +202,7 @@ namespace SimplyFast.Reflection.Tests
         public void InvokesVirtualMethodAs()
         {
             var t2 = new TestClass2();
-            var t3 = new TestClass3();
+            var t3 = new SomeClass3();
             var method = typeof(TestClass2).Method("SetP2P3", typeof(string), typeof(string));
             Assert.Null(method.InvokerAs<Func<TestClass2, string, string, object>>()(t2, "t1", "t2"));
             Assert.Equal("t1", t2.P2);
@@ -215,7 +215,7 @@ namespace SimplyFast.Reflection.Tests
             Assert.Null(method.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t1!", "t2!"));
             Assert.Equal("t1!_", t3.P2);
             Assert.Equal("t2!_", t3.P3);
-            var method2 = typeof(TestClass3).Method("SetP2P3", typeof(string), typeof(string));
+            var method2 = typeof(SomeClass3).Method("SetP2P3", typeof(string), typeof(string));
             Assert.Null(method2.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t11", "t22"));
             Assert.Equal("t11_", t3.P2);
             Assert.Equal("t22_", t3.P3);
@@ -374,12 +374,12 @@ namespace SimplyFast.Reflection.Tests
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
         private class ClassWith2Methods
         {
-            public void TestInstance()
+            public void SomeInstance()
             {
             }
 
             [SuppressMessage("ReSharper", "UnusedParameter.Local")]
-            public static void TestStatic<T>(T v, int x)
+            public static void SomeStatic<T>(T v, int x)
             {
             }
         }
@@ -397,7 +397,7 @@ namespace SimplyFast.Reflection.Tests
             Assert.Equal(2 + objMethods.Length, methods.Length);
             Assert.Equal(2, methods.Count(x => x.DeclaringType == typeof(ClassWith2Methods)));
             Assert.Equal(1, typeof(ClassWith2Methods).Methods("ToString").Length);
-            Assert.NotNull(typeof(ClassWith2Methods).Method("TestStatic", new[] { typeof(string) }, new[] { typeof(string), typeof(int) }));
+            Assert.NotNull(typeof(ClassWith2Methods).Method("SomeStatic", new[] { typeof(string) }, new[] { typeof(string), typeof(int) }));
         }
 
 
@@ -406,7 +406,7 @@ namespace SimplyFast.Reflection.Tests
             T GetDefault<T>();
         }
 
-        private class TestInterface : ITest
+        private class SomeInterface : ITest
         {
             public T GetDefault<T>()
             {
@@ -417,7 +417,7 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void InvokesGenericInterfaceMethod()
         {
-            var test = new TestInterface();
+            var test = new SomeInterface();
             var method = typeof(ITest).Method("GetDefault").MakeGeneric(typeof(int));
             var exactInvoker = method.InvokerAs<Func<ITest, int>>();
             Assert.Equal(test.GetDefault<int>(), exactInvoker(test));

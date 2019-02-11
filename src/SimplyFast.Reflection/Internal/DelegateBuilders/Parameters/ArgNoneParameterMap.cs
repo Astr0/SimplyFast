@@ -20,15 +20,15 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
 
         protected override void CheckParameters()
         {
-            var mt = _methodParameter.Type;
+            var mt = MethodParameter.Type;
             if (mt.IsByRef)
                 throw new ArgumentException("Invalid methodParameter modifier. Should be None.");
-            if (_delegateParameter.IsOut)
-                throw new ArgumentException($"Invalid modifier for parameter {_delegateParameterIndex}. Should be None or Ref.");
+            if (DelegateParameter.IsOut)
+                throw new ArgumentException($"Invalid modifier for parameter {DelegateParameterIndex}. Should be None or Ref.");
 
-            var dt = _delegateParameter.Type.RemoveByRef();
+            var dt = DelegateParameter.Type.RemoveByRef();
             if (!dt.IsAssignableFrom(mt) && !mt.IsAssignableFrom(dt))
-                throw new ArgumentException("Invalid type for parameter " + _delegateParameterIndex);
+                throw new ArgumentException("Invalid type for parameter " + DelegateParameterIndex);
         }
 
 #if EMIT
@@ -66,9 +66,9 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
 
         public override Expression Prepare(ExpressionBlockBuilder block, ParameterExpression parameter)
         {
-            if (_methodParameter.Type == _delegateParameter.Type)
+            if (MethodParameter.Type == DelegateParameter.Type)
                 return parameter;
-            return Expression.Convert(parameter, _methodParameter.Type);
+            return Expression.Convert(parameter, MethodParameter.Type);
         }
 #endif
     }

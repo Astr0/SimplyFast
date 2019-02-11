@@ -26,7 +26,7 @@ namespace SimplyFast.Serialization.Tests
         }
 
         [Fact]
-        public void TestAll()
+        public void AllFine()
         {
             AssertAllFormats(1);
             AssertAllFormats(15);

@@ -13,32 +13,32 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void ConstGettersWorks()
         {
-            var type = typeof(TestClassWithConsts);
+            var type = typeof(SomeClassWithConsts);
             Func<string, Func<object>> getGetter = x => type.Field(x).GetterAs<Func<object>>();
-            Assert.Equal(TestClassWithConsts.TestBool, getGetter("TestBool")());
+            Assert.Equal(SomeClassWithConsts.TestBool, getGetter("TestBool")());
 
-            Assert.Equal(TestClassWithConsts.TestC, getGetter("TestC")());
-            Assert.Equal(TestClassWithConsts.TestStr, getGetter("TestStr")());
+            Assert.Equal(SomeClassWithConsts.TestC, getGetter("TestC")());
+            Assert.Equal(SomeClassWithConsts.TestStr, getGetter("TestStr")());
 
-            Assert.Equal(TestClassWithConsts.TestB, getGetter("TestB")());
-            Assert.Equal(TestClassWithConsts.TestSbyte, getGetter("TestSbyte")());
-            Assert.Equal(TestClassWithConsts.TestS, getGetter("TestS")());
-            Assert.Equal(TestClassWithConsts.TestUShort, getGetter("TestUShort")());
-            Assert.Equal(TestClassWithConsts.TestI, getGetter("TestI")());
-            Assert.Equal(TestClassWithConsts.TestUInt, getGetter("TestUInt")());
-            Assert.Equal(TestClassWithConsts.TestL, getGetter("TestL")());
-            Assert.Equal(TestClassWithConsts.TestULong, getGetter("TestULong")());
+            Assert.Equal(SomeClassWithConsts.TestB, getGetter("TestB")());
+            Assert.Equal(SomeClassWithConsts.TestSbyte, getGetter("TestSbyte")());
+            Assert.Equal(SomeClassWithConsts.TestS, getGetter("TestS")());
+            Assert.Equal(SomeClassWithConsts.TestUShort, getGetter("TestUShort")());
+            Assert.Equal(SomeClassWithConsts.TestI, getGetter("TestI")());
+            Assert.Equal(SomeClassWithConsts.TestUInt, getGetter("TestUInt")());
+            Assert.Equal(SomeClassWithConsts.TestL, getGetter("TestL")());
+            Assert.Equal(SomeClassWithConsts.TestULong, getGetter("TestULong")());
 
-            Assert.Equal(TestClassWithConsts.TestF, getGetter("TestF")());
-            Assert.Equal(TestClassWithConsts.TestD, getGetter("TestD")());
-            Assert.Equal(TestClassWithConsts.TestDec, getGetter("TestDec")());
-            Assert.Equal(TestClassWithConsts.TestEnum, getGetter("TestEnum")());
+            Assert.Equal(SomeClassWithConsts.TestF, getGetter("TestF")());
+            Assert.Equal(SomeClassWithConsts.TestD, getGetter("TestD")());
+            Assert.Equal(SomeClassWithConsts.TestDec, getGetter("TestDec")());
+            Assert.Equal(SomeClassWithConsts.TestEnum, getGetter("TestEnum")());
         }
 
         [Fact]
         public void ConstSettersDoesNotExists()
         {
-            var type = typeof(TestClassWithConsts);
+            var type = typeof(SomeClassWithConsts);
             Func<string, Action<object>> getSetter = x => type.Field(x).SetterAs<Action<object>>();
             Assert.Null(getSetter("TestBool"));
 
@@ -63,8 +63,8 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void GetterExists()
         {
-            Assert.NotNull(typeof(TestClass1).Field("_f1").GetterAs<Func<object, object>>());
-            Assert.NotNull(typeof(TestClass1).Field("F2").GetterAs<Func<object, object>>());
+            Assert.NotNull(typeof(SomeClass1).Field("_f1").GetterAs<Func<object, object>>());
+            Assert.NotNull(typeof(SomeClass1).Field("F2").GetterAs<Func<object, object>>());
             Assert.NotNull(typeof(TestClass2).Field("_f3").GetterAs<Func<object>>());
             Assert.NotNull(typeof(TestClass2).Field("_f3").GetterAs(typeof(Func<object>)));
         }
@@ -72,16 +72,16 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void GetterThrowsIfWrongType()
         {
-            var d = new TestClass1();
+            var d = new SomeClass1();
             Assert.Throws<InvalidCastException>(() => typeof(TestClass2).Field("_f1").GetterAs<Func<object, object>>()(d));
         }
 
         [Fact]
         public void GetterWorksForPrivate()
         {
-            var c = new TestClass1();
+            var c = new SomeClass1();
             Assert.Equal(1,
-                            typeof(TestClass1).Field("_f1").GetterAs<Func<TestClass1, object>>()(c));
+                            typeof(SomeClass1).Field("_f1").GetterAs<Func<SomeClass1, object>>()(c));
         }
 
         [Fact]
@@ -93,15 +93,15 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void GetterWorksForPublic()
         {
-            var c = new TestClass1();
-            Assert.Equal("test", typeof(TestClass1).Field("F2").GetterAs<Func<TestClass1, string>>()(c));
+            var c = new SomeClass1();
+            Assert.Equal("test", typeof(SomeClass1).Field("F2").GetterAs<Func<SomeClass1, string>>()(c));
         }
 
         [Fact]
         public void SetterExists()
         {
-            Assert.NotNull(typeof(TestClass1).Field("_f1").SetterAs<Action<object, object>>());
-            Assert.NotNull(typeof(TestClass1).Field("F2").SetterAs<Action<object, object>>());
+            Assert.NotNull(typeof(SomeClass1).Field("_f1").SetterAs<Action<object, object>>());
+            Assert.NotNull(typeof(SomeClass1).Field("F2").SetterAs<Action<object, object>>());
             Assert.NotNull(typeof(TestClass2).Field("_f3").SetterAs<Action<object>>());
             Assert.NotNull(typeof(TestClass2).Field("_f3").SetterAs(typeof(Action<object>)));
         }
@@ -109,7 +109,7 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void SetterThrowsIfWrongType()
         {
-            var c = new TestClass1();
+            var c = new SomeClass1();
             var d = new TestClass2();
             Assert.Throws<InvalidCastException>(
                 () => typeof(TestClass2).Field("_f1").SetterAs<Action<object, object>>()(c, 123));
@@ -120,9 +120,9 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void SetterWorksForPrivate()
         {
-            var c = new TestClass1();
-            typeof(TestClass1).Field("_f1").SetterAs<Action<TestClass1, int>>()(c, 2);
-            Assert.Equal(2, typeof(TestClass1).Field("_f1").GetterAs<Func<TestClass1, int>>()(c));
+            var c = new SomeClass1();
+            typeof(SomeClass1).Field("_f1").SetterAs<Action<SomeClass1, int>>()(c, 2);
+            Assert.Equal(2, typeof(SomeClass1).Field("_f1").GetterAs<Func<SomeClass1, int>>()(c));
         }
 
         [Fact]
@@ -142,16 +142,16 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void SetterWorksForPublic()
         {
-            var c = new TestClass1();
-            typeof(TestClass1).Field("F2").SetterAs<Action<TestClass1, object>>()(c, "te");
-            Assert.Equal("te", typeof(TestClass1).Field("F2").GetterAs<Func<object, string>>()(c));
+            var c = new SomeClass1();
+            typeof(SomeClass1).Field("F2").SetterAs<Action<SomeClass1, object>>()(c, "te");
+            Assert.Equal("te", typeof(SomeClass1).Field("F2").GetterAs<Func<object, string>>()(c));
         }
 
         [Fact]
         public void FieldsCacheFine()
         {
-            var fields = new HashSet<FieldInfo>(typeof(TestClass1).Fields());
-            Assert.True(fields.SetEquals(typeof(TestClass1).GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)));
+            var fields = new HashSet<FieldInfo>(typeof(SomeClass1).Fields());
+            Assert.True(fields.SetEquals(typeof(SomeClass1).GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)));
         }
 
         private class ClassWithFields

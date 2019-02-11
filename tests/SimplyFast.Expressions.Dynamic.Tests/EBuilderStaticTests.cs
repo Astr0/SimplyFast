@@ -10,18 +10,18 @@ namespace SimplyFast.Expressions.Dynamic.Tests
     {
         [SuppressMessage("ReSharper", "MemberCanBePrivate.Local")]
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
-        private class TestClass
+        private class SomeClass
         {
-            public TestClass(int value)
+            public SomeClass(int value)
             {
-                TestField = value;
+                SomeField = value;
             }
 
-            public static int TestField;
-            public static string TestProp
+            public static int SomeField;
+            public static string SomeProp
             {
-                get { return TestField.ToString(CultureInfo.InvariantCulture); }
-                set { TestField = int.Parse(value); }
+                get => SomeField.ToString(CultureInfo.InvariantCulture);
+                set => SomeField = int.Parse(value);
             }
 
             public static bool IsOk()
@@ -29,73 +29,73 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 return true;
             }
 
-            public static double TestMethod(float param)
+            public static double SomeMethod(float param)
             {
-                return TestField * param;
+                return SomeField * param;
             }
 
             #pragma warning disable 169
-            public static Action<bool> TestAction = b => {};
+            public static Action<bool> SomeAction = b => {};
             #pragma warning restore 169
         }
 
         [Fact]
-        public void TestGetSetField()
+        public void GetSetFieldOk()
         {
             var lambda = EBuilder.Lambda(() =>
             {
-                var testClass = typeof(TestClass).EBuilder();
+                var testClass = typeof(SomeClass).EBuilder();
                 return testClass.TestField = testClass.TestField;
             });
-            Assert.Equal("() => (TestClass.TestField = TestClass.TestField)", lambda.ToDebugString());
+            Assert.Equal("() => (SomeClass.SomeField = SomeClass.SomeField)", lambda.ToDebugString());
         }
 
         [Fact]
-        public void TestGetSetProperty()
+        public void GetSetPropertyOk()
         {
             var lambda = EBuilder.Lambda(() =>
                 {
-                    var testClass = typeof(TestClass).EBuilder();
+                    var testClass = typeof(SomeClass).EBuilder();
                     return testClass.TestProp = testClass.TestProp;
             });
-            Assert.Equal("() => (TestClass.TestProp = TestClass.TestProp)", lambda.ToDebugString());
+            Assert.Equal("() => (SomeClass.SomeProp = SomeClass.SomeProp)", lambda.ToDebugString());
         }
 
         [Fact]
-        public void TestMethod()
+        public void MethodOk()
         {
             var lambda = EBuilder.Lambda(() =>
             {
-                var testClass = typeof(TestClass).EBuilder();
+                var testClass = typeof(SomeClass).EBuilder();
                 return testClass.TestMethod(2.0f);
             });
-            Assert.Equal("() => TestClass.TestMethod(2F)", lambda.ToDebugString());
+            Assert.Equal("() => SomeClass.SomeMethod(2F)", lambda.ToDebugString());
         }
 
         [Fact]
-        public void TestAction()
+        public void ActionOk()
         {
             var lambda = EBuilder.Lambda(() =>
             {
-                var testClass = typeof(TestClass).EBuilder();
+                var testClass = typeof(SomeClass).EBuilder();
                 return testClass.TestAction(true);
             });
-            Assert.Equal("() => TestClass.TestAction(True)", lambda.ToDebugString());
+            Assert.Equal("() => SomeClass.SomeAction(True)", lambda.ToDebugString());
         }
 
         [Fact]
-        public void TestNew()
+        public void NewOk()
         {
             var lambda = EBuilder.Lambda(() =>
             {
-                var testClass = typeof(TestClass).EBuilder();
+                var testClass = typeof(SomeClass).EBuilder();
                 return testClass(2);
             });
-            Assert.Equal("() => new TestClass(2)", lambda.ToDebugString());
+            Assert.Equal("() => new SomeClass(2)", lambda.ToDebugString());
         }
 
         [Fact]
-        public void TestNewArray()
+        public void NewArrayOk()
         {
             var lambda = EBuilder.Lambda(() =>
             {

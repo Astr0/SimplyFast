@@ -10,20 +10,20 @@ namespace SimplyFast.Expressions.Tests
     public sealed class ExpressionExPartialEvalTests
     {
         [SuppressMessage("ReSharper", "UnusedParameter.Local")]
-        private static int TestFuncDontEval(int x)
+        private static int FuncDontEval(int x)
         {
             throw new InvalidOperationException("Don't eval me!");
         }
 
-        private static int TestFuncEval(int x)
+        private static int FuncEval(int x)
         {
             return x;
         }
 
         [Fact]
-        public void TestPartialEvalEvalsAll()
+        public void PartialEvalEvalsAll()
         {
-            Expression<Func<int>> test = () => 2 + TestFuncEval(1);
+            Expression<Func<int>> test = () => 2 + FuncEval(1);
             var expr = test.Body;
             Assert.Equal(ExpressionType.Add, expr.NodeType);
             var evaled = ExpressionEx.PartialEval(expr);
@@ -31,9 +31,9 @@ namespace SimplyFast.Expressions.Tests
         }
 
         [Fact]
-        public void TestPartialEvalDontEvalsWhatThrows()
+        public void PartialEvalDontEvalsWhatThrows()
         {
-            Expression<Func<int>> test = () => 2 + TestFuncDontEval(1);
+            Expression<Func<int>> test = () => 2 + FuncDontEval(1);
             var expr = test.Body;
             Assert.Equal(ExpressionType.Add, expr.NodeType);
             var evaled = ExpressionEx.PartialEval(expr);
@@ -58,7 +58,7 @@ namespace SimplyFast.Expressions.Tests
         }
 
         [Fact]
-        public void TestPartialEvalEvalsVoid()
+        public void PartialEvalEvalsVoid()
         {
             var c = new ClassWithVoid();
             Expression<Action> test = () => c.SetValue(12);
@@ -70,7 +70,7 @@ namespace SimplyFast.Expressions.Tests
         }
 
         [Fact]
-        public void TestPartialDontEvalsVoidThatThrows()
+        public void PartialDontEvalsVoidThatThrows()
         {
             var c = new ClassWithVoid();
             Expression<Action> test = () => c.InvokeWith42(10);
@@ -101,7 +101,7 @@ namespace SimplyFast.Expressions.Tests
             evaled = (LambdaExpression)ExpressionEx.PartialEval(expr);
             Assert.Equal(ExpressionType.Constant, evaled.Body.NodeType);
 
-            expr = x => new List<int> { TestFuncEval(1), x };
+            expr = x => new List<int> { FuncEval(1), x };
             Assert.Equal(ExpressionType.ListInit, expr.Body.NodeType);
             var listInit = (ListInitExpression)expr.Body;
             Assert.Equal(ExpressionType.Call, listInit.Initializers[0].Arguments[0].NodeType);

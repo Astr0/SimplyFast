@@ -13,18 +13,18 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void GetterExists()
         {
-            Assert.NotNull(typeof (TestClass3).Property("P1").GetterAs<Func<object, object>>());
-            Assert.NotNull(typeof(TestClass3).Property("Item", typeof(int)).GetterAs<Func<object, object, object>>());
-            Assert.NotNull(typeof(TestClass3).Property("CanGet").GetterAs<Func<object, object>>());
-            Assert.NotNull(typeof(TestClass3).Property("CanGet").GetterAs(typeof(Func<object, object>)));
-            Assert.Null(typeof(TestClass3).Property("CanSet").GetterAs<Func<object, object>>());
+            Assert.NotNull(typeof (SomeClass3).Property("P1").GetterAs<Func<object, object>>());
+            Assert.NotNull(typeof(SomeClass3).Property("Item", typeof(int)).GetterAs<Func<object, object, object>>());
+            Assert.NotNull(typeof(SomeClass3).Property("CanGet").GetterAs<Func<object, object>>());
+            Assert.NotNull(typeof(SomeClass3).Property("CanGet").GetterAs(typeof(Func<object, object>)));
+            Assert.Null(typeof(SomeClass3).Property("CanSet").GetterAs<Func<object, object>>());
         }
 
         [Fact]
         public void GetterWorksForIndexed()
         {
-            var c = new TestClass3 {CanSet = 2, P2 = "test"};
-            var prop = typeof (TestClass3).Property("Item");
+            var c = new SomeClass3 {CanSet = 2, P2 = "test"};
+            var prop = typeof (SomeClass3).Property("Item");
             var getter = prop.GetterAs<Func<object, int, object>>();
             Assert.NotNull(getter);
             Assert.Equal(15, getter(c, 14));
@@ -33,11 +33,11 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void GetterWorksForPrivate()
         {
-            var c = new TestClass3();
-            Assert.Equal(0, typeof (TestClass3).Property("Priv").GetterAs<Func<object, object>>()(c));
+            var c = new SomeClass3();
+            Assert.Equal(0, typeof (SomeClass3).Property("Priv").GetterAs<Func<object, object>>()(c));
         }
 
-        private class TestPrivateStatic
+        private class SomePrivateStatic
         {
             [SuppressMessage("ReSharper", "UnusedMember.Local")]
             private static int Priv => 11;
@@ -46,43 +46,43 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void GetterWorksForPrivateStatic()
         {
-            Assert.Equal(11, typeof (TestPrivateStatic).Property("Priv").GetterAs<Func<object>>()());
+            Assert.Equal(11, typeof (SomePrivateStatic).Property("Priv").GetterAs<Func<object>>()());
         }
 
         [Fact]
         public void GetterWorksForPublic()
         {
-            var c = new TestClass3 {CanSet = 2, P2 = "test"};
-            Assert.Equal("test", typeof (TestClass3).Property("P2").GetterAs<Func<object, string>>()(c));
-            Assert.Equal(2, typeof (TestClass3).Property("CanGet").GetterAs<Func<object, object>>()(c));
+            var c = new SomeClass3 {CanSet = 2, P2 = "test"};
+            Assert.Equal("test", typeof (SomeClass3).Property("P2").GetterAs<Func<object, string>>()(c));
+            Assert.Equal(2, typeof (SomeClass3).Property("CanGet").GetterAs<Func<object, object>>()(c));
         }
 
         [Fact]
         public void SetterExists()
         {
-            Assert.NotNull(typeof (TestClass3).Property("P1").SetterAs<Action<object, object>>());
-            Assert.NotNull(typeof(TestClass3).Property("Item", typeof(int)).SetterAs<Action<object, object, object>>());
-            Assert.Null(typeof(TestClass3).Property("CanGet").SetterAs<Action<object, object>>());
-            Assert.NotNull(typeof(TestClass3).Property("CanSet").SetterAs<Action<object, object>>());
-            Assert.NotNull(typeof(TestClass3).Property("CanSet").SetterAs(typeof(Action<object, object>)));
+            Assert.NotNull(typeof (SomeClass3).Property("P1").SetterAs<Action<object, object>>());
+            Assert.NotNull(typeof(SomeClass3).Property("Item", typeof(int)).SetterAs<Action<object, object, object>>());
+            Assert.Null(typeof(SomeClass3).Property("CanGet").SetterAs<Action<object, object>>());
+            Assert.NotNull(typeof(SomeClass3).Property("CanSet").SetterAs<Action<object, object>>());
+            Assert.NotNull(typeof(SomeClass3).Property("CanSet").SetterAs(typeof(Action<object, object>)));
         }
 
         [Fact]
         public void SetterThrowsIfWrongType()
         {
-            var c = new TestClass3 {CanSet = 2, P2 = "test"};
+            var c = new SomeClass3 {CanSet = 2, P2 = "test"};
 
             Assert.Throws<NullReferenceException>(
-                () => typeof (TestClass3).Property("CanSet").SetterAs<Action<TestClass3, object>>()(c, null));
+                () => typeof (SomeClass3).Property("CanSet").SetterAs<Action<SomeClass3, object>>()(c, null));
             Assert.Throws<InvalidCastException>(
-                () => typeof (TestClass3).Property("P2").SetterAs<Action<TestClass3, object>>()(c, 2.5));
+                () => typeof (SomeClass3).Property("P2").SetterAs<Action<SomeClass3, object>>()(c, 2.5));
         }
 
         [Fact]
         public void SetterWorksForIndexed()
         {
-            var c = new TestClass3 {CanSet = 2, P2 = "test"};
-            var prop = typeof (TestClass3).Property("Item");
+            var c = new SomeClass3 {CanSet = 2, P2 = "test"};
+            var prop = typeof (SomeClass3).Property("Item");
             var setter = prop.SetterAs<Action<object, int, int>>();
             Assert.NotNull(setter);
             setter(c, 4, 3);
@@ -92,24 +92,24 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void SetterWorksForPrivate()
         {
-            var c = new TestClass3();
-            typeof (TestClass3).Property("Priv").SetterAs<Action<TestClass3, int>>()(c, 5);
-            Assert.Equal(5, typeof (TestClass3).Property("Priv").GetterAs<Func<TestClass3, object>>()(c));
+            var c = new SomeClass3();
+            typeof (SomeClass3).Property("Priv").SetterAs<Action<SomeClass3, int>>()(c, 5);
+            Assert.Equal(5, typeof (SomeClass3).Property("Priv").GetterAs<Func<SomeClass3, object>>()(c));
         }
 
         [Fact]
         public void SetterWorksForPrivateStatic()
         {
-            typeof (TestClass3).Property("Priv2").SetterAs<Action<int>>()(5);
-            Assert.Equal(5, typeof (TestClass3).Property("Priv2").GetterAs<Func<int>>()());
+            typeof (SomeClass3).Property("Priv2").SetterAs<Action<int>>()(5);
+            Assert.Equal(5, typeof (SomeClass3).Property("Priv2").GetterAs<Func<int>>()());
         }
 
         [Fact]
         public void SetterWorksForPublic()
         {
-            var c = new TestClass3 {CanSet = 2, P2 = "test"};
-            typeof (TestClass3).Property("P2").SetterAs<Action<object, string>>()(c, "test1");
-            typeof (TestClass3).Property("CanSet").SetterAs<Action<object, int>>()(c, 5);
+            var c = new SomeClass3 {CanSet = 2, P2 = "test"};
+            typeof (SomeClass3).Property("P2").SetterAs<Action<object, string>>()(c, "test1");
+            typeof (SomeClass3).Property("CanSet").SetterAs<Action<object, int>>()(c, 5);
             Assert.Equal("test1", c.P2);
             Assert.Equal(5, c.CanGet);
         }
@@ -117,22 +117,22 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void IsStaticWorks()
         {
-            Assert.True(typeof(TestClass3).Property("Priv2").IsStatic());
-            Assert.False(typeof(TestClass3).Property("Priv").IsStatic());
+            Assert.True(typeof(SomeClass3).Property("Priv2").IsStatic());
+            Assert.False(typeof(SomeClass3).Property("Priv").IsStatic());
         }
 
         [Fact]
         public void IsPublicWorks()
         {
-            Assert.True(typeof(TestClass3).Property("CanGet").IsPublic());
-            Assert.True(typeof(TestClass3).Property("CanSet").IsPublic());
-            Assert.True(typeof(TestClass3).Property("P1").IsPublic());
-            Assert.False(typeof(TestClass3).Property("Priv").IsPublic());
+            Assert.True(typeof(SomeClass3).Property("CanGet").IsPublic());
+            Assert.True(typeof(SomeClass3).Property("CanSet").IsPublic());
+            Assert.True(typeof(SomeClass3).Property("P1").IsPublic());
+            Assert.False(typeof(SomeClass3).Property("Priv").IsPublic());
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
         [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-        private class TestProtected
+        private class SomeProtected
         {
             protected int Full { get; set; }
             protected int Get => 0;
@@ -144,16 +144,16 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void IsPrivateWorks()
         {
-            Assert.False(typeof(TestClass3).Property("CanGet").IsPrivate());
-            Assert.False(typeof(TestClass3).Property("CanSet").IsPrivate());
-            Assert.False(typeof(TestClass3).Property("P1").IsPrivate());
-            Assert.True(typeof(TestClass3).Property("Priv").IsPrivate());
-            Assert.Equal(5, typeof(TestProtected).Properties().Length);
-            Assert.False(typeof(TestProtected).Property("Full").IsPrivate());
-            Assert.False(typeof(TestProtected).Property("Get").IsPrivate());
-            Assert.False(typeof(TestProtected).Property("Set").IsPrivate());
-            Assert.False(typeof(TestProtected).Property("PSet").IsPrivate());
-            Assert.False(typeof(TestProtected).Property("PSet").IsPrivate());
+            Assert.False(typeof(SomeClass3).Property("CanGet").IsPrivate());
+            Assert.False(typeof(SomeClass3).Property("CanSet").IsPrivate());
+            Assert.False(typeof(SomeClass3).Property("P1").IsPrivate());
+            Assert.True(typeof(SomeClass3).Property("Priv").IsPrivate());
+            Assert.Equal(5, typeof(SomeProtected).Properties().Length);
+            Assert.False(typeof(SomeProtected).Property("Full").IsPrivate());
+            Assert.False(typeof(SomeProtected).Property("Get").IsPrivate());
+            Assert.False(typeof(SomeProtected).Property("Set").IsPrivate());
+            Assert.False(typeof(SomeProtected).Property("PSet").IsPrivate());
+            Assert.False(typeof(SomeProtected).Property("PSet").IsPrivate());
         }
 
         [SuppressMessage("ReSharper", "UnusedMember.Local")]

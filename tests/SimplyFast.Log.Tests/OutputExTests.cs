@@ -8,7 +8,7 @@ namespace SimplyFast.Log.Tests
 {
     public class OutputExTests
     {
-        private class TestOutput : IOutput
+        private class SomeOutput : IOutput
         {
             public readonly List<IMessage> Logged = new List<IMessage>();
 
@@ -37,7 +37,7 @@ namespace SimplyFast.Log.Tests
             Assert.Equal(0, outputs.Count);
             Assert.True(outputs.SequenceEqual(Enumerable.Empty<IOutput>()));
 
-            var o1 = new TestOutput();
+            var o1 = new SomeOutput();
             var message = MessageEx.Default(Severity.Debug);
             outputs.Add(o1);
             Assert.Equal(1, outputs.Count);
@@ -51,7 +51,7 @@ namespace SimplyFast.Log.Tests
             outputs.Log(message);
             Assert.True(o1.Logged.SequenceEqual(new[] { message }));
 
-            var o2 = new TestOutput();
+            var o2 = new SomeOutput();
             outputs.Add(o2);
             Assert.Equal(2, outputs.Count);
             Assert.True(new[] { o1, o2 }.All(c => outputs.Contains(c)));
@@ -85,7 +85,7 @@ namespace SimplyFast.Log.Tests
         [Fact]
         public void OutputSeverityOk()
         {
-            var output = new TestOutput();
+            var output = new SomeOutput();
             var errorOutput = output.OutputSeverity(Severity.Error);
             var debugMsg = MessageEx.Default(Severity.Debug);
             var infoMsg = MessageEx.Default(Severity.Info);
@@ -105,7 +105,7 @@ namespace SimplyFast.Log.Tests
         {
             using (var sw = new StringWriter())
             {
-                var writer = new TestWriter();
+                var writer = new SomeWriter();
                 var output = OutputEx.TextWriter(sw, writer);
                 var msg1 = MessageEx.Default(Severity.Debug);
                 var msg2 = MessageEx.Default(Severity.Error);
@@ -120,7 +120,7 @@ namespace SimplyFast.Log.Tests
         [Fact]
         public void ConsoleOk()
         {
-            var writer = new TestWriter();
+            var writer = new SomeWriter();
             var output = OutputEx.Console(writer);
             var debug = MessageEx.Default(Severity.Debug);
             var info = MessageEx.Default(Severity.Info);
@@ -153,7 +153,7 @@ namespace SimplyFast.Log.Tests
             var tmp = Path.GetTempFileName();
             try
             {
-                var writer = new TestWriter();
+                var writer = new SomeWriter();
                 var debug = MessageEx.Default(Severity.Debug);
                 using (var output = OutputEx.File(tmp, writer, false))
                 {
@@ -180,7 +180,7 @@ namespace SimplyFast.Log.Tests
             }
         }
 
-        private class TestWriter : IWriter
+        private class SomeWriter : IWriter
         {
             public readonly List<Tuple<TextWriter, IMessage>> Written = new List<Tuple<TextWriter, IMessage>>();
 

@@ -11,10 +11,10 @@ namespace SimplyFast.Expressions.Tests
         /*[Fact]
         public void CopyValuesWorksForFields()
         {
-            var a = new TestClass1 {P1 = 321, P2 = "test2", P3 = "test3", P4 = "test4", P5 = "test5"};
-            var b = new TestClass1();
+            var a = new SomeClass1 {P1 = 321, P2 = "test2", P3 = "test3", P4 = "test4", P5 = "test5"};
+            var b = new SomeClass1();
             Assert.NotEqual(a, b);
-            typeof (TestClass1).Simple().Fields.CopyValues(a, b);
+            typeof (SomeClass1).Simple().Fields.CopyValues(a, b);
             // Compiler creates hidden fields for auto-properties, that's why this thing works
             Assert.Equal(a, b);
         }
@@ -22,10 +22,10 @@ namespace SimplyFast.Expressions.Tests
         [Fact]
         public void CopyValuesWorksForProperties()
         {
-            var a = new TestClass1 {P1 = 321, P2 = "test2", P3 = "test3", P4 = "test4", P5 = "test5"};
-            var b = new TestClass1();
+            var a = new SomeClass1 {P1 = 321, P2 = "test2", P3 = "test3", P4 = "test4", P5 = "test5"};
+            var b = new SomeClass1();
             Assert.NotEqual(a, b);
-            typeof (TestClass1).Simple().Properties.CopyValues(a, b);
+            typeof (SomeClass1).Simple().Properties.CopyValues(a, b);
             Assert.Equal(a.P1, b.P1);
             Assert.Equal(a.P2, b.P2);
             Assert.Equal(a.P3, b.P3);
@@ -64,7 +64,7 @@ namespace SimplyFast.Expressions.Tests
         [Fact]
         public void GetValuesAsDictionaryWorkForTypesWithIndexProp()
         {
-            var a = new TestClass3 {P1 = 321, P2 = "test2", P3 = "test3", P4 = "test4", P5 = "test5"};
+            var a = new SomeClass3 {P1 = 321, P2 = "test2", P3 = "test3", P4 = "test4", P5 = "test5"};
             var values = SimpleReflection.TypeOf(a).Properties.Where(x => x.IsPublic).GetValuesAsDictionary(a);
             Assert.Equal(8, values.Count);
             Assert.Null(values["P00"]);
@@ -112,7 +112,7 @@ namespace SimplyFast.Expressions.Tests
         [Fact]
         public void GetValuesWorkForTypesWithIndexProp()
         {
-            var a = new TestClass3 {P1 = 321, P2 = "test2", P3 = "test3", P4 = "test4", P5 = "test5"};
+            var a = new SomeClass3 {P1 = 321, P2 = "test2", P3 = "test3", P4 = "test4", P5 = "test5"};
             var values = SimpleReflection.TypeOf(a).Properties.Where(x => x.IsPublic).GetValues(a);
             Assert.Equal(13, values.Count);
             var valuesExpected = new List<object> {1, 321, "test2", "test3", "test4", "test5", null, "_f3t"};
@@ -132,30 +132,30 @@ namespace SimplyFast.Expressions.Tests
         public void GetMemberWorks()
         {
             Assert.Equal(typeof(List<int>).Property("Count"), LambdaExtract.Member((List<int> l) => l.Count));
-            Assert.Equal(typeof(TestClass1).Constructor(), LambdaExtract.Member(() => new TestClass1()));
+            Assert.Equal(typeof(SomeClass1).Constructor(), LambdaExtract.Member(() => new SomeClass1()));
             Assert.Equal(typeof(string).Constructor(typeof(char), typeof(int)), LambdaExtract.Member(() => new string('c', 10)));
-            Assert.Equal(typeof(TestClass1).Property("P00"), LambdaExtract.Member((TestClass1 tc) => tc.P00));
-            Assert.Equal(typeof(TestClass1).Field("F2"), LambdaExtract.Member((TestClass1 tc) => tc.F2));
-            Assert.Equal(typeof(object).Method("GetHashCode"), LambdaExtract.Member((TestClass1 tc) => tc.GetHashCode()));
+            Assert.Equal(typeof(SomeClass1).Property("P00"), LambdaExtract.Member((SomeClass1 tc) => tc.P00));
+            Assert.Equal(typeof(SomeClass1).Field("F2"), LambdaExtract.Member((SomeClass1 tc) => tc.F2));
+            Assert.Equal(typeof(object).Method("GetHashCode"), LambdaExtract.Member((SomeClass1 tc) => tc.GetHashCode()));
             Assert.Equal(typeof(Dictionary<string, double>).Property("Keys"),
                             LambdaExtract.Member((Dictionary<string, double> d) => d.Keys));
-            Assert.Equal(typeof(TestClass3).Property("Item"),
-                            LambdaExtract.Member((TestClass3 d) => d[0]));
+            Assert.Equal(typeof(SomeClass3).Property("Item"),
+                            LambdaExtract.Member((SomeClass3 d) => d[0]));
         }
 
         [Fact]
         public void GetMemberWorksTyped()
         {
             Assert.Equal(typeof(List<int>).Property("Count"), LambdaExtract.Property((List<int> l) => l.Count));
-            Assert.Equal(typeof(TestClass1).Constructor(), LambdaExtract.Constructor(() => new TestClass1()));
+            Assert.Equal(typeof(SomeClass1).Constructor(), LambdaExtract.Constructor(() => new SomeClass1()));
             Assert.Equal(typeof(string).Constructor(typeof(char), typeof(int)), LambdaExtract.Constructor(() => new string('c', 10)));
-            Assert.Equal(typeof(TestClass1).Property("P00"), LambdaExtract.Property((TestClass1 tc) => tc.P00));
-            Assert.Equal(typeof(TestClass1).Field("F2"), LambdaExtract.Field((TestClass1 tc) => tc.F2));
-            Assert.Equal(typeof(object).Method("GetHashCode"), LambdaExtract.Method((TestClass1 tc) => tc.GetHashCode()));
+            Assert.Equal(typeof(SomeClass1).Property("P00"), LambdaExtract.Property((SomeClass1 tc) => tc.P00));
+            Assert.Equal(typeof(SomeClass1).Field("F2"), LambdaExtract.Field((SomeClass1 tc) => tc.F2));
+            Assert.Equal(typeof(object).Method("GetHashCode"), LambdaExtract.Method((SomeClass1 tc) => tc.GetHashCode()));
             Assert.Equal(typeof(Dictionary<string, double>).Property("Keys"),
                             LambdaExtract.Property((Dictionary<string, double> d) => d.Keys));
-            Assert.Equal(typeof(TestClass3).Property("Item"),
-                LambdaExtract.Property((TestClass3 d) => d[0]));
+            Assert.Equal(typeof(SomeClass3).Property("Item"),
+                LambdaExtract.Property((SomeClass3 d) => d[0]));
             Assert.Equal(typeof(TestClass2).Property("F3"),
                 LambdaExtract.Property(() => TestClass2.F3));
             Assert.Equal(typeof(TestClass2).Field("FStatic"),

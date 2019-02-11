@@ -13,13 +13,13 @@ namespace SimplyFast.Reflection.Tests.Emit
     
     public class EmitControlTests
     {
-        public class TestClass
+        public class SomeClass
         {
-            public int TestField;
-            public string TestProp
+            public int SomeField;
+            public string SomeProp
             {
-                get { return TestField.ToString(CultureInfo.InvariantCulture); }
-                set { TestField = int.Parse(value); }
+                get { return SomeField.ToString(CultureInfo.InvariantCulture); }
+                set { SomeField = int.Parse(value); }
             }
 
             public bool IsOk()
@@ -27,54 +27,54 @@ namespace SimplyFast.Reflection.Tests.Emit
                 return true;
             }
 
-            public double TestMethod(float param)
+            public double SomeMethod(float param)
             {
-                return TestField * param;
+                return SomeField * param;
             }
 
-            public Action<bool> TestAction;
+            public Action<bool> SomeAction;
 
             public int this[int index]
             {
-                get { return TestField * index; }
-                set { TestField = value / index; }
+                get { return SomeField * index; }
+                set { SomeField = value / index; }
             }
 
-            public static explicit operator int(TestClass a)
+            public static explicit operator int(SomeClass a)
             {
-                return a.TestField;
+                return a.SomeField;
             }
 
-            public static explicit operator TestClass(int a)
+            public static explicit operator SomeClass(int a)
             {
-                return new TestClass { TestField = a };
+                return new SomeClass { SomeField = a };
             }
         }
 
         [Fact]
         public void CastFromOpTest()
         {
-            var method = EmitEx.CreateMethod<Func<int, TestClass>>();
+            var method = EmitEx.CreateMethod<Func<int, SomeClass>>();
             var il = method.GetILGenerator();
             il.EmitLdarg(0);
-            il.EmitCast(typeof(int), typeof(TestClass));
+            il.EmitCast(typeof(int), typeof(SomeClass));
             il.Emit(OpCodes.Ret);
-            var del = method.CreateDelegate<Func<int, TestClass>>();
-            Assert.Equal(1, del(1).TestField);
-            Assert.Equal(5, del(5).TestField);
+            var del = method.CreateDelegate<Func<int, SomeClass>>();
+            Assert.Equal(1, del(1).SomeField);
+            Assert.Equal(5, del(5).SomeField);
         }
 
         [Fact]
         public void CastToOpTest()
         {
-            var method = EmitEx.CreateMethod<Func<TestClass, int>>();
+            var method = EmitEx.CreateMethod<Func<SomeClass, int>>();
             var il = method.GetILGenerator();
             il.EmitLdarg(0);
-            il.EmitCast(typeof(TestClass), typeof(int));
+            il.EmitCast(typeof(SomeClass), typeof(int));
             il.Emit(OpCodes.Ret);
-            var del = method.CreateDelegate<Func<TestClass, int>>();
-            Assert.Equal(1, del(new TestClass{TestField = 1}));
-            Assert.Equal(5, del(new TestClass { TestField = 5 }));
+            var del = method.CreateDelegate<Func<SomeClass, int>>();
+            Assert.Equal(1, del(new SomeClass{SomeField = 1}));
+            Assert.Equal(5, del(new SomeClass { SomeField = 5 }));
         }
 
         [Fact]
@@ -130,7 +130,7 @@ namespace SimplyFast.Reflection.Tests.Emit
         }
 
         [Fact]
-        public void TestFor()
+        public void ForOk()
         {
             var method = EmitEx.CreateMethod<Func<int, int>>();
             var il = method.GetILGenerator();
@@ -170,7 +170,7 @@ namespace SimplyFast.Reflection.Tests.Emit
         }
 
         [Fact]
-        public void TestForEach()
+        public void ForEachOk()
         {
             var method = EmitEx.CreateMethod<Func<IEnumerable<int>, int>>();
             var il = method.GetILGenerator();
@@ -193,7 +193,7 @@ namespace SimplyFast.Reflection.Tests.Emit
         }
 
         [Fact]
-        public void TestForEachEnumerable()
+        public void ForEachEnumerableOk()
         {
             var method = EmitEx.CreateMethod<Func<IEnumerable, int>>();
             var il = method.GetILGenerator();
@@ -221,7 +221,7 @@ namespace SimplyFast.Reflection.Tests.Emit
         }
 
         [Fact]
-        public void TestUsing()
+        public void UsingOk()
         {
             var method = EmitEx.CreateMethod<Func<IDisposable, int>>();
             var il = method.GetILGenerator();
@@ -243,7 +243,7 @@ namespace SimplyFast.Reflection.Tests.Emit
         }
 
         [Fact]
-        public void TestWhile()
+        public void WhileOk()
         {
             var method = EmitEx.CreateMethod<Func<int, int>>();
             var il = method.GetILGenerator();

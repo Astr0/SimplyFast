@@ -20,11 +20,11 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
 
         protected override void CheckParameters()
         {
-            if (!_methodParameter.IsOut)
+            if (!MethodParameter.IsOut)
                 throw new ArgumentException("Invalid methodParameter modifier. Should be Out.");
-            if (!(_delegateParameter.IsOut || _delegateParameter.Type.IsByRef))
+            if (!(DelegateParameter.IsOut || DelegateParameter.Type.IsByRef))
                 throw new ArgumentException(
-                    $"Invalid modifier for parameter {_delegateParameterIndex}. Should be Out or Ref.");
+                    $"Invalid modifier for parameter {DelegateParameterIndex}. Should be Out or Ref.");
         }
 
 #if EMIT
@@ -55,9 +55,9 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
 #else
         public override void Finish(ExpressionBlockBuilder block, Expression parameter)
         {
-            if (!_needLocalVariable)
+            if (!NeedLocalVariable)
                 return;
-            var convertResult = Expression.Convert(_localVariable, _delegateParameter.Type.RemoveByRef());
+            var convertResult = Expression.Convert(LocalVariable, DelegateParameter.Type.RemoveByRef());
             var assign = Expression.Assign(parameter, convertResult);
             block.Add(assign);
         }

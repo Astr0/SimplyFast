@@ -1,10 +1,10 @@
-namespace SimplyFast.Reflection.Tests.TestData
+namespace SimplyFast.Expressions.Tests.TestData
 {
-    public class TestClass3 : TestClass2
+    public class SomeClass3 : TestClass2
     {
         private int _field = 1;
 
-        public TestClass3()
+        public SomeClass3()
         {
             Priv = 0;
             Priv2 = 0;

@@ -10,8 +10,8 @@ namespace SimplyFast.Serialization.Tests.Protobuf.TestData
         private static readonly IEqualityComparer<List<InnerMessage>> FrepComparer
             = EqualityComparerEx.Collection<List<InnerMessage>, InnerMessage>();
 
-        private static readonly IEqualityComparer<List<TestEnum>> FrepEnumComparer
-            = EqualityComparerEx.Collection<List<TestEnum>, TestEnum>();
+        private static readonly IEqualityComparer<List<SomeEnum>> FrepEnumComparer
+            = EqualityComparerEx.Collection<List<SomeEnum>, SomeEnum>();
 
         private static readonly IEqualityComparer<List<string>> FrepStringComparer
             = EqualityComparerEx.Collection<List<string>, string>();

@@ -11,15 +11,15 @@ namespace SimplyFast.Data.Tests.Spaces
 
         private static readonly TupleType _testTupleType = new TupleType(0);
 
-        private static readonly TestTuple _tuple00 = new TestTuple(0, 0);
-        private static readonly TestTuple _tuple10 = new TestTuple(1, 0);
-        private static readonly TestTuple _tuple11 = new TestTuple(1, 1);
-        private static readonly TestTuple _tuple20 = new TestTuple(2, 0);
+        private static readonly SpaceTuple _tuple00 = new SpaceTuple(0, 0);
+        private static readonly SpaceTuple _tuple10 = new SpaceTuple(1, 0);
+        private static readonly SpaceTuple _tuple11 = new SpaceTuple(1, 1);
+        private static readonly SpaceTuple _tuple20 = new SpaceTuple(2, 0);
 
 
-        private static readonly TestTupleQuery _tuple1Q = new TestTupleQuery(1, null);
-        private static readonly TestTupleQuery _tuple2Q = new TestTupleQuery(2, null);
-        private static readonly TestTupleQuery _tuplesq = new TestTupleQuery(null, null);
+        private static readonly SpaceTupleQuery _tuple1Q = new SpaceTupleQuery(1, null);
+        private static readonly SpaceTupleQuery _tuple2Q = new SpaceTupleQuery(2, null);
+        private static readonly SpaceTupleQuery _tuplesq = new SpaceTupleQuery(null, null);
 
         [Fact]
         public void CanWrite()
@@ -36,11 +36,11 @@ namespace SimplyFast.Data.Tests.Spaces
             SpaceProxy.Add(_testTupleType, _tuple20);
             var result = SpaceProxy.TryRead(_tuple1Q);
             Assert.Equal(_tuple10, result);
-            result = SpaceProxy.TryRead(new TestTupleQuery(1, 0));
+            result = SpaceProxy.TryRead(new SpaceTupleQuery(1, 0));
             Assert.Equal(_tuple10, result);
             result = SpaceProxy.TryRead(_tuple2Q);
             Assert.Equal(_tuple20, result);
-            result = SpaceProxy.TryRead(new TestTupleQuery(3, null));
+            result = SpaceProxy.TryRead(new SpaceTupleQuery(3, null));
             Assert.Null(result);
         }
 
@@ -75,13 +75,13 @@ namespace SimplyFast.Data.Tests.Spaces
         public void CanCount()
         {
             SpaceProxy.AddRange(_testTupleType, new[] { _tuple10, _tuple11, _tuple20 });
-            Assert.Equal(0, SpaceProxy.Count(new TestTupleQuery(2, 1)));
+            Assert.Equal(0, SpaceProxy.Count(new SpaceTupleQuery(2, 1)));
             Assert.Equal(1, SpaceProxy.Count(_tuple2Q));
             Assert.Equal(2, SpaceProxy.Count(_tuple1Q));
             Assert.Equal(3, SpaceProxy.Count(_tuplesq));
             var obj = SpaceProxy.TryTake(_tuple1Q);
             Assert.NotNull(obj);
-            Assert.Equal(0, SpaceProxy.Count(new TestTupleQuery(2, 1)));
+            Assert.Equal(0, SpaceProxy.Count(new SpaceTupleQuery(2, 1)));
             Assert.Equal(1, SpaceProxy.Count(_tuple2Q));
             Assert.Equal(1, SpaceProxy.Count(_tuple1Q));
             Assert.Equal(2, SpaceProxy.Count(_tuplesq));
@@ -91,7 +91,7 @@ namespace SimplyFast.Data.Tests.Spaces
         public void CanRead()
         {
             SpaceProxy.AddRange(_testTupleType, new[] { _tuple10, _tuple20 });
-            TestTuple result = null;
+            SpaceTuple result = null;
             // instant read
             SpaceProxy.Read(_tuple1Q, r => result = r);
             Assert.Equal(_tuple10, result);
@@ -112,11 +112,11 @@ namespace SimplyFast.Data.Tests.Spaces
             Assert.Equal(_tuple10, result);
 
 
-            Assert.Equal(_tuple11, SpaceProxy.TryTake(new TestTupleQuery(1, 1)));
-            Assert.Equal(_tuple10, SpaceProxy.TryTake(new TestTupleQuery(1, 0)));
+            Assert.Equal(_tuple11, SpaceProxy.TryTake(new SpaceTupleQuery(1, 1)));
+            Assert.Equal(_tuple10, SpaceProxy.TryTake(new SpaceTupleQuery(1, 0)));
 
             result = _tuple00;
-            var cancel = SpaceProxy.Read(new TestTupleQuery(1, null), r => result = r);
+            var cancel = SpaceProxy.Read(new SpaceTupleQuery(1, null), r => result = r);
             Assert.Equal(_tuple00, result);
             // cancel read
             cancel.Dispose();
@@ -131,7 +131,7 @@ namespace SimplyFast.Data.Tests.Spaces
         public void CanTake()
         {
             SpaceProxy.AddRange(_testTupleType, new[] { _tuple10, _tuple20 });
-            TestTuple result = null;
+            SpaceTuple result = null;
 
             // instant take
             SpaceProxy.Take(_tuple1Q, r => result = r);
@@ -237,10 +237,10 @@ namespace SimplyFast.Data.Tests.Spaces
 
             SpaceProxy.BeginTransaction();
             {
-                TestTuple trans10Result = null;
+                SpaceTuple trans10Result = null;
                 SpaceProxy.Read(_tuple1Q, x => trans10Result = x);
 
-                TestTuple trans20Result = null;
+                SpaceTuple trans20Result = null;
                 SpaceProxy.Read(_tuple2Q, x => trans20Result = x);
                 SpaceProxy.BeginTransaction();
                 {
@@ -252,7 +252,7 @@ namespace SimplyFast.Data.Tests.Spaces
                     // nested should see it
                     Assert.Equal(_tuple10, SpaceProxy.TryRead(_tuple1Q));
 
-                    TestTuple nestedResult = null;
+                    SpaceTuple nestedResult = null;
                     SpaceProxy.Read(_tuple2Q, x => nestedResult = x);
                     SpaceProxy.BeginTransaction();
                     {
@@ -667,7 +667,7 @@ namespace SimplyFast.Data.Tests.Spaces
             Assert.Null(SpaceProxy.TryRead(_tuple2Q));
         }
 
-        private void TestScanCountInTransaction(int current, int count)
+        private void ScanCountInTransaction(int current, int count)
         {
             if (current >= count)
                 return;
@@ -688,7 +688,7 @@ namespace SimplyFast.Data.Tests.Spaces
             Assert.Equal(current, scan.Count);
             Assert.True(scan.All(_tuple10.Equals));
 
-            TestScanCountInTransaction(current, count);
+            ScanCountInTransaction(current, count);
 
             // now we should have count stuff
 
@@ -703,7 +703,7 @@ namespace SimplyFast.Data.Tests.Spaces
         [Fact]
         public void ScanAndCountTakeTransItems()
         {
-            TestScanCountInTransaction(0, 10);
+            ScanCountInTransaction(0, 10);
         }
     }
 }

@@ -9,6 +9,7 @@ namespace SimplyFast.IO
     public class FastBufferReader
     {
         #region local var int consts to make code more readable
+        // ReSharper disable InconsistentNaming
         private const byte VarIntData = VarIntHelper.VarIntDataMask;
         private const byte VarIntMore = VarIntHelper.VarIntMoreFlag;
         private const int VarIntDataBits = VarIntHelper.VarIntDataBits;
@@ -21,6 +22,7 @@ namespace SimplyFast.IO
 
         //private const ulong VarIntData64 = VarIntData;
         //private const ulong VarIntMore64 = VarIntMore;
+        // ReSharper restore InconsistentNaming
         #endregion
 
         private readonly byte[] _buffer;

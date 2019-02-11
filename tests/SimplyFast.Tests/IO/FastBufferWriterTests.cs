@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -64,6 +65,7 @@ namespace SimplyFast.Tests.IO
         }
 
         [Fact]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public void VarInt32SeemsOk()
         {
             AssertWritten(w => w.WriteVarInt32(0U), 0);
@@ -78,6 +80,7 @@ namespace SimplyFast.Tests.IO
         }
 
         [Fact]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public void VarInt64SeemsOk()
         {
             AssertWritten(w => w.WriteVarInt64(0UL), 0);

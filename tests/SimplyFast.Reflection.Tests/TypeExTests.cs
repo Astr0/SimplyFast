@@ -13,14 +13,14 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void FieldsReturnValidCounts()
         {
-            var a1 = typeof(TestClass1).Fields();
+            var a1 = typeof(SomeClass1).Fields();
             Assert.Equal(7, a1.Length);
         }
 
         [Fact]
         public void FieldsReturnValidFields()
         {
-            var a2 = typeof(TestClass1).Fields();
+            var a2 = typeof(SomeClass1).Fields();
             var fields = new[] { "_f1", "F2" };
             var other = from o in a2
                         where !fields.Contains(o.Name)
@@ -32,14 +32,14 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void PropertiesReturnValidCounts()
         {
-            var a1 = typeof(TestClass1).Properties();
+            var a1 = typeof(SomeClass1).Properties();
             Assert.Equal(7, a1.Length);
         }
 
         [Fact]
         public void PropertiesReturnValidProperties()
         {
-            var a2 = typeof(TestClass1).Properties();
+            var a2 = typeof(SomeClass1).Properties();
             var props = new[] { "P00", "P0", "P1", "P2", "P3", "P4", "P5", "F3" };
             var other = from o in a2
                         where !props.Contains(o.Name)
@@ -59,11 +59,11 @@ namespace SimplyFast.Reflection.Tests
         public void GetDeclaredTypeWorks()
         {
             IList<int> v1 = new List<int>();
-            TestClass1 t = new TestClass2();
+            SomeClass1 t = new TestClass2();
 
             Assert.Equal(typeof(IList<int>), TypeEx.TypeOf(v1));
             Assert.Equal(typeof(Dictionary<string, double>), TypeEx.TypeOf((Dictionary<string, double>)null));
-            Assert.Equal(typeof(TestClass1), TypeEx.TypeOf(t));
+            Assert.Equal(typeof(SomeClass1), TypeEx.TypeOf(t));
         }
 
         [Fact]
@@ -91,7 +91,7 @@ namespace SimplyFast.Reflection.Tests
 
         }
 
-        private class TestEnumerable : IEnumerable
+        private class SomeEnumerable : IEnumerable
         {
             public IEnumerator GetEnumerator()
             {
@@ -105,7 +105,7 @@ namespace SimplyFast.Reflection.Tests
             Assert.True(new[] { typeof(string), typeof(int), typeof(double), typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(ITestEnumerable))));
             Assert.True(new[] { typeof(char), typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(string))));
             Assert.True(new[] { typeof(int), typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(List<int>))));
-            Assert.True(new[] { typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(TestEnumerable))));
+            Assert.True(new[] { typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(SomeEnumerable))));
             Assert.True(new[] { typeof(char), typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(IEnumerable<char>))));
             Assert.True(new[] { typeof(object) }.SequenceEqual(TypeEx.FindIEnumerable(typeof(IEnumerable))));
 

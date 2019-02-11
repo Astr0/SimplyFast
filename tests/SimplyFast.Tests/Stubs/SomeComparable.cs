@@ -2,18 +2,18 @@
 
 namespace SimplyFast.Tests.Stubs
 {
-    internal class TestComparable : IComparable<TestComparable>, IEquatable<TestComparable>
+    internal class SomeComparable : IComparable<SomeComparable>, IEquatable<SomeComparable>
     {
         private readonly int _a;
 
-        public TestComparable(int a)
+        public SomeComparable(int a)
         {
             _a = a;
         }
 
-        #region IComparable<TestComparable> Members
+        #region IComparable<SomeComparable> Members
 
-        public int CompareTo(TestComparable other)
+        public int CompareTo(SomeComparable other)
         {
             // ReSharper disable once ImpureMethodCallOnReadonlyValueField
             return _a.CompareTo(other._a);
@@ -21,9 +21,9 @@ namespace SimplyFast.Tests.Stubs
 
         #endregion
 
-        #region IEquatable<TestComparable> Members
+        #region IEquatable<SomeComparable> Members
 
-        public bool Equals(TestComparable other)
+        public bool Equals(SomeComparable other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -36,7 +36,7 @@ namespace SimplyFast.Tests.Stubs
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == typeof(TestComparable) && Equals((TestComparable)obj);
+            return obj.GetType() == typeof(SomeComparable) && Equals((SomeComparable)obj);
         }
 
         public override int GetHashCode()

@@ -6,7 +6,7 @@ namespace SimplyFast.Tests.Strings.Tokens
 {
     public class StringTokenProviderExTests
     {
-        private static void TestStorage(IStringTokenStorage storage)
+        private static void StorageOk(IStringTokenStorage storage)
         {
             Assert.Equal(0, storage.Count());
             Assert.Null(storage.Get("test"));
@@ -28,13 +28,13 @@ namespace SimplyFast.Tests.Strings.Tokens
         [Fact]
         public void SequentialOk()
         {
-            TestStorage(StringTokenProviderEx.Sequential());
+            StorageOk(StringTokenProviderEx.Sequential());
         }
 
         [Fact]
         public void IndexedOk()
         {
-            TestStorage(StringTokenProviderEx.Indexed());
+            StorageOk(StringTokenProviderEx.Indexed());
         }
 
         [Fact]

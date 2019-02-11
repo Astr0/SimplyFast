@@ -1,6 +1,6 @@
 ﻿namespace SimplyFast.Serialization.Tests.Protobuf.TestData
 {
-    public static class TestTools
+    public static class ConversionTools
     {
         public static FTestMessage ToMessage(this PTestMessage msg)
         {

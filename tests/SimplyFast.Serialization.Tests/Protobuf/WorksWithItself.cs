@@ -5,7 +5,7 @@ using SimplyFast.Serialization.Tests.Protobuf.TestData;
 namespace SimplyFast.Serialization.Tests.Protobuf
 {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class TestAgainstSelf : MessageTests
+    public class WorksWithItself : MessageTests
     {
         protected override void Test(FTestMessage message, Action<FTestMessage> customAssert = null)
         {

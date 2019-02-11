@@ -82,9 +82,9 @@ namespace SimplyFast.Reflection.Tests
             Assert.Equal(0, wd1.Invoker(2));
         }
 
-        private class TestClass
+        private class SomeClass
         {
-            public TestClass(int value)
+            public SomeClass(int value)
             {
                 _value = value;
             }
@@ -102,7 +102,7 @@ namespace SimplyFast.Reflection.Tests
         {
             var wd1 = WeakDelegate<Func<int>>.Create();
             {
-                var t = new TestClass(5);
+                var t = new SomeClass(5);
                 wd1.Add(t.GetValue);
                 Assert.Equal(5, wd1.Invoker());
             }

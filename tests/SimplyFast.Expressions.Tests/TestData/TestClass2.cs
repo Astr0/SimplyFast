@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace SimplyFast.Expressions.Tests.TestData
 {
-    public class TestClass2 : TestClass1
+    public class TestClass2 : SomeClass1
     {
         private static object _f3 = "_f3t";
         private int _f1;

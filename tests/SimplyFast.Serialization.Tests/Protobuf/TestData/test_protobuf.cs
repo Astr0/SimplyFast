@@ -137,9 +137,9 @@ namespace SimplyFast.Serialization.Tests.Protobuf.TestData
             set { _fbytes = value; }
         }
 
-        private TestEnum? _fenum;
+        private SomeEnum? _fenum;
         [ProtoMember(16, IsRequired = false, Name = @"fenum", DataFormat = DataFormat.TwosComplement)]
-        public TestEnum? Fenum
+        public SomeEnum? Fenum
         {
             get { return _fenum; }
             set { _fenum = value; }
@@ -162,9 +162,9 @@ namespace SimplyFast.Serialization.Tests.Protobuf.TestData
         }
 
 
-        private List<TestEnum> _frepEnum;
+        private List<SomeEnum> _frepEnum;
         [ProtoMember(19, Name = @"frep_enum", DataFormat = DataFormat.TwosComplement)]
-        public List<TestEnum> FrepEnum
+        public List<SomeEnum> FrepEnum
         {
             get { return _frepEnum; }
             set { _frepEnum = value; }

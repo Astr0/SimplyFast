@@ -65,9 +65,9 @@ namespace SimplyFast.Tests.Configuration
             Assert.Equal(11, _readConfig.GetInt64("value"));
         }
 
-        private enum TestEnum
+        private enum SomeEnum
         {
-            TestValue = 12
+            SomeValue = 12
         }
 
         [Fact]
@@ -75,13 +75,13 @@ namespace SimplyFast.Tests.Configuration
         {
             _config["test"] = "test";
             _config["value"] = "12";
-            _config["value2"] = "TestValue";
-            Assert.Equal(null, _readConfig.GetEnum<TestEnum>("null"));
-            Assert.Equal(null, _readConfig.GetEnum<TestEnum>("space"));
-            Assert.Equal(null, _readConfig.GetEnum<TestEnum>("empty"));
-            Assert.Throws<ArgumentException>(() => _readConfig.GetEnum<TestEnum>("test"));
-            Assert.Equal(TestEnum.TestValue, _readConfig.GetEnum<TestEnum>("value"));
-            Assert.Equal(TestEnum.TestValue, _readConfig.GetEnum<TestEnum>("value2"));
+            _config["value2"] = "SomeValue";
+            Assert.Equal(null, _readConfig.GetEnum<SomeEnum>("null"));
+            Assert.Equal(null, _readConfig.GetEnum<SomeEnum>("space"));
+            Assert.Equal(null, _readConfig.GetEnum<SomeEnum>("empty"));
+            Assert.Throws<ArgumentException>(() => _readConfig.GetEnum<SomeEnum>("test"));
+            Assert.Equal(SomeEnum.SomeValue, _readConfig.GetEnum<SomeEnum>("value"));
+            Assert.Equal(SomeEnum.SomeValue, _readConfig.GetEnum<SomeEnum>("value2"));
         }
 
         [Fact]

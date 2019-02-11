@@ -1,5 +1,8 @@
-﻿namespace SimplyFast.IO
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace SimplyFast.IO
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public static class VarIntHelper
     {
         public const int VarIntDataBits = 7;

@@ -19,12 +19,12 @@ namespace SimplyFast.IoC.Tests
             Assert.Throws<InvalidOperationException>(() => kernel.Get<string>());
             Assert.False(kernel.Get<IEnumerable<string>>().Any());
             Assert.False(kernel.Get<List<string>>().Any());
-            kernel.Load(new TestModule());
+            kernel.Load(new SomeModule());
             Assert.Equal("test", kernel.Get<string>());
             Assert.True(kernel.Get<IEnumerable<string>>().SequenceEqual(new[] { "str1", "str2" }));
-            Assert.IsType<TestModule.TestEnumerable>(kernel.Get<IEnumerable<string>>());
+            Assert.IsType<SomeModule.SomeEnumerable>(kernel.Get<IEnumerable<string>>());
             Assert.True(kernel.Get<List<string>>().SequenceEqual(new[] { "test" }));
-            kernel.Load(new TestModule2());
+            kernel.Load(new SomeModule2());
             FinalModuleTests(kernel);
         }
 
@@ -32,7 +32,7 @@ namespace SimplyFast.IoC.Tests
         {
             Assert.Equal("test", kernel.Get<string>());
             Assert.True(kernel.Get<IEnumerable<string>>().SequenceEqual(new[] { "str1", "str2" }));
-            Assert.IsType<TestModule.TestEnumerable>(kernel.Get<IEnumerable<string>>());
+            Assert.IsType<SomeModule.SomeEnumerable>(kernel.Get<IEnumerable<string>>());
             Assert.True(kernel.Get<List<string>>().SequenceEqual(new[] { "str1", "str2" }));
         }
 
@@ -40,14 +40,14 @@ namespace SimplyFast.IoC.Tests
         public void CanLoadTwoModules()
         {
             var kernel = KernelEx.Create();
-            kernel.Load(new TestModule(), new TestModule2());
+            kernel.Load(new SomeModule(), new SomeModule2());
             FinalModuleTests(kernel);
             var reverseKernel = KernelEx.Create();
-            reverseKernel.Load(new TestModule2(), new TestModule());
+            reverseKernel.Load(new SomeModule2(), new SomeModule());
             FinalModuleTests(reverseKernel);
         }
 
-        private static void TestFewTimes(Action action, int times)
+        private static void RunTestFewTimes(Action action, int times)
         {
             for (var i = 0; i < times; i++)
             {
@@ -59,17 +59,17 @@ namespace SimplyFast.IoC.Tests
         public void CanLoadFromAssembly()
         {
             var kernel = KernelEx.Create();
-            kernel.Load(typeof(TestModule).Assembly);
+            kernel.Load(typeof(SomeModule).Assembly);
             FinalModuleTests(kernel);
         }
 
         [Fact]
         public void CanLoadParallelAssembly()
         {
-            TestFewTimes(() =>
+            RunTestFewTimes(() =>
             {
                 var kernel = KernelEx.Create();
-                kernel.LoadParallel(typeof(TestModule).Assembly);
+                kernel.LoadParallel(typeof(SomeModule).Assembly);
                 FinalModuleTests(kernel);
             }, 100);
         }
@@ -77,10 +77,10 @@ namespace SimplyFast.IoC.Tests
         [Fact]
         public void CanLoadParallelAssemblies()
         {
-            TestFewTimes(() =>
+            RunTestFewTimes(() =>
             {
                 var kernel = KernelEx.Create();
-                kernel.LoadParallel(new[] { typeof(TestModule).Assembly });
+                kernel.LoadParallel(new[] { typeof(SomeModule).Assembly });
                 FinalModuleTests(kernel);
             }, 100);
         }

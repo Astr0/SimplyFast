@@ -6,7 +6,7 @@ namespace SimplyFast.Tests.Cache
     
     public class CacheTests
     {
-        private static void TestCache(ICache<int, string> cache)
+        private static void CacheOk(ICache<int, string> cache)
         {
             Assert.False(cache.TryGetValue(1, out string str0));
             Assert.Null(str0);
@@ -67,22 +67,22 @@ namespace SimplyFast.Tests.Cache
         [Fact]
         public void ThreadSafeOk()
         {
-            TestCache(CacheEx.ThreadSafe<int, string>());
+            CacheOk(CacheEx.ThreadSafe<int, string>());
         }
         [Fact]
         public void ThreadSafeLockingOk()
         {
-            TestCache(CacheEx.ThreadSafeLocking<int, string>());
+            CacheOk(CacheEx.ThreadSafeLocking<int, string>());
         }
         [Fact]
         public void ThreadUnsafeOk()
         {
-            TestCache(CacheEx.ThreadUnsafe<int, string>());
+            CacheOk(CacheEx.ThreadUnsafe<int, string>());
         }
         [Fact]
         public void ConcurrentOk()
         {
-            TestCache(CacheEx.Concurrent<int, string>());
+            CacheOk(CacheEx.Concurrent<int, string>());
         }
     }
 }

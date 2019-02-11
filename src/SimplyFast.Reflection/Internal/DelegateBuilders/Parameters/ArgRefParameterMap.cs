@@ -21,7 +21,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
 
         protected override void CheckParameters()
         {
-            if (!_methodParameter.Type.IsByRef)
+            if (!MethodParameter.Type.IsByRef)
                 throw new ArgumentException("Invalid methodParameter modifier. Should be Ref.");
             //if (!(_delegateParameter.ParameterType.IsByRef || _del))
             //    throw new ArgumentException(string.Format("Invalid modifier for parameter {0}. Should be Ref or None.",
@@ -64,14 +64,14 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
 #else
         public override Expression Prepare(ExpressionBlockBuilder block, ParameterExpression parameter)
         {
-            if (_delegateParameter.Type.IsByRef && !_needLocalVariable)
+            if (DelegateParameter.Type.IsByRef && !NeedLocalVariable)
                 return parameter;
 
             var basePrepare = base.Prepare(block, parameter);
-            if (!_needLocalVariable)
+            if (!NeedLocalVariable)
                 return basePrepare;
-            var mt = _methodParameter.Type.RemoveByRef();
-            var value = _delegateParameter.IsOut
+            var mt = MethodParameter.Type.RemoveByRef();
+            var value = DelegateParameter.IsOut
                 ? (Expression)Expression.Default(mt)
                 : Expression.Convert(parameter, mt);
             var assign = Expression.Assign(basePrepare, value);
@@ -81,7 +81,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
 
         public override void Finish(ExpressionBlockBuilder block, Expression parameter)
         {
-            if (_delegateParameter.Type.IsByRef || _delegateParameter.IsOut)
+            if (DelegateParameter.Type.IsByRef || DelegateParameter.IsOut)
                 base.Finish(block, parameter);
         }
 #endif

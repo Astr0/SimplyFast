@@ -2,8 +2,8 @@ using ProtoBuf;
 
 namespace SimplyFast.Serialization.Tests.Protobuf.TestData
 {
-    [ProtoContract(Name = @"TestEnum")]
-    public enum TestEnum
+    [ProtoContract(Name = @"SomeEnum")]
+    public enum SomeEnum
     {
         [ProtoEnum(Name = @"TEST_ENUM_VALUE0", Value = 0)]
         Value0 = 0,

@@ -22,7 +22,7 @@ namespace SimplyFast.Tests
             const double v10 = 1;
             const decimal v11 = 1;
             var v12 = TimeSpan.FromDays(1);
-            var v13 = new TestComparable(1);
+            var v13 = new SomeComparable(1);
 
             Assert.Equal(v1, v1.Clip((byte)0, (byte)2));
             Assert.Equal(v2, v2.Clip((short)0, (short)2));
@@ -36,7 +36,7 @@ namespace SimplyFast.Tests
             Assert.Equal(v10, v10.Clip(0, 2));
             Assert.Equal(v11, v11.Clip(0, 2));
             Assert.Equal(v12, v12.Clip(TimeSpan.FromDays(0), TimeSpan.FromDays(2)));
-            Assert.Equal(v13, v13.Clip(new TestComparable(0), new TestComparable(2)));
+            Assert.Equal(v13, v13.Clip(new SomeComparable(0), new SomeComparable(2)));
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace SimplyFast.Tests
             const double v10 = 7;
             const decimal v11 = 7;
             var v12 = TimeSpan.FromDays(7);
-            var v13 = new TestComparable(7);
+            var v13 = new SomeComparable(7);
 
             Assert.Equal(5, v1.Clip((byte)3, (byte)5));
             Assert.Equal(5, v2.Clip((short)3, (short)5));
@@ -68,7 +68,7 @@ namespace SimplyFast.Tests
             Assert.Equal(5, v10.Clip(3, 5));
             Assert.Equal(5, v11.Clip(3, 5));
             Assert.Equal(TimeSpan.FromDays(5), v12.Clip(TimeSpan.FromDays(3), TimeSpan.FromDays(5)));
-            Assert.Equal(new TestComparable(5), v13.Clip(new TestComparable(3), new TestComparable(5)));
+            Assert.Equal(new SomeComparable(5), v13.Clip(new SomeComparable(3), new SomeComparable(5)));
         }
 
         [Fact]
@@ -86,7 +86,7 @@ namespace SimplyFast.Tests
             const double v10 = 1;
             const decimal v11 = 1;
             var v12 = TimeSpan.FromDays(1);
-            var v13 = new TestComparable(1);
+            var v13 = new SomeComparable(1);
 
             Assert.Equal(3, v1.Clip((byte)3, (byte)5));
             Assert.Equal(3, v2.Clip((short)3, (short)5));
@@ -100,7 +100,7 @@ namespace SimplyFast.Tests
             Assert.Equal(3, v10.Clip(3, 5));
             Assert.Equal(3, v11.Clip(3, 5));
             Assert.Equal(TimeSpan.FromDays(3), v12.Clip(TimeSpan.FromDays(3), TimeSpan.FromDays(5)));
-            Assert.Equal(new TestComparable(3), v13.Clip(new TestComparable(3), new TestComparable(5)));
+            Assert.Equal(new SomeComparable(3), v13.Clip(new SomeComparable(3), new SomeComparable(5)));
         }
 
         [Fact]
@@ -118,7 +118,7 @@ namespace SimplyFast.Tests
             const double v10 = 7;
             const decimal v11 = 7;
             var v12 = TimeSpan.FromDays(7);
-            var v13 = new TestComparable(7);
+            var v13 = new SomeComparable(7);
 
             Assert.Throws(typeof(ArgumentException), () => v1.Clip((byte)5, (byte)3));
             Assert.Throws(typeof(ArgumentException), () => v2.Clip((short)5, (short)3));
@@ -132,14 +132,14 @@ namespace SimplyFast.Tests
             Assert.Throws(typeof(ArgumentException), () => v10.Clip(5, 3));
             Assert.Throws(typeof(ArgumentException), () => v11.Clip(5, 3));
             Assert.Throws(typeof(ArgumentException), () => v12.Clip(TimeSpan.FromDays(5), TimeSpan.FromDays(3)));
-            Assert.Throws(typeof(ArgumentException), () => v13.Clip(new TestComparable(5), new TestComparable(3)));
+            Assert.Throws(typeof(ArgumentException), () => v13.Clip(new SomeComparable(5), new SomeComparable(3)));
         }
 
         [Fact]
         public void ComparableMinMaxWorks()
         {
-            var c1 = new TestComparable(1);
-            var c2 = new TestComparable(2);
+            var c1 = new SomeComparable(1);
+            var c2 = new SomeComparable(2);
 
             Assert.Equal(c1, MathEx.Min(c1, c2));
             Assert.Equal(c1, MathEx.Min(c2, c1));

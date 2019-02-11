@@ -20,7 +20,7 @@ namespace SimplyFast.Tests.Pool
             }
         }
 
-        private static void TestPool(Func<PooledFactory<Func<IPooled<int>>>, IPool<Func<IPooled<int>>>> makePool)
+        private static void PoolOk(Func<PooledFactory<Func<IPooled<int>>>, IPool<Func<IPooled<int>>>> makePool)
         {
             var i = 0;
             var pool = makePool(PooledEx.Factory(() => i++));
@@ -41,26 +41,26 @@ namespace SimplyFast.Tests.Pool
         [Fact]
         public void ThreadSafeOk()
         {
-            TestPool(PoolEx.ThreadSafe);
+            PoolOk(PoolEx.ThreadSafe);
         }
 
         [Fact]
         public void ThreadSafeLockingOk()
         {
-            TestPool(PoolEx.ThreadSafeLocking);
+            PoolOk(PoolEx.ThreadSafeLocking);
         }
 
         [Fact]
         public void ThreadUnsafeOk()
         {
-            TestPool(PoolEx.ThreadUnsafe);
+            PoolOk(PoolEx.ThreadUnsafe);
         }
 
         [Fact]
         public void ConcurrentOk()
         {
-            TestPool(PoolEx.Concurrent);
-            TestPool(f => PoolEx.Concurrent(f, new ConcurrentQueue<Func<IPooled<int>>>()));
+            PoolOk(PoolEx.Concurrent);
+            PoolOk(f => PoolEx.Concurrent(f, new ConcurrentQueue<Func<IPooled<int>>>()));
         }
 
         [Fact]

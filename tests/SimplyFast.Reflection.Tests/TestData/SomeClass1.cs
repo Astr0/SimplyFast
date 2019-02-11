@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SimplyFast.Reflection.Tests.TestData
 {
-    public class TestClass1 : IEquatable<TestClass1>
+    public class SomeClass1 : IEquatable<SomeClass1>
     {
         public string F2 = "test";
         private int _f1 = 1;
@@ -16,7 +16,7 @@ namespace SimplyFast.Reflection.Tests.TestData
             set { P0 = value; }
         }
 
-        [TestMe(Value = 1)]
+        [Some(Value = 1)]
         public int P1
         {
             get { return _f1; }
@@ -25,18 +25,18 @@ namespace SimplyFast.Reflection.Tests.TestData
 
         public string P2 { get; set; }
 
-        [TestMe(Value = 3)]
+        [Some(Value = 3)]
         public string P3 { get; set; }
 
-        [TestMe(Value = 4)]
+        [Some(Value = 4)]
         public virtual string P4 { get; set; }
 
-        [TestMe(Value = 5)]
+        [Some(Value = 5)]
         public virtual string P5 { get; set; }
 
-        #region IEquatable<TestClass1> Members
+        #region IEquatable<SomeClass1> Members
 
-        public bool Equals(TestClass1 other)
+        public bool Equals(SomeClass1 other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -50,7 +50,7 @@ namespace SimplyFast.Reflection.Tests.TestData
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == typeof (TestClass1) && Equals((TestClass1) obj);
+            return obj.GetType() == typeof (SomeClass1) && Equals((SomeClass1) obj);
         }
 
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
@@ -69,12 +69,12 @@ namespace SimplyFast.Reflection.Tests.TestData
             }
         }
 
-        public static bool operator ==(TestClass1 left, TestClass1 right)
+        public static bool operator ==(SomeClass1 left, SomeClass1 right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(TestClass1 left, TestClass1 right)
+        public static bool operator !=(SomeClass1 left, SomeClass1 right)
         {
             return !Equals(left, right);
         }

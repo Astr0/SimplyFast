@@ -106,7 +106,7 @@ namespace SimplyFast.Reflection.Tests
         [SuppressMessage("ReSharper", "UnusedParameter.Local")]
 #pragma warning disable 169
 #pragma warning disable 649
-        private class TestInvokable
+        private class InvokableOk
         {
             public int One()
             {
@@ -146,7 +146,7 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void FindInvokableMemberWorks()
         {
-            var t = typeof (TestInvokable);
+            var t = typeof (InvokableOk);
             Assert.Equal(typeof(int), ((MethodInfo)t.FindInvokableMember("One")).ReturnType);
             Assert.Equal(typeof(void), ((MethodInfo)t.FindInvokableMember("One", typeof(int))).ReturnType);
             Assert.Equal(typeof(string), ((MethodInfo)t.FindInvokableMember("One", typeof(string))).ReturnType);

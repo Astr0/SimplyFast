@@ -9,21 +9,21 @@ namespace SimplyFast.Expressions.Dynamic.Tests
     {
         [SuppressMessage("ReSharper", "UnusedMember.Global")]
         [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-        public class TestClass
+        public class SomeClass
         {
-            public Action<bool> TestAction;
-            public int TestField;
+            public Action<bool> SomeAction;
+            public int SomeField;
 
-            public string TestProp
+            public string SomeProp
             {
-                get { return TestField.ToString(CultureInfo.InvariantCulture); }
-                set { TestField = int.Parse(value); }
+                get => SomeField.ToString(CultureInfo.InvariantCulture);
+                set => SomeField = int.Parse(value);
             }
 
             public int this[int index]
             {
-                get { return TestField * index; }
-                set { TestField = value / index; }
+                get => SomeField * index;
+                set => SomeField = value / index;
             }
 
             public bool IsOk()
@@ -31,123 +31,123 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 return true;
             }
 
-            public double TestMethod(float param)
+            public double SomeMethod(float param)
             {
-                return TestField * param;
+                return SomeField * param;
             }
 
-            public static explicit operator int(TestClass a)
+            public static explicit operator int(SomeClass a)
             {
-                return a.TestField;
+                return a.SomeField;
             }
 
-            public static explicit operator TestClass(int a)
+            public static explicit operator SomeClass(int a)
             {
-                return new TestClass {TestField = a};
+                return new SomeClass {SomeField = a};
             }
         }
 
         [Fact]
-        public void TestAction()
+        public void ActionOk()
         {
-            var lambda = EBuilder.Lambda(typeof(TestClass), a =>
+            var lambda = EBuilder.Lambda(typeof(SomeClass), a =>
             {
-                var aexp = a.EBuilder();
-                return aexp.TestAction(true);
+                var eBuilder = a.EBuilder();
+                return eBuilder.SomeAction(true);
             });
-            Assert.Equal("(TestClass p_0) => p_0.TestAction(True)", lambda.ToDebugString());
+            Assert.Equal("(TestClass p_0) => p_0.SomeAction(True)", lambda.ToDebugString());
         }
 
         [Fact]
-        public void TestBinary()
+        public void BinaryOk()
         {
-            var lambda = EBuilder.Lambda(typeof(TestClass), a =>
+            var lambda = EBuilder.Lambda(typeof(SomeClass), a =>
             {
-                var aexp = a.EBuilder();
-                return aexp.TestField + 2;
+                var eBuilder = a.EBuilder();
+                return eBuilder.SomeField + 2;
             });
-            Assert.Equal("(TestClass p_0) => (p_0.TestField + 2)", lambda.ToDebugString());
+            Assert.Equal("(TestClass p_0) => (p_0.SomeField + 2)", lambda.ToDebugString());
         }
 
         [Fact]
-        public void TestGetSetField()
+        public void GetSetFieldOk()
         {
-            var lambda = EBuilder.Lambda(typeof(TestClass), typeof(TestClass), (a, b) =>
+            var lambda = EBuilder.Lambda(typeof(SomeClass), typeof(SomeClass), (a, b) =>
             {
-                var aexp = a.EBuilder();
-                var bexp = b.EBuilder();
-                return aexp.TestField = bexp.TestField;
+                var p0 = a.EBuilder();
+                var p1 = b.EBuilder();
+                return p0.SomeField = p1.SomeField;
             });
-            Assert.Equal("(TestClass p_0, TestClass p_1) => (p_0.TestField = p_1.TestField)", lambda.ToDebugString());
+            Assert.Equal("(TestClass p_0, TestClass p_1) => (p_0.SomeField = p_1.SomeField)", lambda.ToDebugString());
         }
 
         [Fact]
-        public void TestGetSetIndex()
+        public void GetSetIndexOk()
         {
-            var lambda = EBuilder.Lambda(typeof(TestClass), typeof(TestClass), (a, b) =>
+            var lambda = EBuilder.Lambda(typeof(SomeClass), typeof(SomeClass), (a, b) =>
             {
-                var aexp = a.EBuilder();
-                var bexp = b.EBuilder();
-                return aexp[3] = bexp[2];
+                var p0 = a.EBuilder();
+                var p1 = b.EBuilder();
+                return p0[3] = p1[2];
             });
             Assert.Equal("(TestClass p_0, TestClass p_1) => (p_0.Item[3] = p_1.Item[2])", lambda.ToDebugString());
         }
 
         [Fact]
-        public void TestGetSetProperty()
+        public void GetSetPropertyOk()
         {
-            var lambda = EBuilder.Lambda(typeof(TestClass), typeof(TestClass), (a, b) =>
+            var lambda = EBuilder.Lambda(typeof(SomeClass), typeof(SomeClass), (a, b) =>
             {
-                var aexp = a.EBuilder();
-                var bexp = b.EBuilder();
-                return aexp.TestProp = bexp.TestProp;
+                var p0 = a.EBuilder();
+                var p1 = b.EBuilder();
+                return p0.SomeProp = p1.SomeProp;
             });
-            Assert.Equal("(TestClass p_0, TestClass p_1) => (p_0.TestProp = p_1.TestProp)", lambda.ToDebugString());
+            Assert.Equal("(TestClass p_0, TestClass p_1) => (p_0.SomeProp = p_1.SomeProp)", lambda.ToDebugString());
         }
 
         [Fact]
-        public void TestInvoke()
+        public void InvokeOk()
         {
-            var lambda = EBuilder.Lambda(typeof(Func<int, bool>), typeof(TestClass), (a, b) =>
+            var lambda = EBuilder.Lambda(typeof(Func<int, bool>), typeof(SomeClass), (a, b) =>
             {
-                var aexp = a.EBuilder();
-                var bexp = b.EBuilder();
-                return !aexp(bexp.TestField);
+                var p0 = a.EBuilder();
+                var p1 = b.EBuilder();
+                return !p0(p1.SomeField);
             });
-            Assert.Equal("(Func<Int32, Boolean> p_0, TestClass p_1) => !p_0(p_1.TestField)", lambda.ToDebugString());
+            Assert.Equal("(Func<Int32, Boolean> p_0, TestClass p_1) => !p_0(p_1.SomeField)", lambda.ToDebugString());
         }
 
         [Fact]
-        public void TestMethod()
+        public void MethodOk()
         {
-            var lambda = EBuilder.Lambda(typeof(TestClass), a =>
+            var lambda = EBuilder.Lambda(typeof(SomeClass), a =>
             {
-                var aexp = a.EBuilder();
-                return aexp.TestMethod(2.0f);
+                var p = a.EBuilder();
+                return p.SomeMethod(2.0f);
             });
-            Assert.Equal("(TestClass p_0) => p_0.TestMethod(2F)", lambda.ToDebugString());
+            Assert.Equal("(TestClass p_0) => p_0.SomeMethod(2F)", lambda.ToDebugString());
         }
 
         [Fact]
-        public void TestUnary()
+        public void UnaryOk()
         {
             var lambda = EBuilder.Lambda(typeof(bool), a =>
             {
-                var aexp = a.EBuilder();
-                return !aexp;
+                var p = a.EBuilder();
+                return !p;
             });
             Assert.Equal("(Boolean p_0) => !p_0", lambda.ToDebugString());
         }
 
         [Fact]
-        public void TestUnary2()
+        public void UnaryOk2()
         {
-            var lambda = EBuilder.Lambda(typeof(TestClass), a =>
+            var lambda = EBuilder.Lambda(typeof(SomeClass), a =>
             {
-                var aexp = a.EBuilder();
-                return --aexp.TestField;
+                var p = a.EBuilder();
+                return --p.SomeField;
             });
-            Assert.Equal("(TestClass p_0) => --p_0.TestField", lambda.ToDebugString());
+            Assert.Equal("(TestClass p_0) => --p_0.SomeField", lambda.ToDebugString());
         }
     }
 }

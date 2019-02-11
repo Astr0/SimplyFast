@@ -6,9 +6,9 @@ using SimplyFast.IoC.Modules;
 namespace SimplyFast.IoC.Tests.Modules
 {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class TestModule: FastModule
+    public class SomeModule: FastModule
     {
-        public class TestEnumerable : IEnumerable<string>
+        public class SomeEnumerable : IEnumerable<string>
         {
             public IEnumerator<string> GetEnumerator()
             {
@@ -25,7 +25,7 @@ namespace SimplyFast.IoC.Tests.Modules
         public override void Load()
         {
             Bind<string>().ToConstant("test");
-            Bind<IEnumerable<string>>().To<TestEnumerable>();
+            Bind<IEnumerable<string>>().To<SomeEnumerable>();
         }
     }
 }

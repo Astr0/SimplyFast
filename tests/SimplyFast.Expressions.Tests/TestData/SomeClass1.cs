@@ -3,7 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SimplyFast.Expressions.Tests.TestData
 {
-    public class TestClass1 : IEquatable<TestClass1>
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+    public class SomeClass1 : IEquatable<SomeClass1>
     {
         public string F2 = "test";
         private int _f1 = 1;
@@ -30,9 +31,9 @@ namespace SimplyFast.Expressions.Tests.TestData
 
         public virtual string P5 { get; set; }
 
-        #region IEquatable<TestClass1> Members
+        #region IEquatable<SomeClass1> Members
 
-        public bool Equals(TestClass1 other)
+        public bool Equals(SomeClass1 other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -46,7 +47,7 @@ namespace SimplyFast.Expressions.Tests.TestData
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == typeof (TestClass1) && Equals((TestClass1) obj);
+            return obj.GetType() == typeof (SomeClass1) && Equals((SomeClass1) obj);
         }
 
         [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
@@ -65,12 +66,12 @@ namespace SimplyFast.Expressions.Tests.TestData
             }
         }
 
-        public static bool operator ==(TestClass1 left, TestClass1 right)
+        public static bool operator ==(SomeClass1 left, SomeClass1 right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(TestClass1 left, TestClass1 right)
+        public static bool operator !=(SomeClass1 left, SomeClass1 right)
         {
             return !Equals(left, right);
         }

@@ -4,27 +4,27 @@ using System.Diagnostics.CodeAnalysis;
 namespace SimplyFast.IoC.Tests.TestData
 {
     [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local")]
-    internal class TestClass : IEquatable<TestClass>
+    internal class SomeClass : IEquatable<SomeClass>
     {
         public char C { get; }
         public long I { get; }
         public string Str { get; }
 
 
-        public TestClass(char c, long i)
+        public SomeClass(char c, long i)
         {
             C = c;
             I = i;
         }
 
-        public TestClass(char c, long i, string str)
+        public SomeClass(char c, long i, string str)
         {
             C = c;
             I = i;
             Str = str;
         }
 
-        public bool Equals(TestClass other)
+        public bool Equals(SomeClass other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -41,7 +41,7 @@ namespace SimplyFast.IoC.Tests.TestData
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((TestClass) obj);
+            return Equals((SomeClass) obj);
         }
 
         public override int GetHashCode()

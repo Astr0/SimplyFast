@@ -18,7 +18,7 @@ namespace SimplyFast.Log.Tests
             Assert.NotEqual(f1Root, f2Root);
         }
 
-        private class TestOutput : IOutput
+        private class SomeOutput : IOutput
         {
             public IMessage LastMessage { get; private set; }
             public void Dispose()
@@ -34,7 +34,7 @@ namespace SimplyFast.Log.Tests
         [Fact]
         public void RootCanLogMessage()
         {
-            var o = new TestOutput();
+            var o = new SomeOutput();
             var f1 = new LoggerFactory();
             var root = f1.Root;
             root.Severity = Severity.Debug;
@@ -98,11 +98,11 @@ namespace SimplyFast.Log.Tests
             var root = f.Root;
             root.Severity = Severity.Debug;
             var child = f.Get("test");
-            var oroot = new TestOutput();
+            var oroot = new SomeOutput();
             root.Outputs.Add(oroot);
             child.Log(Severity.Debug);
             Assert.Equal(Severity.Debug, oroot.LastMessage.Severity);
-            var ochild = new TestOutput();
+            var ochild = new SomeOutput();
             child.Outputs.Add(ochild);
             child.Log(Severity.Warn);
             Assert.Equal(Severity.Warn, oroot.LastMessage.Severity);
@@ -118,7 +118,7 @@ namespace SimplyFast.Log.Tests
             var f = new LoggerFactory(s => MessageEx.Default(Severity.Fatal));
             var root = f.Root;
             root.Severity = Severity.Debug;
-            var oroot = new TestOutput();
+            var oroot = new SomeOutput();
             root.Outputs.Add(oroot);
             root.Log(Severity.Warn);
             var lastMessage = oroot.LastMessage;

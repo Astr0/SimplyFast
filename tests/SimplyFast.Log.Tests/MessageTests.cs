@@ -14,15 +14,15 @@ namespace SimplyFast.Log.Tests
         [Fact]
         public void MessageSeverityOk()
         {
-            TestMsgSeverity(Severity.Debug);
-            TestMsgSeverity(Severity.Info);
-            TestMsgSeverity(Severity.Warn);
-            TestMsgSeverity(Severity.Error);
-            TestMsgSeverity(Severity.Fatal);
-            TestMsgSeverity(Severity.Off);
+            MsgSeverityOk(Severity.Debug);
+            MsgSeverityOk(Severity.Info);
+            MsgSeverityOk(Severity.Warn);
+            MsgSeverityOk(Severity.Error);
+            MsgSeverityOk(Severity.Fatal);
+            MsgSeverityOk(Severity.Off);
         }
 
-        private void TestMsgSeverity(Severity severity)
+        private void MsgSeverityOk(Severity severity)
         {
             var msg = CreateMessage(severity);
             Assert.Equal(severity, msg.Severity);

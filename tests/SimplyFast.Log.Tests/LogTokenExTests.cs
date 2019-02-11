@@ -36,11 +36,11 @@ namespace SimplyFast.Log.Tests
             Assert.Equal("Debug", token.ToString(null));
         }
 
-        private class TestLogger : ILogger
+        private class SomeLogger : ILogger
         {
             private readonly string _name;
 
-            public TestLogger(string name)
+            public SomeLogger(string name)
             {
                 _name = name;
             }
@@ -69,7 +69,7 @@ namespace SimplyFast.Log.Tests
         [Fact]
         public void LoggerOk()
         {
-            var token = LogTokenEx.Logger(new TestLogger("MegaLogger"));
+            var token = LogTokenEx.Logger(new SomeLogger("MegaLogger"));
             Assert.Equal(LogTokenEx.Names.Logger, token.Name);
             Assert.Equal("MegaLogger", token.ToString(null));
         }
