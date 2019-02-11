@@ -105,6 +105,7 @@ namespace SimplyFast.Reflection.Tests
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
         [SuppressMessage("ReSharper", "UnusedParameter.Local")]
 #pragma warning disable 169
+#pragma warning disable 649
         private class TestInvokable
         {
             public int One()
@@ -139,6 +140,7 @@ namespace SimplyFast.Reflection.Tests
                 return null;
             }
         }
+#pragma warning restore 649
 #pragma warning restore 169
 
         [Fact]

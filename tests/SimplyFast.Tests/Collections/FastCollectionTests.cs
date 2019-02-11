@@ -29,6 +29,7 @@ namespace SimplyFast.Tests.Collections
         }
 
         [SuppressMessage("ReSharper", "UnusedParameter.Local")]
+        [SuppressMessage("ReSharper", "ParameterOnlyUsedForPreconditionCheck.Local")]
         private static void AssertEquals<T>(FastCollection<T> collection, IEnumerable<T> enumerable)
         {
             var array = enumerable as T[] ?? enumerable.ToArray();

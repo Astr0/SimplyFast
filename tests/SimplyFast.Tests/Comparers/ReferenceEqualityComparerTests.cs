@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Xunit;
 using SimplyFast.Comparers;
 
@@ -9,6 +10,7 @@ namespace SimplyFast.Tests.Comparers
     public class ReferenceEqualityComparerTests
     {
         [Fact]
+        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
         public void ComparerWorksByReference()
         {
             var comparer = (IEqualityComparer<string>)EqualityComparerEx.Reference();

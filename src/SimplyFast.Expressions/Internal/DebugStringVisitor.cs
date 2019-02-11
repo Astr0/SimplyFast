@@ -586,11 +586,10 @@ namespace SimplyFast.Expressions.Internal
             BeginBlock();
             Visit(node.Body);
             EndBlock();
-            if (node.Handlers != null)
-                foreach (var handler in node.Handlers)
-                {
-                    VisitCatchBlock(handler);
-                }
+            foreach (var handler in node.Handlers)
+            {
+                VisitCatchBlock(handler);
+            }
             if (node.Fault != null)
             {
                 Out("catch");

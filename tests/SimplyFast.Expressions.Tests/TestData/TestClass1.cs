@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SimplyFast.Expressions.Tests.TestData
 {
@@ -48,6 +49,7 @@ namespace SimplyFast.Expressions.Tests.TestData
             return obj.GetType() == typeof (TestClass1) && Equals((TestClass1) obj);
         }
 
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode()
         {
             unchecked

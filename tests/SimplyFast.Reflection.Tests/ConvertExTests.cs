@@ -3,6 +3,7 @@ using Xunit;
 
 #pragma warning disable 414
 #pragma warning disable 169
+#pragma warning disable 649
 
 namespace SimplyFast.Reflection.Tests
 {
@@ -11,6 +12,7 @@ namespace SimplyFast.Reflection.Tests
     {
         private class Convert1
         {
+            [SuppressMessage("ReSharper", "NotAccessedField.Local")] 
             public string A;
         }
 
@@ -55,6 +57,7 @@ namespace SimplyFast.Reflection.Tests
         }
 
         [SuppressMessage("ReSharper", "UnusedParameter.Local")]
+        [SuppressMessage("ReSharper", "ParameterOnlyUsedForPreconditionCheck.Local")]
         private static void TestConvert<TSource, TResult>(TResult expected, TSource value)
         {
             Assert.Equal(expected, ConvertEx.Converter<TSource, TResult>()(value));

@@ -28,6 +28,7 @@ namespace SimplyFast.Log.Tests
             private IStringToken[] _lastTokens;
 
             [SuppressMessage("ReSharper", "UnusedParameter.Local")]
+            [SuppressMessage("ReSharper", "ParameterOnlyUsedForPreconditionCheck.Local")]
             public void LastWas(Severity severity, string name, string str)
             {
                 Assert.Equal(severity, _lastSeverity);

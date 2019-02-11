@@ -51,6 +51,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf.TestData
             return Equals((FTestMessage) obj);
         }
 
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode()
         {
             unchecked

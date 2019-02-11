@@ -157,11 +157,13 @@ namespace SimplyFast.Reflection.Tests
         private class ClassWithFields
         {
 #pragma warning disable 169
+#pragma warning disable 414
             public int Ok = 1;
             public readonly int Read = 2;
             [SuppressMessage("ReSharper", "UnusedMember.Local")]
             public const int Constant = 3;
 #pragma warning restore 169
+#pragma warning restore 414
         }
 
         [Fact]

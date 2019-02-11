@@ -165,7 +165,8 @@ namespace SimplyFast.Expressions
         public static Expression Method(this Expression expression, string methodOrMemberName,
             params Expression[] arguments)
         {
-            var method = expression.Type.FindInvokableMember(methodOrMemberName, arguments.Select(x => x.Type).ToArray());
+            var method =
+                expression.Type.FindInvokableMember(methodOrMemberName, arguments.Select(x => x.Type).ToArray());
             if (method == null)
                 throw new ArgumentException("Method not found.", nameof(methodOrMemberName));
             var methodInfo = method as MethodInfo;
@@ -177,6 +178,7 @@ namespace SimplyFast.Expressions
         public static Expression New(Type type, params Expression[] arguments)
         {
             if (type.IsArray)
+                // ReSharper disable once AssignNullToNotNullAttribute
                 return Expression.NewArrayBounds(type.GetElementType(), arguments);
             var constructor = type.Constructor(arguments.ConvertAll(x => x.Type));
             if (constructor == null)
@@ -229,7 +231,8 @@ namespace SimplyFast.Expressions
 
         public static LambdaExpression Lambda(Type parameterType1, Type parameterType2, Type parameterType3,
             Type parameterType4,
-            Func<ParameterExpression, ParameterExpression, ParameterExpression, ParameterExpression, Expression> builder)
+            Func<ParameterExpression, ParameterExpression, ParameterExpression, ParameterExpression, Expression>
+                builder)
         {
             var p1 = Expression.Parameter(parameterType1);
             var p2 = Expression.Parameter(parameterType2);
@@ -346,7 +349,8 @@ namespace SimplyFast.Expressions
         }
 
 
-        public static Expression ForEach(Type type, Expression enumerable, Func<IForeachControl, Expression> bodyBuilder)
+        public static Expression ForEach(Type type, Expression enumerable,
+            Func<IForeachControl, Expression> bodyBuilder)
         {
             if (type == null)
                 type = TypeEx.GetForEachType(enumerable.Type);
@@ -393,6 +397,7 @@ namespace SimplyFast.Expressions
                 if (type != ifFalse.Type)
                     type = typeof(void);
             }
+
             return Expression.Condition(test, ifTrue, ifFalse, type);
         }
 

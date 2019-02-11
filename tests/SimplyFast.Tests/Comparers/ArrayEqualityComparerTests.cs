@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Xunit;
 using SimplyFast.Comparers;
 
@@ -100,6 +101,7 @@ namespace SimplyFast.Tests.Comparers
         }
 
         [Fact]
+        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
         public void CompareNulls()
         {
             var comparer = GetArrayComparer<int>();
