@@ -1,5 +1,4 @@
-﻿#if EMIT
-using System;
+﻿using System;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -7,7 +6,7 @@ using System.Reflection.Emit;
 namespace SimplyFast.Reflection.Emit
 {
     /// <summary>
-    ///     Helper with usefull Emit methods
+    ///     Helper with useful Emit methods
     /// </summary>
     public static class ILGeneratorEx
     {
@@ -443,4 +442,3 @@ namespace SimplyFast.Reflection.Emit
         }
     }
 }
-#endif

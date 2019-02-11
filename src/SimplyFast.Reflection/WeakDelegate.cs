@@ -2,25 +2,33 @@
 using System.Diagnostics.CodeAnalysis;
 using SimplyFast.Collections;
 using System.Collections.Generic;
-
-#if EMIT
 using System.Reflection.Emit;
 using SimplyFast.Reflection.Emit;
-#else
 using System.Reflection;
 using System.Collections;
 using System.Linq.Expressions;
-#endif
 
 namespace SimplyFast.Reflection
 {
+    public static class WeakDelegate
+    {
+        private static bool _useEmit = true;
+
+        public static bool UseEmit
+        {
+            get => _useEmit && EmitEx.Supported;
+            set => _useEmit = value;
+        }
+    }
+
     [SuppressMessage("ReSharper", "StaticMemberInGenericType")]
     public class WeakDelegate<T> : WeakCollection<T>
         where T : class
     {
+
         private WeakDelegate()
         {
-            Invoker = CreateInvoke(this);
+            Invoker = WeakDelegate.UseEmit ? EmitImpl.CreateInvoke(this) : ExpressionsImpl.CreateInvoke(this);
         }
 
         public readonly T Invoker;
@@ -30,98 +38,107 @@ namespace SimplyFast.Reflection
             return new WeakDelegate<T>();
         }
 
-#if EMIT
-        private static readonly DynamicMethod _buildInvoke = BuildInvoke();
-
-        private static T CreateInvoke(WeakDelegate<T> target)
+        private static class EmitImpl
         {
-            return _buildInvoke.CreateDelegate<T>(target);
-        }
+            private static readonly DynamicMethod _buildInvoke = BuildInvoke();
 
-        private static DynamicMethod BuildInvoke()
-        {
-            var invokeMethod = MethodInfoEx.GetInvokeMethod(typeof(T));
-            var parameters = invokeMethod.GetParameters();
-            var args = new Type[parameters.Length + 1];
-            args[0] = typeof(WeakDelegate<T>);
-            for (var i = 0; i < parameters.Length; i++)
+            public static T CreateInvoke(WeakDelegate<T> target)
             {
-                args[i + 1] = parameters[i].ParameterType;
+                return _buildInvoke.CreateDelegate<T>(target);
             }
-            var returnType = invokeMethod.ReturnType;
-            var invoke = new DynamicMethod(string.Empty,
-                returnType, args,
-                typeof(WeakDelegate<T>).Module,
-                MemberInfoEx.PrivateAccess);
 
-            var il = invoke.GetILGenerator();
-            //var del = il.DeclareLocal(typeof(T));
-            var hasReturn = returnType != typeof(void);
-            var returnValue = hasReturn ? il.DeclareLocal(returnType) : null;
-
-            // get enumerator
-            il.Emit(OpCodes.Ldarg_0);
-            il.EmitForEach(typeof(IEnumerable<T>), l =>
+            private static DynamicMethod BuildInvoke()
             {
-                for (var i = 1; i < args.Length; i++)
+                var invokeMethod = MethodInfoEx.GetInvokeMethod(typeof(T));
+                var parameters = invokeMethod.GetParameters();
+                var args = new Type[parameters.Length + 1];
+                args[0] = typeof(WeakDelegate<T>);
+                for (var i = 0; i < parameters.Length; i++)
                 {
-                    il.EmitLdarg(i);
+                    args[i + 1] = parameters[i].ParameterType;
                 }
-                il.EmitCall(OpCodes.Callvirt, invokeMethod, null);
+
+                var returnType = invokeMethod.ReturnType;
+                var invoke = new DynamicMethod(string.Empty,
+                    returnType, args,
+                    typeof(WeakDelegate<T>).Module,
+                    MemberInfoEx.PrivateAccess);
+
+                var il = invoke.GetILGenerator();
+                //var del = il.DeclareLocal(typeof(T));
+                var hasReturn = returnType != typeof(void);
+                var returnValue = hasReturn ? il.DeclareLocal(returnType) : null;
+
+                // get enumerator
+                il.Emit(OpCodes.Ldarg_0);
+                il.EmitForEach(typeof(IEnumerable<T>), l =>
+                {
+                    for (var i = 1; i < args.Length; i++)
+                    {
+                        il.EmitLdarg(i);
+                    }
+
+                    il.EmitCall(OpCodes.Callvirt, invokeMethod, null);
+                    if (hasReturn)
+                        il.EmitStloc(returnValue);
+                });
+
                 if (hasReturn)
-                    il.EmitStloc(returnValue);
-            });
+                    il.EmitLdloc(returnValue);
+                il.Emit(OpCodes.Ret);
 
-            if (hasReturn)
-                il.EmitLdloc(returnValue);
-            il.Emit(OpCodes.Ret);
-
-            return invoke;
+                return invoke;
+            }
         }
-#else
-        private static readonly ParameterExpression[] _invokeParameters;
-        private static readonly ParameterExpression _enumerator;
-        private static readonly MethodInfo _getEnumerator;
-        private static readonly Expression _invokeLoop;
 
-        static WeakDelegate()
+        private static class ExpressionsImpl
         {
-            var invokeMethod = MethodInfoEx.GetInvokeMethod(typeof(T));
-            _invokeParameters = invokeMethod.GetParameters().ConvertAll((x, i) => Expression.Parameter(x.ParameterType, "p" + i));
-            _getEnumerator = typeof(IEnumerable<T>).Method("GetEnumerator");
-            _enumerator = Expression.Variable(typeof(IEnumerator<T>), "e");
 
-            var destroyEnumerator = Expression.Call(_enumerator, typeof(IDisposable).Method("Dispose"));
+            private static readonly ParameterExpression[] _invokeParameters;
+            private static readonly ParameterExpression _enumerator;
+            private static readonly MethodInfo _getEnumerator;
+            private static readonly Expression _invokeLoop;
 
-            var returnType = invokeMethod.ReturnType;
-            var hasReturn = returnType != typeof(void);
-            var breakLabel = hasReturn ? Expression.Label(returnType, "br") : Expression.Label("br");
-            var result = hasReturn ? Expression.Variable(returnType, "r") : null;
-            var breakExpr = hasReturn ? Expression.Break(breakLabel, result) : Expression.Break(breakLabel);
-            var moveNext = Expression.Call(_enumerator, typeof(IEnumerator).Method("MoveNext"));
-            var current = Expression.Property(_enumerator, typeof(IEnumerator<T>).Property("Current"));
-            // ReSharper disable once CoVariantArrayConversion
-            var invoke = (Expression)Expression.Invoke(current, _invokeParameters);
-            if (hasReturn)
-                invoke = Expression.Assign(result, invoke);
-            var ifNotMoveNext = Expression.IfThenElse(moveNext, invoke, breakExpr);
-            var loop = (Expression)Expression.Loop(ifNotMoveNext, breakLabel);
-            if (hasReturn)
-                loop = Expression.Block(new[] {result},
-                    Expression.Assign(result, Expression.Default(returnType)),
-                    loop);
-           
-            _invokeLoop = Expression.TryFinally(loop, destroyEnumerator);
+            static ExpressionsImpl()
+            {
+                var invokeMethod = MethodInfoEx.GetInvokeMethod(typeof(T));
+                _invokeParameters = invokeMethod.GetParameters()
+                    .ConvertAll((x, i) => Expression.Parameter(x.ParameterType, "p" + i));
+                _getEnumerator = typeof(IEnumerable<T>).Method("GetEnumerator");
+                _enumerator = Expression.Variable(typeof(IEnumerator<T>), "e");
+
+                var destroyEnumerator = Expression.Call(_enumerator, typeof(IDisposable).Method("Dispose"));
+
+                var returnType = invokeMethod.ReturnType;
+                var hasReturn = returnType != typeof(void);
+                var breakLabel = hasReturn ? Expression.Label(returnType, "br") : Expression.Label("br");
+                var result = hasReturn ? Expression.Variable(returnType, "r") : null;
+                var breakExpr = hasReturn ? Expression.Break(breakLabel, result) : Expression.Break(breakLabel);
+                var moveNext = Expression.Call(_enumerator, typeof(IEnumerator).Method("MoveNext"));
+                var current = Expression.Property(_enumerator, typeof(IEnumerator<T>).Property("Current"));
+                // ReSharper disable once CoVariantArrayConversion
+                var invoke = (Expression) Expression.Invoke(current, _invokeParameters);
+                if (hasReturn)
+                    invoke = Expression.Assign(result, invoke);
+                var ifNotMoveNext = Expression.IfThenElse(moveNext, invoke, breakExpr);
+                var loop = (Expression) Expression.Loop(ifNotMoveNext, breakLabel);
+                if (hasReturn)
+                    loop = Expression.Block(new[] {result},
+                        Expression.Assign(result, Expression.Default(returnType)),
+                        loop);
+
+                _invokeLoop = Expression.TryFinally(loop, destroyEnumerator);
+            }
+
+            public static T CreateInvoke(WeakDelegate<T> target)
+            {
+                var getEnumerator = Expression.Call(Expression.Constant(target), _getEnumerator);
+                var assignEnumerator = Expression.Assign(_enumerator, getEnumerator);
+                var body = Expression.Block(new[] {_enumerator}, assignEnumerator, _invokeLoop);
+                var lambda = Expression.Lambda<T>(body, _invokeParameters);
+                return lambda.Compile();
+            }
         }
 
-        private static T CreateInvoke(WeakDelegate<T> target)
-        {
-            var getEnumerator = Expression.Call(Expression.Constant(target), _getEnumerator);
-            var assignEnumerator = Expression.Assign(_enumerator, getEnumerator);
-            var body = Expression.Block(new[]{ _enumerator }, assignEnumerator, _invokeLoop);
-            var lambda = Expression.Lambda<T>(body, _invokeParameters);
-            return lambda.Compile();
-        }
-#endif
     }
 }

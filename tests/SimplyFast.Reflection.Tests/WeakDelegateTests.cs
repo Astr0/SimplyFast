@@ -1,11 +1,25 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Xunit;
 
 namespace SimplyFast.Reflection.Tests
 {
-    
-    public class WeakDelegateTests
+    public abstract class WeakDelegateTestsBase
     {
+        private readonly bool _useEmit;
+
+        protected WeakDelegateTestsBase(bool useEmit)
+        {
+            _useEmit = useEmit;
+            WeakDelegate.UseEmit = useEmit;
+        }
+
+        [Fact]
+        public void UseEmitApplied()
+        {
+            Assert.Equal(_useEmit, WeakDelegate.UseEmit);
+        }
+
         [Fact]
         public void EmptyWorks()
         {
@@ -68,7 +82,7 @@ namespace SimplyFast.Reflection.Tests
             Assert.Equal(0, wd1.Invoker(2));
         }
 
-        class TestClass
+        private class TestClass
         {
             public TestClass(int value)
             {
@@ -100,6 +114,22 @@ namespace SimplyFast.Reflection.Tests
         public void DelegateThrowsForStupidTypes()
         {
             Assert.Throws<TypeInitializationException>(() => WeakDelegate<string>.Create());
+        }
+    }
+
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class WeakDelegateEmitTests: WeakDelegateTestsBase
+    {
+        public WeakDelegateEmitTests() : base(true)
+        {
+        }
+    }
+
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class WeakDelegateExpressionsTests: WeakDelegateTestsBase
+    {
+        public WeakDelegateExpressionsTests() : base(false)
+        {
         }
     }
 }
