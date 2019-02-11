@@ -55,7 +55,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var eBuilder = a.EBuilder();
                 return eBuilder.SomeAction(true);
             });
-            Assert.Equal("(TestClass p_0) => p_0.SomeAction(True)", lambda.ToDebugString());
+            Assert.Equal("(SomeClass p_0) => p_0.SomeAction(True)", lambda.ToDebugString());
         }
 
         [Fact]
@@ -66,7 +66,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var eBuilder = a.EBuilder();
                 return eBuilder.SomeField + 2;
             });
-            Assert.Equal("(TestClass p_0) => (p_0.SomeField + 2)", lambda.ToDebugString());
+            Assert.Equal("(SomeClass p_0) => (p_0.SomeField + 2)", lambda.ToDebugString());
         }
 
         [Fact]
@@ -78,7 +78,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var p1 = b.EBuilder();
                 return p0.SomeField = p1.SomeField;
             });
-            Assert.Equal("(TestClass p_0, TestClass p_1) => (p_0.SomeField = p_1.SomeField)", lambda.ToDebugString());
+            Assert.Equal("(SomeClass p_0, SomeClass p_1) => (p_0.SomeField = p_1.SomeField)", lambda.ToDebugString());
         }
 
         [Fact]
@@ -90,7 +90,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var p1 = b.EBuilder();
                 return p0[3] = p1[2];
             });
-            Assert.Equal("(TestClass p_0, TestClass p_1) => (p_0.Item[3] = p_1.Item[2])", lambda.ToDebugString());
+            Assert.Equal("(SomeClass p_0, SomeClass p_1) => (p_0.Item[3] = p_1.Item[2])", lambda.ToDebugString());
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var p1 = b.EBuilder();
                 return p0.SomeProp = p1.SomeProp;
             });
-            Assert.Equal("(TestClass p_0, TestClass p_1) => (p_0.SomeProp = p_1.SomeProp)", lambda.ToDebugString());
+            Assert.Equal("(SomeClass p_0, SomeClass p_1) => (p_0.SomeProp = p_1.SomeProp)", lambda.ToDebugString());
         }
 
         [Fact]
@@ -114,7 +114,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var p1 = b.EBuilder();
                 return !p0(p1.SomeField);
             });
-            Assert.Equal("(Func<Int32, Boolean> p_0, TestClass p_1) => !p_0(p_1.SomeField)", lambda.ToDebugString());
+            Assert.Equal("(Func<Int32, Boolean> p_0, SomeClass p_1) => !p_0(p_1.SomeField)", lambda.ToDebugString());
         }
 
         [Fact]
@@ -125,7 +125,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var p = a.EBuilder();
                 return p.SomeMethod(2.0f);
             });
-            Assert.Equal("(TestClass p_0) => p_0.SomeMethod(2F)", lambda.ToDebugString());
+            Assert.Equal("(SomeClass p_0) => p_0.SomeMethod(2F)", lambda.ToDebugString());
         }
 
         [Fact]
@@ -147,7 +147,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var p = a.EBuilder();
                 return --p.SomeField;
             });
-            Assert.Equal("(TestClass p_0) => --p_0.SomeField", lambda.ToDebugString());
+            Assert.Equal("(SomeClass p_0) => --p_0.SomeField", lambda.ToDebugString());
         }
     }
 }

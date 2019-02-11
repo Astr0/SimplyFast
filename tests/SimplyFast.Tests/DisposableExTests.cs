@@ -102,8 +102,7 @@ namespace SimplyFast.Tests
         {
             var i = 0;
             DisposableEx.Action(() => i++).DisposeOnFinalize();
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
+            GCEx.CollectAndWait();
             Assert.Equal(1, i);
         }
 

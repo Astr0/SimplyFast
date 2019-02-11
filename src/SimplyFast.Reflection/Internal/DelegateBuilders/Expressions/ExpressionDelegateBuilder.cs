@@ -56,7 +56,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Expressions
 
         private static Delegate BuildDelegate(DelegateMap map, Func<Expression[], Expression> buildInvoke)
         {
-            var parameters = map.DelegateParams.ConvertAll(p => Expression.Parameter(p.Type));
+            var parameters = map.ParametersMap.ConvertAll(p => Expression.Parameter(p.DelegateParameter.Type));
             var block = new ExpressionBlockBuilder();
             var invokeParameters = parameters
                 .ConvertAll((p, i) => map.ParametersMap[i].Prepare(block, p));

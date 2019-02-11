@@ -142,7 +142,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var aexp = a.EBuilder();
                 return Cast(aexp, typeof(object));
             });
-            Assert.Equal("(TestClass p_0) => (p_0 As Object)", lambda.ToDebugString());
+            Assert.Equal("(SomeClass p_0) => (p_0 As Object)", lambda.ToDebugString());
         }
 
         [Fact]
@@ -153,7 +153,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var aexp = a.EBuilder();
                 return Convert(aexp, typeof(int));
             });
-            Assert.Equal("(TestClass p_0) => Convert(p_0 As Int32)", lambda.ToDebugString());
+            Assert.Equal("(SomeClass p_0) => Convert(p_0 As Int32)", lambda.ToDebugString());
         }
 
         [Fact]
@@ -164,7 +164,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
                 var aexp = a.EBuilder();
                 return Convert(aexp, typeof(EBuilderInstanceTests.SomeClass));
             });
-            Assert.Equal("(Int32 p_0) => Convert(p_0 As TestClass)", lambda.ToDebugString());
+            Assert.Equal("(Int32 p_0) => Convert(p_0 As SomeClass)", lambda.ToDebugString());
         }
 
         [Fact]

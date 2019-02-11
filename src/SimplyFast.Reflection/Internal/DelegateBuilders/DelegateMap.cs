@@ -7,7 +7,6 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
 {
     internal class DelegateMap
     {
-        public readonly SimpleParameterInfo[] DelegateParams;
         public readonly Type DelegateType;
         public readonly ArgParameterMap[] ParametersMap;
         public readonly RetValMap RetValMap;
@@ -20,34 +19,28 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders
             
             // delegate info
             var invokeMethod = GetDelegateInvokeMethod();
-            DelegateParams = SimpleParameterInfo.FromParameters(invokeMethod.GetParameters());
+            var delegateParams = SimpleParameterInfo.FromParameters(invokeMethod.GetParameters());
             var delegateReturn = invokeMethod.ReturnType;
 
-
-            SimpleParameterInfo[] fullMethodParameters;
-            // Check return
-            if (thisParameter == null)
-            {
-                fullMethodParameters = methodParameters;
-            }
-            else
-            {
-                var fullParameters = new SimpleParameterInfo[methodParameters.Length + 1];
-                fullParameters[0] = new SimpleParameterInfo(thisParameter);
-                Array.Copy(methodParameters, 0, fullParameters, 1, methodParameters.Length);
-                fullMethodParameters = fullParameters;
-            }
-            
             // map
             try
             {
+                var hasThis = thisParameter != null;
                 // Check param count
-                if (DelegateParams.Length != fullMethodParameters.Length)
+                if (delegateParams.Length != methodParameters.Length + (hasThis ? 1 : 0))
                     throw new Exception("Invalid parameters count.");
 
-                ParametersMap = DelegateParams
-                    .ConvertAll((delegateParam, i) => 
-                        ArgParameterMap.CreateParameterMap(delegateParam, i, fullMethodParameters[i]));
+                ParametersMap = new ArgParameterMap[delegateParams.Length];
+                for (var i = 0; i < ParametersMap.Length; i++)
+                {
+                    var methodParam = hasThis
+                        ? i == 0
+                            ? new SimpleParameterInfo(thisParameter)
+                            : methodParameters[i - 1]
+                        : methodParameters[i];
+
+                    ParametersMap[i] = ArgParameterMap.CreateParameterMap(delegateParams[i], i, methodParam);
+                }
 
                 RetValMap = new RetValMap(delegateReturn, methodReturn);
             }

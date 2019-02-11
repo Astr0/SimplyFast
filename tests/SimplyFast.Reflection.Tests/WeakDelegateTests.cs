@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using Xunit;
 
 namespace SimplyFast.Reflection.Tests
 {
-    public abstract class WeakDelegateTestsBase
+    public abstract class WeakDelegateTestsBase: IDisposable
     {
+        private static readonly object _lock = new object();
         private readonly bool _useEmit;
 
         protected WeakDelegateTestsBase(bool useEmit)
         {
+            Monitor.Enter(_lock);
             _useEmit = useEmit;
             WeakDelegate.UseEmit = useEmit;
         }
@@ -114,6 +117,11 @@ namespace SimplyFast.Reflection.Tests
         public void DelegateThrowsForStupidTypes()
         {
             Assert.Throws<TypeInitializationException>(() => WeakDelegate<string>.Create());
+        }
+
+        public void Dispose()
+        {
+            Monitor.Exit(_lock);
         }
     }
 

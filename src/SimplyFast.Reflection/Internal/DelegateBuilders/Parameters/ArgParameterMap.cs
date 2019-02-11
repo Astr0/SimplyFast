@@ -10,7 +10,7 @@ namespace SimplyFast.Reflection.Internal.DelegateBuilders.Parameters
 {
     internal abstract class ArgParameterMap
     {
-        protected readonly SimpleParameterInfo DelegateParameter;
+        public readonly SimpleParameterInfo DelegateParameter;
         protected readonly int DelegateParameterIndex;
         protected readonly SimpleParameterInfo MethodParameter;
 

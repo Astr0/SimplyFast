@@ -45,7 +45,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
             var lambda = EBuilder.Lambda(() =>
             {
                 var testClass = typeof(SomeClass).EBuilder();
-                return testClass.TestField = testClass.TestField;
+                return testClass.SomeField = testClass.SomeField;
             });
             Assert.Equal("() => (SomeClass.SomeField = SomeClass.SomeField)", lambda.ToDebugString());
         }
@@ -56,7 +56,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
             var lambda = EBuilder.Lambda(() =>
                 {
                     var testClass = typeof(SomeClass).EBuilder();
-                    return testClass.TestProp = testClass.TestProp;
+                    return testClass.SomeProp = testClass.SomeProp;
             });
             Assert.Equal("() => (SomeClass.SomeProp = SomeClass.SomeProp)", lambda.ToDebugString());
         }
@@ -67,7 +67,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
             var lambda = EBuilder.Lambda(() =>
             {
                 var testClass = typeof(SomeClass).EBuilder();
-                return testClass.TestMethod(2.0f);
+                return testClass.SomeMethod(2.0f);
             });
             Assert.Equal("() => SomeClass.SomeMethod(2F)", lambda.ToDebugString());
         }
@@ -78,7 +78,7 @@ namespace SimplyFast.Expressions.Dynamic.Tests
             var lambda = EBuilder.Lambda(() =>
             {
                 var testClass = typeof(SomeClass).EBuilder();
-                return testClass.TestAction(true);
+                return testClass.SomeAction(true);
             });
             Assert.Equal("() => SomeClass.SomeAction(True)", lambda.ToDebugString());
         }
