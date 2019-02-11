@@ -1,6 +1,4 @@
-﻿using SimplyFast.Reflection.Internal.DelegateBuilders.Expressions;
-
-namespace SimplyFast.Reflection.Internal.DelegateBuilders
+﻿namespace SimplyFast.Reflection.Internal.DelegateBuilders
 {
     internal static class DelegateBuilder
     {
