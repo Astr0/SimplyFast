@@ -4,11 +4,11 @@ using SimplyFast.IoC.Tests.TestData;
 
 namespace SimplyFast.IoC.Tests
 {
-    public class ArgBindTest
+    public class ArgBindTests
     {
         private readonly IKernel _kernel;
 
-        public ArgBindTest()
+        public ArgBindTests()
         {
             _kernel = KernelEx.Create();
         }
