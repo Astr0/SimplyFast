@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
 using SimplyFast.Collections;
 using SimplyFast.Collections.Concurrent;
 using SimplyFast.IoC.Internal.DefaultBuilders;
@@ -15,6 +16,7 @@ namespace SimplyFast.IoC.Internal
         private readonly ConcurrentDictionary<Type, Injector> _injectors = new ConcurrentDictionary<Type, Injector>();
         private readonly ConcurrentGrowList<DefaultBuilder> _defaultBuilders = new ConcurrentGrowList<DefaultBuilder>();
         private readonly GenericDerivedBuilders _genericDerivedBuilders = new GenericDerivedBuilders();
+        private long _version;
 
         public Kernel()
         {
@@ -38,6 +40,7 @@ namespace SimplyFast.IoC.Internal
 
         private void ClearCaches()
         {
+            Interlocked.Increment(ref _version);
             _defaultBindings.Clear();
             _injectors.Clear();
         }
@@ -57,6 +60,8 @@ namespace SimplyFast.IoC.Internal
             // new types available - clear caches
             ClearCaches();
         }
+
+        public long Version => Interlocked.Read(ref _version);
 
         public Binding GetUserBinding(Type type)
         {

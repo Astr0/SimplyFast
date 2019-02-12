@@ -34,6 +34,8 @@ namespace SimplyFast.IoC
 
     public interface IRootKernel : IGetKernel
     {
+        long Version { get; }
+
         /// <summary>
         /// Returns relevant user binding for type
         /// </summary>
