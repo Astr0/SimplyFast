@@ -4,7 +4,6 @@ using SimplyFast.IoC.Tests.TestData;
 
 namespace SimplyFast.IoC.Tests
 {
-    
     public class ArgBindTest
     {
         private readonly IKernel _kernel;
