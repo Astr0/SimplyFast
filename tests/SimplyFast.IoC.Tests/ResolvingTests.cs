@@ -19,11 +19,11 @@ namespace SimplyFast.IoC.Tests
         [Fact]
         public void UsesNonDefaultCtorWhenBindingExists()
         {
+            Assert.Equal(11, _kernel.Get<SomeClass3>().Value);
+
             _kernel.Bind<long>().ToConstant(100);
             _kernel.Bind<int>().ToConstant(55);
-            _kernel.Bind<List<string>>().ToSelf();
-            var list = _kernel.Get<List<string>>();
-            Assert.Equal(55, list.Capacity);
+            Assert.Equal(55, _kernel.Get<SomeClass3>().Value);
             Assert.Throws<InvalidOperationException>(() => _kernel.Get<SomeClass>());
             _kernel.Bind<char>().ToConstant('a');
             var test = _kernel.Get<SomeClass>();
@@ -44,13 +44,13 @@ namespace SimplyFast.IoC.Tests
         [Fact]
         public void CanBindHierarchy()
         {
-            var ints = new[] {1, 2, 3, 4};
-            _kernel.Bind<IEnumerable<int>>().ToConstant(ints);
-            _kernel.Bind<List<int>>().ToSelf();
+            var integers = new[] {1, 2, 3, 4};
+            _kernel.Bind<IEnumerable<int>>().ToConstant(integers);
+            _kernel.Bind<List<int>>().ToConstructor(x => new List<int>(x.Get<IEnumerable<int>>()));
             _kernel.Bind<char>().ToConstant('c');
             _kernel.Bind<long>().ToMethod(c => c.Get<IEnumerable<int>>().First());
             var test = _kernel.Get<SomeClass2>();
-            Assert.True(test.Ints.SequenceEqual(ints));
+            Assert.True(test.Ints.SequenceEqual(integers));
             Assert.Equal(new SomeClass('c', 1), test.Test);
             
             // Funcs are not resolved dynamically
@@ -58,15 +58,15 @@ namespace SimplyFast.IoC.Tests
             _kernel.Bind<SomeClass2>().ToSelf();
             
             var func = _kernel.Get<Func<SomeClass2>>();
-            ints[0] = 10;
-            Assert.False(test.Ints.SequenceEqual(ints));
+            integers[0] = 10;
+            Assert.False(test.Ints.SequenceEqual(integers));
             var test2 = func();
-            Assert.True(test2.Ints.SequenceEqual(ints));
+            Assert.True(test2.Ints.SequenceEqual(integers));
             Assert.Equal(new SomeClass('c', 10), test2.Test);
 
             var list = new List<int> {2, 3, 4};
             _kernel.Bind<List<int>>().ToConstant(list);
-            ints[0] = 11;
+            integers[0] = 11;
             var test3 = func();
             Assert.True(test3.Ints.SequenceEqual(list));
             Assert.True(ReferenceEquals(test3.Ints, list));

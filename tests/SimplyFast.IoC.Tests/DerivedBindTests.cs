@@ -17,7 +17,7 @@ namespace SimplyFast.IoC.Tests
         private readonly IKernel _kernel;
 
         [Fact]
-        public void DerivedExistsEvenIfNotBinded()
+        public void DerivedExistsEvenIfNotBind()
         {
             Assert.NotNull(_kernel.Get<Func<object>>());
             Assert.NotNull(_kernel.Get<IEnumerable<object>>());
@@ -30,28 +30,20 @@ namespace SimplyFast.IoC.Tests
         }
 
         [Fact]
-        public void DerivedReturnsDefaultIfNotBinded()
+        public void DerivedReturnsEmptyIfNotBind()
         {
             Assert.NotNull(_kernel.Get<Func<object>>()());
-            AssertCollectionObj(_kernel.Get<IEnumerable<object>>());
-            AssertCollectionObj(_kernel.Get<object[]>());
-            AssertCollectionObj(_kernel.Get<List<object>>());
-            AssertCollectionObj(_kernel.Get<IList<object>>());
-            AssertCollectionObj(_kernel.Get<ICollection<object>>());
-            AssertCollectionObj(_kernel.Get<IReadOnlyList<object>>());
-            AssertCollectionObj(_kernel.Get<IReadOnlyCollection<object>>());
+            Assert.Empty(_kernel.Get<IEnumerable<object>>());
+            Assert.Empty(_kernel.Get<object[]>());
+            Assert.Empty(_kernel.Get<List<object>>());
+            Assert.Empty(_kernel.Get<IList<object>>());
+            Assert.Empty(_kernel.Get<ICollection<object>>());
+            Assert.Empty(_kernel.Get<IReadOnlyList<object>>());
+            Assert.Empty(_kernel.Get<IReadOnlyCollection<object>>());
         }
-
-        [SuppressMessage("ReSharper", "UnusedParameter.Local")]
-        private static void AssertCollectionObj(IEnumerable<object> collection)
-        {
-            var item = collection.Single();
-            Assert.NotNull(item);
-            Assert.IsType<object>(item);
-        }
-
+        
         [Fact]
-        public void DerivedBindingOkForConsts()
+        public void DerivedBindingOkForConst()
         {
             const string str1 = "test";
             const string str2 = "testy";

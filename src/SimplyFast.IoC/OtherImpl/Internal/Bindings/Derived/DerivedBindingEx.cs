@@ -6,7 +6,7 @@ namespace SimplyFast.IoC.Internal.Bindings.Derived
     internal static class DerivedBindingEx
     {
         /// <summary>
-        ///     Create derived binding intance by convention = One generic argument and parametless constructor
+        ///     Create derived binding instance by convention = One generic argument and default constructor
         /// </summary>
         public static IDerivedBinding Create(Type derivedBindingType, Type bindType)
         {

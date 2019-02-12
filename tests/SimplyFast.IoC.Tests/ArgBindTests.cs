@@ -84,14 +84,49 @@ namespace SimplyFast.IoC.Tests
         }
 
         [Fact]
-        public void ArgBindDontUseBetterCtorIfTypeWasBind()
+        public void ArgBindUseBetterCtorIfTypeWasBind()
         {
-            _kernel.Bind<char>().ToConstant('d');
+            _kernel.Bind<char>().ToConstant('a');
             _kernel.Bind<long>().ToConstant(12);
             _kernel.Bind<SomeClass>().ToSelf();
-            Assert.Equal(new SomeClass('d', 12), _kernel.Get<SomeClass>());
-            Assert.Equal(new SomeClass('c', 12, "test"), _kernel.Get<SomeClass>(BindArg.Typed('c'), BindArg.Typed("test")));
-            Assert.Equal(new SomeClass('c', 12), _kernel.Get<SomeClass2>(BindArg.Typed('c'), BindArg.Typed("test")).Test);
+            Assert.Equal(new SomeClass('a', 12), _kernel.Get<SomeClass>());
+            Assert.Equal(new SomeClass('b', 12, "test"), _kernel.Get<SomeClass>(BindArg.Typed('b'), BindArg.Typed("test")));
+            Assert.Equal(new SomeClass('c', 12, "test2"), _kernel.Get<SomeClass2>(BindArg.Typed('c'), BindArg.Typed("test2")).Test);
+        }
+
+        [Fact]
+        public void ArgBindDoNotUseBetterCtorIfTypeWasBindSingleton()
+        {
+            _kernel.Bind<char>().ToConstant('a');
+            _kernel.Bind<long>().ToConstant(12);
+            _kernel.Bind<SomeClass>().ToSelf().InSingletonScope();
+            var obj = _kernel.Get<SomeClass>();
+            Assert.Equal(new SomeClass('a', 12), obj);
+            Assert.Same(obj, _kernel.Get<SomeClass>(BindArg.Typed('b'), BindArg.Typed("test")));
+            Assert.Same(obj, _kernel.Get<SomeClass2>(BindArg.Typed('c'), BindArg.Typed("test2")).Test);
+        }
+
+        [Fact]
+        public void ArgBindDoNotUseBetterCtorIfTypeWasBindConst()
+        {
+            var test = new SomeClass('x', -1, "ttt");
+            _kernel.Bind<char>().ToConstant('a');
+            _kernel.Bind<long>().ToConstant(12);
+            _kernel.Bind<SomeClass>().ToConstant(test);
+            Assert.Same(test, _kernel.Get<SomeClass>());
+            Assert.Same(test, _kernel.Get<SomeClass>(BindArg.Typed('b'), BindArg.Typed("test")));
+            Assert.Same(test, _kernel.Get<SomeClass2>(BindArg.Typed('c'), BindArg.Typed("test2")).Test);
+        }
+
+        [Fact]
+        public void ArgBindDoNotUseBetterCtorIfTypeWasBindMethod()
+        {
+            _kernel.Bind<char>().ToConstant('a');
+            _kernel.Bind<long>().ToConstant(12);
+            _kernel.Bind<SomeClass>().ToMethod(c => new SomeClass('x', 42, c.CanBind(typeof(string)) ? c.Get<string>() : null));
+            Assert.Equal(new SomeClass('x', 42), _kernel.Get<SomeClass>());
+            Assert.Equal(new SomeClass('x', 42, "test"), _kernel.Get<SomeClass>(BindArg.Typed('b'), BindArg.Typed("test")));
+            Assert.Equal(new SomeClass('x', 42, "test2"), _kernel.Get<SomeClass2>(BindArg.Typed('c'), BindArg.Typed("test2")).Test);
         }
 
         [Fact]

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Linq;
+using SimplyFast.Collections;
 using SimplyFast.IoC.Internal.Reflection;
 
 namespace SimplyFast.IoC.Internal.Bindings.Args
@@ -89,6 +91,12 @@ namespace SimplyFast.IoC.Internal.Bindings.Args
                 if (_args[i].Match(type, name))
                     return true;
             return false;
+        }
+
+        [Pure]
+        public BindArg[] Combine(BindArg[] args)
+        {
+            return ArrayEx.Concat(args, _args);
         }
     }
 }

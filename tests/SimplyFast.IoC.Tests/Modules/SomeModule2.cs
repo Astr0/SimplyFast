@@ -9,7 +9,7 @@ namespace SimplyFast.IoC.Tests.Modules
     {
         public override void Load()
         {
-            Bind<List<string>>().ToSelf();
+            Bind<List<string>>().ToConstructor(c => new List<string>(c.Get<IEnumerable<string>>()));
         }
     }
 }

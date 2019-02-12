@@ -25,5 +25,22 @@ namespace SimplyFast.Collections
         {
             Array.ForEach(array, action);
         }
+
+        public static T[] Concat<T>(T[] first, T[] second)
+        {
+            if (first == null || first.Length == 0)
+                return second;
+            if (second == null || second.Length == 0)
+                return first;
+            var result = new T[first.Length + second.Length];
+            Array.Copy(first, result, first.Length);
+            Array.Copy(second, 0, result, first.Length, second.Length);
+            return result;
+        }
+
+        public static T[] Empty<T>()
+        {
+            return TypeHelper<T>.EmptyArray;
+        }
     }
 }
