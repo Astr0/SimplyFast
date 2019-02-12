@@ -7,7 +7,7 @@ namespace SimplyFast.IoC.Internal.Bindings
         private readonly Type _type;
         private IBinding _defaultBinding;
 
-        protected DefaultBinding(Type type)
+        public DefaultBinding(Type type)
         {
             _type = type;
         }

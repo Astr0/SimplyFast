@@ -44,7 +44,7 @@ namespace SimplyFast.IoC.Internal.Bindings
         {
             var allBindings = _allBindings.GetOrAdd(type, t => new ConcurrentGrowList<IBinding>(), out bool addedNewType);
             allBindings.Add(binding);
-             _bindings.Upsert(type, binding);
+            _bindings.Upsert(type, binding);
             if (!addedNewType)
                 return;
             _version++;
