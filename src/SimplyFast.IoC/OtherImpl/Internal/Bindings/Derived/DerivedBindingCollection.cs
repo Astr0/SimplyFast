@@ -20,11 +20,11 @@ namespace SimplyFast.IoC.Internal.Bindings.Derived
 
         public void Add(Type type, IBinding binding)
         {
-            bool added;
-            var derivedBinding = _bindings.GetOrAdd(type, CreateDerivedRoot, out added);
+            var derivedBinding = _bindings.GetOrAdd(type, CreateDerivedRoot, out var added);
             if (added)
                 derivedBinding.RegisterDerivedTypes(_kernel);
-            derivedBinding.Add(binding);
+            if (binding != null)
+                derivedBinding.Add(binding);
         }
 
         private static IDerivedBinding CreateDerivedRoot(Type type)

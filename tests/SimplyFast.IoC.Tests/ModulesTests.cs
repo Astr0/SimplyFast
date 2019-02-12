@@ -7,23 +7,21 @@ using SimplyFast.IoC.Tests.Modules;
 
 namespace SimplyFast.IoC.Tests
 {
-    
     public class ModulesTests
     {
-
-
         [Fact]
         public void CanLoadOneModule()
         {
             var kernel = KernelEx.Create();
             Assert.Throws<InvalidOperationException>(() => kernel.Get<string>());
+            //Assert.Throws<InvalidOperationException>(() => kernel.Get<IEnumerable<string>>());
             Assert.False(kernel.Get<IEnumerable<string>>().Any());
             Assert.False(kernel.Get<List<string>>().Any());
             kernel.Load(new SomeModule());
             Assert.Equal("test", kernel.Get<string>());
-            Assert.True(kernel.Get<IEnumerable<string>>().SequenceEqual(new[] { "str1", "str2" }));
+            Assert.True(kernel.Get<IEnumerable<string>>().SequenceEqual(new[] {"str1", "str2"}));
             Assert.IsType<SomeModule.SomeEnumerable>(kernel.Get<IEnumerable<string>>());
-            Assert.True(kernel.Get<List<string>>().SequenceEqual(new[] { "test" }));
+            Assert.True(kernel.Get<List<string>>().SequenceEqual(new[] {"test"}));
             kernel.Load(new SomeModule2());
             FinalModuleTests(kernel);
         }
@@ -31,9 +29,9 @@ namespace SimplyFast.IoC.Tests
         private static void FinalModuleTests(IKernel kernel)
         {
             Assert.Equal("test", kernel.Get<string>());
-            Assert.True(kernel.Get<IEnumerable<string>>().SequenceEqual(new[] { "str1", "str2" }));
+            Assert.True(kernel.Get<IEnumerable<string>>().SequenceEqual(new[] {"str1", "str2"}));
             Assert.IsType<SomeModule.SomeEnumerable>(kernel.Get<IEnumerable<string>>());
-            Assert.True(kernel.Get<List<string>>().SequenceEqual(new[] { "str1", "str2" }));
+            Assert.True(kernel.Get<List<string>>().SequenceEqual(new[] {"str1", "str2"}));
         }
 
         [Fact]
@@ -80,7 +78,7 @@ namespace SimplyFast.IoC.Tests
             RunTestFewTimes(() =>
             {
                 var kernel = KernelEx.Create();
-                kernel.LoadParallel(new[] { typeof(SomeModule).Assembly });
+                kernel.LoadParallel(new[] {typeof(SomeModule).Assembly});
                 FinalModuleTests(kernel);
             }, 100);
         }

@@ -52,9 +52,11 @@ namespace SimplyFast.IoC.Tests
             var test = _kernel.Get<SomeClass2>();
             Assert.True(test.Ints.SequenceEqual(ints));
             Assert.Equal(new SomeClass('c', 1), test.Test);
-            //Assert.Throws<InvalidOperationException>(() => _kernel.Get<Func<SomeClass2>>());
-            //_kernel.Bind<SomeClass2>().ToSelf();
+            
             // Funcs are not resolved dynamically
+            // Assert.Throws<InvalidOperationException>(() => _kernel.Get<Func<SomeClass2>>());
+            _kernel.Bind<SomeClass2>().ToSelf();
+            
             var func = _kernel.Get<Func<SomeClass2>>();
             ints[0] = 10;
             Assert.False(test.Ints.SequenceEqual(ints));
