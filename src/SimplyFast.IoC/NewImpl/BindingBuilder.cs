@@ -41,7 +41,7 @@ namespace SimplyFast.IoC
             CheckBound(false);
             if (typeof(TImpl) == typeof(T))
             {
-                Binding = k => k.GetDefault(typeof(T));
+                Binding = BindingEx.Default(typeof(T));
             }
             else
             {
