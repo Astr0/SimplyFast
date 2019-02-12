@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using SimplyFast.Reflection;
 using System.Threading.Tasks;
+using SimplyFast.Reflection;
 
-namespace SimplyFast.IoC.Modules
+namespace SimplyFast.IoC
 {
     public static class FastModuleEx
     {
@@ -32,7 +32,7 @@ namespace SimplyFast.IoC.Modules
 
         private static IEnumerable<Type> GetAssemblyModuleCandidates(Assembly assembly)
         {
-            return assembly.ExportedTypes.Where(IsModuleCandidate);
+            return assembly.GetExportedTypes().Where(IsModuleCandidate);
         }
 
         public static void LoadParallel(this IKernel kernel, Assembly assembly)
@@ -52,16 +52,13 @@ namespace SimplyFast.IoC.Modules
             Parallel.ForEach(assembly, kernel.LoadParallel);
         }
 
-        private static readonly TypeInfo _iFastModule = typeof(IFastModule).TypeInfo();
-
         private static bool IsModuleCandidate(Type type)
         {
-            var ti = type.TypeInfo();
             return
-                !ti.IsAbstract &&
-                !ti.IsInterface &&
-                !ti.IsGenericTypeDefinition &&
-                _iFastModule.IsAssignableFrom(ti);
+                !type.IsAbstract &&
+                !type.IsInterface &&
+                !type.IsGenericTypeDefinition &&
+                typeof(IFastModule).IsAssignableFrom(type);
         }
     }
 }

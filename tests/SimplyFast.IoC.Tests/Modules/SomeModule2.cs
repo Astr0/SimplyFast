@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using SimplyFast.IoC.Modules;
 
 namespace SimplyFast.IoC.Tests.Modules
 {

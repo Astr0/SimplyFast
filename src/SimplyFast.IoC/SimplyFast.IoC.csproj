@@ -5,18 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="CurrentImpl\**" />
-    <Compile Remove="Legacy\**" />
-    <Compile Remove="OtherImpl\**" />
-    <EmbeddedResource Remove="CurrentImpl\**" />
-    <EmbeddedResource Remove="Legacy\**" />
-    <EmbeddedResource Remove="OtherImpl\**" />
-    <None Remove="CurrentImpl\**" />
-    <None Remove="Legacy\**" />
-    <None Remove="OtherImpl\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\SimplyFast\SimplyFast.csproj" />
     <ProjectReference Include="..\SimplyFast.Reflection\SimplyFast.Reflection.csproj" />
   </ItemGroup>

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
-using SimplyFast.IoC.Modules;
 using SimplyFast.IoC.Tests.Modules;
 
 namespace SimplyFast.IoC.Tests

@@ -1,4 +1,4 @@
-﻿namespace SimplyFast.IoC.Modules
+﻿namespace SimplyFast.IoC
 {
     public interface IFastModule
     {
