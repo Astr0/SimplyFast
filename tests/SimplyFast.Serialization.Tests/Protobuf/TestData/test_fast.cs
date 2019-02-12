@@ -9,9 +9,6 @@
 // Generated from: test.proto
 
 
-using SimplyFast.Serialization.interfaces;
-using SimplyFast.Serialization.interfaces.repeated;
-
 namespace SimplyFast.Serialization.Tests.Protobuf.TestData
 {
     public partial class FTestMessage: IMessage

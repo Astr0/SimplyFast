@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using SimplyFast.IO;
-using SimplyFast.Serialization.interfaces;
-using SimplyFast.Serialization.interfaces.repeated;
 
 namespace SimplyFast.Serialization.Protobuf
 {

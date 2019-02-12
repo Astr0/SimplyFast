@@ -3,7 +3,6 @@ using System.IO;
 using SimplyFast.IO;
 using SimplyFast.Pool;
 using SimplyFast.Reflection;
-using SimplyFast.Serialization.interfaces;
 using SimplyFast.Serialization.Protobuf;
 
 namespace SimplyFast.Serialization

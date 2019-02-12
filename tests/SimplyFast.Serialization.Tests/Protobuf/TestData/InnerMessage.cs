@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using ProtoBuf;
-using SimplyFast.Serialization.interfaces;
 
 namespace SimplyFast.Serialization.Tests.Protobuf.TestData
 {

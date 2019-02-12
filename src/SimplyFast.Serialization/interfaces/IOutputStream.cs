@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using SimplyFast.Serialization.interfaces.repeated;
 
-namespace SimplyFast.Serialization.interfaces
+namespace SimplyFast.Serialization
 {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public interface IOutputStream

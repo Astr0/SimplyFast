@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SimplyFast.Serialization.interfaces.repeated
+namespace SimplyFast.Serialization
 {
     public sealed class RepeatedType<T>
     {

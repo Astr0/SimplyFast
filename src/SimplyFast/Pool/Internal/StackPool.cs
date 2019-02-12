@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SimplyFast.Cache;
 
 namespace SimplyFast.Pool.Internal
 {
@@ -14,5 +15,8 @@ namespace SimplyFast.Pool.Internal
         }
 
         public TGetter Get => _storage.Count != 0 ? _storage.Pop() : _factory(_storage.Push);
+
+
+        public CacheStat CacheStat => new CacheStat(_storage.Count);
     }
 }

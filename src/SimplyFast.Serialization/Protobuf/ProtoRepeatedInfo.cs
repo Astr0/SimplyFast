@@ -1,5 +1,3 @@
-using SimplyFast.Serialization.interfaces;
-
 namespace SimplyFast.Serialization.Protobuf
 {
     internal static class ProtoRepeatedInfo<T>

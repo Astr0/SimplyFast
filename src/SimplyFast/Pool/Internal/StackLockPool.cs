@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using SimplyFast.Cache;
 
 namespace SimplyFast.Pool.Internal
 {
@@ -24,6 +25,15 @@ namespace SimplyFast.Pool.Internal
                 }
             }
         }
+
+        public CacheStat CacheStat
+        {
+            get
+            {
+                lock (_storage)
+                    return new CacheStat(_storage.Count);
+            }
+        } 
 
         private void Return(TGetter getter)
         {

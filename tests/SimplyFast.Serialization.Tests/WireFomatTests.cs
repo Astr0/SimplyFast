@@ -1,5 +1,4 @@
 ﻿using Xunit;
-using SimplyFast.Serialization.interfaces;
 
 namespace SimplyFast.Serialization.Tests
 {

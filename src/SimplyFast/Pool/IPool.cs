@@ -1,6 +1,8 @@
-﻿namespace SimplyFast.Pool
+﻿using SimplyFast.Cache;
+
+namespace SimplyFast.Pool
 {
-    public interface IPool<out TGetter>
+    public interface IPool<out TGetter>: IHasCacheStat
     {
         TGetter Get { get; }
     }

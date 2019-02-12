@@ -1,4 +1,4 @@
-namespace SimplyFast.Serialization.interfaces.repeated
+namespace SimplyFast.Serialization
 {
     public delegate void PrepareForRepeatedItems(int count);
 }

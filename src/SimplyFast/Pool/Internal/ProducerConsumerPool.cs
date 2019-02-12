@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using SimplyFast.Cache;
 
 namespace SimplyFast.Pool.Internal
 {
@@ -21,5 +22,7 @@ namespace SimplyFast.Pool.Internal
         {
             _storage.TryAdd(getter);
         }
+
+        public CacheStat CacheStat => new CacheStat(_storage.Count);
     }
 }

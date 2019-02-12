@@ -1,4 +1,4 @@
-﻿namespace SimplyFast.Serialization.interfaces
+﻿namespace SimplyFast.Serialization
 {
     public enum WireType : uint
     {

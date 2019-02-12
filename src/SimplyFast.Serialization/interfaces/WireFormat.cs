@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace SimplyFast.Serialization.interfaces
+namespace SimplyFast.Serialization
 {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class WireFormat

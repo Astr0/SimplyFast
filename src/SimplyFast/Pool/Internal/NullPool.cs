@@ -1,4 +1,6 @@
-﻿namespace SimplyFast.Pool.Internal
+﻿using SimplyFast.Cache;
+
+namespace SimplyFast.Pool.Internal
 {
     public class NullPool<TGetter>: IPool<TGetter>
     {
@@ -14,5 +16,7 @@
         private static void NoReturn(TGetter getter)
         {
         }
+
+        public CacheStat CacheStat => new CacheStat(0);
     }
 }
