@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 using Xunit;
 using SimplyFast.Reflection.Tests.TestData;
@@ -65,15 +66,15 @@ namespace SimplyFast.Reflection.Tests
         {
             Assert.NotNull(typeof(SomeClass1).Field("_f1").GetterAs<Func<object, object>>());
             Assert.NotNull(typeof(SomeClass1).Field("F2").GetterAs<Func<object, object>>());
-            Assert.NotNull(typeof(TestClass2).Field("_f3").GetterAs<Func<object>>());
-            Assert.NotNull(typeof(TestClass2).Field("_f3").GetterAs(typeof(Func<object>)));
+            Assert.NotNull(typeof(SomeClass2).Field("_f3").GetterAs<Func<object>>());
+            Assert.NotNull(typeof(SomeClass2).Field("_f3").GetterAs(typeof(Func<object>)));
         }
 
         [Fact]
         public void GetterThrowsIfWrongType()
         {
             var d = new SomeClass1();
-            Assert.Throws<InvalidCastException>(() => typeof(TestClass2).Field("_f1").GetterAs<Func<object, object>>()(d));
+            Assert.Throws<InvalidCastException>(() => typeof(SomeClass2).Field("_f1").GetterAs<Func<object, object>>()(d));
         }
 
         [Fact]
@@ -87,7 +88,7 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void GetterWorksForPrivateStatic()
         {
-            Assert.Equal("_f3t", typeof(TestClass2).Field("_f3").GetterAs<Func<object>>()());
+            Assert.Equal("_f3t", typeof(SomeClass2).Field("_f3").GetterAs<Func<object>>()());
         }
 
         [Fact]
@@ -102,19 +103,19 @@ namespace SimplyFast.Reflection.Tests
         {
             Assert.NotNull(typeof(SomeClass1).Field("_f1").SetterAs<Action<object, object>>());
             Assert.NotNull(typeof(SomeClass1).Field("F2").SetterAs<Action<object, object>>());
-            Assert.NotNull(typeof(TestClass2).Field("_f3").SetterAs<Action<object>>());
-            Assert.NotNull(typeof(TestClass2).Field("_f3").SetterAs(typeof(Action<object>)));
+            Assert.NotNull(typeof(SomeClass2).Field("_f3").SetterAs<Action<object>>());
+            Assert.NotNull(typeof(SomeClass2).Field("_f3").SetterAs(typeof(Action<object>)));
         }
 
         [Fact]
         public void SetterThrowsIfWrongType()
         {
             var c = new SomeClass1();
-            var d = new TestClass2();
+            var d = new SomeClass2();
             Assert.Throws<InvalidCastException>(
-                () => typeof(TestClass2).Field("_f1").SetterAs<Action<object, object>>()(c, 123));
+                () => typeof(SomeClass2).Field("_f1").SetterAs<Action<object, object>>()(c, 123));
             Assert.Throws<InvalidCastException>(
-                () => typeof(TestClass2).Field("_f1").SetterAs<Action<object, object>>()(d, "te"));
+                () => typeof(SomeClass2).Field("_f1").SetterAs<Action<object, object>>()(d, "te"));
         }
 
         [Fact]
@@ -130,12 +131,12 @@ namespace SimplyFast.Reflection.Tests
         {
             try
             {
-                typeof(TestClass2).Field("_f3").SetterAs<Action<int>>()(123);
-                Assert.Equal(123, typeof(TestClass2).Field("_f3").GetterAs<Func<object>>()());
+                typeof(SomeClass2).Field("_f3").SetterAs<Action<int>>()(123);
+                Assert.Equal(123, typeof(SomeClass2).Field("_f3").GetterAs<Func<object>>()());
             }
             finally
             {
-                TestClass2.F3 = "_f3t";
+                SomeClass2.F3 = "_f3t";
             }
         }
 
@@ -152,6 +153,15 @@ namespace SimplyFast.Reflection.Tests
         {
             var fields = new HashSet<FieldInfo>(typeof(SomeClass1).Fields());
             Assert.True(fields.SetEquals(typeof(SomeClass1).GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)));
+        }
+
+        [Fact]
+        public void DeclaringPropertyOk()
+        {
+            var prop = typeof(SimpleAutoPropClass).Fields().FirstOrDefault(x => x.Name != "SomeField").DeclaringProperty();
+            Assert.Equal(prop, typeof(SimpleAutoPropClass).Properties().Single());
+            var prop2 = typeof(SimpleAutoPropClass).Field("SomeField").DeclaringProperty();
+            Assert.Null(prop2);
         }
 
         private class ClassWithFields

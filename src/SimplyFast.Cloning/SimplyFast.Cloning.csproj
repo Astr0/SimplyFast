@@ -2,18 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="impl\**" />
-    <EmbeddedResource Remove="impl\**" />
-    <None Remove="impl\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Clone.cs" />
-    <Compile Remove="CloneOverrideAttribute.cs" />
-    <Compile Remove="CloneType.cs" />
+    <ProjectReference Include="..\SimplyFast.Reflection\SimplyFast.Reflection.csproj" />
   </ItemGroup>
 
 </Project>

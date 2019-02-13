@@ -1,4 +1,4 @@
-﻿namespace Blink.Common.TinyClone
+﻿namespace SimplyFast.Cloning
 {
     public enum CloneType
     {

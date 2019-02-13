@@ -1,12 +1,19 @@
-﻿namespace Blink.Common.TinyClone
+﻿using SimplyFast.Cloning.Internal;
+
+namespace SimplyFast.Cloning
 {
     public static class Clone
     {
-        private static readonly CloneTypeCache _cloneTypeCache = new CloneTypeCache();
+        private static readonly DefaultCloneFactory _defaultCloneFactory = new DefaultCloneFactory();
+
+        public static T Custom<T>(T obj, ICloneObject cloneObject)
+        {
+            return (T) new CloneContext(cloneObject).Clone(obj);
+        }
 
         public static T Deep<T>(T obj)
         {
-            return new CloneContext(_cloneTypeCache).Clone(obj);
+            return Custom(obj, _defaultCloneFactory);
         }
     }
 }

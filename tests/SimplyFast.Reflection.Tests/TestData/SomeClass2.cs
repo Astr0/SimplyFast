@@ -5,17 +5,17 @@ using System.Linq;
 
 namespace SimplyFast.Reflection.Tests.TestData
 {
-    public class TestClass2 : SomeClass1
+    public class SomeClass2 : SomeClass1
     {
         private static object _f3 = "_f3t";
         private long _f1;
         public static readonly object FStatic = new object();
 
-        public TestClass2() : this(string.Empty, 11)
+        public SomeClass2() : this(string.Empty, 11)
         {
         }
 
-        private TestClass2(string p2, int f1)
+        private SomeClass2(string p2, int f1)
         {
             P2 = p2;
             _f1 = f1;

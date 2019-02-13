@@ -1,6 +1,6 @@
 namespace SimplyFast.Reflection.Tests.TestData
 {
-    public class SomeClass3 : TestClass2
+    public class SomeClass3 : SomeClass2
     {
         private int _field = 1;
 

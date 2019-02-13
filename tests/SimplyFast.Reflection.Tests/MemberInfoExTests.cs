@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using SimplyFast.Reflection.Tests.TestData;
 using Xunit;
 
 namespace SimplyFast.Reflection.Tests
@@ -167,6 +168,21 @@ namespace SimplyFast.Reflection.Tests
             Assert.Null(t.FindInvokableMember("One", typeof(int), typeof(int)));
             Assert.Null(t.FindInvokableMember("Three", typeof(int), typeof(string)));
             Assert.Null(t.FindInvokableMember("Four", typeof(void)));
+        }
+
+        [Fact]
+        public void HasAttributeWorks()
+        {
+            Assert.False(typeof(SomeClass1).HasAttribute<SomeAttribute>());
+            Assert.True(typeof(SomeClass1).Property("P1").HasAttribute<SomeAttribute>());
+        }
+
+        [Fact]
+        public void CompilerGeneratedWorks()
+        {
+            Assert.False(typeof(SimpleAutoPropClass).CompilerGenerated());
+            Assert.All(typeof(SimpleAutoPropClass).Properties(), p => Assert.False(p.CompilerGenerated()));
+            Assert.All(typeof(SimpleAutoPropClass).Fields(), p => Assert.True(p.CompilerGenerated()));
         }
     }
 }

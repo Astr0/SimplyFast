@@ -18,13 +18,13 @@ namespace SimplyFast.Reflection.Tests
             Assert.NotNull(obj);
             Assert.IsType<SomeClass1>(obj);
 
-            var obj2 = typeof(TestClass2).CreateInstance<SomeClass1>();
+            var obj2 = typeof(SomeClass2).CreateInstance<SomeClass1>();
             Assert.NotNull(obj2);
-            Assert.IsType<TestClass2>(obj2);
+            Assert.IsType<SomeClass2>(obj2);
 
-            var obj3 = ConstructorInfoEx.CreateInstance<TestClass2>();
+            var obj3 = ConstructorInfoEx.CreateInstance<SomeClass2>();
             Assert.NotNull(obj3);
-            Assert.IsType<TestClass2>(obj3);
+            Assert.IsType<SomeClass2>(obj3);
         }
 
         [Fact]
@@ -33,20 +33,20 @@ namespace SimplyFast.Reflection.Tests
             var obj = typeof(SomeClass1).Constructor().InvokerAs<Func<object>>()();
             Assert.NotNull(obj);
             Assert.IsType<SomeClass1>(obj);
-            var obj2 = typeof(TestClass2).Constructor().InvokerAs<Func<object>>()();
+            var obj2 = typeof(SomeClass2).Constructor().InvokerAs<Func<object>>()();
             Assert.NotNull(obj2);
-            Assert.IsType<TestClass2>(obj2);
+            Assert.IsType<SomeClass2>(obj2);
         }
 
         [Fact]
         public void CanCreateObjectUsingPrivateConstructor()
         {
             var obj2 =
-                typeof(TestClass2).Constructor(typeof(string), typeof(int))
+                typeof(SomeClass2).Constructor(typeof(string), typeof(int))
                     .InvokerAs<Func<string, int, object>>()("test1", 88);
             Assert.NotNull(obj2);
-            Assert.IsType<TestClass2>(obj2);
-            var t = (TestClass2) obj2;
+            Assert.IsType<SomeClass2>(obj2);
+            var t = (SomeClass2) obj2;
             Assert.Equal(88, t.P1);
             Assert.Equal("test1", t.P2);
         }
@@ -57,18 +57,18 @@ namespace SimplyFast.Reflection.Tests
             var obj = typeof(SomeClass1).Constructor().InvokerAs<Func<object>>()();
             Assert.NotNull(obj);
             Assert.IsType<SomeClass1>(obj);
-            var obj2 = typeof(TestClass2).Constructor().InvokerAs<Func<object>>()();
+            var obj2 = typeof(SomeClass2).Constructor().InvokerAs<Func<object>>()();
             Assert.NotNull(obj2);
-            Assert.IsType<TestClass2>(obj2);
+            Assert.IsType<SomeClass2>(obj2);
         }
 
         [Fact]
         public void CanCreateObjectUsingPrivateConstructorAs()
         {
-            var obj2 = typeof(TestClass2).Constructor(typeof(string), typeof(int)).InvokerAs<Func<string, int, object>>()("test1", 88);
+            var obj2 = typeof(SomeClass2).Constructor(typeof(string), typeof(int)).InvokerAs<Func<string, int, object>>()("test1", 88);
             Assert.NotNull(obj2);
-            Assert.IsType<TestClass2>(obj2);
-            var t = (TestClass2)obj2;
+            Assert.IsType<SomeClass2>(obj2);
+            var t = (SomeClass2)obj2;
             Assert.Equal(88, t.P1);
             Assert.Equal("test1", t.P2);
         }
@@ -76,10 +76,10 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void CanCreateObjectUsingPrivateConstructorInvoker()
         {
-            var obj2 = typeof(TestClass2).Constructor(typeof(string), typeof(int)).Invoker()("test1", 88);
+            var obj2 = typeof(SomeClass2).Constructor(typeof(string), typeof(int)).Invoker()("test1", 88);
             Assert.NotNull(obj2);
-            Assert.IsType<TestClass2>(obj2);
-            var t = (TestClass2)obj2;
+            Assert.IsType<SomeClass2>(obj2);
+            var t = (SomeClass2)obj2;
             Assert.Equal(88, t.P1);
             Assert.Equal("test1", t.P2);
         }

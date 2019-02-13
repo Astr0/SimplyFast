@@ -1,13 +1,13 @@
 ﻿using System;
 
-namespace Blink.Common.TinyClone
+namespace SimplyFast.Cloning
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Field | AttributeTargets.Property)]
-    public class CloneOverrideAttribute: Attribute
+    public class CloneTypeAttribute: Attribute
     {
         public CloneType Type { get; }
 
-        public CloneOverrideAttribute(CloneType type)
+        public CloneTypeAttribute(CloneType type)
         {
             Type = type;
         }

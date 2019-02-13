@@ -18,9 +18,9 @@ namespace SimplyFast.Reflection.Tests
         public void FindOverloadReturnsNullOnMultipleGenericMatches()
         {
             var parameters = new[] { typeof(int), typeof(int) };
-            var methodGeneric = typeof(TestClass2).FindMethod("Max", parameters);
+            var methodGeneric = typeof(SomeClass2).FindMethod("Max", parameters);
             Assert.Null(methodGeneric);
-            var method = typeof(TestClass2).FindMethod("Max", parameters);
+            var method = typeof(SomeClass2).FindMethod("Max", parameters);
             Assert.Null(method);
         }
 
@@ -28,17 +28,17 @@ namespace SimplyFast.Reflection.Tests
         public void FindOverloadWorks()
         {
             var intParameters = new[] { typeof(int), typeof(int) };
-            var normalInt = typeof(TestClass2).FindMethod("Max3", intParameters);
+            var normalInt = typeof(SomeClass2).FindMethod("Max3", intParameters);
             Assert.NotNull(normalInt);
             Assert.Equal(7, normalInt.InvokerAs<Func<object, object, object>>()(3, 5));
 
             var doubleParameters = new[] { typeof(double), typeof(double) };
-            var normalDouble = typeof(TestClass2).FindMethod("Max3", doubleParameters);
+            var normalDouble = typeof(SomeClass2).FindMethod("Max3", doubleParameters);
             Assert.NotNull(normalDouble);
             Assert.Equal(6.5, normalDouble.InvokerAs<Func<double, double, double>>()(3.5, 5.5));
 
             var floatParameters = new[] { typeof(float), typeof(float) };
-            var genericFloat = typeof(TestClass2).FindMethod("Max3", floatParameters);
+            var genericFloat = typeof(SomeClass2).FindMethod("Max3", floatParameters);
             Assert.NotNull(normalDouble);
             Assert.True(genericFloat.IsGenericMethod);
             Assert.Equal(5.5f, genericFloat.InvokerAs<Func<float, float, float>>()(3.5f, 5.5f));
@@ -47,7 +47,7 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void GenericWorks()
         {
-            var genericMethod = typeof(TestClass2).Method("Max", 1, Substitute.T[0], Substitute.T[0]);
+            var genericMethod = typeof(SomeClass2).Method("Max", 1, Substitute.T[0], Substitute.T[0]);
             Assert.NotNull(genericMethod);
             var method = genericMethod.MakeGeneric(typeof(int));
             Assert.Equal(5, method.InvokerAs<Func<int, int, int>>()(3, 5));
@@ -58,10 +58,10 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void InvokesIntMethod()
         {
-            var t2 = new TestClass2();
+            var t2 = new SomeClass2();
             var t3 = new SomeClass3();
-            var method = typeof(TestClass2).Method("GetF1");
-            var invoker1 = method.InvokerAs<Func<TestClass2, int>>();
+            var method = typeof(SomeClass2).Method("GetF1");
+            var invoker1 = method.InvokerAs<Func<SomeClass2, int>>();
             var invoker2 = method.InvokerAs<Func<object, object>>();
             Assert.Equal(11, invoker1(t2));
             Assert.Equal(11, invoker2(t2));
@@ -72,9 +72,9 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void InvokesIntMethodInvoker()
         {
-            var t2 = new TestClass2();
+            var t2 = new SomeClass2();
             var t3 = new SomeClass3();
-            var method = typeof(TestClass2).Method("GetF1");
+            var method = typeof(SomeClass2).Method("GetF1");
             var invoker = method.Invoker();
             Assert.Equal(11, invoker(t2));
             Assert.Equal(11, invoker(t3));
@@ -83,10 +83,10 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void InvokesIntMethodAs()
         {
-            var t2 = new TestClass2();
+            var t2 = new SomeClass2();
             var t3 = new SomeClass3();
-            var method = typeof(TestClass2).Method("GetF1");
-            var invoker1 = method.InvokerAs<Func<TestClass2, int>>();
+            var method = typeof(SomeClass2).Method("GetF1");
+            var invoker1 = method.InvokerAs<Func<SomeClass2, int>>();
             var invoker2 = method.InvokerAs<Func<object, object>>();
             Assert.Equal(11, invoker1(t2));
             Assert.Equal(11, invoker2(t2));
@@ -115,8 +115,8 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void InvokesPrivateMethod()
         {
-            var t2 = new TestClass2();
-            var method = typeof(TestClass2).Method("SetP2P3Test", typeof(string), typeof(string));
+            var t2 = new SomeClass2();
+            var method = typeof(SomeClass2).Method("SetP2P3Test", typeof(string), typeof(string));
             Assert.Null(method.InvokerAs<Func<object, object, object, object>>()(t2, "t1", "t2"));
             Assert.Equal("t1", t2.P2);
             Assert.Equal("t2", t2.P3);
@@ -128,8 +128,8 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void InvokesPrivateMethodInvoker()
         {
-            var t2 = new TestClass2();
-            var method = typeof(TestClass2).Method("SetP2P3Test", typeof(string), typeof(string));
+            var t2 = new SomeClass2();
+            var method = typeof(SomeClass2).Method("SetP2P3Test", typeof(string), typeof(string));
             Assert.Null(method.Invoker()(t2, "t1", "t2"));
             Assert.Equal("t1", t2.P2);
             Assert.Equal("t2", t2.P3);
@@ -138,8 +138,8 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void InvokesPrivateMethodAs()
         {
-            var t2 = new TestClass2();
-            var method = typeof(TestClass2).Method("SetP2P3Test", typeof(string), typeof(string));
+            var t2 = new SomeClass2();
+            var method = typeof(SomeClass2).Method("SetP2P3Test", typeof(string), typeof(string));
             Assert.Null(method.InvokerAs<Func<object, object, object, object>>()(t2, "t1", "t2"));
             Assert.Equal("t1", t2.P2);
             Assert.Equal("t2", t2.P3);
@@ -151,7 +151,7 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void InvokesStaticOptionalArgs()
         {
-            var method = typeof(TestClass2).Method("Sum", typeof(int), typeof(int), typeof(int[]));
+            var method = typeof(SomeClass2).Method("Sum", typeof(int), typeof(int), typeof(int[]));
             Assert.Equal(10, method.InvokerAs<Func<int, int, int[], int>>()(4, 6, new int[0]));
             Assert.Equal(25, method.InvokerAs<Func<object, object, int[], int>>()(4, 6, new[] { 1, 2, 3, 4, 5 }));
         }
@@ -159,7 +159,7 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void InvokesStaticOptionalArgsAs()
         {
-            var method = typeof(TestClass2).Method("Sum", typeof(int), typeof(int), typeof(int[]));
+            var method = typeof(SomeClass2).Method("Sum", typeof(int), typeof(int), typeof(int[]));
             Assert.Equal(10, method.InvokerAs<Func<int, int, int[], int>>()(4, 6, new int[0]));
             Assert.Equal(25, method.InvokerAs<Func<object, object, int[], int>>()(4, 6, new[] { 1, 2, 3, 4, 5 }));
         }
@@ -167,7 +167,7 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void InvokesStaticOptionalArgsInvoker()
         {
-            var method = typeof(TestClass2).Method("Sum", typeof(int), typeof(int), typeof(int[]));
+            var method = typeof(SomeClass2).Method("Sum", typeof(int), typeof(int), typeof(int[]));
             Assert.Equal(10, method.Invoker()(null, 4, 6, new int[0]));
             Assert.Equal(25, method.Invoker()(null, 4, 6, new[] { 1, 2, 3, 4, 5 }));
         }
@@ -175,25 +175,25 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void InvokesVirtualMethod()
         {
-            var t2 = new TestClass2();
+            var t2 = new SomeClass2();
             var t3 = new SomeClass3();
-            var method = typeof(TestClass2).Method("SetP2P3", typeof(string), typeof(string));
-            Assert.Null(method.InvokerAs<Func<TestClass2, string, string, object>>()(t2, "t1", "t2"));
+            var method = typeof(SomeClass2).Method("SetP2P3", typeof(string), typeof(string));
+            Assert.Null(method.InvokerAs<Func<SomeClass2, string, string, object>>()(t2, "t1", "t2"));
             Assert.Equal("t1", t2.P2);
             Assert.Equal("t2", t2.P3);
             Assert.Null(method.InvokerAs<Func<object, string, object, object>>()(t2, "t1!", "t2!"));
             Assert.Equal("t1!", t2.P2);
-            Assert.Null(method.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t1", "t2"));
+            Assert.Null(method.InvokerAs<Func<SomeClass2, string, string, object>>()(t3, "t1", "t2"));
             Assert.Equal("t1_", t3.P2);
             Assert.Equal("t2_", t3.P3);
-            Assert.Null(method.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t1!", "t2!"));
+            Assert.Null(method.InvokerAs<Func<SomeClass2, string, string, object>>()(t3, "t1!", "t2!"));
             Assert.Equal("t1!_", t3.P2);
             Assert.Equal("t2!_", t3.P3);
             var method2 = typeof(SomeClass3).Method("SetP2P3", typeof(string), typeof(string));
-            Assert.Null(method2.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t11", "t22"));
+            Assert.Null(method2.InvokerAs<Func<SomeClass2, string, string, object>>()(t3, "t11", "t22"));
             Assert.Equal("t11_", t3.P2);
             Assert.Equal("t22_", t3.P3);
-            Assert.Null(method2.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t11!", "t22!"));
+            Assert.Null(method2.InvokerAs<Func<SomeClass2, string, string, object>>()(t3, "t11!", "t22!"));
             Assert.Equal("t11!_", t3.P2);
             Assert.Equal("t22!_", t3.P3);
         }
@@ -201,25 +201,25 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void InvokesVirtualMethodAs()
         {
-            var t2 = new TestClass2();
+            var t2 = new SomeClass2();
             var t3 = new SomeClass3();
-            var method = typeof(TestClass2).Method("SetP2P3", typeof(string), typeof(string));
-            Assert.Null(method.InvokerAs<Func<TestClass2, string, string, object>>()(t2, "t1", "t2"));
+            var method = typeof(SomeClass2).Method("SetP2P3", typeof(string), typeof(string));
+            Assert.Null(method.InvokerAs<Func<SomeClass2, string, string, object>>()(t2, "t1", "t2"));
             Assert.Equal("t1", t2.P2);
             Assert.Equal("t2", t2.P3);
             Assert.Null(method.InvokerAs<Func<object, string, object, object>>()(t2, "t1!", "t2!"));
             Assert.Equal("t1!", t2.P2);
-            Assert.Null(method.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t1", "t2"));
+            Assert.Null(method.InvokerAs<Func<SomeClass2, string, string, object>>()(t3, "t1", "t2"));
             Assert.Equal("t1_", t3.P2);
             Assert.Equal("t2_", t3.P3);
-            Assert.Null(method.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t1!", "t2!"));
+            Assert.Null(method.InvokerAs<Func<SomeClass2, string, string, object>>()(t3, "t1!", "t2!"));
             Assert.Equal("t1!_", t3.P2);
             Assert.Equal("t2!_", t3.P3);
             var method2 = typeof(SomeClass3).Method("SetP2P3", typeof(string), typeof(string));
-            Assert.Null(method2.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t11", "t22"));
+            Assert.Null(method2.InvokerAs<Func<SomeClass2, string, string, object>>()(t3, "t11", "t22"));
             Assert.Equal("t11_", t3.P2);
             Assert.Equal("t22_", t3.P3);
-            Assert.Null(method2.InvokerAs<Func<TestClass2, string, string, object>>()(t3, "t11!", "t22!"));
+            Assert.Null(method2.InvokerAs<Func<SomeClass2, string, string, object>>()(t3, "t11!", "t22!"));
             Assert.Equal("t11!_", t3.P2);
             Assert.Equal("t22!_", t3.P3);
         }
@@ -227,7 +227,7 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void ModifiersWorks()
         {
-            var method = typeof(TestClass2).Method("Sum", typeof(int), typeof(int), typeof(int).MakeByRefType(), typeof(int).MakeByRefType());
+            var method = typeof(SomeClass2).Method("Sum", typeof(int), typeof(int), typeof(int).MakeByRefType(), typeof(int).MakeByRefType());
             Assert.NotNull(method);
             int c;
             var d = 2;
@@ -245,7 +245,7 @@ namespace SimplyFast.Reflection.Tests
         [Fact]
         public void ModifiersWorksAs()
         {
-            var method = typeof(TestClass2).Method("Sum", typeof(int), typeof(int), typeof(int).MakeByRefType(), typeof(int).MakeByRefType());
+            var method = typeof(SomeClass2).Method("Sum", typeof(int), typeof(int), typeof(int).MakeByRefType(), typeof(int).MakeByRefType());
             Assert.NotNull(method);
             int c;
             var d = 2;
