@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
@@ -8,41 +9,43 @@ using SimplyFast.Strings;
 namespace SimplyFast.Log.Internal
 {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class PatternWriter : IWriter
+    internal class TokenStringWriter : IWriter
     {
-        private readonly List<IOutputPattern> _patterns = new List<IOutputPattern>();
-
-        public IEnumerable<IOutputPattern> Patterns => _patterns;
+        private readonly List<Func<IMessage, string>> _patterns = new List<Func<IMessage, string>>();
 
         public void Write(TextWriter writer, IMessage message)
         {
             foreach (var pattern in _patterns)
             {
-                var value = pattern.GetValue(message);
+                var value = pattern(message);
                 if (value != null)
                     writer.Write(value);
             }
         }
 
-        private void Add(IOutputPattern pattern)
+        private void Add(Func<IMessage, string> part)
         {
-            _patterns.Add(pattern);
+            _patterns.Add(part);
         }
 
-        public void Add(string str)
+        private static Func<IMessage, string> ParseToken(string str)
         {
-            Add(new StringOutputPattern(str));
+            var sp = new StringParser(str);
+            var token = sp.SubstringTo(':');
+            if (string.IsNullOrEmpty(token))
+                return null;
+            sp.Skip(1);
+            var format = sp.Right;
+            if (string.IsNullOrEmpty(format))
+                format = null;
+            var messageToken = MessageTokens.Get(token);
+            return m => m.Get(messageToken, format);
         }
 
-        public void Add(MessageToken token, string format = null)
+        public static TokenStringWriter Parse(string stringWithTokens)
         {
-            Add(new TokenOutputPattern(token, format));
-        }
-
-        public static PatternWriter Parse(string tokenizedString)
-        {
-            var sp = new StringParser(tokenizedString);
-            var result = new PatternWriter();
+            var sp = new StringParser(stringWithTokens);
+            var result = new TokenStringWriter();
             var inToken = false;
             var sb = new StringBuilder();
             while (!sp.End)
@@ -64,8 +67,8 @@ namespace SimplyFast.Log.Internal
                     if (!string.IsNullOrEmpty(current))
                     {
                         var pattern = inToken
-                            ? TokenOutputPattern.ParseToken(current)
-                            : new StringOutputPattern(current);
+                            ? ParseToken(current)
+                            : m => current;
                         if (pattern != null)
                             result.Add(pattern);
                     }
