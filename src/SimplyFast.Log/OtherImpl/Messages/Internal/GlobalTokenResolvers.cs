@@ -25,8 +25,7 @@ namespace SimplyFast.Log.Messages.Internal
 
         public string GetTokenValue(MessageToken token, string format)
         {
-            GlobalTokenResolver resolver;
-            return _resolvers.TryGetValue(token, out resolver) ? resolver(format) : null;
+            return _resolvers.TryGetValue(token, out var resolver) ? resolver(format) : null;
         }
     }
 }

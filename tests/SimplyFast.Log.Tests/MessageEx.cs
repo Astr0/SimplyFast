@@ -6,9 +6,9 @@ namespace SimplyFast.Log.Tests
     {
         private static readonly IMessageFactory _messageFactory = LoggerEx.CreateDefaultMessageFactory();
 
-        public static IMessage Default(Severity severity, string msg = null)
+        public static IMessage Default(Severity severity, string msg = null, ILogger logger = null)
         {
-            return _messageFactory.CreateMessage(null, severity, () => msg);
+            return _messageFactory.CreateMessage(logger, severity, () => msg);
         }
     }
 }

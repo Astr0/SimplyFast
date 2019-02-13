@@ -46,6 +46,29 @@ namespace SimplyFast.Log
             switch (severity)
             {
                 case Severity.Trace:
+                    return "trace";
+                case Severity.Debug:
+                    return "debug";
+                case Severity.Info:
+                    return "info";
+                case Severity.Warn:
+                    return "warn";
+                case Severity.Error:
+                    return "error";
+                case Severity.Fatal:
+                    return "fatal";
+                case Severity.Off:
+                    return "off";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
+            }
+        }
+
+        private static string ToStrN(this Severity severity)
+        {
+            switch (severity)
+            {
+                case Severity.Trace:
                     return "Trace";
                 case Severity.Debug:
                     return "Debug";
@@ -67,7 +90,7 @@ namespace SimplyFast.Log
         public static string ToStr(this Severity severity, string format = null)
         {
             if (format == null)
-                return severity.ToStrL();
+                return severity.ToStrN();
             switch (format)
             {
                 case "u":
@@ -75,12 +98,13 @@ namespace SimplyFast.Log
                     return severity.ToStrU();
                 case "l":
                 case "L":
+                    return severity.ToStrL();
                 case "G":
                 case "g":
                 case "":
                 case "F":
                 case "f":
-                    return severity.ToStrL();
+                    return severity.ToStrN();
                 default:
                     return severity.ToString(format);
             }
