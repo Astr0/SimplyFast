@@ -49,7 +49,7 @@ namespace SimplyFast.Reflection.Tests
         public void CanWriteWorks()
         {
             var t = typeof (Test);
-            Assert.False(MemberInfoEx.CanWrite(t.Field("F1")));
+            Assert.True(MemberInfoEx.CanWrite(t.Field("F1")));
             Assert.False(MemberInfoEx.CanWrite(t.Field("F2")));
             Assert.True(MemberInfoEx.CanWrite(t.Field("F3")));
             Assert.False(t.Property("P1").CanWrite());

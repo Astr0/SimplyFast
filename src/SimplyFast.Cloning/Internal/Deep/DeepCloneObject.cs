@@ -21,8 +21,9 @@ namespace SimplyFast.Cloning.Internal.Deep
         {
             return DeepCloneHelper
                     .GetDeepCloneFields(type)
-                    .Where(x => x.Field.CanWrite())
+                    //.Where(x => x.Field.CanWrite())
                     .Select(x => new FieldClone(x))
+                    .Where(x => x.Set != null)
                     .ToArray();
         }
 
@@ -50,8 +51,10 @@ namespace SimplyFast.Cloning.Internal.Deep
             {
                 Debug.Assert(field.CloneType != CloneType.Ignore);
                 Deep = field.CloneType != CloneType.Copy;
-                Get = field.Field.GetterAs<Func<object, object>>();
                 Set = field.Field.SetterAs<Action<object, object>>();
+                Get = Set != null 
+                    ? field.Field.GetterAs<Func<object, object>>()
+                    : null;
             }
         }
 

@@ -40,25 +40,39 @@ namespace SimplyFast.Reflection.Tests
         public void ConstSettersDoesNotExists()
         {
             var type = typeof(SomeClassWithConsts);
-            Func<string, Action<object>> getSetter = x => type.Field(x).SetterAs<Action<object>>();
-            Assert.Null(getSetter("TestBool"));
+            Action<object> GetSetter(string x) => type.Field(x).SetterAs<Action<object>>();
+            Assert.Null(GetSetter("TestBool"));
 
-            Assert.Null(getSetter("TestC"));
-            Assert.Null(getSetter("TestStr"));
+            Assert.Null(GetSetter("TestC"));
+            Assert.Null(GetSetter("TestStr"));
 
-            Assert.Null(getSetter("TestB"));
-            Assert.Null(getSetter("TestSbyte"));
-            Assert.Null(getSetter("TestS"));
-            Assert.Null(getSetter("TestUShort"));
-            Assert.Null(getSetter("TestI"));
-            Assert.Null(getSetter("TestUInt"));
-            Assert.Null(getSetter("TestL"));
-            Assert.Null(getSetter("TestULong"));
+            Assert.Null(GetSetter("TestB"));
+            Assert.Null(GetSetter("TestSbyte"));
+            Assert.Null(GetSetter("TestS"));
+            Assert.Null(GetSetter("TestUShort"));
+            Assert.Null(GetSetter("TestI"));
+            Assert.Null(GetSetter("TestUInt"));
+            Assert.Null(GetSetter("TestL"));
+            Assert.Null(GetSetter("TestULong"));
 
-            Assert.Null(getSetter("TestF"));
-            Assert.Null(getSetter("TestD"));
-            Assert.Null(getSetter("TestDec"));
-            Assert.Null(getSetter("TestEnum"));
+            Assert.Null(GetSetter("TestF"));
+            Assert.Null(GetSetter("TestD"));
+            Assert.Null(GetSetter("TestEnum"));
+
+            // decimal constants are not constants o.O
+            Assert.NotNull(GetSetter("TestDec"));
+        }
+
+        private const decimal SomeDecimalConst = 11;
+
+        [Fact]
+        public void CanWriteDecimalConstant()
+        {
+            var field = typeof(FieldInfoExTests).Field("SomeDecimalConst");
+            Assert.Equal(11M, SomeDecimalConst);
+            field.SetterAs<Action<object>>()(42M);
+            Assert.Equal(11M, SomeDecimalConst);
+            Assert.Equal(42M, field.GetterAs<Func<decimal>>()());
         }
 
         [Fact]
@@ -181,7 +195,7 @@ namespace SimplyFast.Reflection.Tests
         {
             var type = typeof(ClassWithFields);
             Assert.True(type.Field("Ok").CanWrite());
-            Assert.False(type.Field("Read").CanWrite());
+            Assert.True(type.Field("Read").CanWrite());
             Assert.False(type.Field("Constant").CanWrite());
         }
     }

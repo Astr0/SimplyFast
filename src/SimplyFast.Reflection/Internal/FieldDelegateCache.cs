@@ -23,6 +23,8 @@ namespace SimplyFast.Reflection.Internal
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Delegate SetterAs(FieldInfo fieldInfo, Type delegateType)
         {
+            //return _setCache.GetOrAdd(Tuple.Create(fieldInfo, delegateType),
+            //    t => DelegateBuilder.Current.FieldSet(fieldInfo, delegateType));
             return fieldInfo.CanWrite()
                 ? _setCache.GetOrAdd(Tuple.Create(fieldInfo, delegateType), t => DelegateBuilder.Current.FieldSet(fieldInfo, delegateType))
                 : null;

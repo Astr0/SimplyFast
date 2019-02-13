@@ -13,7 +13,8 @@ namespace SimplyFast.Reflection
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool CanWrite(this FieldInfo fieldInfo)
         {
-            return !(fieldInfo.IsInitOnly || fieldInfo.IsLiteral);
+            return !fieldInfo.IsLiteral;
+            //return !(fieldInfo.IsInitOnly || fieldInfo.IsLiteral);
         }
 
         /// <summary>
