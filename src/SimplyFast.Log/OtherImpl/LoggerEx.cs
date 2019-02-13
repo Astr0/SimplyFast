@@ -9,6 +9,11 @@ namespace SimplyFast.Log
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class LoggerEx
     {
+        public static IMessage CustomMessage(Severity severity, Func<IMessage, MessageToken, string, string> get)
+        {
+            return new CustomMessage(severity, get);
+        }
+
         public static IMessageFactory CreateDefaultMessageFactory()
         {
             var factory = new DefaultMessageFactory();
