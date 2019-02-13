@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace SimplyFast.Log.Messages.Internal
+namespace SimplyFast.Log.Messages
 {
-    internal class MessageTokenResolvers<T> : IEnumerable<KeyValuePair<MessageToken, MessageTokenResolver<T>>>
+    public class MessageTokenResolvers<T> : IEnumerable<KeyValuePair<MessageToken, MessageTokenResolver<T>>>
         where T : IMessage
     {
         private readonly Dictionary<MessageToken, MessageTokenResolver<T>> _resolvers =

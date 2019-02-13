@@ -11,8 +11,8 @@ namespace SimplyFast.Log.Messages
             Token = token;
         }
 
+        // ReSharper disable once MemberCanBePrivate.Global
         public readonly string Token;
-        public bool IsEmpty => Token == null;
 
         public bool Equals(MessageToken other)
         {
