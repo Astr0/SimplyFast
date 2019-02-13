@@ -6,13 +6,14 @@ using SimplyFast.Reflection;
 
 namespace SimplyFast.Cloning.Internal.Deep
 {
-    internal class DeepCloneObject: ICloneObject
+    internal class DeepCloneStruct: ICloneObject
     {
         private readonly Type _type;
         private readonly FieldClone[] _cloneFields;
 
-        public DeepCloneObject(Type type)
+        public DeepCloneStruct(Type type)
         {
+            Debug.Assert(type.IsValueType);
             _type = type;
             _cloneFields = BuildCloneFields(type);
         }
@@ -21,9 +22,8 @@ namespace SimplyFast.Cloning.Internal.Deep
         {
             return DeepCloneHelper
                     .GetDeepCloneFields(type)
-                    //.Where(x => x.Field.CanWrite())
                     .Select(x => new FieldClone(x))
-                    .Where(x => x.Set != null)
+                    .Where(x => x.Ok)
                     .ToArray();
         }
 
@@ -35,23 +35,27 @@ namespace SimplyFast.Cloning.Internal.Deep
                 var value = cloneField.Get(src);
                 if (cloneField.Deep)
                     value = context.Clone(value);
-                cloneField.Set(target, value);
+                cloneField.Set(ref target, value);
             }
 
             return target;
         }
 
+        private delegate void SetStructHelper(ref object o, object v);
+
         private struct FieldClone
         {
             public readonly bool Deep;
             public readonly Func<object, object> Get;
-            public readonly Action<object, object> Set;
+            public readonly SetStructHelper Set;
+
+            public bool Ok => Set != null && Get != null;
 
             public FieldClone(CloneFieldInfo field)
             {
                 Debug.Assert(field.CloneType != CloneType.Ignore);
                 Deep = field.CloneType != CloneType.Copy;
-                Set = field.Field.SetterAs<Action<object, object>>();
+                Set = field.Field.SetterAs<SetStructHelper>();
                 Get = Set != null 
                     ? field.Field.GetterAs<Func<object, object>>()
                     : null;

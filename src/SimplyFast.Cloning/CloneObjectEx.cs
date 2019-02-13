@@ -42,7 +42,7 @@ namespace SimplyFast.Cloning
 
         public static ICloneObject DeepCloneObject(Type type)
         {
-            return new DeepCloneObject(type);
+            return  type.IsValueType ? (ICloneObject)new DeepCloneStruct(type) : new DeepCloneClass(type);
         }
 
         private class CopyArrayCloneObject : ICloneObject
