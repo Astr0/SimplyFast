@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CurrentImpl\**" />
+    <EmbeddedResource Remove="CurrentImpl\**" />
+    <None Remove="CurrentImpl\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SimplyFast\SimplyFast.csproj" />
   </ItemGroup>
 

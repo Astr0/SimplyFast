@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using SimplyFast.Log.Messages;
 using Xunit;
 
 namespace SimplyFast.Log.Tests
