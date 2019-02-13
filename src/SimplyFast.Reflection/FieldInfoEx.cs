@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using SimplyFast.Reflection.Internal;
@@ -8,7 +9,7 @@ namespace SimplyFast.Reflection
     public static class FieldInfoEx
     {
         /// <summary>
-        ///     Checks if field can be writter to
+        ///     Checks if field can be written to
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool CanWrite(this FieldInfo fieldInfo)
@@ -70,6 +71,21 @@ namespace SimplyFast.Reflection
             where TDelegate : class
         {
             return (TDelegate) (object) FieldDelegateCache.SetterAs(fieldInfo, typeof(TDelegate));
+        }
+
+        /// <summary>
+        /// Returns Declaring property for backing fields
+        /// </summary>
+        public static PropertyInfo DeclaringProperty(this FieldInfo fieldInfo)
+        {
+            if (!fieldInfo.CompilerGenerated())
+                return null;
+            const string end = ">k__BackingField";
+            var name = fieldInfo.Name;
+            if (string.IsNullOrEmpty(name) || name[0] != '<' || !name.EndsWith(end))
+                return null;
+            var propertyName = name.Substring(1, name.Length - end.Length - 1);
+            return fieldInfo.DeclaringType.Property(propertyName);
         }
     }
 }

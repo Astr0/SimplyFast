@@ -94,5 +94,15 @@ namespace SimplyFast.Reflection
                 return null;
             }
         }
+
+        public static bool HasAttribute<T>(this MemberInfo member) where T: Attribute
+        {
+            return Attribute.IsDefined(member, typeof(T));
+        }
+
+        public static bool CompilerGenerated(this MemberInfo member)
+        {
+            return member.HasAttribute<CompilerGeneratedAttribute>();
+        }
     }
 }

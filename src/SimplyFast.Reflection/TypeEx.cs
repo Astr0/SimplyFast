@@ -211,5 +211,14 @@ namespace SimplyFast.Reflection
                 ? type.GenericTypeParameters
                 : type.GenericTypeArguments;
         }
+
+        public static IEnumerable<Type> Hierarchy(this Type type)
+        {
+            while (type != null)
+            {
+                yield return type;
+                type = type.BaseType;
+            }
+        }
     }
 }
