@@ -2,7 +2,7 @@
 
 namespace SimplyFast.IoC
 {
-    public abstract class FastModule : IFastModule
+    public abstract class IocModule : IIocModule
     {
         [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")] 
         protected IKernel Kernel { get; private set; }
@@ -18,8 +18,6 @@ namespace SimplyFast.IoC
             return Kernel.Bind<T>();
         }
 
-        // This should be protected, but for ninject sake..
-        [SuppressMessage("ReSharper", "MemberCanBeProtected.Global")]
-        public abstract void Load();
+        protected abstract void Load();
     }
 }

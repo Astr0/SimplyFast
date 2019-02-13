@@ -1,6 +1,6 @@
 ﻿namespace SimplyFast.IoC
 {
-    public interface IFastModule
+    public interface IIocModule
     {
         void Load(IKernel kernel);
     }

@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace SimplyFast.IoC.Tests.Modules
 {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
-    public class SomeModule: FastModule
+    public class SomeModule: IocModule
     {
         public class SomeEnumerable : IEnumerable<string>
         {
@@ -21,7 +21,7 @@ namespace SimplyFast.IoC.Tests.Modules
             }
         }
 
-        public override void Load()
+        protected override void Load()
         {
             Bind<string>().ToConstant("test");
             Bind<IEnumerable<string>>().To<SomeEnumerable>();

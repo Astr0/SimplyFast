@@ -8,15 +8,15 @@ using SimplyFast.Reflection;
 
 namespace SimplyFast.IoC
 {
-    public static class FastModuleEx
+    public static class IocModuleEx
     {
-        public static void Load(this IKernel kernel, params IFastModule[] modules)
+        public static void Load(this IKernel kernel, params IIocModule[] modules)
         {
-            Load(kernel, (IEnumerable<IFastModule>) modules);
+            Load(kernel, (IEnumerable<IIocModule>) modules);
         }
 
         [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
-        public static void Load(this IKernel kernel, IEnumerable<IFastModule> modules)
+        public static void Load(this IKernel kernel, IEnumerable<IIocModule> modules)
         {
             foreach (var module in modules)
                 module.Load(kernel);
@@ -27,7 +27,7 @@ namespace SimplyFast.IoC
             kernel.Load(GetAssemblyModuleCandidates(assembly)
                 .Select(t => t.Constructor())
                 .Where(c => c != null)
-                .Select(c => c.InvokerAs<Func<IFastModule>>()()));
+                .Select(c => c.InvokerAs<Func<IIocModule>>()()));
         }
 
         private static IEnumerable<Type> GetAssemblyModuleCandidates(Assembly assembly)
@@ -42,7 +42,7 @@ namespace SimplyFast.IoC
                 var constructor = t.Constructor();
                 if (constructor == null)
                     return;
-                var module = constructor.InvokerAs<Func<IFastModule>>()();
+                var module = constructor.InvokerAs<Func<IIocModule>>()();
                 module.Load(kernel);
             });
         }
@@ -58,7 +58,7 @@ namespace SimplyFast.IoC
                 !type.IsAbstract &&
                 !type.IsInterface &&
                 !type.IsGenericTypeDefinition &&
-                typeof(IFastModule).IsAssignableFrom(type);
+                typeof(IIocModule).IsAssignableFrom(type);
         }
     }
 }
