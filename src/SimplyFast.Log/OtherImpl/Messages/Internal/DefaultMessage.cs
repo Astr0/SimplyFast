@@ -37,7 +37,7 @@ namespace SimplyFast.Log.Messages.Internal
         public string Get(MessageToken token, string format)
         {
             return _resolvers.GetTokenValue(this, token, format) ??
-                   _factory.GetTokenValue(this, token, format) ??
+                   _factory.Get(this, token, format) ??
                    MessageTokens.GetTokenValue(token, format);
         }
     }

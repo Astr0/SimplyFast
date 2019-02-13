@@ -1,4 +1,5 @@
-﻿using SimplyFast.Log.Messages;
+﻿using System;
+using SimplyFast.Log.Messages;
 using Xunit;
 
 namespace SimplyFast.Log.Tests
@@ -12,7 +13,7 @@ namespace SimplyFast.Log.Tests
             var f1Root = f1.Root;
             Assert.NotNull(f1Root);
             Assert.Equal(f1Root, f1.Root);
-            var f2 = LoggerEx.CreateDefaultFactory("TestRoot");
+            var f2 = LoggerEx.CreateDefaultFactory(rootName: "TestRoot");
             var f2Root = f2.Root;
             Assert.Equal("TestRoot", f2Root.ToString());
             Assert.Equal(f2Root, f2.Root);
@@ -116,8 +117,7 @@ namespace SimplyFast.Log.Tests
         [Fact]
         public void LogUsesMessageFactory()
         {
-            //var f = new LoggerFactory(s => MessageEx.Default(Severity.Fatal));
-            var f = LoggerEx.CreateDefaultFactory();
+            var f = LoggerEx.CreateDefaultFactory(new FatalMessageFactory());
             var root = f.Root;
             root.Severity = Severity.Debug;
             var rootOutput = new SomeOutput();
@@ -128,6 +128,26 @@ namespace SimplyFast.Log.Tests
             f.Get("test").Log(Severity.Info, "I");
             Assert.Equal(Severity.Fatal, rootOutput.LastMessage.Severity);
             Assert.NotEqual(lastMessage, rootOutput.LastMessage);
+        }
+
+        private class FatalMessageFactory : IMessageFactory
+        {
+            private static readonly IMessageFactory _messageFactory = LoggerEx.CreateDefaultMessageFactory();
+
+            public IMessage CreateMessage(ILogger source, Severity severity, Func<string> getMessage)
+            {
+                return _messageFactory.CreateMessage(source, Severity.Fatal, getMessage);
+            }
+
+            public void Map(MessageToken token, MessageTokenResolver<IMessage> resolver)
+            {
+                throw new NotSupportedException();
+            }
+
+            public string Get(IMessage message, MessageToken token, string format)
+            {
+                return _messageFactory.Get(message, token, format);
+            }
         }
     }
 }

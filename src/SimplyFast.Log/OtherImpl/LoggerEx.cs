@@ -2,25 +2,33 @@
 using System.Diagnostics.CodeAnalysis;
 using SimplyFast.Log.Internal;
 using SimplyFast.Log.Messages;
+using SimplyFast.Log.Messages.Internal;
 
 namespace SimplyFast.Log
 {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class LoggerEx
     {
-        public static ILoggerFactory CreateDefaultFactory(string rootName = null)
+        public static IMessageFactory CreateDefaultMessageFactory()
         {
-            return new LoggerFactory(new RootLogger(rootName));
+            return new DefaultMessageFactory();
         }
 
-        private static IMessage CreateMessage(this ILogger source, Severity severity, Func<string> getMesage)
+        public static ILoggerFactory CreateDefaultFactory(IMessageFactory messageFactory = null, string rootName = null)
         {
-            return Logger.MessageFactory.CreateMessage(source, severity, getMesage);
+            if (messageFactory == null)
+                messageFactory = CreateDefaultMessageFactory();
+            return new LoggerFactory(new RootLogger(messageFactory, rootName));
         }
 
-        private static void Log(this ILogger logger, Severity severity, Func<string> getMesage)
+        private static IMessage CreateMessage(this ILogger source, Severity severity, Func<string> getMessage)
         {
-            var message = logger.CreateMessage(severity, getMesage);
+            return source.MessageFactory.CreateMessage(source, severity, getMessage);
+        }
+
+        private static void Log(this ILogger logger, Severity severity, Func<string> getMessage)
+        {
+            var message = logger.CreateMessage(severity, getMessage);
             logger.Log(message);
         }
 

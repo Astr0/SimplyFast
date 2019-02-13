@@ -6,8 +6,9 @@ namespace SimplyFast.Log.Internal
     {
         private volatile Severity _severity = Severity.Info;
 
-        public RootLogger(string name = null)
+        public RootLogger(IMessageFactory messageFactory, string name = null)
         {
+            MessageFactory = messageFactory;
             Name = name ?? "Root";
         }
 
@@ -16,6 +17,8 @@ namespace SimplyFast.Log.Internal
             get => _severity;
             set => _severity = value;
         }
+
+        public IMessageFactory MessageFactory { get; }
 
         public void Log(IMessage message)
         {

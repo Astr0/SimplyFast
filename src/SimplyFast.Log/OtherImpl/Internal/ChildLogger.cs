@@ -19,6 +19,8 @@ namespace SimplyFast.Log.Internal
             set => _severity = value;
         }
 
+        public IMessageFactory MessageFactory => _parent.MessageFactory;
+
         public void Log(IMessage message)
         {
             if (!Severity.ShouldLog(message))

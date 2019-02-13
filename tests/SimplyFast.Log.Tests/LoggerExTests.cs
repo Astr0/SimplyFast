@@ -8,6 +8,8 @@ namespace SimplyFast.Log.Tests
     {
         private class SomeLogger : ILogger
         {
+            public IMessageFactory MessageFactory { get; } = LoggerEx.CreateDefaultMessageFactory();
+
             public void Log(IMessage message)
             {
                 _lastMessage = message;

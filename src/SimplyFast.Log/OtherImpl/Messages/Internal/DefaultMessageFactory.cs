@@ -11,12 +11,12 @@ namespace SimplyFast.Log.Messages.Internal
             return new DefaultMessage(this, source, severity, getMessage);
         }
 
-        //public void MapToken(MessageToken token, MessageTokenResolver<IMessage> resolver)
-        //{
-        //    _tokenResolvers.Add(token, resolver);
-        //}
+        public void Map(MessageToken token, MessageTokenResolver<IMessage> resolver)
+        {
+            _tokenResolvers.Add(token, resolver);
+        }
 
-        public string GetTokenValue(IMessage message, MessageToken token, string format)
+        public string Get(IMessage message, MessageToken token, string format)
         {
             return _tokenResolvers.GetTokenValue(message, token, format);
         }
