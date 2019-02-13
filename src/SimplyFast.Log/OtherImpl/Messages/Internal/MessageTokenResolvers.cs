@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SimplyFast.Log.Messages.Internal
 {
-    public class MessageTokenResolvers<T> : IEnumerable<KeyValuePair<MessageToken, MessageTokenResolver<T>>>
+    internal class MessageTokenResolvers<T> : IEnumerable<KeyValuePair<MessageToken, MessageTokenResolver<T>>>
         where T : IMessage
     {
         private readonly Dictionary<MessageToken, MessageTokenResolver<T>> _resolvers =
@@ -26,8 +26,7 @@ namespace SimplyFast.Log.Messages.Internal
 
         public string GetTokenValue(T message, MessageToken token, string format)
         {
-            MessageTokenResolver<T> resolver;
-            return _resolvers.TryGetValue(token, out resolver) ? resolver(message, format) : null;
+            return _resolvers.TryGetValue(token, out var resolver) ? resolver(message, format) : null;
         }
     }
 }

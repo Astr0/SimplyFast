@@ -11,7 +11,22 @@ namespace SimplyFast.Log
     {
         public static IMessageFactory CreateDefaultMessageFactory()
         {
-            return new DefaultMessageFactory();
+            var factory = new DefaultMessageFactory();
+            AddDefaultResolvers(factory);
+            return factory;
+        }
+
+        private static void AddDefaultResolvers(IMessageFactory factory)
+        {
+            factory.Map(MessageTokens.Date, (m, f) => DateTime.Now.ToString(f));
+            factory.Map(MessageTokens.NewLine, (m, f) => Environment.NewLine);
+            factory.Map(MessageTokens.AppData, (m, f) => Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+            factory.Map(MessageTokens.AppRoot, (m, f) => AppEx.ExecutableDirectory);
+            factory.Map(MessageTokens.Thread, (m, f) =>
+            {
+                var current = System.Threading.Thread.CurrentThread;
+                return current.Name ?? current.ManagedThreadId.ToString();
+            });
         }
 
         public static ILoggerFactory CreateDefaultFactory(IMessageFactory messageFactory = null, string rootName = null)
