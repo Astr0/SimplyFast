@@ -1,7 +1,4 @@
 ﻿namespace SimplyFast.Cloning
 {
-    public interface ICloneObject
-    {
-        object Clone(ICloneContext context, object src);
-    }
+    public delegate object CloneObject(ICloneContext context, object src);
 }

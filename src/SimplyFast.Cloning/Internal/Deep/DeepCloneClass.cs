@@ -6,7 +6,7 @@ using SimplyFast.Reflection;
 
 namespace SimplyFast.Cloning.Internal.Deep
 {
-    internal class DeepCloneClass: ICloneObject
+    internal class DeepCloneClass
     {
         private readonly Type _type;
         private readonly FieldClone[] _cloneFields;
@@ -15,16 +15,10 @@ namespace SimplyFast.Cloning.Internal.Deep
         {
             Debug.Assert(!type.IsValueType);
             _type = type;
-            _cloneFields = BuildCloneFields(type);
-        }
-
-        private static FieldClone[] BuildCloneFields(Type type)
-        {
-            return DeepCloneHelper
-                    .GetDeepCloneFields(type)
-                    .Select(x => new FieldClone(x))
-                    .Where(x => x.Ok)
-                    .ToArray();
+            _cloneFields = DeepCloneHelper
+                .GetDeepCloneFields(type)
+                .Select(x => new FieldClone(x))
+                .ToArray();
         }
 
         public object Clone(ICloneContext context, object src)
@@ -47,16 +41,13 @@ namespace SimplyFast.Cloning.Internal.Deep
             public readonly Func<object, object> Get;
             public readonly Action<object, object> Set;
 
-            public bool Ok => Set != null && Get != null;
-
             public FieldClone(CloneFieldInfo field)
             {
                 Debug.Assert(field.CloneType != CloneType.Ignore);
                 Deep = field.CloneType != CloneType.Copy;
                 Set = field.Field.SetterAs<Action<object, object>>();
-                Get = Set != null 
-                    ? field.Field.GetterAs<Func<object, object>>()
-                    : null;
+                Get = field.Field.GetterAs<Func<object, object>>();
+                Debug.Assert(Get != null && Set != null);
             }
         }
 

@@ -165,6 +165,18 @@ namespace SimplyFast.Cloning.Tests
         }
 
         [Fact]
+        public void NoCloneStatic()
+        {
+            var o = SomeStruct.NoCloneObj = new object();
+            var s = new SomeStruct(5, new object());
+            var c = Clone.Deep(s);
+            Assert.Equal(5, c.Int);
+            Assert.NotNull(c.Obj);
+            Assert.NotSame(s.Obj, c.Obj);
+            Assert.Same(o, SomeStruct.NoCloneObj);
+        }
+
+        [Fact]
         public void NullableCopyOk()
         {
             var s = new SomeCopyStruct(new object());
@@ -267,6 +279,9 @@ namespace SimplyFast.Cloning.Tests
 
         private struct SomeStruct
         {
+            public const int NoCloneConst = 5;
+            public static object NoCloneObj;
+
             public readonly int? Int;
             public readonly object Obj;
 

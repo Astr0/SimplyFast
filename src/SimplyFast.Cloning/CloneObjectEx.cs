@@ -9,18 +9,17 @@ namespace SimplyFast.Cloning
 {
     public static class CloneObjectEx
     {
-        public static readonly ICloneObject Ignore = new IgnoreCloneObject();
-        public static readonly ICloneObject Copy = new CopyCloneObject();
-        public static readonly ICloneObject CopyArray = new CopyArrayCloneObject();
+        public static readonly CloneObject Ignore = (c,src) => null;
+        public static readonly CloneObject Copy = (c, src) => src;
+        public static readonly CloneObject CopyArray = (c, src) => ((Array) src).Clone();
 
-        private static ICloneObject CreateCloneObject(Type genericTypeDefinition, Type arg)
+        public static CloneObject CloneArray(Type elementType)
         {
-            return genericTypeDefinition.MakeGeneric(arg).CreateInstance<ICloneObject>();
-        }
-
-        public static ICloneObject CloneArray(Type elementType)
-        {
-            return CreateCloneObject(typeof(CloneArrayCloneObject<>), elementType);
+            return 
+                typeof(CloneArrayHelper<>)
+                .MakeGenericType(elementType)
+                .Methods()[0]
+                .InvokerAs<CloneObject>();
         }
 
         [SuppressMessage("ReSharper", "TailRecursiveCall")]
@@ -42,42 +41,19 @@ namespace SimplyFast.Cloning
         }
 
         [SuppressMessage("ReSharper", "TailRecursiveCall")]
-        public static ICloneObject DeepCloneObject(Type type)
+        public static CloneObject DeepCloneObject(Type type)
         {
             var nullable = Nullable.GetUnderlyingType(type);
             if (nullable != null)
-                return new DeepCloneStruct(nullable);
+                return new DeepCloneStruct(nullable).Clone;
 
-            return  type.IsValueType ? (ICloneObject)new DeepCloneStruct(type) : new DeepCloneClass(type);
+            return  type.IsValueType ? (CloneObject)new DeepCloneStruct(type).Clone : new DeepCloneClass(type).Clone;
         }
 
-        private class CopyArrayCloneObject : ICloneObject
+        private static class CloneArrayHelper<T>
         {
-            public object Clone(ICloneContext context, object src)
-            {
-                return ((Array) src).Clone();
-            }
-        }
-
-        private class CopyCloneObject : ICloneObject
-        {
-            public object Clone(ICloneContext context, object src)
-            {
-                return src;
-            }
-        }
-
-        private class IgnoreCloneObject : ICloneObject
-        {
-            public object Clone(ICloneContext context, object src)
-            {
-                return null;
-            }
-        }
-
-        private class CloneArrayCloneObject<T> : ICloneObject
-        {
-            public object Clone(ICloneContext context, object src)
+            [SuppressMessage("ReSharper", "UnusedMember.Local")]
+            public static object Clone(ICloneContext context, object src)
             {
                 return Array.ConvertAll((T[]) src, x => (T) context.Clone(x));
             }

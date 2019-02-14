@@ -6,12 +6,12 @@ namespace SimplyFast.Cloning.Internal
 {
     internal class CloneContext: ICloneContext
     {
-        private readonly ICloneObject _cloneObject;
+        private readonly CloneObject _cloneObject;
         private readonly object _cloning = new object();
 
         private readonly Dictionary<object, object> _objects = new Dictionary<object, object>(EqualityComparerEx.Reference());
 
-        public CloneContext(ICloneObject cloneObject)
+        public CloneContext(CloneObject cloneObject)
         {
             _cloneObject = cloneObject;
         }
@@ -31,7 +31,7 @@ namespace SimplyFast.Cloning.Internal
             _objects.Add(obj, _cloning);
             
             // clone
-            clonedObj = _cloneObject.Clone(this, obj);
+            clonedObj = _cloneObject(this, obj);
 
             _objects[obj] = clonedObj;
 

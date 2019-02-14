@@ -12,7 +12,7 @@ namespace SimplyFast.Cloning.Internal.Deep
         {
             return type
                 .Fields()
-                .Where(x => !x.IsStatic && x.DeclaringType == type)
+                .Where(x => !x.IsStatic && x.DeclaringType == type && x.CanWrite())
                 .Select(x =>
                 {
                     var attrMember = (MemberInfo)x.DeclaringProperty() ?? x;

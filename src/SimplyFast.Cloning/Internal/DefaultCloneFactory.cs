@@ -3,16 +3,16 @@ using System.Collections.Concurrent;
 
 namespace SimplyFast.Cloning.Internal
 {
-    internal class DefaultCloneFactory: ICloneObject
+    internal class DefaultCloneFactory
     {
-        private readonly ConcurrentDictionary<Type, ICloneObject> _cache = new ConcurrentDictionary<Type, ICloneObject>();
+        private readonly ConcurrentDictionary<Type, CloneObject> _cache = new ConcurrentDictionary<Type, CloneObject>();
 
         public object Clone(ICloneContext context, object src)
         {
-            return _cache.GetOrAdd(src.GetType(), CreateObjectClone).Clone(context, src);
+            return _cache.GetOrAdd(src.GetType(), CreateObjectClone)(context, src);
         }
 
-        private static ICloneObject CreateObjectClone(Type type)
+        private static CloneObject CreateObjectClone(Type type)
         {
             switch (CloneObjectEx.GetCloneType(type))
             {
@@ -30,7 +30,7 @@ namespace SimplyFast.Cloning.Internal
             }
         }
 
-        private static ICloneObject CreateArrayClone(Type type)
+        private static CloneObject CreateArrayClone(Type type)
         {
             var elementType = type.GetElementType();
             switch (CloneObjectEx.GetCloneType(elementType))
