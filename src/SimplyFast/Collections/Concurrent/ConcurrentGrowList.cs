@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 
 #pragma warning disable 420
@@ -9,23 +10,36 @@ namespace SimplyFast.Collections.Concurrent
 {
     public class ConcurrentGrowList<T> : IReadOnlyList<T>
     {
-        private volatile T[] _array = TypeHelper<T>.EmptyArray;
+        private volatile T[] _array;
         private volatile int _count;
         private volatile int _written;
         private volatile int _length;
         private int _lockTaken;
 
-        public void Add(T item)
+        public ConcurrentGrowList()
+        {
+            _array = TypeHelper<T>.EmptyArray;
+        }
+
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
+        public ConcurrentGrowList(int capacity)
+        {
+            _array = new T[capacity];
+            _length = capacity;
+        }
+
+        public int Add(T item)
         {
             // declare that we will write new stuff
             var count = Interlocked.Increment(ref _count);
 
-                        // capture current array
+            // capture current array
             var arr = GetArray(count);
-            
+
             // we can write something
             arr[count - 1] = item;
             Interlocked.Increment(ref _written);
+            return count - 1;
         }
 
         private T[] GetArray(int count)
@@ -100,6 +114,8 @@ namespace SimplyFast.Collections.Concurrent
         }
 
         public int Count => _count;
+
+        public int Capacity => _length;
 
         public T this[int index]
         {

@@ -3,8 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Xunit;
 using SimplyFast.Collections.Concurrent;
+using Xunit;
 
 namespace SimplyFast.Tests.Collections.Concurrent
 {
@@ -16,10 +16,10 @@ namespace SimplyFast.Tests.Collections.Concurrent
         {
             var c = new ConcurrentGrowList<int> { 1, 2, 3, 4, 5 };
             Assert.Equal(5, c.Count);
-            Assert.True(c.SequenceEqual(new[] { 1, 2, 3, 4, 5 }));
+            Assert.Equal(new[] { 1, 2, 3, 4, 5 }, c);
             var snap = c.GetSnapshot();
             Assert.Equal(5, snap.Count);
-            Assert.True(snap.SequenceEqual(new[] { 1, 2, 3, 4, 5 }));
+            Assert.Equal(new[] { 1, 2, 3, 4, 5 }, snap);
             Assert.Equal(1, c[0]);
             Assert.Equal(2, c[1]);
             Assert.Equal(3, c[2]);
@@ -30,6 +30,27 @@ namespace SimplyFast.Tests.Collections.Concurrent
             Assert.Equal(3, snap[2]);
             Assert.Equal(4, snap[3]);
             Assert.Equal(5, snap[4]);
+        }
+
+        [Fact]
+        public void CtorWithCapacityWorks()
+        {
+            var c1 = new ConcurrentGrowList<int>();
+            Assert.Equal(0, c1.Capacity);
+            var c2 = new ConcurrentGrowList<int>(5);
+            Assert.Equal(5, c2.Capacity);
+        }
+
+        [Fact]
+        public void AddReturnsIndexOfAddedItem()
+        {
+            var c = new ConcurrentGrowList<int>();
+            Assert.Equal(1, c[c.Add(1)]);
+            Assert.Equal(2, c[c.Add(2)]);
+            Assert.Equal(3, c[c.Add(3)]);
+            Assert.Equal(4, c[c.Add(4)]);
+            Assert.Equal(5, c[c.Add(5)]);
+            Assert.Equal(new[] { 1, 2, 3, 4, 5 }, c);
         }
 
         [Fact]
@@ -59,7 +80,7 @@ namespace SimplyFast.Tests.Collections.Concurrent
                 }
                 start.Set();
                 finish.Wait();
-                Assert.True(Enumerable.Range(0, count).SequenceEqual(c.OrderBy(x => x)));
+                Assert.Equal(Enumerable.Range(0, count), c.OrderBy(x => x));
             }
         }
 
@@ -105,7 +126,7 @@ namespace SimplyFast.Tests.Collections.Concurrent
                 }
                 lastCount = snapshot.Count;
             }
-            Assert.True(c.SequenceEqual(Enumerable.Range(0, count)));
+            Assert.Equal(Enumerable.Range(0, count), c);
         }
     }
 }
