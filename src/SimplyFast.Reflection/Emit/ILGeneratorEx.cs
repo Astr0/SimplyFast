@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -79,11 +80,11 @@ namespace SimplyFast.Reflection.Emit
                 else if (type == typeof (uint))
                     generator.EmitLdcI4(unchecked((int) (uint) value));
                 else
-                    throw new ArgumentException("Type not supported.", "value");
+                    throw new ArgumentException("Type not supported.", nameof(value));
             }
             catch (Exception ex)
             {
-                throw new ArgumentException("Invalid value", "value", ex);
+                throw new ArgumentException("Invalid value", nameof(value), ex);
             }
         }
 
@@ -130,6 +131,7 @@ namespace SimplyFast.Reflection.Emit
             }
         }
 
+        // ReSharper disable once IdentifierTypo
         public static void EmitStloc(this ILGenerator generator, int index)
         {
             if (index < 0)
@@ -159,12 +161,14 @@ namespace SimplyFast.Reflection.Emit
             }
         }
 
+        // ReSharper disable once IdentifierTypo
         public static void EmitStloc(this ILGenerator generator, LocalBuilder local)
         {
             generator.EmitStloc(local.LocalIndex);
         }
 
 
+        // ReSharper disable once IdentifierTypo
         public static void EmitLdloc(this ILGenerator generator, int index)
         {
             if (index < 0)
@@ -194,12 +198,14 @@ namespace SimplyFast.Reflection.Emit
             }
         }
 
+        // ReSharper disable once IdentifierTypo
         public static void EmitLdloc(this ILGenerator generator, LocalBuilder local)
         {
             generator.EmitLdloc(local.LocalIndex);
         }
 
 
+        // ReSharper disable once IdentifierTypo
         public static void EmitLdarg(this ILGenerator generator, int index)
         {
             if (index < 0)
@@ -229,6 +235,7 @@ namespace SimplyFast.Reflection.Emit
             }
         }
 
+        // ReSharper disable once IdentifierTypo
         public static void EmitLdloca(this ILGenerator generator, int index)
         {
             if (index < 0)
@@ -241,11 +248,14 @@ namespace SimplyFast.Reflection.Emit
                 throw new ArgumentException("index");
         }
 
+        [SuppressMessage("ReSharper", "UnusedMember.Global")]
+        // ReSharper disable once IdentifierTypo
         public static void EmitLdloca(this ILGenerator generator, LocalBuilder local)
         {
             generator.EmitLdloca(local.LocalIndex);
         }
 
+        // ReSharper disable once IdentifierTypo
         public static void EmitLdind(this ILGenerator generator, Type type)
         {
             if (type.IsEnum)
@@ -280,6 +290,7 @@ namespace SimplyFast.Reflection.Emit
                 generator.Emit(OpCodes.Ldobj, type);
         }
 
+        // ReSharper disable once IdentifierTypo
         public static void EmitStind(this ILGenerator generator, Type type)
         {
             if (type.IsEnum)
@@ -314,6 +325,7 @@ namespace SimplyFast.Reflection.Emit
                 generator.Emit(OpCodes.Ldobj, type);
         }
 
+        // ReSharper disable once IdentifierTypo
         public static void EmitLdarga(this ILGenerator generator, int index)
         {
             if (index < 0)
@@ -326,6 +338,7 @@ namespace SimplyFast.Reflection.Emit
                 throw new ArgumentException("index");
         }
 
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public static void EmitTryFinally(this ILGenerator g, Action emitTry, Action emitFinally)
         {
             g.BeginExceptionBlock();
@@ -390,11 +403,12 @@ namespace SimplyFast.Reflection.Emit
         /// <summary>
         /// Foreach loop. body receives continue label
         /// </summary>
+        [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
         public static void EmitForEach(ILGenerator g, MethodInfo getEnumerator, Action<Label> emitBody,
             bool shortBody = true)
         {
-            var ienumerator = getEnumerator.ReturnType;
-            var enumerator = g.DeclareLocal(ienumerator);
+            var iEnumerator = getEnumerator.ReturnType;
+            var enumerator = g.DeclareLocal(iEnumerator);
 
             g.EmitMethodCall(getEnumerator);
             g.EmitStloc(enumerator);
@@ -408,7 +422,7 @@ namespace SimplyFast.Reflection.Emit
                 l =>
                 {
                     g.EmitLdloc(enumerator);
-                    g.EmitMethodCall(ienumerator.Property("Current").GetGetMethod());
+                    g.EmitMethodCall(iEnumerator.Property("Current").GetGetMethod());
                     emitBody(l);
                 },
                 shortBody));
@@ -439,6 +453,11 @@ namespace SimplyFast.Reflection.Emit
                 else if (!to.IsAssignableFrom(from))
                     g.Emit(OpCodes.Castclass, to);
             }
+        }
+
+        public static void EmitLoadType(this ILGenerator g, Type type)
+        {
+            g.Emit(OpCodes.Ldtoken, type);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using SimplyFast.Cloning.Internal.Deep;
 using SimplyFast.Reflection;
+using SimplyFast.Reflection.Emit;
 
 namespace SimplyFast.Cloning
 {
@@ -16,7 +17,7 @@ namespace SimplyFast.Cloning
         public static CloneObject CloneArray(Type elementType)
         {
             return 
-                typeof(CloneArrayHelper<>)
+                typeof(DeepCloneArray<>)
                 .MakeGenericType(elementType)
                 .Methods()[0]
                 .InvokerAs<CloneObject>();
@@ -44,19 +45,14 @@ namespace SimplyFast.Cloning
         public static CloneObject DeepCloneObject(Type type)
         {
             var nullable = Nullable.GetUnderlyingType(type);
+
+            if (EmitEx.Supported)
+                return DeepCloneEmit.Build(nullable ?? type);
+
             if (nullable != null)
                 return new DeepCloneStruct(nullable).Clone;
 
             return  type.IsValueType ? (CloneObject)new DeepCloneStruct(type).Clone : new DeepCloneClass(type).Clone;
-        }
-
-        private static class CloneArrayHelper<T>
-        {
-            [SuppressMessage("ReSharper", "UnusedMember.Local")]
-            public static object Clone(ICloneContext context, object src)
-            {
-                return Array.ConvertAll((T[]) src, x => (T) context.Clone(x));
-            }
         }
     }
 }

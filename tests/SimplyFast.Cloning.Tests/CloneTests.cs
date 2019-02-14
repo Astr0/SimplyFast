@@ -8,12 +8,22 @@ namespace SimplyFast.Cloning.Tests
     public class CloneTests
     {
         [Fact]
+        public void CanCloneObject()
+        {
+            var o = new object();
+            var c = Clone.Deep(o);
+            Assert.NotNull(c);
+            Assert.NotSame(o, c);
+        }
+
+        [Fact]
         public void EverythingWorksOk()
         {
             var testInner = new NormalClass(1, null, new CopyClass(), new IgnoreClass());
             var testOuter = new NormalClass(2, testInner, new CopyClass(), new IgnoreClass());
 
             var outerClone = Clone.Deep(testOuter);
+            Assert.NotNull(outerClone);
             var innerClone = outerClone.Test;
 
             Assert.NotNull(innerClone);
