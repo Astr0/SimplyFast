@@ -19,16 +19,16 @@ namespace SimplyFast.Comparers
         {
             if (ReferenceEquals(x, y))
                 return true;
-            if (ReferenceEquals(x, null))
+            if (x == null)
                 return false;
-            if (ReferenceEquals(y, null))
+            if (y == null)
                 return false;
             return x.Count == y.Count && x.SequenceEqual(y, _elementComparer);
         }
 
         public override int GetHashCode(TCollection obj)
         {
-            if (ReferenceEquals(obj, null))
+            if (obj == null)
                 return 0;
             unchecked
             {

@@ -17,12 +17,13 @@ namespace SimplyFast.Comparers
         {
             if (ReferenceEquals(x, y))
                 return true;
-            if (ReferenceEquals(x, null))
+            if (x == null)
                 return false;
-            if (ReferenceEquals(y, null))
+            if (y == null)
                 return false;
             if (x.Length != y.Length)
                 return false;
+            // ReSharper disable once LoopCanBeConvertedToQuery
             for (var i = 0; i < x.Length; i++)
             {
                 if (!_elementComparer.Equals(x[i], y[i]))

@@ -17,7 +17,7 @@ namespace SimplyFast.Comparers
         }
 
         /// <summary>
-        /// Array equlity comparer using EqualityComparer.Default for elements
+        /// Array equality comparer using EqualityComparer.Default for elements
         /// </summary>
         public static EqualityComparer<T[]> Array<T>()
         {
@@ -25,7 +25,7 @@ namespace SimplyFast.Comparers
         }
 
         /// <summary>
-        /// Array equlity comparer using elementComparer
+        /// Array equality comparer using elementComparer
         /// </summary>
         public static EqualityComparer<T[]> Array<T>(IEqualityComparer<T> elementComparer)
         {
@@ -33,7 +33,7 @@ namespace SimplyFast.Comparers
         }
 
         /// <summary>
-        /// Collection equlity comparer using EqualityComparer.Default for elements
+        /// Collection equality comparer using EqualityComparer.Default for elements
         /// </summary>
         public static EqualityComparer<TCollection> Collection<TCollection, TItem>() where TCollection : class, IReadOnlyCollection<TItem>
         {
@@ -41,7 +41,7 @@ namespace SimplyFast.Comparers
         }
 
         /// <summary>
-        /// Collection equlity comparer using elementComparer
+        /// Collection equality comparer using elementComparer
         /// </summary>
         public static EqualityComparer<TCollection> Collection<TCollection, TItem>(IEqualityComparer<TItem> elementComparer) where TCollection : class, IReadOnlyCollection<TItem>
         {
