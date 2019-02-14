@@ -289,6 +289,7 @@ namespace SimplyFast.Cloning.Tests
 
         private struct SomeStruct
         {
+            [SuppressMessage("ReSharper", "UnusedMember.Local")] 
             public const int NoCloneConst = 5;
             public static object NoCloneObj;
 
