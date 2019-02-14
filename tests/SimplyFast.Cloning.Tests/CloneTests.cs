@@ -122,6 +122,61 @@ namespace SimplyFast.Cloning.Tests
             Assert.Null(b[2]);
         }
 
+        [Fact]
+        public void WeirdEqualClones()
+        {
+            var parent = new WeirdEqual(null);
+            var child = new WeirdEqual(parent);
+
+            var cloned = Clone.Deep(child);
+
+            Assert.NotNull(cloned);
+            Assert.NotNull(cloned.Parent);
+            Assert.Null(cloned.Parent.Parent);
+
+            Assert.NotSame(child, cloned);
+            Assert.NotSame(parent, cloned.Parent);
+        }
+
+
+        [Fact]
+        public void NullableOk()
+        {
+            var s1 = new SomeStruct(5, new object());
+            var c1 = Clone.Deep((SomeStruct?)s1);
+            Assert.True(c1.HasValue);
+            Assert.Equal(5, c1.Value.Int);
+            Assert.NotNull(c1.Value.Obj);
+            Assert.NotSame(s1.Obj, c1.Value.Obj);
+
+            var cloneNull = Clone.Deep((SomeStruct?)null);
+            Assert.False(cloneNull.HasValue);
+
+            var s2 = new SomeStruct(null, s1);
+            var c2 = Clone.Deep((SomeStruct?) s2);
+            Assert.True(c2.HasValue);
+            Assert.False(c2.Value.Int.HasValue);
+            Assert.NotNull(c2.Value.Obj);
+            Assert.IsType<SomeStruct>(c2.Value.Obj);
+            var inner2 = (SomeStruct) c2.Value.Obj;
+            Assert.Equal(5, inner2.Int);
+            Assert.NotNull(inner2.Obj);
+            Assert.NotSame(s1.Obj, inner2.Obj);
+        }
+
+        [Fact]
+        public void NullableCopyOk()
+        {
+            var s = new SomeCopyStruct(new object());
+            var c = Clone.Deep((SomeCopyStruct?)s);
+            Assert.True(c.HasValue);
+            Assert.Same(s.Obj, c.Value.Obj);
+
+            var s2 = new {s = (SomeCopyStruct?) s};
+            var c2 = Clone.Deep(s2);
+            Assert.True(c2.s.HasValue);
+            Assert.Same(s.Obj, c2.s.Value.Obj);
+        }
 
         private class NormalClass
         {
@@ -183,6 +238,54 @@ namespace SimplyFast.Cloning.Tests
         private class IgnoreClass
         {
 
+        }
+
+        private class WeirdEqual : IEquatable<WeirdEqual>
+        {
+            public readonly WeirdEqual Parent;
+            
+            public bool Equals(WeirdEqual other)
+            {
+                return true;
+            }
+
+            public override bool Equals(object obj)
+            {
+                return true;
+            }
+
+            public override int GetHashCode()
+            {
+                return 0;
+            }
+
+            public WeirdEqual(WeirdEqual parent)
+            {
+                Parent = parent;
+            }
+        }
+
+        private struct SomeStruct
+        {
+            public readonly int? Int;
+            public readonly object Obj;
+
+            public SomeStruct(int? i, object obj)
+            {
+                Int = i;
+                Obj = obj;
+            }
+        }
+        
+        [CloneType(CloneType.Copy)]
+        private struct SomeCopyStruct
+        {
+            public readonly object Obj;
+
+            public SomeCopyStruct(object obj)
+            {
+                Obj = obj;
+            }
         }
     }
 }

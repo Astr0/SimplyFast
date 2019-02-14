@@ -2,7 +2,7 @@
 
 namespace SimplyFast.Cloning
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Field | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Field | AttributeTargets.Property)]
     public class CloneTypeAttribute: Attribute
     {
         public CloneType Type { get; }

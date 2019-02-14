@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using SimplyFast.Cloning.Internal.Deep;
@@ -22,16 +23,16 @@ namespace SimplyFast.Cloning
             return CreateCloneObject(typeof(CloneArrayCloneObject<>), elementType);
         }
 
+        [SuppressMessage("ReSharper", "TailRecursiveCall")]
         public static CloneType GetCloneType(Type type)
         {
             if (type.IsPrimitive || type.IsEnum || type == typeof(string))
                 return CloneType.Copy;
+            var nullable = Nullable.GetUnderlyingType(type);
+            if (nullable != null)
+                return GetCloneType(nullable);
+
             return GetCloneTypeFromAttribute(type) ?? CloneType.Deep;
-            // TODO: Nullable?
-            //if (entityType.IsNullable()) {
-            //    Type underlyingType = entityType.GetNullableUnderlyingType();
-            //    return GetPerTypeBehavior(underlyingType);
-            //}
         }
 
         public static CloneType? GetCloneTypeFromAttribute(MemberInfo member)
@@ -40,8 +41,13 @@ namespace SimplyFast.Cloning
             return attr?.Type;
         }
 
+        [SuppressMessage("ReSharper", "TailRecursiveCall")]
         public static ICloneObject DeepCloneObject(Type type)
         {
+            var nullable = Nullable.GetUnderlyingType(type);
+            if (nullable != null)
+                return new DeepCloneStruct(nullable);
+
             return  type.IsValueType ? (ICloneObject)new DeepCloneStruct(type) : new DeepCloneClass(type);
         }
 

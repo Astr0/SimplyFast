@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SimplyFast.Comparers;
 
 namespace SimplyFast.Cloning.Internal
 {
@@ -8,7 +9,7 @@ namespace SimplyFast.Cloning.Internal
         private readonly ICloneObject _cloneObject;
         private readonly object _cloning = new object();
 
-        private readonly Dictionary<object, object> _objects = new Dictionary<object, object>();
+        private readonly Dictionary<object, object> _objects = new Dictionary<object, object>(EqualityComparerEx.Reference());
 
         public CloneContext(ICloneObject cloneObject)
         {
