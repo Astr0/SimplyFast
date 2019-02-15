@@ -18,7 +18,7 @@ namespace SimplyFast.Pool.Internal
             lock (_lock)
             {
                 var polled = _source.Get(param);
-                return new Pooled<T>(this, polled.Instance);
+                return new Pooled<T>(this, polled.Item);
             }
         }
 

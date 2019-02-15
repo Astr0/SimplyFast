@@ -9,18 +9,18 @@ namespace SimplyFast.Pool
     public struct Pooled<T>: IDisposable
     {
         private IPoolBase<T> _pool;
-        public readonly T Instance;
+        public readonly T Item;
 
-        public Pooled(IPoolBase<T> pool, T instance)
+        public Pooled(IPoolBase<T> pool, T item)
         {
             _pool = pool;
-            Instance = instance;
+            Item = item;
         }
 
         public void Dispose()
         {
             var pool = Interlocked.Exchange(ref _pool, null);
-            pool?.Return(Instance);
+            pool?.Return(Item);
         }
     }
 }

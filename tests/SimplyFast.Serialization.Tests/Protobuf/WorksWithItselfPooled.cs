@@ -11,7 +11,7 @@ namespace SimplyFast.Serialization.Tests.Protobuf
         {
             using (var pool = ProtoSerializer.SerializePooled(message))
             {
-                var buf = pool.Instance;
+                var buf = pool.Item;
                 var deserialized = ProtoSerializer.Deserialize<FTestMessage>(buf.Buffer, buf.Offset, buf.Count);
                 AssertDeserialized(message, deserialized, customAssert);
             }

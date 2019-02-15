@@ -37,9 +37,9 @@ namespace SimplyFast.Serialization
             {
                 hasLength = false;
                 pooled = SerializerBuffers.Get(DefaultBufferSize);
-                count = pooled.Instance.BufferLength;
+                count = pooled.Item.BufferLength;
             }
-            var buf = pooled.Instance;
+            var buf = pooled.Item;
             var offset = 0;
             while (true)
             {
@@ -77,7 +77,7 @@ namespace SimplyFast.Serialization
         {
             using (var pooled = SerializePooled(item))
             {
-                var buffer = pooled.Instance;
+                var buffer = pooled.Item;
                 stream.Write(buffer.Buffer, buffer.Offset, buffer.Count);
             }
         }
@@ -86,7 +86,7 @@ namespace SimplyFast.Serialization
         {
             var calcSize = new ProtoSizeCalc(item);
             var result = SerializerBuffers.Get(calcSize.Size);
-            var buf = result.Instance;
+            var buf = result.Item;
             var stream = new ProtoOutputStream(calcSize, buf.Buffer);
             item.WriteTo(stream);
             buf.SetView(0, calcSize.Size);
@@ -113,7 +113,7 @@ namespace SimplyFast.Serialization
         {
             using (var pooled = stream.ToBuffer())
             {
-                var buf = pooled.Instance;
+                var buf = pooled.Item;
                 return Deserialize<T>(buf.Buffer, buf.Offset, buf.Count);
             }
         }
@@ -125,7 +125,7 @@ namespace SimplyFast.Serialization
             var instance = (IMessage)messageType.CreateInstance();
             using (var pooled = stream.ToBuffer())
             {
-                var buf = pooled.Instance;
+                var buf = pooled.Item;
                 var input = new ProtoInputStream(buf.Buffer, buf.Offset, buf.Count);
                 instance.ReadFrom(input);
                 return instance;
