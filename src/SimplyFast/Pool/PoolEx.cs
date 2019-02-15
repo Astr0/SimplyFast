@@ -1,5 +1,4 @@
-﻿using System;
-using SimplyFast.Pool.Internal;
+﻿using SimplyFast.Pool.Internal;
 using System.Collections.Concurrent;
 
 namespace SimplyFast.Pool
@@ -32,12 +31,14 @@ namespace SimplyFast.Pool
             return new StackPool<T, TParam>(init, done);
         }
 
-        /// <summary>
-        /// Basic pooling using underlying producer consumer collection
-        /// </summary>
         public static IPool<T, TParam> Concurrent<T, TParam>(InitPooled<T, TParam> init, ReturnToPoll<T> done = null, IProducerConsumerCollection<T> storage = null)
         {
             return new ProducerConsumerPool<T, TParam>(init, done, storage);
+        }
+
+        public static Pooled<T> NotPooled<T>(T item)
+        {
+            return new Pooled<T>(null, item);
         }
     }
 }

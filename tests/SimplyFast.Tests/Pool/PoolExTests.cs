@@ -108,5 +108,16 @@ namespace SimplyFast.Tests.Pool
             }
             Assert.Equal(3, clean);
         }
+
+        [Fact]
+        public void NotPooledOk()
+        {
+            var o = new object();
+            var oc = o;
+            using (var p = PoolEx.NotPooled(o))
+                Assert.Same(o, p.Instance);
+            Assert.Same(oc, o);
+        }
+
     }
 }
