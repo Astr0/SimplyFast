@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using SimplyFast.Comparers;
 
-namespace SimplyFast.Comparers
+namespace SimplyFast
 {
     /// <summary>
     ///     Facade for Comparers
