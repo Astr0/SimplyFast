@@ -21,6 +21,8 @@ namespace SimplyFast.Comparers
         /// </summary>
         public static EqualityComparer<T[]> Array<T>()
         {
+            if (typeof(T) == typeof(byte))
+                return (EqualityComparer<T[]>)(object)ByteArrayEqualityComparer.Instance;
             return ArrayEqualityComparer<T>.Instance;
         }
 
