@@ -2,11 +2,17 @@
 
 namespace SimplyFast.Pool
 {
-    public interface IPool<out TGetter>: IHasCacheStat
+    public delegate T InitPooled<T, in TParam>(T instance, TParam param);
+
+    public delegate void ReturnToPoll<in T>(T item);
+
+    public interface IPoolBase<in T> : IHasCacheStat
     {
-        TGetter Get { get; }
+        void Return(T item);
     }
 
-    public delegate void ReturnToPool<in TGetter>(TGetter getter);
-    public delegate TGetter PooledFactory<out TGetter>(ReturnToPool<TGetter> returnToPool);
+    public interface IPool<T, in TParam> : IPoolBase<T>
+    {
+        Pooled<T> Get(TParam param = default);
+    }
 }

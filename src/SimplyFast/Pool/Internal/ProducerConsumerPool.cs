@@ -1,26 +1,33 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using SimplyFast.Cache;
 
 namespace SimplyFast.Pool.Internal
 {
-    internal class ProducerConsumerPool<TGetter> : IPool<TGetter>
+    internal class ProducerConsumerPool<T, TParam> : IPool<T, TParam>
     {
-        private readonly PooledFactory<TGetter> _factory;
-        private readonly IProducerConsumerCollection<TGetter> _storage;
+        private readonly InitPooled<T, TParam> _init;
+        private readonly ReturnToPoll<T> _done;
+        private readonly IProducerConsumerCollection<T> _storage;
 
-        public ProducerConsumerPool(PooledFactory<TGetter> factory,
-            IProducerConsumerCollection<TGetter> storage = null)
+        public ProducerConsumerPool(InitPooled<T, TParam> init, ReturnToPoll<T> done,
+            IProducerConsumerCollection<T> storage = null)
         {
-            _factory = factory;
-            _storage = storage ?? new ConcurrentBag<TGetter>();
+            _init = init ?? throw new ArgumentNullException(nameof(init));
+            _done = done;
+            _storage = storage ?? new ConcurrentBag<T>();
         }
 
-
-        public TGetter Get => _storage.TryTake(out TGetter getFromPool) ? getFromPool : _factory(Return);
-
-        private void Return(TGetter getter)
+        public void Return(T getter)
         {
+            _done?.Invoke(getter);
             _storage.TryAdd(getter);
+        }
+
+        Pooled<T> IPool<T, TParam>.Get(TParam param)
+        {
+            _storage.TryTake(out var item);
+            return new Pooled<T>(this, _init(item, param));
         }
 
         public CacheStat CacheStat => new CacheStat(_storage.Count);

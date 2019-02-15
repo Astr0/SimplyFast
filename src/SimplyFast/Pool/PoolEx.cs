@@ -1,4 +1,5 @@
-﻿using SimplyFast.Pool.Internal;
+﻿using System;
+using SimplyFast.Pool.Internal;
 using System.Collections.Concurrent;
 
 namespace SimplyFast.Pool
@@ -11,40 +12,32 @@ namespace SimplyFast.Pool
         /// <summary>
         /// No pooling, always calls factory and no return
         /// </summary>
-        public static IPool<T> None<T>(PooledFactory<T> factory) 
+        public static IPool<T, TParam> None<T, TParam>(InitPooled<T, TParam> init, ReturnToPoll<T> done = null) 
         {
-            return new NullPool<T>(factory);
+            return new NullPool<T, TParam>(init, done);
         }
        
-        public static IPool<T> ThreadSafe<T>(PooledFactory<T> factory)
+        public static IPool<T, TParam> ThreadSafe<T, TParam>(InitPooled<T, TParam> init, ReturnToPoll<T> done = null)
         {
-            return Concurrent(factory, new ConcurrentBag<T>());
+            return Concurrent(init, done);
         }
 
-        public static IPool<T> ThreadSafeLocking<T>(PooledFactory<T> factory)
+        public static IPool<T, TParam> Locking<T, TParam>(this IPool<T, TParam> pool)
         {
-            return new StackLockPool<T>(factory);
+            return new LockingPool<T, TParam>(pool);
         }
 
-        public static IPool<T> ThreadUnsafe<T>(PooledFactory<T> factory)
+        public static IPool<T, TParam> ThreadUnsafe<T, TParam>(InitPooled<T, TParam> init, ReturnToPoll<T> done = null)
         {
-            return new StackPool<T>(factory);
-        }
-
-        /// <summary>
-        /// Basic pooling using underlying producer consumer collection
-        /// </summary>
-        public static IPool<T> Concurrent<T>(PooledFactory<T> factory, IProducerConsumerCollection<T> storage)
-        {
-            return new ProducerConsumerPool<T>(factory, storage);
+            return new StackPool<T, TParam>(init, done);
         }
 
         /// <summary>
         /// Basic pooling using underlying producer consumer collection
         /// </summary>
-        public static IPool<T> Concurrent<T>(PooledFactory<T> factory)
+        public static IPool<T, TParam> Concurrent<T, TParam>(InitPooled<T, TParam> init, ReturnToPoll<T> done = null, IProducerConsumerCollection<T> storage = null)
         {
-            return Concurrent(factory, new ConcurrentBag<T>());
+            return new ProducerConsumerPool<T, TParam>(init, done, storage);
         }
     }
 }

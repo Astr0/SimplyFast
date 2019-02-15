@@ -1,20 +1,27 @@
-﻿using SimplyFast.Cache;
+﻿using System;
+using SimplyFast.Cache;
 
 namespace SimplyFast.Pool.Internal
 {
-    public class NullPool<TGetter>: IPool<TGetter>
+    internal class NullPool<T, TParam>: IPool<T, TParam>
     {
-        private readonly PooledFactory<TGetter> _factory;
+        private readonly InitPooled<T, TParam> _init;
+        private readonly ReturnToPoll<T> _done;
 
-        public NullPool(PooledFactory<TGetter> factory)
+        public NullPool(InitPooled<T, TParam> init, ReturnToPoll<T> done)
         {
-            _factory = factory;
+            _init = init ?? throw new ArgumentNullException(nameof(init));
+            _done = done;
         }
 
-        public TGetter Get => _factory(NoReturn);
-
-        private static void NoReturn(TGetter getter)
+        public void Return(T item)
         {
+            _done?.Invoke(item);
+        }
+
+        public Pooled<T> Get(TParam param = default)
+        {
+            return new Pooled<T>(this, _init(default, param));
         }
 
         public CacheStat CacheStat => new CacheStat(0);

@@ -1,22 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using SimplyFast.Cache;
 
 namespace SimplyFast.Pool.Internal
 {
-    internal class StackPool<TGetter> : IPool<TGetter>
+    internal class StackPool<T, TParam> : IPool<T, TParam>
     {
-        private readonly PooledFactory<TGetter> _factory;
-        private readonly Stack<TGetter> _storage;
+        private readonly ReturnToPoll<T> _done;
+        private readonly InitPooled<T, TParam> _init;
+        private readonly Stack<T> _storage = new Stack<T>();
 
-        public StackPool(PooledFactory<TGetter> factory)
+        public StackPool(InitPooled<T, TParam> init, ReturnToPoll<T> done)
         {
-            _factory = factory;
-            _storage = new Stack<TGetter>();
+            _init = init ?? throw new ArgumentNullException(nameof(init));
+            _done = done;
         }
 
-        public TGetter Get => _storage.Count != 0 ? _storage.Pop() : _factory(_storage.Push);
-
+        public Pooled<T> Get(TParam param = default)
+        {
+            var item = _storage.Count != 0 ? _storage.Pop() : default;
+            return new Pooled<T>(this, _init(item, param));
+        }
 
         public CacheStat CacheStat => new CacheStat(_storage.Count);
+
+        public void Return(T item)
+        {
+            _done?.Invoke(item);
+            _storage.Push(item);
+        }
     }
 }

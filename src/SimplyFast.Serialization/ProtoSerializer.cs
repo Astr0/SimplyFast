@@ -11,7 +11,7 @@ namespace SimplyFast.Serialization
     {
         private const int DefaultBufferSize = 4096;
 
-        private static IPooled<ByteBuffer> ToBuffer(this Stream stream)
+        private static Pooled<ByteBuffer> ToBuffer(this Stream stream)
         {
             // TODO .Net 4.6
             //var ms = stream as MemoryStream;
@@ -25,7 +25,7 @@ namespace SimplyFast.Serialization
             //}
 
             int count;
-            IPooled<ByteBuffer> pooled;
+            Pooled<ByteBuffer> pooled;
             bool hasLength;
             if (stream.CanSeek)
             {
@@ -82,7 +82,7 @@ namespace SimplyFast.Serialization
             }
         }
 
-        public static IPooled<ByteBuffer> SerializePooled<T>(T item) where T : IMessage
+        public static Pooled<ByteBuffer> SerializePooled<T>(T item) where T : IMessage
         {
             var calcSize = new ProtoSizeCalc(item);
             var result = SerializerBuffers.Get(calcSize.Size);
