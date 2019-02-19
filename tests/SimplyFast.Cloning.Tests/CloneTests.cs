@@ -1,17 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using Xunit;
 
 namespace SimplyFast.Cloning.Tests
 {
-    public class CloneTests
+    public abstract class CloneTests: IDisposable
     {
+        private static readonly object _lock = new object();
+        private readonly CloneObject _factory;
+
+        protected CloneTests(bool useEmit)
+        {
+            Monitor.Enter(_lock);
+            CloneObjectEx.UseEmit = useEmit;
+            _factory = Cloning.Clone.DefaultCloneObject();
+        }
+
+        private T Clone<T>(T obj)
+        {
+            return Cloning.Clone.Custom(obj, _factory);
+        }
+
         [Fact]
         public void CanCloneObject()
         {
             var o = new object();
-            var c = Clone.Deep(o);
+            var c = Clone(o);
             Assert.NotNull(c);
             Assert.NotSame(o, c);
         }
@@ -22,7 +38,7 @@ namespace SimplyFast.Cloning.Tests
             var testInner = new NormalClass(1, null, new CopyClass(), new IgnoreClass());
             var testOuter = new NormalClass(2, testInner, new CopyClass(), new IgnoreClass());
 
-            var outerClone = Clone.Deep(testOuter);
+            var outerClone = Clone(testOuter);
             Assert.NotNull(outerClone);
             var innerClone = outerClone.Test;
 
@@ -58,15 +74,15 @@ namespace SimplyFast.Cloning.Tests
             var test2 = new NormalClass(2, test1, new CopyClass(), new IgnoreClass());
             test1.Test = test2;
 
-            Assert.ThrowsAny<Exception>(() => Clone.Deep(test1));
-            Assert.ThrowsAny<Exception>(() => Clone.Deep(test2));
+            Assert.ThrowsAny<Exception>(() => Clone(test1));
+            Assert.ThrowsAny<Exception>(() => Clone(test2));
         }
 
         [Fact]
         public void WorksForReadonly()
         {
             var a = new {test = "t"};
-            var b = Clone.Deep(a);
+            var b = Clone(a);
             Assert.NotSame(a, b);
             Assert.Equal(a.test, b.test);
         }
@@ -75,7 +91,7 @@ namespace SimplyFast.Cloning.Tests
         public void WorksForStructs()
         {
             var a = new { test = new KeyValuePair<object, int>(Tuple.Create("test", 1), 1) };
-            var b = Clone.Deep(a);
+            var b = Clone(a);
             Assert.Equal(Tuple.Create("test", 1), b.test.Key);
             //Assert.IsFalse(ReferenceEquals(a.test.Key, b.test.Key));
             Assert.Equal(1, b.test.Value);
@@ -92,7 +108,7 @@ namespace SimplyFast.Cloning.Tests
                     Tuple.Create("test2", 2)
                 }
             };
-            var b = Clone.Deep(a);
+            var b = Clone(a);
             Assert.False(ReferenceEquals(a.list, b.list));
             Assert.Equal(2, b.list.Length);
             Assert.Equal(Tuple.Create("test1", 1), b.list[0]);
@@ -105,7 +121,7 @@ namespace SimplyFast.Cloning.Tests
         public void WorksForArrayCopy()
         {
             var a = new[] { new CopyClass(), new CopyClass() };
-            var b = Clone.Deep(a);
+            var b = Clone(a);
             Assert.Equal(2, b.Length);
             Assert.True(ReferenceEquals(a[0], b[0]));
             Assert.True(ReferenceEquals(a[1], b[1]));
@@ -115,7 +131,7 @@ namespace SimplyFast.Cloning.Tests
         public void WorksForArrayIgnore()
         {
             var a = new[] { new IgnoreClass(), new IgnoreClass() };
-            var b = Clone.Deep(a);
+            var b = Clone(a);
             Assert.Null(b);
         }
 
@@ -124,7 +140,7 @@ namespace SimplyFast.Cloning.Tests
         public void WorksForArrayMixed()
         {
             var a = new object[] { new NormalClass(2, null, null, null), new CopyClass(), new IgnoreClass() };
-            var b = Clone.Deep(a);
+            var b = Clone(a);
             Assert.Equal(3, b.Length);
             Assert.False(ReferenceEquals(a[0], b[0]));
             Assert.Equal(2, ((NormalClass)b[0]).Prop);
@@ -138,7 +154,7 @@ namespace SimplyFast.Cloning.Tests
             var parent = new WeirdEqual(null);
             var child = new WeirdEqual(parent);
 
-            var cloned = Clone.Deep(child);
+            var cloned = Clone(child);
 
             Assert.NotNull(cloned);
             Assert.NotNull(cloned.Parent);
@@ -153,17 +169,17 @@ namespace SimplyFast.Cloning.Tests
         public void NullableOk()
         {
             var s1 = new SomeStruct(5, new object());
-            var c1 = Clone.Deep((SomeStruct?)s1);
+            var c1 = Clone((SomeStruct?)s1);
             Assert.True(c1.HasValue);
             Assert.Equal(5, c1.Value.Int);
             Assert.NotNull(c1.Value.Obj);
             Assert.NotSame(s1.Obj, c1.Value.Obj);
 
-            var cloneNull = Clone.Deep((SomeStruct?)null);
+            var cloneNull = Clone((SomeStruct?)null);
             Assert.False(cloneNull.HasValue);
 
             var s2 = new SomeStruct(null, s1);
-            var c2 = Clone.Deep((SomeStruct?) s2);
+            var c2 = Clone((SomeStruct?) s2);
             Assert.True(c2.HasValue);
             Assert.False(c2.Value.Int.HasValue);
             Assert.NotNull(c2.Value.Obj);
@@ -179,7 +195,7 @@ namespace SimplyFast.Cloning.Tests
         {
             var o = SomeStruct.NoCloneObj = new object();
             var s = new SomeStruct(5, new object());
-            var c = Clone.Deep(s);
+            var c = Clone(s);
             Assert.Equal(5, c.Int);
             Assert.NotNull(c.Obj);
             Assert.NotSame(s.Obj, c.Obj);
@@ -190,12 +206,12 @@ namespace SimplyFast.Cloning.Tests
         public void NullableCopyOk()
         {
             var s = new SomeCopyStruct(new object());
-            var c = Clone.Deep((SomeCopyStruct?)s);
+            var c = Clone((SomeCopyStruct?)s);
             Assert.True(c.HasValue);
             Assert.Same(s.Obj, c.Value.Obj);
 
             var s2 = new {s = (SomeCopyStruct?) s};
-            var c2 = Clone.Deep(s2);
+            var c2 = Clone(s2);
             Assert.True(c2.s.HasValue);
             Assert.Same(s.Obj, c2.s.Value.Obj);
         }
@@ -313,5 +329,27 @@ namespace SimplyFast.Cloning.Tests
                 Obj = obj;
             }
         }
+
+        public void Dispose()
+        {
+            Monitor.Exit(_lock);
+        }
     }
+
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class CloneEmitTests : CloneTests
+    {
+        public CloneEmitTests() : base(true)
+        {
+        }
+    }
+
+    [SuppressMessage("ReSharper", "UnusedMember.Global")]
+    public class CloneNormalTests : CloneTests
+    {
+        public CloneNormalTests() : base(false)
+        {
+        }
+    }
+
 }

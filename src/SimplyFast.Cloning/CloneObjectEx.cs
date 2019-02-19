@@ -14,6 +14,8 @@ namespace SimplyFast.Cloning
         public static readonly CloneObject Copy = (c, src) => src;
         public static readonly CloneObject CopyArray = (c, src) => ((Array) src).Clone();
 
+        public static bool UseEmit { get; set; } = true;
+
         public static CloneObject CloneArray(Type elementType)
         {
             return 
@@ -46,7 +48,7 @@ namespace SimplyFast.Cloning
         {
             var nullable = Nullable.GetUnderlyingType(type);
 
-            if (EmitEx.Supported)
+            if (UseEmit && EmitEx.Supported)
                 return DeepCloneEmit.Build(nullable ?? type);
 
             if (nullable != null)

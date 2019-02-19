@@ -4,7 +4,12 @@ namespace SimplyFast.Cloning
 {
     public static class Clone
     {
-        private static readonly CloneObject _defaultClone = new DefaultCloneFactory().Clone;
+        private static readonly CloneObject _defaultClone = DefaultCloneObject();
+
+        public static CloneObject DefaultCloneObject()
+        {
+            return new DefaultCloneFactory().Clone;
+        }
 
         public static T Custom<T>(T obj, CloneObject cloneObject)
         {
